@@ -93,8 +93,18 @@
       "Bash(git push origin:*)",
       "Bash(git status:*)",
       "Bash(git diff:*)",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
  
+      "Bash(python3 /Users/K00TSUKA/Sources/bookaudioapp/*)",
+      "Bash(python3.11 /Users/K00TSUKA/Sources/bookaudioapp/*)",
+      "Bash(python3 scripts/*)",
+      "Bash(python3 ./scripts/*)",
+      "Bash(python3.11 scripts/*)",
+      "Bash(python3.11 ./scripts/*)",
+        
+      // xcode
+      "Bash(xcodegen*)",
+      "Bash(xcodebuild test*)" 
     ]
   }
 }
