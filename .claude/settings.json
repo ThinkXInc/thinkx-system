@@ -41,12 +41,19 @@
       "Write(thinkx/web-server/libcommon/**)",
       "Edit(kazukiotsukacom/web-server/libcommon/**)",
       "Write(kazukiotsukacom/web-server/libcommon/**)",
+
       "Edit(quantz-web/web-server/libcommon/**)",
       "Write(quantz-web/web-server/libcommon/**)",
       "Edit(quantz-web/vectordb_server/libcommon/**)",
       "Write(quantz-web/vectordb_server/libcommon/**)",
       "Edit(quantz-web/web-server/views/src/js/simplicity/**)",
       "Write(quantz-web/web-server/views/src/js/simplicity/**)",
+
+      "Edit(transformism/web-server/libcommon/**)",
+      "Write(transformism/web-server/libcommon/**)",
+      "Edit(transformism/refactor_plan.md)",
+      "Write(transformism/refactor_plan.md)",
+
       "Edit(**/dist/**)",
       "Write(**/dist/**)",
 
@@ -56,8 +63,6 @@
       "Write(.claude/**)",
       "Edit(/CLAUDE.md)",
       "Write(/CLAUDE.md)",
-      "Edit(docs/**)",
-      "Write(docs/**)",
       "Edit(auth/**/libcommon/**)",
       "Write(auth/**/libcommon/**)",
 
@@ -72,6 +77,10 @@
       "Read(**/*.pem)"
     ],
     "ask": [
+      "Edit(docs/**)", "Write(docs/**)",
+      "Edit(infra/docs/**)", "Write(infra/docs/**)",
+      "Edit(infra/runbooks/**)", "Write(infra/runbooks/**)",
+
       "Bash(brew install:*)",
       "Bash(git restore:*)",
       "Bash(git submodule deinit:*)",
@@ -101,10 +110,24 @@
       "Bash(python3 ./scripts/*)",
       "Bash(python3.11 scripts/*)",
       "Bash(python3.11 ./scripts/*)",
+
+      "Bash(aws --version*)",
         
-      // xcode
       "Bash(xcodegen*)",
       "Bash(xcodebuild test*)" 
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR/infra/scripts/cost-hook.sh\""
+          }
+        ]
+      }
     ]
   }
 }

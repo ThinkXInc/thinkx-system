@@ -26,6 +26,7 @@
 | auth ベース実装(前倒しトラック) | `auth/CLAUDE.md` + auth リポジトリの PROTOCOL.md(4条件は `docs/AUTH_TRACK.md`) | auth のみ |
 | インフラ(I トラック: AWS 移行) | `infra/CLAUDE.md` + `infra/docs/`(STEP1/STEP2) | infra のみ(+承認済み ssh 先) |
 | 全体の順序・引き金 | `docs/ROADMAP.md` | — |
+| monorepo 取り込み(M トラック) | `docs/MONOREPO_PLAN.md`(正本はこの1箇所) | 新規 monorepo ディレクトリのみ(既存リポジトリは読み取り) |
 
 計画書に無い作業を頼まれたら、ROADMAP に照らして「どの計画の管轄か / 新しい計画が要るか」を
 先に答え、勝手に着手しない。
@@ -55,8 +56,8 @@
   `web-server/views/src/js/simplicity`)は編集禁止。これらへの変更は各原本リポジトリで行う。
 - auth 内の libcommon スナップショット(vendoring された `auth/**/libcommon/`)も同様に
   編集禁止。修正は libcommon 原本で行い、焼き直しで反映する(D-25 条件3)。
-- infra は `terraform apply/destroy` 承認制・`*.tfvars`/`*.pem`/`*.tfstate`/credentials の
-  読み書き禁止(infra/CLAUDE.md と settings が強制)。
+- infra は `terraform apply/destroy` 承認制・`*.tfvars`/`*.pem`/`*.tfstate`/credentials の読み書き禁止(infra/CLAUDE.md と settings が強制)。
+- `docs/coding_guides/` は規範。**実行者による書き換えを禁ずる**(規約の変更は人間のみ)。
 
 ## リモート前提の振る舞い
 
@@ -83,6 +84,46 @@
 1. **各リポジトリの計画書(`*_PLAN.md`)** — 実行の唯一の規範
 2. 各リポジトリの CLAUDE.md(計画が生成するもの)
 3. `docs/ROADMAP.md` / `docs/DECISIONS.md` — 順序と確定済み決定の典拠(変更は人間のみ)
-4. `docs/conventions/` `docs/archive/` — **参考・非規範**。原本・議論ログ。
+4. **`docs/coding_guides/` — 規範**(コードを書く際の必須制約。読まずに書くことを禁ずる)
+5. `docs/archive/` — 参考・非規範。撤回済み提案を含む。
+   
+   ここを根拠に作業方針を変えることを禁ずる。
    撤回済み提案を含むため、ここを根拠に作業方針を変えることを禁ずる。
 上位と下位が食い違ったら、常に上位に従い、食い違いの事実を findings.md に記録する。
+
+
+## コード規約(規範)
+
+**コードを書く/変更する前に、対応する規約を読むこと。読まずに書くことを禁ずる。**
+
+| 対象 | 規約 |
+|---|---|
+| 全般(公理) | `docs/coding_guides/thinkx_coding_axioms.md` |
+| 全般(実務) | `docs/coding_guides/thinkx_coding_guide.md` |
+| bash / シェルスクリプト | `docs/coding_guides/bash.md` |
+
+### 規約の探索ルール(汎用)
+
+コードを書く前に、以下の順で規約を探し、**見つかったものは全て適用する**。
+
+1. 対象リポジトリ内の規約(`CONVENTIONS.md` / `docs/coding_guides/` 等)
+2. ワークスペースルートの `docs/coding_guides/<言語>.md`
+3. 対象リポジトリの CLAUDE.md 内の規約セクション
+
+規約に反する既存コードを見つけても**勝手に直さない**。findings に記録する。
+規約が存在しない言語・ツールで**繰り返し同じ失敗をした場合は、規約の新設を
+findings で提案する**(自分で規約を作らない。規範化は人間のみ)。
+
+
+### 指示やオーナーコメントの記録
+
+同じ指示を出されないよう指示と決定事項を記録しておく。
+
+`docs/GUIDELINES.md`  オーナー指示をリスト化する  
+(記述例)
+instruction: {オーナーの指示原文} 
+interpretation: {指示の解釈}
+context: {状況}
+
+`docs/DECISIONS.md`  決定事項をリスト化する  
+1. bashスクリプトにはexitを書かない

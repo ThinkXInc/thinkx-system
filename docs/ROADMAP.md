@@ -6,10 +6,10 @@ AI 駆動開発で詰まらないこと(独立した軽量モジュール+機械
 
 ## フェーズと現在地
 
-- [ ] **Phase 0: ワークスペース構築**(bootstrap.sh 実行、計画書の各リポジトリへの配置、
+- [x] **Phase 0: ワークスペース構築**(bootstrap.sh 実行、計画書の各リポジトリへの配置、
       ブランチ refactor/2026 作成)
 - [x] **Phase 1: simplicity 計画の完遂(版数は計画書ヘッダが正)**(対象: simplicity のみ)
-- [ ] **Phase 2: libcommon 計画の完遂(版数は計画書ヘッダが正)**(対象: libcommon + quantz-web。
+- [x] **Phase 2: libcommon 計画の完遂(版数は計画書ヘッダが正)**(対象: libcommon + quantz-web。
       L-8 で v2.0.0 タグ + bake.sh、Q-6 で quantz-web の vendoring カットオーバー)
 - [x] **Phase 2.5: 静的サイト群の vendoring カットオーバー**(規範: thinkx/refactor_plan.md
       = S トラック計画。対象: thinkx + kazukiotsukacom。サイトコードは無変更 —
