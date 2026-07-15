@@ -26,6 +26,13 @@ class MissingKeyError(Exception):
     """Raised when a required key is missing from .env file."""
     pass
 
+# 秘密値を journald に平文で残さないためのキー判定(部分一致・大文字化)
+_SENSITIVE_KEY_MARKERS = ('SECRET', 'PASSWORD', 'TOKEN', 'WEBHOOK', 'KEY', 'PRIVATE', 'CREDENTIAL')
+
+def _is_sensitive_key(key):
+    up = key.upper()
+    return any(marker in up for marker in _SENSITIVE_KEY_MARKERS)
+
 def check_config(config, required_keys):
     """Function to check if all required configuration keys exist and are not None."""
     # Assuming `red` and `bold` are defined functions that color the text
@@ -37,6 +44,9 @@ def check_config(config, required_keys):
             if value is None:
                 # Log with error highlighting if value is None
                 logger.error(red(f"Config.{key} is set but its value is None."))
+            elif _is_sensitive_key(key):
+                # 秘密は値を出さず「設定済み」の事実のみ(journald 平文露出を防ぐ)
+                logger.debug(yellow(f"Config.{key}: (set, hidden)"))
             else:
                 # Log with standard highlighting for info
                 logger.debug(yellow(f"Config.{key}: {value}"))
