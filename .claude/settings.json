@@ -2,7 +2,6 @@
   "permissions": {
     "defaultMode": "default",
     "deny": [
-
       "Read(~/.ssh/**)",
       "Read(~/.aws/**)",
       "Read(~/.config/**)",
@@ -21,11 +20,11 @@
       "Bash(rm -fr:*)",
       "Bash(rm -r:*)",
       "Bash(sudo:*)",
-      "Bash(curl:*)",
       "Bash(wget:*)",
-      "Bash(ssh:*)",
-      "Bash(scp:*)",
       "Bash(nc:*)",
+      "Bash(cp:*)",
+      "Bash(rsync:*)",
+      "Bash(scp:*)",
 
       "Bash(git push --force:*)",
       "Bash(git push -f:*)",
@@ -35,73 +34,47 @@
       "Bash(git branch -d:*)",
       "Bash(git branch -D:*)",
 
-      "Edit(thinkx/**)",
-      "Write(thinkx/**)",
-      "Edit(kazukiotsukacom/**)",
-      "Write(kazukiotsukacom/**)",
-      "Edit(transformism/**)",
-      "Write(transformism/**)",
-      "Edit(simplicity/**)",
-      "Write(simplicity/**)",
-      "Edit(auth/**)",
-      "Write(auth/**)",
-      "Edit(infra/**)",
-      "Write(infra/**)",
-
-  "Bash(cp *)",
-  "Bash(rsync *)",
-
-
-      "Edit(thinkx/web-server/libcommon/**)",
-      "Write(thinkx/web-server/libcommon/**)",
-      "Edit(kazukiotsukacom/web-server/libcommon/**)",
-      "Write(kazukiotsukacom/web-server/libcommon/**)",
-
-      "Edit(quantz-web/web-server/libcommon/**)",
-      "Write(quantz-web/web-server/libcommon/**)",
-      "Edit(quantz-web/vectordb_server/libcommon/**)",
-      "Write(quantz-web/vectordb_server/libcommon/**)",
-      "Edit(quantz-web/web-server/views/src/js/simplicity/**)",
-      "Write(quantz-web/web-server/views/src/js/simplicity/**)",
-
-      "Edit(transformism/web-server/libcommon/**)",
-      "Write(transformism/web-server/libcommon/**)",
-      "Edit(transformism/refactor_plan.md)",
-      "Write(transformism/refactor_plan.md)",
-
       "Edit(**/dist/**)",
       "Write(**/dist/**)",
 
       "Edit(**/*_PLAN.md)",
       "Write(**/*_PLAN.md)",
+      "Edit(transformism/refactor_plan.md)",
+      "Write(transformism/refactor_plan.md)",
+      "Edit(ARCHIVE.md)",
+      "Write(ARCHIVE.md)",
       "Edit(.claude/**)",
       "Write(.claude/**)",
       "Edit(/CLAUDE.md)",
       "Write(/CLAUDE.md)",
-      "Edit(auth/**/libcommon/**)",
-      "Write(auth/**/libcommon/**)",
 
-      "Bash(terraform apply:*)",
-      "Bash(terraform destroy:*)",
       "Bash(aws iam:*)",
       "Bash(aws ec2 terminate-instances:*)",
       "Read(**/*.tfstate)",
       "Edit(**/*.tfstate)",
+      "Write(**/*.tfstate)",
       "Read(**/*.tfvars)",
       "Edit(**/*.tfvars)",
+      "Write(**/*.tfvars)",
       "Read(**/*.pem)"
     ],
     "ask": [
+      "Edit(docs/**)",
+      "Write(docs/**)",
+      "Edit(infra/docs/**)",
+      "Write(infra/docs/**)",
+      "Edit(infra/runbooks/**)",
+      "Write(infra/runbooks/**)",
 
-      "Edit(docs/**)", "Write(docs/**)",
-      "Edit(infra/docs/**)", "Write(infra/docs/**)",
-      "Edit(infra/runbooks/**)", "Write(infra/runbooks/**)",
+      "Bash(terraform apply:*)",
+      "Bash(terraform destroy:*)",
+      "Bash(ssh:*)",
+      "Bash(curl:*)",
 
       "Bash(brew install:*)",
       "Bash(git restore:*)",
       "Bash(git submodule deinit:*)",
-      "Bash(git tag -d:*)",
-
+      "Bash(git tag -d:*)"
     ],
     "allow": [
       "Read(./**)",
@@ -120,18 +93,13 @@
       "Bash(git status:*)",
       "Bash(git diff:*)",
       "Bash(git log:*)",
- 
-      "Bash(python3 /Users/K00TSUKA/Sources/bookaudioapp/*)",
-      "Bash(python3.11 /Users/K00TSUKA/Sources/bookaudioapp/*)",
+
       "Bash(python3 scripts/*)",
       "Bash(python3 ./scripts/*)",
       "Bash(python3.11 scripts/*)",
       "Bash(python3.11 ./scripts/*)",
 
-      "Bash(aws --version*)",
-        
-      "Bash(xcodegen*)",
-      "Bash(xcodebuild test*)" 
+      "Bash(aws --version*)"
     ]
   },
   "hooks": {
