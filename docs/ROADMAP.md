@@ -17,6 +17,7 @@ AI 駆動開発で詰まらないこと(独立した軽量モジュール+機械
       前提: Phase 2 完了(v2.0.0 + bake.sh)+ settings.json のスコープ切り替え(計画 S-0a)。
       **Phase 4b と並行実行可**(対象リポジトリの重なりゼロ・前提は同一)。
       本番デプロイは計画外・人間がスケジュール)
+- [x] **Phase 2.5-S2: transformism vendoring カットオーバー**(規範: transformism/refactor_plan.md v1.1。2026-07 完遂: v2.1.0 焼き込み・ルートゴールデン新設・CLAUDE.md 新設。静的サイト群 3 サイト全て vendoring 済み)
 - [x] **Phase 3: バグ修正計画の実行**(規範: libcommon/bugfix_plan.md v1.0・起草済み。入力: 両計画で蓄積された findings.md 全項目。
       前提: Phase 1・2 完了 = 全リポジトリに検証の床がある状態。
       起草時の規則: 各項目を「修正する / 仕様として凍結する / 次期送り」に仕分けし、
@@ -57,8 +58,7 @@ Phase 2 完了後は Phase 2.5 と Phase 4b も相互に並列実行可(いず�
 - [ ] **I-STEP2: 既存 web システムの載せ替え**(setup/*.sh を ssh で流す。
       前提: Phase 3 完了(v2.1.0 の全系再 bake)+ 2026refactor→master マージの人間判断。
       受け入れ試験: 各サイトのルートゴールデンを curl 照合(機械化済み)+
-      quantz を載せる場合は Q-2 スイート。**transformism は S トラック未適用 — 載せる前に
-      カットオーバー適用の要否を人間が判断**)
+      quantz を載せる場合は Q-2 スイート。)
 - インフラの検証はここだけ実インフラが要る(D-16: Ubuntu/AWS 必須は STEP2 から)
 
 ## monorepo 化の引き金(先回りしない。PROTOCOL.md §7 と同じ流儀)

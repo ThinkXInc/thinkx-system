@@ -36,6 +36,21 @@
       "Bash(git branch -d:*)",
       "Bash(git branch -D:*)",
 
+      //"Edit(thinkx/**)",
+      //"Write(thinkx/**)",
+      //"Edit(kazukiotsukacom/**)",
+      //"Write(kazukiotsukacom/**)",
+      //"Edit(transformism/**)",
+      //"Write(transformism/**)",
+      //"Edit(libcommon/**)",
+      //"Write(libcommon/**)",
+      //"Edit(simplicity/**)",
+      //"Write(simplicity/**)",
+      //"Edit(auth/**)",
+      //"Write(auth/**)",
+      //"Edit(infra/**)",
+      //"Write(infra/**)",
+
 
       "Edit(thinkx/web-server/libcommon/**)",
       "Write(thinkx/web-server/libcommon/**)",

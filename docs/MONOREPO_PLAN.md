@@ -1,8 +1,12 @@
-# monorepo 取り込み計画書(M トラック) v1.0
+# monorepo 取り込み計画書(M トラック) v1.1
 
 対象: thinkx-system ワークスペース全体の monorepo 化。正本はこの1箇所。
 方式: **ファイルコピー**(裁定済み: 歴史は運ばない。歴史の調査は旧リポジトリ(凍結アーカイブ)で行う)。
 構成: 現ワークスペースのフォルダ構成を**ほぼそのまま**1つの git リポジトリにする。
+
+v1.1 の変更点: 取り込み元 ref の裁定(2026-07)を反映 — **全リポジトリ一律 `2026refactor` HEAD**。
+これに伴い M の開始タイミングは「infra の 2026refactor が切りの良い状態(I-STEP1 完了等)」に
+人間が合わせる。
 
 ## 目的
 
@@ -14,9 +18,10 @@ polyrepo + vendoring 構成を単一リポジトリに集約し、
 ## 前提(開始条件)
 
 - S2 トラック完了(transformism vendoring + ゴールデン green)
-- thinkx / kazukiotsukacom / transformism / libcommon / simplicity / auth / infra の
-  取り込み元 ref を人間が指定する(既定: サイト群と libcommon は `2026refactor` HEAD。
-  それ以外は人間が明示。**実行者は勝手に ref を仮定しない**)
+- 取り込み元 ref: **全リポジトリ(thinkx / kazukiotsukacom / transformism / libcommon /
+  simplicity / auth / infra)一律 `2026refactor` HEAD**(裁定済み)。
+  M-0 で各 HEAD SHA を実測・一覧化し人間の承認を得る(SHA の確定は人間承認時点)。
+  `2026refactor` ブランチが存在しないリポジトリを発見したら停止して報告
 - 取り込み対象外: quantz-web(裁定済み: 後続。新システム設計時に判断)
 
 ## 禁止事項
