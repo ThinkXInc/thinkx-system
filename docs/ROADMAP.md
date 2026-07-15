@@ -7,7 +7,7 @@ AI 駆動開発で詰まらないこと(独立した軽量モジュール+機械
 ## フェーズと現在地
 
 - [x] **Phase 0: ワークスペース構築**(bootstrap.sh 実行、計画書の各リポジトリへの配置、
-      ブランチ refactor/2026 作成)
+      ブランチ 2026refactor 作成)
 - [x] **Phase 1: simplicity 計画の完遂(版数は計画書ヘッダが正)**(対象: simplicity のみ)
 - [x] **Phase 2: libcommon 計画の完遂(版数は計画書ヘッダが正)**(対象: libcommon + quantz-web。
       L-8 で v2.0.0 タグ + bake.sh、Q-6 で quantz-web の vendoring カットオーバー)
@@ -52,24 +52,38 @@ Phase 2 完了後は Phase 2.5 と Phase 4b も相互に並列実行可(いず�
 
 ## インフラトラック(I。Phase 系と独立・並行可)
 
-- [ ] **I-STEP1: 最小インフラのリハーサル**(staging の VPC/EC2×2(LB+web)を terraform で
-      作成→経路確認→destroy。規範: infra/CLAUDE.md + infra/docs/step1-rehearsal.md。
-      前提なし・いつでも開始可。全 apply/destroy 承認制)
-- [ ] **I-STEP2: 既存 web システムの載せ替え**(setup/*.sh を ssh で流す。
-      前提: Phase 3 完了(v2.1.0 の全系再 bake)+ 2026refactor→master マージの人間判断。
-      受け入れ試験: 各サイトのルートゴールデンを curl 照合(機械化済み)+
-      quantz を載せる場合は Q-2 スイート。)
-- インフラの検証はここだけ実インフラが要る(D-16: Ubuntu/AWS 必須は STEP2 から)
+- [x] **I-STEP1: 最小インフラのリハーサル**(staging の VPC/EC2 を terraform で構築・経路確認。
+      2026-07: destroy せず実運用 staging へ昇格 — 全サイト(transformism 含む)の
+      staging 稼働・目視確認済み。アクセス制限(Basic 認証/noindex)適用済み)
+- [ ] **I-STEP2: 本番カットオーバー**(前提: M トラック完了 + staging で monorepo 稼働・
+      全ゴールデン green。内容: production EC2 を terraform で新設 → setup/*.sh →
+      monorepo clone → run → 受け入れ試験(全サイトのルートゴールデン curl 照合)→ DNS 切替。
+      指針: prod 新設そのものが「monorepo 前提でゼロから立てる」再現性の実地検証。
+      ドキュメント・スクリプトの抜けはここで全部露出する — 露出は失敗ではなく本 STEP の成果。
+      切替後: 旧リポジトリ凍結(M 計画 M-7)。DNS 切替時、移行対象外サブドメイン
+      (store.transformism.art 等)のレコード温存を確認)
+- [ ] **I-STEP2b: 露出した抜けの修正**(prod 構築中に露出した抜けは、その場しのぎの
+      手作業で埋めて先に進まず、monorepo の infra/(setup・runbooks・terraform)に
+      反映してから次の手順へ進む。手作業で通した箇所は I-STEP3 の staging 再構築で
+      必ず再発する — 修正の完了指標は「同じ手順をもう一度流せば素通りすること」)
+- [ ] **I-STEP3: staging の monorepo 前提再構築**(前提: カットオーバー完了。
+      指針: それまで既存 staging は不触 — prod 構築で詰まったときの「正解の参照」
+      として維持する。カットオーバー後に既存 staging を destroy し、prod と同一の
+      手順で再作成。staging / prod が同一手順書の産物になった時点で旧世界の手作業の
+      痕跡が消える。完了後 E トラック(docs/SITE_EDIT_WORKFLOW.md)発効)
 
-## monorepo 化の引き金(先回りしない。PROTOCOL.md §7 と同じ流儀)
+## monorepo 化(M トラック。裁定済み — 2026-07)
 
-現構成は polyrepo + vendoring(独立凍結・変更の完全可視を優先した決定)。
-次のいずれかが**実測で**成立した時点で monorepo 移行計画に着手する:
-- (a) libcommon の変更と全サイト追随を1コミットで原子的に行いたい場面が高頻度になった
-- (b) vendoring の焼き直し運用コストが実測で支配的になった
-- (c) 横断 CI を一本化する必要が生じた
-移行自体は「フォルダ集約 + import 路書き換え + 全ゲート green」であり、
-全リポジトリに機械オラクルが張られた後なら小さな計画書1本で済む。
+引き金の(a)(b)(c)実測待ちは撤回し、**EC2 カットオーバーと monorepo 化を一点に束ねる**と裁定した。
+旧リポジトリ群はカットオーバー後に凍結アーカイブ化(履歴は運ばない・調査は旧リポジトリで行う)。
+
+- [ ] **M: monorepo 取り込み**(規範: docs/MONOREPO_PLAN.md v1.1。方式: ファイルコピー・
+      1リポジトリ=1コミット・ARCHIVE.md に出所記録。取り込み元: 全リポジトリ一律
+      2026refactor HEAD。対象外: quantz-web(後続・新システム設計時に判断)。
+      前提: S2 完了(済)+ staging 全サイト確認(済)。完了判定: 全ゴールデン sweep green + push)
+- [ ] **E: サイト編集ワークフロー**(規範: docs/SITE_EDIT_WORKFLOW.md。発効はカットオーバー後。
+      Remote Control 常駐 + セッションブランチ → staging 確認 → PR → rebase マージ →
+      prod 反映。マージは人間のみ = 本番反映の承認ゲート)
 
 ## 参照
 
@@ -77,3 +91,5 @@ Phase 2 完了後は Phase 2.5 と Phase 4b も相互に並列実行可(いず�
 - コーディング規約: 各リポジトリの CLAUDE.md(層状配置。組織原則 → 契約 → リポジトリ固有)
 - インフラ: infra リポジトリ(Terraform + runbooks)。AWS 移行 STEP2 の受け入れ試験は
   quantz-web の Q-2 スモークスイートが兼ねる
+- monorepo 取り込み: docs/MONOREPO_PLAN.md(M トラック正本)
+- サイト編集ワークフロー: docs/SITE_EDIT_WORKFLOW.md(E トラック正本・カットオーバー後発効)

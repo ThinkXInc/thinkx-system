@@ -23,6 +23,8 @@ polyrepo + vendoring 構成を単一リポジトリに集約し、
   M-0 で各 HEAD SHA を実測・一覧化し人間の承認を得る(SHA の確定は人間承認時点)。
   `2026refactor` ブランチが存在しないリポジトリを発見したら停止して報告
 - 取り込み対象外: quantz-web(裁定済み: 後続。新システム設計時に判断)
+- settings: cp/rsync は本トラック期間限定で deny → ask に変更済み(M-2 のコピー取り込みのため。
+  Write ツールでの1ファイルずつ複製による迂回は禁止 — パーミッション・リンクの再現性が劣化する)
 
 ## 禁止事項
 
@@ -93,6 +95,20 @@ polyrepo + vendoring 構成を単一リポジトリに集約し、
 - [ ] 旧リポジトリの凍結(README への凍結宣言 + GitHub の Archive 設定)は人間作業 —
       実行可能形式の手順を完了報告に含めること。**凍結の実施タイミングは
       EC2 カットオーバー完了後**(それまで旧本番の緊急修正余地を残す)
+- [ ] settings の cp/rsync を ask → deny に戻す(人間作業 — 実行可能形式の手順を完了報告に含めること。
+      M トラック期間限定の窓であり、恒久化しない) 以下を案内すること
+```
+M の完了報告が来たら、.claude/settings.json を開いて：
+"ask" 配列から消す：
+json"Bash(cp *)",
+"Bash(rsync *)",
+（この2行で ask 配列が空になるなら "ask": [], ごと消してよい）
+"deny" 配列に戻す（元の27-28行にあった表記と同じものを。元表記が不明なら以下）：
+json"Bash(cp *)",
+"Bash(rsync *)",
+検証：
+bashpython3 -c "import json; json.load(open('.claude/settings.json')); print('OK')"
+```
 
 ## 完了判定
 
