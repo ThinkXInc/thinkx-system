@@ -1,0 +1,229 @@
+# infra findings
+
+作業中に気づいた点を随時追記。日付 / 該当 / 事実 / 対応方針。
+
+## 2026-07-12 環境セットアップ設計レビュー(docs/raw 原本 + 実リポジトリ照合)
+
+### F1 Git 認証(🔴ブロッカー)
+- 原本(`【作成済】supercom3_ git.md`): 各マシンで `ssh-keygen -t ed25519` → pubkey を GitHub **アカウント** Settings>SSH keys に**手動登録**。repo deploy key ではない。HTTPS/PAT 不使用。鍵は `/home/kaz/.ssh/id_github`、`~/.ssh/config` Host github.com。
+- fresh EC2 は鍵ゼロ。EC2 既定ユーザ `ubuntu` だが鍵/サービスは `User=kaz` 前提 → ユーザ不一致。
+- 対応: 鍵方式を決定(下記いずれか)。(a) EC2 で生成+pubkey を GitHub 手動登録[原本準拠・推奨] (b) 既存秘密鍵を Mac→EC2 配布 (c) repo deploy key。clone を ubuntu/kaz どちらで走らせるかも決める。
+
+### F2 LB nginx は証明書が無いと起動しない(🔴ブロッカー)
+- 実物 `loadbalancer/nginx.conf` は `include conf.d/*conf`。各 443 server が下記 cert を参照:
+  - `/etc/letsencrypt/live/thinkxinc.com/{fullchain,privkey}.pem` … thinkxinc.com, nntm.thinkxinc.com, quantz.thinkxinc.com
+  - `/etc/letsencrypt/live/nntmapp.com/…` … nntmapp.com
+  - `/etc/letsencrypt/live/truetechjapan.com/…` … truetechjapan.com
+  - `/etc/letsencrypt/live/transformism.art/…` … transformism.art
+  - `/etc/letsencrypt/live/kazukiotsuka.com/…` … kazukiotsuka.com
+  - `/etc/ssl/certs/jessicas.online.crt` + `/etc/ssl/private/jessicas.online.key` … demosites.conf(自己管理・デモ)
+- staging は DO_CERTBOT=no で cert 不在 → `nginx -t` 失敗 → LB 起動せず → 手順3(https)不可。
+- 対応: staging は上記パスに自己署名を生成して起動可にする、または conf.d を対象サイトだけに絞る(demosites/transformism/quantz/nntmapp を除外)。
+
+### F3 Python 3.9.6 ソースビルド(要約版設計の取りこぼし)
+- 原本は全 docs で `Python-3.9.6.tgz` をソースビルド + `python3.9 -m venv`(3.10 は皆無)。native ext は 3.9 向けにビルドされている(例: celery doc の torchaudio .so が python3.9 パス)。
+- 現 web-setup は system `python3`(22.04=3.10)→ 不整合。
+- 対応: web-setup を 3.9.6 ソースビルドに合わせる(オーナー方針: ソースビルドは必須・コマンド固定)。3.10 へ上げるのは要判断。
+
+### F4 uwsgi は unix socket / web も nginx 必須
+- 原本: uwsgi は `unix:/tmp/uwsgi_*.sock`。TCP 800x を listen するのは **web 側 nginx**(socket へ proxy + `views/` 静的配信)。
+- 現 web-setup の web nginx リンクは `if [ -f … ]` 頼みで弱い。無ければ 8005 が返らない。スモーク `curl localhost:8005` は web nginx が立って初めて成立。
+- 対応: web nginx.conf/service の設置・起動を確実化。thinkx `web-server/nginx/nginx.conf` を要取得・照合。
+
+### F5 ポート/backend 実態(LB nginx.conf 実物)
+- backend は主に `192.168.1.8`。port map: 8005=thinkxinc/nntmapp/truetechjapan/nntm(共有 uwsgi_thinkx)、8006=transformism、8007=kazukiotsuka、8000/8001/8009=quantz(.8/.9/.7・対象外)。
+- web SG は LB SG から 8000-8009 許可済み → 網羅。
+
+### F6 lb-setup の sed は `.8` のみ置換
+- 現 lb-setup は `192.168.1.8 → WEB_IP`。対象サイト(thinkx/kazukiotsuka/truetech=.8)は妥当。
+- ただし demosites=`192.168.1.11`、quantz stream/files=`.9/.7`、experiment=`.21` は置換対象外。staging 対象サイトのみなら可。conf.d を絞れば無害化。
+
+### F7 私の暫定編集
+- web-setup を Node NodeSource 18 に変更済み。原本は `apt npm`+`n stable`(未ピン)→ 相違。CLAUDE.md「Node 18+」には沿う。ピンするか原本踏襲か要判断。
+- lb-setup の ref を strict 化(`|| master` 撤去)→ CLAUDE.md #2 準拠・維持推奨。
+
+### 判定
+方向性は妥当(トポロジ/意図的相違=libcommon vendoring・dns-route53・MongoDB 不要 は正しい)。ただし F1/F2 が片づき、F3/F4 を原本準拠に直すまで apply 保留を推奨。thinkx の web nginx.conf は未取得。
+
+## 2026-07-12 決定: git 鍵方式 → 正本 `infra/docs/github_deploy_key.md`(D-1/D-2/D-3)
+- **D-1** 方式 = (c) Deploy key(read-only・repo 単位)。setup の clone URL を host 別名へ。
+  実装済: web-setup(`github-thinkx`/`github-kazukiotsuka`/`github-transformism`)、lb-setup(`github-loadbalancer`)。
+- **D-2** 登録は手動ブラウザ・自動化しない(PAT/SSM/IAM は割に合わない)。
+- **D-3** I-STEP1 リハーサルは鍵不要(ダミー静的ページで経路検証)。鍵は I-STEP2 直前に生成・登録。
+  → `setup/web-smoke.sh` / `setup/lb-smoke.sh`(鍵レス・TLS なし)で疎通確認。
+- **F1 解決(オーナー裁定 = kaz)**: clone は `sudo -u kaz` のまま。Deploy key と `~/.ssh/config` は
+  **kaz 側 `/home/kaz/.ssh/`** に置く。サービスも `User=kaz` で整合。
+- **正本追加 `infra/docs/user_setup.md`(RUN_USER 前処理)**: 全 EC2 は ubuntu 以外の RUN_USER で統一
+  (既定 kaz・パラメータ化)。手作業は `sudo -u "$RUN_USER" -H` + 絶対パス。setup の前段アタッチメント。
+  - **D-4 実装済**: web-setup / lb-setup に「clone 前ガード = `/home/$APP_USER/.ssh` の鍵・config が
+    無ければ明示停止し user_setup.md を案内」を追加。
+  - **lb-setup を RUN_USER=kaz に統一**(旧: ubuntu)。ユーザ作成・`/src` を kaz 所有・`sudo -u kaz` で clone。
+- 注意: thinkx の playbooks submodule が別 repo なら playbooks 用 Deploy key/alias も要る(.gitmodules を実機確認)。
+- 別途 F2(LB 証明書)・F3(Python3.9.6)・F4(web nginx.conf)は実 setup 実行前に要対応。
+
+## 2026-07-12 実装: F2/F3 + ssh 鍵 + 図の plan 由来化
+- **F2 実装**: lb-setup の DO_CERTBOT=no(staging)分岐で、loadbalancer/conf.d が参照する ssl_certificate パス
+  (`/etc/letsencrypt/live/{thinkxinc.com,nntmapp.com,truetechjapan.com,transformism.art,kazukiotsuka.com}/`,
+  demosites の `/etc/ssl/certs/jessicas.online.crt`)に**自己署名を生成**→ `nginx -t` が通り nginx 起動可。手順3は -k で検証。
+- **F3 実装**: web-setup で **Python 3.9.6 をソースビルド**(原本の configure/make/altinstall)+ venv を
+  `python3.9 -m venv --without-pip` + get-pip に変更。system python3(3.10)は使わない・上書きしない。
+- **ssh 鍵**: outputs.tf(ssh_lb/ssh_web/setup_hint)と step1-rehearsal.md 手順2を `ssh -i ~/.ssh/supercom.pem` に統一。
+- **図の plan 由来化**: plan-summary.sh は diagram.md 静的テンプレを廃し、`terraform show -json` の実値から構成図を
+  生成・リソースごとに +緑/~黄/-赤/淡色。変更検出=terraform plan(git 差分ではない)。手順1に `terraform state list`(現状確認)を追加。
+- **残 F4**: thinkx `web-server/nginx/nginx.conf` は未取得(8005 配信の確定は実機 or 取得で)。
+
+## 2026-07-12 terraform 実行ユーザの実態
+- terraform / aws CLI(Mac)の認証は IAM ユーザ **`transcript-deployer`**(account 027421896362)。
+  EC2/VPC 系権限はあるが **iam:\* が無い** → iam.tf(D-22 の LB ロール)の apply が 403。
+- EC2 インスタンス側の IAM は D-22 以前は皆無(certbot --dns-route53 が動かなかった根因)。
+- **出自調査**: `transcript-deployer` は workspace 全 docs(raw 34 本含む)に言及ゼロ = 文書化されずに
+  作られた。名前と時期(Transcript Scraper Machine Setup, 2023-10)から scraper デプロイ用のアドホック作成と推定。
+- **削除可否**: 即削除は危険。(1) Mac の terraform/CLI がこのユーザで稼働中(sts で確認済み)。
+  (2) オンプレ .env の平文キー(<REDACTED-AWS-KEY-ID>=supercom2/3a/quantz、<REDACTED-AWS-KEY-ID>=3c)が
+  同一アカウント。**同ユーザのキーかは iam 権限が無く未確認**(管理者がコンソールの
+  Users > transcript-deployer > Access keys と Last used で要確認)。SES 送信がこのキーなら削除で本番メール停止。
+- **方針(オーナー)**: IAM ユーザ `supercom` を新設し移行 → transcript-deployer は使用実態ゼロを確認後に削除。
+  IAM の正式ドキュメントはオーナーが別途用意。transcript-deployer 参照のソース/doc は存在しないため名称置換は不要。
+  Mac 側 ~/.aws の差し替えと .env キーの扱い(ロール化 D-22)が移行の実作業。
+- **確認結果(コンソール・2026-07-12)**: .env の 2 キーは transcript-deployer に**無い**(別ユーザ所有)
+  → 削除してもオンプレ SES は壊れない。使用実態: IAM/EC2=今日(=terraform)、S3=904日前(scraper 残骸)、
+  ELB/CW/ASG=なし。現行ポリシーは S3FullAccess / EC2FullAccess で広すぎ。
+- **完了(2026-07-12 夜)**: supercom 移行済み(sts=user/supercom)。iam.tf apply 成功
+  (+role/policy/instance_profile、lb へ in-place 付与。途中 `iam:TagInstanceProfile` 不足で 403 → ポリシーに追加して解消)。
+  LB メタデータで `supercom-staging-lb` 確認。**certbot --dns-route53 --test-cert で thinkxinc.com の発行成功**
+  = D-22 チェーン実証完了。transcript-deployer は削除可能な状態(削除実施は未確認)。
+- **certbot の躓き(記録)**: (1) certbot 未導入 → apt で導入。(2) `python3-certbot-nginx` が入っており
+  **`python3-certbot-dns-route53` が未導入**で "plugin does not appear to be installed" → 正しくは
+  `sudo apt-get install -y certbot python3-certbot-dns-route53`(setup_loadbalancer.sh に要記載)。
+  (3) sudo 無し実行は lock で Permission denied(常に sudo)。
+- **TLS 自動更新**: apt 版 certbot の **systemd timer(certbot.timer)が標準で有効**(1日2回 renew・
+  dns-route53 設定は renewal conf に保存済み・認証は IAM ロール)= 更新は無人。
+  **残り**: 更新後の nginx reload 用 deploy hook(`/etc/letsencrypt/renewal-hooks/deploy/reload-nginx.sh`)を
+  setup_loadbalancer.sh に追加(旧 cron 案は timer と二重になるため hook 方式を推奨)。
+  prod 移行時は --test-cert を外して再発行(既存 test 系譜の置換に --force-renewal が要る点に注意)。
+- **needrestart 対話**: apt 中の「Daemons using outdated libraries」は無人実行を止める →
+  setup_*.sh 冒頭の `export NEEDRESTART_MODE=a` で抑止(3本とも導入済み)。
+- **ssh 別名**: Mac の ~/.ssh/config に supercom-lb / supercom-web(staging は一時 IP のため再作成時に HostName 更新)。
+- **supercom ユーザの権限セット(確定案)**: inline 2本のみ — `supercom-terraform-ec2`
+  (ec2:* を ap-northeast-1 限定 + Project=supercom タグ無しリソースの terminate/削除を明示 Deny)+
+  `supercom-terraform-iam`(iam:CreateRole 等を role/supercom-* に限定 + PassRole は EC2 サービス限定。
+  **iam:TagInstanceProfile / UntagInstanceProfile も必要** — instance profile にも default_tags が付くため。
+  初版に抜けており apply が 403 になった)。
+  S3/ELB/ASG/CW は付けない。移行順: supercom 作成 → Mac ~/.aws 差し替え → sts/plan 確認 → apply →
+  transcript-deployer 削除(旧 role/transcript も残骸なら削除)。
+
+## 2026-07-15 セッション終了時の現在地(次セッション復元用)
+- **稼働**: staging.thinkxinc.com(Basic 認証 user=thinkx / pass は loadbalancer/.env)= LB→web1→uwsgi_thinkx(2026refactor)200・動画表示 OK。
+- **.env 移行済み**: `.env` は `<site>/.env`(サイト clone ルート)。配布は **push_env.sh**(.env)/ **push_assets.sh**(video)/ **push_secrets.sh**(certs/deploykeys)の**3本分離**(D-14/D-40/D-41…)。infra/env は廃止。
+- **問い合わせ→Discord**: 実装 = `/inquiry/submit` `/apply/submit`(POST JSON name/email/phone/job_title/company_name/message)→ `send_discord(webhook, …)` + SES 確認メール。**Discord webhook URL は thinkx/.env にある**(オーナー確認済み)。テスト: フォーム送信 → `journalctl -u uwsgi_thinkx | grep discord` で `sent successfully` か `skipped`。
+- **staging.<domain> 実運用化(進行中)**: オーナーが Route53 に staging.truetechjapan.com / staging.nntmapp.com の A(→16.76.147.168)追加済み。**certbot(証明書がワイルドカードか)未確認** → `ssh supercom-lb 'sudo certbot certificates'` で Domains 確認が次の一手。確認後 loadbalancer repo(2026refactor)に staging vhost(Host を本番ドメインに書換)を作り push→pull。truetechjapan/nntmapp は uwsgi_thinkx が host 振り分けで配信(app は 200)。kazukiotsukacom(8007)/transformism(8006)は未起動。
+- **未コミット多数**: infra(setup 各種・run/・etc の push_env/push_assets/push_secrets・docs D-14〜D-43・coding_guides)は未 push。loadbalancer は 2026refactor push 済み(web1+staging vhost)。nginx-web-root は push 済み。
+- **S トラック申し送り**: thinkx の polyfill.io 参照削除(恒久修正・sub_filter 不採用)/ config.py が秘密を journald に平文ログ。
+
+## 2026-07-14 ★ 棚卸し(rebuild 漏れ)解決
+オーナー指摘「setup 実行だけでサイトが立つべき」に基づき ad-hoc 修正を script 化:
+- setup_kazukiotsukacom.sh: .env 配置 / front build(babel+lessc)/ uwsgi drop-in(SIGQUIT)追加。
+- setup_loadbalancer.sh: cert を secrets.tgz 経由 / htpasswd を env/loadbalancer/.env から生成(chmod 644)/
+  clone 後 `git checkout 2026refactor` / 末尾 verify を色付きに。
+- loadbalancer repo **2026refactor**: proxy_pass 192.168.1.8→web1.supercom.internal(全静的サイト)+ staging vhost。
+  **master はオンプレ本番のまま不変**(AWS 変更を master に載せかけたが origin/master は無傷と確認・2026refactor に是正)。
+- env dir 綴りミス kazukitotsukacom→kazukiotsukacom リネーム。
+- 実証: LB を 2026refactor に切替 → staging.thinkxinc.com 200(.env 資格情報)。D-37/38/39 記録。
+- 残: ④ env/kazukiotsukacom/.env 中身(オーナー)/ Route53 staging A は手動(D-38)/ quantz-web は D-27 後。
+
+## 2026-07-14 🔴 thinkx が polyfill.io を参照(サプライチェーン脆弱性・S トラック)
+- ブラウザで staging.thinkxinc.com を開くと `https://polyfill.io` 由来の Basic 認証プロンプトが出た
+  (= ページが polyfill.io の script を読み込んでいる。ユーザ設定の認証ではない・資格情報を入れてはいけない)。
+- 該当: thinkx `web-server/views/templates/index.html:281` と `about/philosophy.html:23`:
+  `<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>`
+- polyfill.io は 2024 にドメインが売却されマルウェア注入した既知のサプライチェーン攻撃。参照は危険。
+- 対応(S トラック・thinkx repo): script 行を削除(es6 polyfill は現代ブラウザで不要)or 安全なミラーに差し替え。
+  infra では直さない(読み取り専用・トラック規律)。staging リハがこれを炙り出した。
+- **オーナー裁定(2026-07-15)**: 恒久修正=thinkx repo(2026refactor)から該当 script 行を削除。LB の sub_filter 暫定対策は**入れない**。
+  対象: index.html:281 / about/philosophy.html:23 の polyfill.io script 行。
+
+## 2026-07-14 ★ staging 経路 end-to-end 実証(thinkx)
+- https://staging.thinkxinc.com → LB(EIP 16.76.147.168・*.thinkxinc.com ワイルドカード実証明書=lb-certs.tgz 由来・警告なし)
+  → web1.supercom.internal:8005(内部 DNS)→ nginx-web-root → uwsgi_thinkx(2026refactor)→ **200**。
+- 2026refactor は master の上位互換(master tip が共通祖先。欠落機能なし。vendored libcommon + conf.d + golden tests を追加)。
+- Route53: staging.thinkxinc.com A → LB EIP は**コンソールで手動追加**(apex 無変更)。今後 staging.<domain> で揃える(D 化候補)。
+- **未コミット**: LB の staging vhost は /src/loadbalancer/conf.d/staging.thinkxinc.com.conf を **EC2 上で直接作成**(D-28 の正道は
+  loadbalancer repo にコミット)。リビルド再現のため repo 化が必要。証明書パスは既存 /etc/letsencrypt/live/thinkxinc.com/(ワイルドカード)を参照。
+- 既知の注意: thinkx config は production/develop のみ(staging 概念なし)。HOST_URL=production のため絶対リンクが本番へ飛ぶ場合あり
+  → staging 完結は S トラック対応。表示・基本操作の確認は可能。
+
+## 2026-07-14 thinkx 起動時の秘密ログ / 環境変数の出所(🔴 要対応)
+- thinkx の config.py が起動時に**全 config 値を journald に平文ログ出力**しており、
+  `Config.AWS_SECRET_ACCESS_KEY: <REDACTED>…` が丸見え。ログに秘密を残さない規約に反する。
+  thinkx repo 側のコードのため勝手に直さず報告(修正は原本 repo で・S トラック)。
+- AWS キーの出所 = **/src/thinkx/.env の中**(grep 確定)。infra/env/thinkx/.env に実 SES キーが入っている
+  (おそらくメール機能用にオーナーが追加)。infra/env/(gitignore)格納なら扱いは適正。
+  → 本当の問題は上記の config.py が秘密を journald に出す点(それ以外は想定内)。要オーナー確認。
+
+## 2026-07-14 uwsgi restart がハングする(SIGTERM=reload)
+- uwsgi_thinkx.service は Type=simple・KillSignal なし、uwsgi.ini に die-on-term なし。
+  uwsgi は SIGTERM を reload 扱いするため systemctl stop/restart が TimeoutStopSec(90秒)待ちでハング。
+  そのため run/restart スクリプトの journal 出力に到達せず「ログが見えない」。
+- infra 側修正: systemd drop-in `/etc/systemd/system/uwsgi_thinkx.service.d/override.conf` に
+  `KillSignal=SIGQUIT` + `TimeoutStopSec=10`(uwsgi は SIGQUIT で即 shutdown)。setup_thinkx に恒久化。
+  原本側の正攻法は uwsgi.ini に `die-on-term = true`(S トラック)。
+
+## 2026-07-14 setup_thinkx 実行で判明
+- **get-pip 3.9**: `https://bootstrap.pypa.io/get-pip.py`(汎用)は Python 3.10+ 必須になり 3.9 で
+  `ERROR: does not work on Python 3.9` → pip 未生成 → `./venv/bin/pip: command not found` → 依存未install
+  → uwsgi app 起動失敗 → socket 無し → 8005 が 000。修正: `.../pip/3.9/get-pip.py`(setup_quantz は既に正)。
+  setup_thinkx / setup_kazukiotsukacom を修正済み。
+- **front build 誤り**: setup_thinkx の `npx npm-run-all … copy:simplicity:js copy:simplicity:css` は quantz-web 用タスクで
+  thinkx に無い(`Task not found`)。thinkx の compile:views:* は **--watch 付きで常駐**。非 watch ビルドタスクが
+  2026refactor にあるか要確認。暫定で該当行を無効化(dist 済み assets 前提で 200 を狙う)。
+- **playbooks**: submodule が素の github.com URL で Deploy key alias 未経由 → Permission denied。
+  オーナー「playbooks は使わないので無視」→ setup_thinkx から submodule 取得行を削除。
+- verify(D-36)の赤 `FAIL: thinkx 8005 -> 000` が末尾に出て、ログを追わず一目で失敗と分かった(色分け有効)。
+
+## 2026-07-13 Deploy key を preflight 化(check_deploykey.py)
+- 起点: nginx-web-root 新設時に Deploy key 未登録で clone が silent 失敗。setup_user の REPOS ループが
+  鍵管理を抱え、repo 追加のたびに人手の記憶に依存していた(構造欠陥)。
+- 確定設計(D-33/D-34/D-35): 鍵の真実 = Mac の infra/deploykeys/。各 setup_{service} 冒頭で
+  check_deploykey.py <repo> を呼び、install(上書き)+ config.d alias + ssh -T 検証。未整備は公開鍵表示 +
+  戻り値1(exit で ssh を切らない)。EC2 再作成でも scp+再実行で復元・GitHub 再登録不要(方式 b)。
+- setup_deploykey.sh(前案)は廃止・削除。setup_user.sh は user + Include 骨格のみ(分岐ゼロ)。
+- **要確認(CLAUDE.md #1 との整合)**: setup_quantz.sh は今も `git submodule update --remote --recursive` で
+  libcommon を取得しうる(url.insteadOf に libcommon 行あり)。CLAUDE.md #1 は「libcommon は vendoring 済み、
+  submodule 取得を書かない・残っていたら削除」。deploy key の checkは llm/simplicity のみに絞った(libcommon 除外)が、
+  submodule update 行と libcommon の insteadOf は未修整で残置。**この矛盾の解消は deploy key タスク外のため保留・要指示**。
+
+## 2026-07-13 Route53 最小権限 と 料金反映
+- supercom ユーザの Route53 権限はオーナーが段階式最小構成に締めた(CreateHostedZone は Resource 絞り不可 /
+  GetChange は change/* / zone 操作は hostedzone/*・第2段階で zone ID 固定 / ListHostedZones・Associate 系は除外)。
+- **穴を1つ検出**: dns.tf の zone には tags(+provider default_tags)が付くため **route53:ChangeTagsForResource
+  (hostedzone/\*)が必要**。無いと apply が 403。→ ポリシーに追加を依頼(議論の「タグを付けていなければ不要」は
+  現物と不一致だった)。
+- 料金反映の検証: EIP は既存「Public IPv4」行と同単価で反映済みだったが、**Route53 private zone $0.50/月が未計上**
+  → cost-estimate.sh に追加(staging 24/7 合計 40.93 → **41.43 USD/月**)。private zone のクエリ($0.40/100万)は無視。
+
+## 2026-07-12 F4 調査(thinkx repo を clone して確認)= 🔴 新ブロッカー
+- uwsgi: `web-server/uwsgi/uwsgi.ini` は **socket=`/tmp/uwsgi_thinkx.sock`(unix)**・module main:app・venv ./venv。
+  `uwsgi_thinkx.service` は `User=kaz`・ExecStart `venv/bin/uwsgi --ini uwsgi/uwsgi.ini`。→ F5 の unix socket 確定。
+- **本番用の web nginx 設定が repo に無い**。存在するのは `local/nginx/`(ローカル開発用: Mac 絶対パス
+  `/Users/K00TSUKA/...`・`daemon off`・`listen 8000`・`server_name thinkx.localhost`・`unix:/tmp/uwsgi.sock`)。
+- `web-setup.sh` は `thinkx/web-server/nginx/nginx.service` を symlink するが**そのパスは存在しない**(`if [ -f ]` で無言スキップ)。
+  → **web 箱は 8005 で配信できない**(LB→web:8005 が到達しない)。
+- 対応候補(要判断): (a) `local/nginx/webserver.conf` を本番用に改変(listen 8005・socket 名 `/tmp/uwsgi_thinkx.sock`・
+  Mac パス→`/src/thinkx/web-server`・truetechjapan/nntm 各 server ブロック追加)して infra 側に持つ、
+  (b) オンプレ実機から本番 web nginx.conf を回収(git 外),(c) web-setup が生成する。
+- 「本番同様のリハ」を 8005 まで通すには F4 の解決が必須。
+
+## 2026-07-12 bash 規約(docs/coding_guides/bash.md)適合
+- 規約: 観測系(見るだけ)は `set -e`/`set -u`/`pipefail`/`exit` **禁止**(関数+return・cd はサブシェル)。
+  変更系(状態変更)は `set -euo pipefail` を**使う**。
+- 現状の逸脱(観測系なのに set -e/exit 使用): ~~`plan-summary.sh`~~(D で観測系準拠へ直済)・
+  `cost-estimate.sh` `cost-hook.sh`(未・順次)。status.sh(オーナー作)も観測系だが set -e/exit あり → オーナー判断。
+- 変更系(web-setup/lb-setup/user-setup/smoke)は `set -euo pipefail` で規約通り。
+
+## 2026-07-12 F4 判断: 本番 web nginx 設定
+- thinkx は読み取り専用 → 本番 web nginx 設定は **infra 側に持つ**(`infra/setup/nginx/`)。
+- **正 = オンプレ実機から本番設定を回収**。git のは `local/nginx`(開発用)のみで、truetechjapan/kazukiotsuka
+  ブロック無し・nntmapp の振り分け曖昧 → 完全な再構成は不可(推測になる)。
+- 暫定: `infra/setup/nginx/web-thinkx.conf` を再構成ドラフトとして作成(8005→uwsgi_thinkx.sock、
+  thinkx/truetechjapan/nntm)。**実機照合が必須**。web-setup への配線は照合後(現状 section 8 は
+  存在しないパスを symlink=無言スキップ、要修正)。

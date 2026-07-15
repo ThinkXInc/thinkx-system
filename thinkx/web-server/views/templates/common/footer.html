@@ -1,0 +1,80 @@
+{% from "/macro/lang-selector.html" import lang_selector %} 
+
+<footer>
+    <div class="footer-container">
+
+      <div class="footer-contents-top">
+
+        <div class="top-left">
+          <div class="basic">
+            <a class="footer-company-logo" href="/">
+              <img src="/img/thinkx-logo/logo-with-text.png"/>
+            </a>
+            <p class="caption">
+              based at Tokyo.
+            </p>
+          </div>
+        </div>
+
+        <div class="top-right">
+          <ul class="contents-list">
+            <h4 class="title about-title-container">{{ locale_dict['menu_title_about'][lang] }}</h4>
+            <li class="sub-menu-content"><a href="/{{ lang }}/">{{ locale_dict['menu_content_home'][lang] }}</a></li>
+            <li class="sub-menu-content"><a href="/{{ lang }}/mission">{{ locale_dict['menu_content_mission'][lang] }}</a></li>
+            <li class="sub-menu-content"><a href="/{{ lang }}/philosophy">{{ locale_dict['menu_content_philosophy'][lang] }}</a></li>
+            <li class="sub-menu-content"><a href="/{{ lang }}/about">{{ locale_dict['menu_content_about'][lang] }}</a></li>
+            <li class="sub-menu-content"><a href="/{{ lang }}/history">{{ locale_dict['menu_content_history'][lang] }}</a></li>
+          </ul>
+          <ul class="contents-list">
+            <h4 class="title product-title-container">{{ locale_dict['menu_title_product'][lang] }}</h4>
+            <li class="sub-menu-content"><a href="/{{ lang }}/products/Quantz-Voice-AI-OS">Quantz<sup>®</sup> Voice AI OS</a></li>
+            <li class="sub-menu-content"><a href="https://quantz.thinkxinc.com/{{lang}}" target="_blank">Quantz<sup>®</sup></a></li>
+            <li class="sub-menu-content"><a href="/">ILRSA</a></li>
+            <li class="sub-menu-content"><a href="/">CITYWALK</a></li>
+            <li class="sub-menu-content"><a href="/{{ lang }}/products/LSH">Latent Semantic Hyperspace (LSH)</a></li>
+            <li class="sub-menu-content"><a href="/">JPTextParser</a></li>
+            <li class="sub-menu-content"><a href="https://nntmapp.com/{{ lang }}/">NNTM</a></li>
+          </ul>
+          <ul class="contents-list">
+            <h4 class="title">{{ locale_dict['menu_title_blog'][lang] }}</h4>
+            <li class="sub-menu-content"><a href="/{{ lang }}/blognews">{{ locale_dict['menu_content_news'][lang] }}</a></li>
+          </ul>
+          <ul class="contents-list">
+            <h4 class="title">{{ locale_dict['menu_title_application'][lang] }}</h4>
+            <li class="sub-menu-content"><a href="/{{ lang }}/apply/regular">{{ locale_dict['menu_content_regular'][lang] }}</a></li>
+            <li class="sub-menu-content"><a href="/{{ lang }}/apply/intern">{{ locale_dict['menu_content_intern'][lang] }}</a></li>
+            <li class="sub-menu-content"><a href="/{{ lang }}/apply/collaborator">{{ locale_dict['menu_content_collaborator'][lang] }}</a></li>
+          </ul>
+          {#
+          <ul class="contents-list">
+            <h3>IR情報</h3>
+            <a href="/"><li style="font-size: 1.2em;">投資家向け情報</li></a>
+          </ul>
+          #}
+          <ul class="contents-list">
+            <h4 class="title">{{ locale_dict['menu_title_inquiry'][lang] }}</h4>
+            <li class="sub-menu-content"><a href="/{{ lang }}/inquiry/product">{{ locale_dict['menu_content_inquiry_product'][lang] }}</a></li>
+            <li class="sub-menu-content"><a href="/{{ lang }}/inquiry/collaboration">{{ locale_dict['menu_content_inquiry_collaboration'][lang] }}</a></li>
+            <li class="sub-menu-content"><a href="/{{ lang }}/inquiry/others">{{ locale_dict['menu_content_inquiry_others'][lang] }}</a></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="footer-contents-middle">
+        <div class="mailnews">
+          <p class="mailnews-caption">If you sympathize with our motivation, let's become a member of ThinkX family. Sign up to receive email letters, latest informations about us. </b>
+           (now in preparation)
+          </p>
+          <form>
+          <input type="text" placeholder="Your Email Address" name="emailletter">
+          </form>
+        </div>
+      </div>
+
+      <div class="footer-contents-bottom">
+        <p class="copyright">© 2015-2025 ThinkX Inc.</div>
+      </div>
+
+    </div>
+  </footer>

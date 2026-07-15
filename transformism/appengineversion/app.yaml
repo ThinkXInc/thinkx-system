@@ -1,0 +1,35 @@
+application: thinkxinc
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: yes
+
+handlers:
+- url: /css
+  static_dir: css 
+
+- url: /js
+  static_dir: js
+
+- url: /pjs
+  static_dir: pjs
+
+- url: /img
+  static_dir: img
+
+- url: /lib
+  static_dir: lib
+
+- url: /favicon\.ico
+  static_files: favicon.ico
+  upload: favicon\.ico
+
+- url: /.*
+  script: main.app
+  #secure: always
+
+libraries:
+- name: webapp2
+  version: "2.5.1"
+- name: ssl
+  version: latest

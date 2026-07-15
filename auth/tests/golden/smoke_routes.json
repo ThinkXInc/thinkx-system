@@ -1,0 +1,27 @@
+{
+  "authorize_registered_service_bad_redirect_uri": {
+    "content_type": "text/html",
+    "json": null,
+    "status": 400
+  },
+  "authorize_unknown_service": {
+    "content_type": "text/html",
+    "json": null,
+    "status": 403
+  },
+  "healthcheck": {
+    "content_type": "text/html",
+    "json": null,
+    "status": 200
+  },
+  "token_exchange_bad_content_type": {
+    "content_type": "application/json",
+    "json": {
+      "code": 415,
+      "field_name": "",
+      "message": "Invalid content type.",
+      "reason": "UNSUPPORTED_MEDIA_TYPE"
+    },
+    "status": 415
+  }
+}

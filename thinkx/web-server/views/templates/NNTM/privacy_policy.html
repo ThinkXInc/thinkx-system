@@ -1,0 +1,147 @@
+{% extends "NNTM/base.html" %}
+
+{% block head %}
+<script>
+    window.langOptions = {
+        'en': 'English',
+        'ja': '日本語',
+        'zh': '中文（简体）',
+        'fr': 'Français',
+        'de': 'Deutsch',
+        'es': 'Español',
+        'ar': 'العربية',
+        'ru': 'Русский',
+        'ko': '한국어'
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+<div id="NNTM_privacy">
+
+    <!-- Header (similar style to top.html) -->
+    <div class="header">
+        <div class="header_overlay"></div>
+        <div class="header_head">
+            {% include 'common/lang_selector.html' %}
+            <a href="/">
+                <img class="header_logo" src="/img/NNTM/top/logo.png" alt="Logo">
+            </a>
+        </div>
+        <div class="header_main">
+            <div class="main_left">
+                <div class="container">
+                    <h1 class="header_copy_sub">
+                        {{ locale_dict["privacy_policy"]["page_title"][lang] | safe }}
+                    </h1>
+                </div>
+            </div>
+            <div class="main_right">
+                <h2 class="header_copy_main"
+                    style="{% if lang == 'ru' %} font-size:19px;{% endif %}">
+                    {{ locale_dict["privacy_policy"]["page_subtitle"][lang] | safe }}
+                </h2>
+            </div>
+            <div class="header_bottom"></div>
+        </div>
+    </div>
+    <!-- End Header -->
+
+    <!-- Privacy Policy Content -->
+    <div class="privacy_content section">
+        <div class="description_text">
+            <!-- Last Updated -->
+            <p class="privacy_last_updated">
+                {{ locale_dict["privacy_policy"]["last_updated"][lang] }}
+            </p>
+
+            <!-- Intro -->
+            <p class="privacy_intro">
+                {{ locale_dict["privacy_policy"]["intro"][lang] | replace('\n', '<br>') | safe }}
+            </p>
+
+            <!-- Section 1 -->
+            <h3 class="privacy_section_title">
+                {{ locale_dict["privacy_policy"]["section_1_title"][lang] }}
+            </h3>
+            <p class="privacy_section_body">
+                {{ locale_dict["privacy_policy"]["section_1_body"][lang] | replace('\n', '<br>') | safe }}
+            </p>
+
+            <!-- Section 2 -->
+            <h3 class="privacy_section_title">
+                {{ locale_dict["privacy_policy"]["section_2_title"][lang] }}
+            </h3>
+            <p class="privacy_section_body">
+                {{ locale_dict["privacy_policy"]["section_2_body"][lang] | replace('\n', '<br>') | safe }}
+            </p>
+
+            <!-- Section 3 -->
+            <h3 class="privacy_section_title">
+                {{ locale_dict["privacy_policy"]["section_3_title"][lang] }}
+            </h3>
+            <p class="privacy_section_body">
+                {{ locale_dict["privacy_policy"]["section_3_body"][lang] | replace('\n', '<br>') | safe }}
+            </p>
+
+            <!-- Section 4 -->
+            <h3 class="privacy_section_title">
+                {{ locale_dict["privacy_policy"]["section_4_title"][lang] }}
+            </h3>
+            <p class="privacy_section_body">
+                {{ locale_dict["privacy_policy"]["section_4_body"][lang] | replace('\n', '<br>') | safe }}
+            </p>
+
+            <!-- Section 5 (Data Security + GDPR) -->
+            <h3 class="privacy_section_title">
+                {{ locale_dict["privacy_policy"]["section_5_title"][lang] }}
+            </h3>
+            <p class="privacy_section_body">
+                {{ locale_dict["privacy_policy"]["section_5_body"][lang] | replace('\n', '<br>') | safe }}
+            </p>
+
+            <!-- Section 6 -->
+            <h3 class="privacy_section_title">
+                {{ locale_dict["privacy_policy"]["section_6_title"][lang] }}
+            </h3>
+            <p class="privacy_section_body">
+                {{ locale_dict["privacy_policy"]["section_6_body"][lang] | replace('\n', '<br>') | safe }}
+            </p>
+
+            <!-- Section 7 -->
+            <h3 class="privacy_section_title">
+                {{ locale_dict["privacy_policy"]["section_7_title"][lang] }}
+            </h3>
+            <p class="privacy_section_body">
+                {{ locale_dict["privacy_policy"]["section_7_body"][lang] | replace('\n', '<br>') | safe }}
+            </p>
+
+            <!-- Section 8 -->
+            <h3 class="privacy_section_title">
+                {{ locale_dict["privacy_policy"]["section_8_title"][lang] }}
+            </h3>
+            <p class="privacy_section_body">
+                {{ locale_dict["privacy_policy"]["section_8_body"][lang] | replace('\n', '<br>') | safe }}
+            </p>
+
+            <!-- Section 9 -->
+            <h3 class="privacy_section_title">
+                {{ locale_dict["privacy_policy"]["section_9_title"][lang] }}
+            </h3>
+            <p class="privacy_section_body">
+                {{ locale_dict["privacy_policy"]["section_9_body"][lang] | replace('\n', '<br>') | safe }}
+            </p>
+
+        </div>
+    </div>
+    <!-- End Privacy Policy Content -->
+
+    {% include 'NNTM/footer.html' %}
+</div>
+{% endblock %}
+
+{% block foot %}
+<script>
+    // Any additional scripts for this page
+</script>
+{% endblock %}

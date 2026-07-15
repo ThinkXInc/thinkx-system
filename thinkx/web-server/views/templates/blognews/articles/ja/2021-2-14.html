@@ -1,0 +1,56 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+
+    <article class="article" data-news-id="2021-2-14">
+      <div class="container">
+        <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}"><<</a></span>
+        <p class="date news-date">2021 Feb 14</p>
+        <h2 class="title">次世代音声案内システムCITYWALKが長崎市で試験運用を開始</h2>
+        <div class="news-image-container">
+          <figure class="news-image news-id-2021-2-14">
+            <img class="news-id-2021-2-14" src="/img/glover_panel.png" srcset="/img/glover_panel@2x.png 2x"/>
+          </figure>
+        </div>
+        <div class="main-text">
+          年間40万人が訪れるグラバー園や、出島、伊王島 i+Land nagasaki、</br>
+          長崎市を代表する観光施設群で弊社の音声案内システムCITYWALKが試験運用を開始しました。</br>
+          </br>
+          旅行者は入り口のQRコードからお持ちの端末 (iPhoneのみ対応・Androidは年内対応予定) にダウンロードし、</br>
+          一度チェックインすると施設内を歩き回る移動に合わせて自動的に案内が配信されます。</br>
+        <div class="news-image-container">
+          <figure class="news-image news-id-2021-2-14">
+            <img class="news-id-2021-2-14" src="/img/dejima_panel.png" srcset="/img/dejima_panel@2x.png 2x"/>
+          </figure>
+        <div class="main-text">
+        本観光庁事業での、長崎市での実証試験は3/15までの1ヶ月間行われます。</br>
+        </br> 
+        </br>
+        製品の導入または詳細についてはinquiry@thinkxinc.comまでお問い合わせください。</br>
+
+        </br>
+        </div>
+        <div class="back-container cf">
+          <span class="back">
+            <a href="/{{ lang }}/blognews?page={{ page }}">一覧に戻る</a>
+          </span>
+        </div>
+      </div>
+    </article>
+  </div>
+  {% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

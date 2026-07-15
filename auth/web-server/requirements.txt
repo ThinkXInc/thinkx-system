@@ -1,0 +1,17 @@
+# Runtime dependencies — exact-pinned (D-3)。python 3.11.15 で実測。
+# 無断アップグレード禁止。更新は意図的イベントとして行う。
+Flask==3.1.3
+redis==5.2.1
+mongoengine==0.29.3
+pymongo==4.17.0
+pytz==2026.2
+pydantic==2.13.4
+msgpack==1.2.1
+google-auth==2.55.1
+
+# vendored libcommon (pre-v2.0.0) が import 時/実行時に要求する推移的依存。
+# requirements.txt には元々列挙されていなかったが、足場の import に必須のため追加した。
+#   pycryptodome: libcommon/cipher.py (from Crypto import ...) — models/data/user.py 経由
+#   requests:     libcommon/web/google_oauth_helper.py (google.auth.transport.requests 経由)
+pycryptodome==3.23.0
+requests==2.34.2

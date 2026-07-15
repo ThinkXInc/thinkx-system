@@ -1,0 +1,58 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+  <article class="article" data-news-id="2020-11-10">
+    <div class="container">
+      <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}">
+          << </a></span>
+      <p class="date news-date">2020 Nov 11</p>
+      <h2 class="title">Japan Tourism Agency Chooses CITYWALK for 'Creating Attractive Stay Contents to Diversify Visitors' Demonstration Project</h2>
+      <div class="news-image-container">
+        <figure class="news-image news-id-2020-11-10">
+          <img class="news-id-2020-11-10" src="/img/citywalk_nagasaki.png" srcset="/img/citywalk_nagasaki@2x.png 2x" />
+        </figure>
+      </div>
+      <div class="main-text">
+        We're delighted to announce that a project utilizing CITYWALK in Nagasaki City has been selected for the Japan Tourism Agency's demonstration initiative, titled 'Creating Attractive Stay Contents to Diversify Visitors'.
+        <br>
+        <br>
+        <br>
+        This project will promote Nagasaki City's prominent tourist facilities through an integrated strategy that includes non-contact smart guides and video PR. This effort is fittingly titled:
+        <br>
+        'Creating a system of non-contact guidance that communicates safe and secure travel and region-specific values by using AI to avoid "density"'. 
+        <br>
+        <br>
+        The organizations participating in this endeavor include Nagasaki City, Nagasaki International Convention Association, SAIKOH!, Nagasaki Minamiyamate Glover Partners, Dejima VOF, and KPG HOTEL & RESORT i+Land Nagasaki. KTN Television Nagasaki will act as the project operator, with ThinkX株式会社 handling planning and overall production.
+        <br>
+        <br>
+        In response to the ongoing COVID-19 pandemic, there is a crucial need for new methods of travel that prioritize safety while avoiding high-density situations. 
+        <br>
+        The voice guidance system of CITYWALK, which captures and communicates the unique attractions of various regions, will be instrumental in addressing this need. 
+        <br>
+        By using this new guidance system, visitors to Nagasaki City will receive travel information tailored to their individual preferences, directly through their smartphone and earphones.<br>
+        <br>
+      </div>
+      <div class="back-container cf">
+        <span class="back">
+          <a href="/{{ lang }}/blognews?page={{ page }}">Back to list</a>
+        </span>
+      </div>
+    </div>
+  </article>
+</div>
+{% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

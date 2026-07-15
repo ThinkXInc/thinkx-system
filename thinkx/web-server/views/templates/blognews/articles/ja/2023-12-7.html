@@ -1,0 +1,48 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+    <article class="article" data-news-id="2023-12-7">
+      <div class="container">
+        <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}">
+          テキストベースのレコメンデーション基本アルゴリズムで特許を取得
+            << </a></span>
+        <h2 class="title">
+
+        </h2>
+        <p class="date news-date">2023 December 7</p>
+        <div class="news-image-container">
+
+        </div>
+        <div class="main-text">
+
+          ユーザーの趣向などの定性的情報をテキストから理解するための文書解析アルゴリズムの特許を取得しました。
+          <br/>
+本発明は、ユーザーの行動データの蓄積を必要とせず、テキストからそれを記述したユーザーの趣向やパーソナリティ特性を、反意語で定義される概念群と語彙埋め込み空間における独自の意味超平面アルゴリズムにより、僅かな計算時間で解析します。
+          <br/>
+従来のレコメンデーションの問題点であるコールドスタート問題（データが蓄積されなければ動作しない問題）を解決するだけでなく、任意に定義するユーザー特性の集合を文書から高速に解析することで、多様なユーザーのニーズをより精緻に捉えることができます。
+
+          <br/>
+          <br/>
+文献番号: 特許7393772<br/>
+出願番号: 特願2022-180651<br/>
+発明者: 大塚一輝<br/>
+公知日: 2023年12月7日<br/>
+        </div>
+    </article>
+  </div>
+  {% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

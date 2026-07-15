@@ -1,0 +1,218 @@
+// blognews.less
+@import 'mixin.less';
+
+@black: #000;
+@white: #FFF;
+@blue: #326894;
+@text: #454545;
+@mark: #bd8300;
+@readmore: #326894;
+@readmore-hover: #aaa;
+
+@cubic-bezier1: cubic-bezier(.65,0,.34,1);
+
+div#blognews.main-container {
+  div.main-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: @white;
+    padding: 130px 0px 70px 0px;
+    ul.newslist {
+      width: 68vw;
+      margin-bottom: 49px;
+      li.news {
+        padding-bottom: 0px;
+        padding-top: 20px;
+        border-bottom: 1px solid #ebebeb;
+        div.container {
+          padding: 0 20px 0 20px;
+          margin-bottom: 20px;
+          max-width: 1040px;
+          p.date {
+            font-size: 1em;
+            font-weight: 600;
+            padding: 5px 0 5px 0;
+          }
+          h2.title {
+            font-size: 1.4em;
+            font-weight: 500;
+          }
+          p.content {
+            padding: 21px 5px 10px 1px;
+            color: @text;
+            font-size: 0.9em;
+          }
+          div.news-image-container {
+            figure.news-image {
+            }
+
+            figure.news-id-2023-5-26 {
+              display: inline-block;
+              @media screen and (min-width: 600px){
+                width: 600px;
+                height: 348px;
+              }
+              background: url('/img/blog/neuravoice/NV_PV_v2_Title-4K.png') no-repeat center / contain;
+              vertical-align: middle;
+            }
+
+            figure.news-id-2021-8-13 {
+              display: inline-block;
+              @media screen and (min-width: 600px){
+                width: 600px;
+                height: 348px;
+              }
+              background: url('/img/blog/NeuraVoiceDiagram.png') no-repeat;
+              .image-2x('/img/blog/NeuraVoiceDiagram.png');
+              background-size: contain;
+              vertical-align: middle;
+            }
+
+            figure.news-id-2021-3-7 {
+              display: inline-block;
+              @media screen and (min-width: 600px){
+                width: 600px;
+                height: 348px;
+              }
+              background: url('/img/blog/tomii_nagasaki.png') no-repeat;
+              .image-2x('/img/blog/tomii_nagasaki.png');
+              background-size: contain;
+              vertical-align: middle;
+            }
+
+            figure.news-id-2021-2-20 {
+              display: inline-block;
+              @media screen and (min-width: 600px){
+                width: 600px;
+                height: 348px;
+              }
+              background: url('/img/blog/ktn_news.png') no-repeat;
+              .image-2x('/img/blog/ktn_news.png');
+              background-size: contain;
+              vertical-align: middle;
+            }
+            figure.news-id-2021-2-24 {
+              display: inline-block;
+              @media screen and (min-width: 600px){
+                width: 600px;
+                height: 348px;
+              }
+              background: url('/img/blog/citywalk_expo.png') no-repeat;
+              .image-2x('/img/blog/citywalk_expo.png');
+              background-size: contain;
+              vertical-align: middle;
+            }
+
+            figure.news-id-2021-2-14 {
+              display: inline-block;
+              @media screen and (min-width: 600px){
+                width: 600px;
+                height: 348px;
+              }
+              background: url('/img/blog/dejima_panel.png') no-repeat;
+              .image-2x('/img/blog/dejima_panel.png');
+              background-size: contain;
+              vertical-align: middle;
+            }
+            figure.news-id-2020-11-10 {
+              display: inline-block;
+              @media screen and (min-width: 600px){
+                width: 600px;
+                height: 348px;
+              }
+              background: url('/img/blog/citywalk_nagasaki.png') no-repeat;
+              .image-2x('/img/blog/citywalk_nagasaki.png');
+              background-size: contain;
+              vertical-align: middle;
+            }
+            figure.news-id-2020-03-04 {
+              display: inline-block;
+              @media screen and (min-width: 600px){
+                width: 600px;
+                height: 348px;
+              }
+              background: url('/img/blog/ciphernet-image.png') no-repeat;
+              .image-2x('/img/blog/ciphernet-image.png');
+              background-size: contain;
+              vertical-align: middle;
+            }
+            figure.news-id-2020-02-07 {
+              display: inline-block;
+              @media screen and (min-width: 600px){
+                width: 600px;
+                height: 348px;
+              }
+              background: url('/img/blog/expo.jpg') no-repeat;
+              .image-2x('/img/blog/expo.jpg');
+              background-size: contain;
+              vertical-align: middle;
+            }
+            figure.news-id-2020-01-20 {
+              display: inline-block;
+              @media screen and (min-width: 600px){
+                width: 600px;
+                height: 348px;
+              }
+              background: url('/img/blog/citywalkbrochure.png') no-repeat;
+              .image-2x('/img/blog/citywalkbrochure.png');
+              background-size: contain;
+              vertical-align: middle;
+            }
+          }
+          div.readmore-container {
+            padding: 0px 0px 16px 0px;
+            span.readmore {
+              float: right;
+              font-size: 0.9em;
+              a {
+                text-decoration: none;
+                color: @readmore;
+                .transition(color, .5s);
+              }
+              a:hover {
+                color: @readmore-hover;
+              }
+            }
+          }
+        }
+      }
+    }
+    div.pagination {
+      a {
+        padding: 10px 20px;
+        border: 1px solid;// #326894;
+        transition: all 0.4s @cubic-bezier1;
+      }
+      a:hover {
+        color: #326894;
+        background-color: #bddaf4;
+        border: 1px solid #326894;
+      }
+      a.disabled {
+        display: none;
+        cursor: not-allowed;
+        color: #aaa;
+      }
+      a:not(last-child) {
+        margin-right: 28px;
+      }
+    }
+
+  }
+}
+
+
+@media (min-width: @tablet-width) {
+}
+
+@media (max-width: @smartphone-width) {
+  div#blognews.main-container {
+    div.main-content {
+      padding: 100px 30px 30px 30px;
+      ul.newslist {
+        width: auto;
+      }
+    }
+  }
+}

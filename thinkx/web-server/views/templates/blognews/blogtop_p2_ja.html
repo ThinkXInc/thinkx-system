@@ -1,0 +1,157 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div id="blognews" class="main-container">
+  {% include 'common/header.html' %}
+
+  <div class="blog-list main-content">
+ 
+
+    <ul class="newslist">
+
+
+    <li class="news" data-news-id="2023-3-20">
+      <div class="container">
+        <h2 class="title news-title">音声合成ガイドシステムに関する特許を取得</h2>
+        <p class="date news-date">2023 March 20</p>
+        <p class="content news-content">  
+          ニューラル音声合成ガイドシステムに関する特許を取得しました。
+          <br/>
+          本発明は、ユーザー位置を補足しながら、深層学習Text-to-Speech技術を用いての地理空間上での音声ガイドシステムを構築する際に広く適用され、先行文献のNTTによる特許をさらに深層学習時代に敷衍するものです。
+        </p>
+
+        <div class="readmore-container cf">
+          <span class="readmore">
+            <a href="/{{ lang }}/blognews/2023-3-20?page={{ page }}">続きを読む...</a>
+          </span>
+        </div>
+      <div class="news-image-container">
+        <figure class="news-image news-id-2023-3-20">
+        </figure>
+      </div>
+      </div>
+    </li>
+    <li class="news" data-news-id="2021-10-30">
+      <div class="container">
+        <h2 class="title news-title">プレシリーズA第三者割当増資を実施</h2>
+        <p class="date news-date">2021 Oct 30</p>
+        <p class="content news-content">  
+        </p>
+
+        <div class="readmore-container cf">
+          <span class="readmore">
+            <a href="/{{ lang }}/blognews/2021-10-30?page={{ page }}">続きを読む...</a>
+          </span>
+        </div>
+      <div class="news-image-container">
+        <figure class="news-image news-id-2023-3-20">
+        </figure>
+      </div>
+      </div>
+    </li>
+
+
+      <li class="news" data-news-id="2021-8-13">
+        <div class="container">
+          <h2 class="title news-title">RTF0.1未満の速度でテキストを音声に変換するニューラル音声合成システム「NeuraVoice2 β」を開発</h2>
+          <p class="date news-date">2021 Aug 13</p>
+          <p class="content news-content">
+
+            Real Time Factor(音声データ時間長[sec]/合成にかかる時間[sec])がGPU推論でのベンチマークが0.0227*<br/>
+          、CPU推論でのベンチマークが1.1106*の高速高品質な音声合成システム「NeuraVoice2 β」を開発しました。
+
+          </p>
+          <div class="readmore-container cf">
+            <span class="readmore">
+              <a href="/{{ lang }}/blognews/2021-8-13?page={{ page }}">続きを読む...</a>
+            </span>
+          </div>
+          <div class="news-image-container">
+            <figure class="news-image news-id-2021-8-13">
+            </figure>
+          </div>
+        </div>
+      </li>
+
+
+      <li class="news" data-news-id="2021-2-24">
+        <div class="container">
+          <h2 class="title news-title">幕張メッセで行われた「自治体・公共Week 2021 地方創生EXPO 第4回」に出展</h2>
+          <p class="date news-date">2021 Feb 24</p>
+          <p class="content news-content">
+          2021年2月24日（水）～26日（金）に幕張メッセで開催された「自治体・公共Week 2021 地方創生EXPO 第4回」にブース出展しました。</br>
+          出展者：252団体、</br>
+          来場者約30,000人の日本最大級の地方創生イベントです。（※2020年実績に基づく）</br>
+          </p>
+          <div class="readmore-container cf">
+            <span class="readmore">
+              <a href="/{{ lang }}/blognews/2021-2-24?page={{ page }}">続きを読む...</a>
+            </span>
+          </div>
+          <div class="news-image-container">
+            {#<figure class="news-image news-id-2021-2-24">
+            </figure>
+            #}
+          </div>
+        </div>
+      </li>
+
+
+
+      <li class="news" data-news-id="2021-2-20">
+        <div class="container">
+          <h2 class="title news-title">CITYWALKと代表大塚がKTNの夜のニュースで取り上げられました。</h2>
+          <p class="date news-date">2021 Feb 20</p>
+          <p class="content news-content">
+          KTN夜のニュースにて、長崎市で実施中の「音声案内システムCITYWALK」が紹介されました。</br>
+          利用者のコメントや、出島で行われた市内団体様向けの説明会の様子が紹介されました。
+          </p>
+          <div class="readmore-container cf">
+            <span class="readmore">
+              <a href="/{{ lang }}/blognews/2021-2-20?page={{ page }}">続きを読む...</a>
+            </span>
+          </div>
+          <div class="news-image-container">
+            <figure class="news-image news-id-2021-2-20">
+            </figure>
+          </div>
+        </div>
+      </li>
+
+
+      <li class="news" data-news-id="2021-2-14">
+        <div class="container">
+          <h2 class="title news-title">次世代音声案内システムCITYWALKが長崎市で試験運用を開始</h2>
+          <p class="date news-date">2021 Feb 14</p>
+          <p class="content news-content">
+            年間40万人が訪れるグラバー園や、出島、伊王島 i+Land nagasaki、</br>
+          長崎市を代表する観光施設群で弊社の音声案内システムCITYWALKが試験運用を開始しました。
+
+          </p>
+          <div class="readmore-container cf">
+            <span class="readmore">
+              <a href="/{{ lang }}/blognews/2021-2-14?page={{ page }}">続きを読む...</a>
+            </span>
+          </div>
+          <div class="news-image-container">
+            <figure class="news-image news-id-2021-2-14">
+            </figure>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    {% include 'blognews/common/pagenation.html' %}
+  </div>
+  {% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

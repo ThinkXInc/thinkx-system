@@ -1,0 +1,46 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+{% from "macro/inquiry.html" import inquiry_form %}
+
+<div id="apply-collaborator" class="main-container">
+  {% include 'common/header.html' %}
+
+  <div class="apply-page main-content">
+
+    <h2 class="title">{{ locale_dict["apply_collaborator_title"][lang] }}</h2>
+
+    <article class="main-text">{{ locale_dict["apply_collaborator_main"][lang] }}</article>
+
+    <div class="inquiry-container">
+      {{ inquiry_form('inquiry-form', '/apply/submit',
+          place_holder_name=locale_dict['name_label'][lang]+'*',
+          place_holder_email=locale_dict['email_label'][lang]+'*',
+          place_holder_phone=locale_dict['phone_label'][lang],
+          place_holder_job_title=locale_dict['job_title_label'][lang],
+          place_holder_company_name=locale_dict['company_name_label'][lang],
+          place_holder_message=locale_dict['message_label'][lang]+'*',
+          value_submit_button=locale_dict['submit_label'][lang],
+          requirement_error=locale_dict['requirement_error'][lang],
+          format_error=locale_dict['format_error'][lang],
+          submit_success=locale_dict['submit_success'][lang],
+          submit_failed=locale_dict['submit_failed'][lang])
+        }}
+    </div>
+
+</div>
+  {% include 'common/footer.html' %}
+</div>
+
+<script src="/js/top.js"></script>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}
+
+

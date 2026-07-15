@@ -1,0 +1,225 @@
+@charset "UTF-8";
+
+// mixin.less
+
+.border-radius(@radius: 5px) {
+    -webkit-border-radius: @radius;
+    -moz-border-radius: @radius;
+    border-radius: @radius;
+}
+
+.lineStroke (@duration:.5s, @startOffset:0, @endOffset: 3000, @delay: 0s) {
+  -webkit-animation: DASH @duration linear @delay forwards;
+  -o-animation: DASH @duration linear @delay forwards;
+  -moz-animation: DASH @duration linear @delay forwards;
+  -ms-animation: DASH @duration linear @delay forwards;
+  @-webkit-keyframes DASH {
+    0%{stroke-dashoffset: @startOffset;}
+    100%{stroke-dashoffset: @endOffset;}
+  }
+  @-moz-keyframes DASH {
+    0%{stroke-dashoffset: @startOffset;}
+    100%{stroke-dashoffset: @endOffset;}
+  }
+  @-ms-keyframes DASH {
+    0%{stroke-dashoffset: @startOffset;}
+    100%{stroke-dashoffset: @endOffset;}
+  }
+  @-o-keyframes DASH {
+    0%{stroke-dashoffset: @startOffset;}
+    100%{stroke-dashoffset: @endOffset;}
+  }
+}
+
+.transition(@css, @duration:.2s, @delay:0s, @easing:cubic-bezier(0.24,.8,.55,.94)) {
+  -webkit-transition: @css @duration @easing @delay;
+  -moz-transition: @css @duration @easing @delay;
+  -o-transitino: @css @duration @easing @delay;
+  transition: @css @duration @easing @delay;
+}
+
+.transition-all(@duration:.2s, @delay:0s, @easing:cubic-bezier(0.24,.8,.55,.94)) {
+  -webkit-transition: all @duration @easing @delay;
+  -moz-transition: all @duration @easing @delay;
+  -o-transitino: all @duration @easing @delay;
+  transition: all @duration @easing @delay;
+}
+
+.transitionTwo(@css:all, @duration:.2s, @delay:0s, @easing:cubic-bezier(0.24,.8,.55,.94), @css2:all, @duration2:.2s, @delay2:0s, @easing2:cubic-bezier(0.24,.8,.55,.94)) {
+  // not working
+  -webkit-transition: @css @duration @easing @delay, @css2 @duration2 @easing2 @delay2;
+  -moz-transition: @css @duration @easing @delay, @css2 @duration2 @easing2 @delay2;
+  -o-transitino: @css @duration @easing @delay, @css2 @duration2 @easing2 @delay2;
+  transition: @css @duration @easing @delay, @css2 @duration2 @easing2 @delay2;
+}
+
+.transform(@X: 100%, @Y: 100%, @rotate: 0deg) {
+  -webkit-transform: translateX(@X) translateY(@Y) rotate(@rotate);
+  -moz-transform: translateX(@X) translateY(@Y) rotate(@rotate);
+  -ms-transform: translateX(@X) translateY(@Y) rotate(@rotate);
+  -o-transform: translateX(@X) translateY(@Y) rotate(@rotate);
+  transform: translateX(@X) translateY(@Y) rotate(@rotate);
+}
+
+.transformX(@X: 100%) {
+  -webkit-transform: translateX(@X);
+  -moz-transform: translateX(@X);
+  -ms-transform: translateX(@X);
+  -o-transform: translateX(@X);
+  transform: translateX(@X);
+}
+
+.transformY(@Y: 100%) {
+  -webkit-transform: translateY(@Y);
+  -moz-transform: translateY(@Y);
+  -ms-transform: translateY(@Y);
+  -o-transform: translateY(@Y);
+  transform: translateY(@Y);
+}
+
+.rotate (@duration: 0.5s, @easing: linear) {
+  @-moz-keyframes spin {100%{-moz-transform: rotate(360deg);}}
+  @-webkit-keyframes spin {100%{-webkit-transform: rotate(360deg);}}
+  @keyframes spin {100%{-webkit-transform: rotate(360deg); transform:rotate(360deg);}}
+  -webkit-animation:spin @duration @easing infinite;
+  -moz-animation:spin @duration @easing infinite;
+  animation:spin @duration @easing infinite;
+}
+
+.rotateX (@rotateX) {
+  -webkit-transform: rotateX(@rotateX);
+  -moz-transform: rotateX(@rotateX);
+  -ms-transform: rotateX(@rotateX);
+  transform: rotateX(@rotateX);
+}
+
+.rotateY (@rotateY) {
+  -webkit-transform: rotateY(@rotateY);
+  -moz-transform: rotateY(@rotateY);
+  -ms-transform: rotateY(@rotateY);
+  transform: rotateY(@rotateY);
+}
+
+.preserve-3d-with-perspective (@perspective) {
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  -moz-transform-style: preserve-3d;
+  -ms-transform-style: preserve-3d;
+  perspective: @perspective;
+  -webkit-perspective: @perspective;
+  -moz-perspective: @perspective;
+  -ms-perspective: @perspective;
+}
+
+.image-2x(@image, @repeat: no-repeat) {
+  @filename  : ~`/(.*)\.(jpg|jpeg|png|gif)/.exec(@{image})[1]`;
+  @extension : ~`/(.*)\.(jpg|jpeg|png|gif)/.exec(@{image})[2]`;
+  background-image: ~`"url(@{filename}.@{extension})"`;
+  background-repeat: @repeat;
+  
+  @media
+    only screen and (-webkit-min-device-pixel-ratio: 2),
+    only screen and (   min--moz-device-pixel-ratio: 2),
+    only screen and (     -o-min-device-pixel-ratio: 2/1),
+    only screen and (        min-device-pixel-ratio: 2),
+    only screen and (                min-resolution: 192dpi),
+    only screen and (                min-resolution: 2dppx) {
+      /* on retina, use image that's scaled by 2 */
+      background-image: ~`"url(@{filename}@2x.@{extension})"`;
+  }
+}
+
+.corner (@radius: 3px) {
+  -webkit-border-radius: @radius;
+  -moz-border-radius: @radius;
+  border-radius: @radius;
+}
+
+.corner-detail (@topbottomleft: 3px, @topright: 3px, @bottomright: 3px, @bottomleft: 3px) {
+  -webkit-border-radius: @topbottomleft @topright @bottomright @bottomleft;
+  -moz-border-radius: @topbottomleft @topright @bottomright @bottomleft;
+  border-radius: @topbottomleft @topright @bottomright @bottomleft;
+}
+
+.text-shadow (@distance: 1px, @blur: 1px ,@color: rgba(150, 150, 150, 0.64)) {
+  text-shadow: @distance @distance @blur @color;
+}
+
+.box-shadow (@left: 1px, @top: 1px, @size: 2px, @spread: 1px, @color: rgba(0, 0, 0, 0.3)) {
+  -webkit-box-shadow: @left @top @size @spread @color;
+  -moz-box-shadow: @left @top @size @spread @color;
+  box-shadow: @left @top @size @spread @color;
+}
+
+.scale(@scale: 1.0) {
+  -webkit-transform: scale(@scale);
+  -moz-transform: scale(@scale);
+}
+
+.user-select-none () {
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+.dotted-over-flow () {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.dotted-over-flow-multiLine () {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.black-gradient-cover (@black_start: rgba(0,0,0,0.08), @black_end: rgba(0,0,0,0.45)) {
+  background: -moz-linear-gradient(top, @black_start 0%, @black_end 99%); /* FF3.6+ */ 
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,@black_start), color-stop(99%,@black_end)); /* Chrome,Safari4+ */ 
+  background: -webkit-linear-gradient(top, @black_start 0%,@black_end 99%); /* Chrome10+,Safari5.1+ */ 
+  background: -o-linear-gradient(top, @black_start 0%,@black_end 99%); /* Opera 11.10+ */ 
+  background: -ms-linear-gradient(top, @black_start 0%,@black_end 99%); /* IE10+ */ 
+  background: linear-gradient(to bottom, @black_start 0%,@black_end 99%); /* W3C */ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#14000000', endColorstr='#73000000',GradientType=0 ); /* IE6-9 */
+}
+
+.placeholder (@font-family: @default_font_family, @font-size: 1em, @line-height: 1em) {
+  input[type=text]::-webkit-input-placeholder,
+  input[type=email]::-webkit-input-placeholder,
+  input[type=password]::-webkit-input-placeholder {
+    font-family: @font-family;
+    font-size: @font-size;
+    line-height: @line-height;
+  }
+
+  input[type=text]:-moz-input-placeholder,
+  input[type=email]::-moz-input-placeholder,
+  input[type=password]:-moz-placeholder {
+    font-family: @font-family;
+    font-size: @font-size;
+    line-height: @line-height;
+  }
+
+  input[type=text]:-ms-input-placeholder,
+  input[type=email]::-ms-input-placeholder,
+  input[type=password]:-ms-input-placeholder {
+    font-family: @font-family;
+    font-size: @font-size;
+    line-height: @line-height;
+  }
+}
+
+.column-width (@column-width: @400px) {
+  -webkit-column-width: @column-width;
+  -moz-column-width: @column-width;
+  -ms-column-width: @column-width;
+  -o-column-width: @column-width;
+  column-width: @column-width;
+}
+
+.filter (@blur: 10px, @saturate: 1, @grayscalse: 0%) {
+  -webkit-filter: blur(@blur) saturate(@saturate) grayscale(@grayscalse);
+  -moz-filter: blur(@blur) saturate(@saturate) grayscale(@grayscalse);
+  -ms-filter: blur(@blur) saturate(@saturate) grayscale(@grayscalse);
+  filter: blur(@blur) saturate(@saturate) grayscale(@grayscalse);
+}

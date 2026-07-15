@@ -1,0 +1,73 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+
+    <article class="article" data-news-id="2020-02-07">
+      <div class="container">
+        <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}"><<</a></span>
+        <p class="date news-date">2020 Feb 7</p>
+        <h2 class="title">2021年2月幕張メッセで行われる「地方創生EXPO」への出展が決まりました。</h2>
+        <div class="news-image-container">
+          <figure class="news-image news-id-2020-02-07">
+            <img class="news-id-2020-02-07" src="/img/expo.jpg" srcset="/img/expo@2x.jpg 2x"/>
+          </figure>
+        </div>
+        <div class="main-text">
+          CITYWALKプロジェクトは人口減少社会へのひとつの解決策としての</br>
+          ディスティネーションマーケティング支援の体制を強化し、全国の地方創生に寄与するために</br>
+          </br>
+          来年2020年2月に開催の幕張メッセで行われる「地方創生Expo」に出展することとなりました。</br>
+          </br>
+          長崎、姫路、沖縄市などの地方自治体や観光局とのディスカッション、</br>
+          およびDMOに関する調査の結果をもとに、予算編成の複雑な自治体様向けに、</br>
+          「地方自治体特別プラン」をご用意しております。</br>
+          </br>
+
+          <!-- TODO:-->
+          <button class="download-button">
+            <a class="download-link" href="/downloads/destination_support_plan" target="_blank" download>資料をダウンロード</a>
+          </button></br>
+          </br>
+          <!---->
+
+          日本人の1人あたりの平均消費額は100万円と言われており、</br>
+          人口が100人減ると1億円の経済縮小が発生します。</br>
+          </br>
+
+          地域と一体になり寄り添いながら先進国中圧倒的に遅れているデジタルマーケティングをサポートし、</br>
+          域外からの流入と域内での回遊、口コミによる紹介と再訪、までの一連の導線をつなぐツールとして、</br>
+          </br>
+          CITYWALKは地域の鍵となる固有の観光資源を引き出し、伝え、世界の中で輝くための存在感をもたらします。</br>
+          </br>
+
+
+          製品の詳細、資料のお申し込みについては</br>
+          </br>
+          <span class="contact-mail">sales@thinkxinc.com</span></br>
+          </br>
+          までお問い合わせください。
+        </div>
+        <div class="back-container cf">
+          <span class="back">
+            <a href="/{{ lang }}/blognews?page={{ page }}">一覧に戻る</a>
+          </span>
+        </div>
+      </div>
+    </article>
+  </div>
+  {% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

@@ -1,0 +1,80 @@
+@cubic-bezier1: cubic-bezier(.65,0,.34,1);
+
+div.lang-selector {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+
+    div.lang-selector-button {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        position: relative;
+
+        img.locale-icon {
+            width: 14px;
+        }
+        span.current-lang {
+            display: none;
+        }
+        img.arrow-icon {
+            width: 10px;
+            margin-left: 5px;
+            transition: transform 0.3s @cubic-bezier1;
+        }
+    }
+
+    ul.lang-options {
+        display: none;
+        position: absolute;
+        top: 100%; /* Position directly below the button */
+        left: -56px;
+        background-color: white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: max-content;
+        padding: 9px 6px;
+        transition: transform 0.3s @cubic-bezier1, opacity 0.3s @cubic-bezier1;
+        transform-origin: top;
+        transform: scaleY(0);
+        opacity: 0;
+
+        li.select {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px 0px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s @cubic-bezier1;
+            color: #525252;
+            transition: color 0.3s @cubic-bezier1;
+        }
+
+        li.select:hover {
+            color: #000;
+        }
+    }
+}
+
+div.lang-selector.show {
+    div.lang-selector-button {
+        img.arrow-icon {
+            transform: rotate(180deg);
+        }
+    }
+    @keyframes expandDown {
+        from {
+            transform: scaleY(0);
+            opacity: 0;
+        }
+        to {
+            transform: scaleY(1);
+            opacity: 1;
+        }
+    }
+    ul.lang-options {
+        display: block;
+        animation: expandDown 0.3s @cubic-bezier1 forwards;
+    }
+}

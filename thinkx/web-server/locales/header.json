@@ -1,0 +1,173 @@
+{
+    "menu_title_about": {
+        "ja": "ThinkXについて",
+        "en": "About ThinkX",
+        "zh": "关于ThinkX",
+        "es": "Sobre ThinkX",
+        "ru": "О ThinkX",
+        "fr": "À propos de ThinkX",
+        "ar": "حول ThinkX"
+    },
+    "menu_content_home": {
+        "ja": "ホーム",
+        "en": "Home",
+        "zh": "首页",
+        "es": "Inicio",
+        "ru": "Главная",
+        "fr": "Accueil",
+        "ar": "الرئيسية"
+    },
+    "menu_content_mission": {
+        "ja": "ThinkXの目指す世界",
+        "en": "Mission",
+        "zh": "使命",
+        "es": "Misión",
+        "ru": "Миссия",
+        "fr": "Mission",
+        "ar": "المهمة"
+    },
+    "menu_content_philosophy": {
+        "ja": "科学と芸術の融合",
+        "en": "Fusion of science and art",
+        "zh": "关于我们的标志",
+        "es": "Sobre nuestro logo",
+        "ru": "О нашем логотипе",
+        "fr": "À propos de notre logo",
+        "ar": "تلاقي العلم والفن"
+    },
+    "menu_content_about": {
+        "ja": "会社概要",
+        "en": "About us",
+        "zh": "关于我们",
+        "es": "Sobre nosotros",
+        "ru": "О нас",
+        "fr": "À propos de nous",
+        "ar": "عن الشركة"
+    },
+    "menu_content_history": {
+        "ja": "沿革",
+        "en": "Our history",
+        "zh": "我们的历史",
+        "es": "Nuestra historia",
+        "ru": "Наша история",
+        "fr": "Notre histoire",
+        "ar": "تاريخنا"
+    },
+    "menu_title_product": {
+        "ja": "製品・サービス",
+        "en": "Our products",
+        "zh": "我们的产品",
+        "es": "Nuestros productos",
+        "ru": "Наши продукты",
+        "fr": "Nos produits",
+        "ar": "منتجاتنا"
+    },
+    "menu_title_blog": {
+        "ja": "ブログニュース",
+        "en": "Blog",
+        "zh": "博客新闻",
+        "es": "Blog",
+        "ru": "Блог",
+        "fr": "Blog",
+        "ar": "المدونة"
+    },
+    "menu_content_news": {
+        "ja": "最新情報",
+        "en": "Latest",
+        "zh": "最新",
+        "es": "Últimas noticias",
+        "ru": "Последние новости",
+        "fr": "Dernières nouvelles",
+        "ar": "الأخبار الأخيرة"
+    },
+    "menu_title_application": {
+        "ja": "採用情報",
+        "en": "Work with us",
+        "zh": "招聘信息",
+        "es": "Únete a nosotros",
+        "ru": "Работайте с нами",
+        "fr": "Travaillez avec nous",
+        "ar": "انضم إلينا"
+    },
+    "menu_content_regular": {
+        "ja": "正社員への応募",
+        "en": "Apply for full-time",
+        "zh": "申请全职",
+        "es": "Postulación a tiempo completo",
+        "ru": "Откликнуться на вакансию",
+        "fr": "Postulez pour un emploi à temps plein",
+        "ar": "تقدم لوظيفة دائمة"
+    },
+    "menu_content_intern": {
+        "ja": "インターンへの応募",
+        "en": "Apply for internship",
+        "zh": "申请实习",
+        "es": "Postulación a pasantía",
+        "ru": "Откликнуться на стажировку",
+        "fr": "Postulez pour un stage",
+        "ar": "تقدم للتدريب"
+    },
+    "menu_content_collaborator": {
+        "ja": "業務委託への応募",
+        "en": "Apply as a contractor",
+        "zh": "申请作为承包商",
+        "es": "Postulación como colaborador",
+        "ru": "Откликнуться как подрядчик",
+        "fr": "Postulez en tant que prestataire",
+        "ar": "تقدم كمقاول"
+    },
+    "menu_title_ir": {
+        "ja": "IR情報",
+        "en": "IR Information",
+        "zh": "投资者关系",
+        "es": "Información de IR",
+        "ru": "Информация для инвесторов",
+        "fr": "Informations sur les investisseurs",
+        "ar": "معلومات العلاقات الاستثمارية"
+    },
+    "menu_content_investor": {
+        "ja": "投資家向け情報",
+        "en": "Investor information",
+        "zh": "投资者信息",
+        "es": "Información para inversores",
+        "ru": "Информация для инвесторов",
+        "fr": "Informations pour les investisseurs",
+        "ar": "معلومات المستثمرين"
+    },
+    "menu_title_inquiry": {
+        "ja": "お問い合わせ",
+        "en": "Inquiry",
+        "zh": "咨询",
+        "es": "Consulta",
+        "ru": "Запрос",
+        "fr": "Demande",
+        "ar": "استفسار"
+    },
+    "menu_content_inquiry_product": {
+        "ja": "製品について",
+        "en": "About product",
+        "zh": "关于产品",
+        "es": "Sobre el producto",
+        "ru": "О продукте",
+        "fr": "À propos du produit",
+        "ar": "حول المنتج"
+    },
+    "menu_content_inquiry_collaboration": {
+        "ja": "お取引に関するお問い合わせ",
+        "en": "About collaboration",
+        "zh": "关于合作",
+        "es": "Sobre la colaboración",
+        "ru": "О сотрудничестве",
+        "fr": "À propos de la collaboration",
+        "ar": "حول التعاون"
+    },
+    "menu_content_inquiry_others": {
+        "ja": "その他お問い合わせ",
+        "en": "Other inquiries",
+        "zh": "其他咨询",
+        "es": "Otras consultas",
+        "ru": "Другие запросы",
+        "fr": "Autres demandes",
+        "ar": "استفسارات أخرى"
+    }
+}

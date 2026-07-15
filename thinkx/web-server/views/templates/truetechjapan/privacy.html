@@ -1,0 +1,49 @@
+{# templates/truetechjapan/privacy.html #}
+{% extends "truetechjapan/base.html" %}
+
+{% block head %}
+<script>
+    /* Language menu used by the common header */
+    window.langOptions = {
+        'en': 'English',
+        'ja': '日本語'
+    };
+</script>
+{% endblock %}
+
+{% block content %}
+
+{% include 'truetechjapan/common/header.html' %}
+
+<div id="truetech-privacy" class="main-container">
+
+    <div class="privacy_content section">
+        <div class="description_text">
+
+            <p class="privacy_intro">
+                {{ locale_dict["privacy_policy"]["intro"][lang] | replace('\n', '<br>') | safe }}
+            </p>
+
+            {# Repeat for every numbered section – keep keys identical to privacy.json #}
+            {% for i in range(1, 16) %}
+            <h3 class="privacy_section_title">
+                {{ locale_dict["privacy_policy"]["section_" ~ i ~ "_title"][lang] }}
+            </h3>
+            <p class="privacy_section_body">
+                {{ locale_dict["privacy_policy"]["section_" ~ i ~ "_body"][lang] | replace('\n', '<br>') | safe }}
+            </p>
+            {% endfor %}
+            <p class="privacy_last_updated">
+                {{ locale_dict["privacy_policy"]["last_updated"][lang] }}
+            </p>
+        </div>
+    </div>
+
+</div>
+
+{% include 'truetechjapan/common/footer.html' %}
+{% endblock %}
+
+{% block foot %}
+{# Extra scripts for the privacy page only (optional) #}
+{% endblock %}

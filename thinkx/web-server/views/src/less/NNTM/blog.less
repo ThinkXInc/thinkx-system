@@ -1,0 +1,160 @@
+@tablet-width: 768px;
+@smartphone-width: 480px;
+
+div#NNTM_blog {
+    div.header {
+        width: 100%;
+        height: 300px;
+        position: relative;
+        background: url('/img/NNTM/top/highfidelitybg2600.jpg') center center / cover no-repeat;
+        color: #fff;
+        overflow: hidden;
+
+        div.header_overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Ensure content sits above the overlay */
+        & > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        div.header_head {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 20px;
+            z-index: 100;
+
+            /* Language selector, if needed */
+            div.lang-selector {
+                margin-right: 27px;
+                font-family: Arial, sans-serif;
+            }
+
+            /* Right-aligned images */
+            img.header_olivewreath,
+            img.header_logo {
+                height: 60px;
+                margin-left: 20px;
+            }
+        }
+
+        div.header_main {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 10px;
+            min-height: 25vh;
+
+            div.main_left {
+                width: 50%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+
+                div.container {
+                    h1.header_copy_sub {
+                        font-size: 30px;
+                        font-weight: 800;
+                        margin: 0 0 28px;
+                        color: #fff;
+                    }
+                }
+            }
+
+            div.main_right {
+                width: 40%;
+                display: flex;
+                align-items: center;
+
+                div.header_copy_main {
+                    font-size: 28px;
+                    font-weight: 600;
+                    margin: 0;
+                    color: #f1f1f1;
+                }
+            }
+
+            div.header_bottom {
+                margin-top: 10px;
+            }
+        }
+    }
+}
+
+div#NNTM_blog {
+    // Mediumから拝借したフォント
+    font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    div.blog_content {
+        article.article {
+            text-align: left;
+            font-size: 19px;
+            max-width: 800px;
+            padding: 58px 0;
+            p.article_text {
+                margin-bottom: 60px;
+                font-weight: 400;
+                font-style: normal;
+                font-size: 21px;
+                line-height: 2.0;
+                letter-spacing: -.003em;
+            }
+            h5.head {
+                font-size: 22px;
+                font-weight: 700;
+                margin-bottom: 11px;
+            }
+            div.image-container {
+                margin-bottom: 60px;
+                img {
+
+                }
+                p.caption {
+                    font-size: 16px;
+                    text-align: center;
+
+                }
+
+            }
+        }
+    }
+    div.ad_section {
+        padding-bottom: 200px;
+    }
+    footer {
+        width: 100%;
+    }
+}
+
+
+@media (min-width: @tablet-width) {
+}
+
+@media (max-width: @smartphone-width) {
+    div#NNTM_blog {
+        div.header {
+            min-height: 510px;
+        }
+        div.blog_content {
+            article.article {
+                padding: 58px 24px;
+            }
+        }
+        footer {
+            max-width: 100%;
+        }
+    }
+}

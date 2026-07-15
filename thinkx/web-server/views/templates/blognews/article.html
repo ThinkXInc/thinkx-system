@@ -1,0 +1,87 @@
+{# 
+2025年以降はこの汎用テンプレートを使う それ以前は共通テンプレートがないまま運用されていたために /blognews/{lang}/..の個別のテンプレートが使われている 
+TODO: 
+step 1 このテンプレートに集約しすべてjsonから引き出す
+step 2 jsonの中身は本来DBに保存したい つまりMediumやWordpressのようなインターフェースを作ることになる
+
+        
+    (本文のjson)
+    json_path = f'{LOCALES_ROOT}/articles/{news_id}.json'
+
+    (Metaデータのjson)
+    metadata_key = f"metadata_blog_{news_id}"
+    metadata_default = locale.dict()["metadata_blognews"][lang]
+    metadata = locale.dict()[metadata_key][lang] \
+        if f"metadata_blog_{news_id}" in locale.dict() else metadata_default
+
+    ＊ json 中身例
+
+    {
+    "metadata_blog_2025-02-19-talk": {
+      "ja": {
+        "title": "アドバイザーインタビュー: ThinkXと東北大学が描く、AIとFPGAで切り拓くスーパーコンピューティング　張山昌論教授インタビュー",
+        "description": "誰もが使える超高速計算プラットフォームへ",
+        "keywords": "スーパーコンピューティング, HPC, AI, FPGA, 東北大学, 動的アクセラレータ, リアルタイムビッグデータ解析, 量子コンピューティング, 量子アニーリング, DNAシーケンス, 気候モデリング, 専用半導体, 大規模言語モデル, パイプライン, 並列化, 部分再構成, OneAPI, 張山昌論教授, ThinkX"
+      },
+      "en": {
+      },
+      "zh": {
+      },
+      "es": {
+      },
+      "ru": {
+      },
+      "fr": {
+      },
+      "ar": {
+      }
+    },
+    "article_title": {
+        "ja": "アドバイザーインタビュー: 誰もが使える超高速計算プラットフォームへ──ThinkXと東北大学が描く、AIとFPGAで切り拓くスーパーコンピューティング　張山昌論教授インタビュー",
+    },
+    "article_date": {
+        "ja": "2025年2月19日",
+    },
+    "article_guest": {
+        "ja": "張山昌論 東北大学情報科学研究科知能集積学分野教授",
+
+
+#}
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+    <article class="article" data-news-id="{{ news_id }}">
+      <div class="container">
+        <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}">
+            << </a></span>
+        <h2 class="title">
+          {{ locale_dict["article_title"][lang] | replace('\n', '<br>') | safe }}
+        </h2>
+        <p class="date news-date">
+          {{ locale_dict["article_date"][lang] | replace('\n', '<br>') | safe }}
+        </p>
+        <div class="news-image-container">
+
+        </div>
+        <div class="main-text">
+          {{ locale_dict["article_main"][lang] | replace('\n', '<br>') | replace('{{ lang }}', lang)  | replace('{{lang}}', lang) | safe }}
+
+        </div>
+    </article>
+  </div>
+  {% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

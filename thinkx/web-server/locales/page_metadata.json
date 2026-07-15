@@ -1,0 +1,595 @@
+{
+    "metadata_home": {
+        "ja": {
+            "title": "ThinkX",
+            "description": "科学と芸術の融合。全ての個が自己実現を果たす「創造社会」へ。",
+            "keywords": "AI,音声,音声対話システム,6thSense,ThinkX,Quantz,Quantz Voice-AI OS,ソフトウェア,システム"
+        },
+        "en": {
+            "title": "ThinkX",
+            "description": "The fusion of science and art. Towards a 'creative society' where every individual achieves self-fulfillment.",
+            "keywords": "AI, voice, voice conversational systems, 6thSense, ThinkX, Quantz, Quantz Voice-AI OS, software, system"
+        },
+        "zh": {
+            "title": "ThinkX",
+            "description": "科学与艺术的融合。朝向每个人都能实现自我成就的‘创造性社会’。",
+            "keywords": "AI, 语音, 语音对话系统, 6thSense, ThinkX, Quantz, Quantz Voice-AI OS, 软件, 系统"
+        },
+        "es": {
+            "title": "ThinkX",
+            "description": "La fusión de ciencia y arte. Hacia una 'sociedad creativa' donde cada individuo logra la auto-realización.",
+            "keywords": "IA, voz, sistemas de diálogo por voz, 6thSense, ThinkX, Quantz, Quantz Voice-AI OS, software, sistema"
+        },
+        "fr": {
+            "title": "ThinkX",
+            "description": "La fusion de la science et de l'art. Vers une 'société créative' où chaque individu atteint l'autoréalisation.",
+            "keywords": "IA, voix, systèmes de dialogue vocal, 6thSense, ThinkX, Quantz, Quantz Voice-AI OS, logiciel, système"
+        },
+        "ru": {
+            "title": "ThinkX",
+            "description": "Слияние науки и искусства. К 'творческому обществу', где каждый человек достигает самореализации.",
+            "keywords": "ИИ, голос, системы голосового диалога, 6thSense, ThinkX, Quantz, Quantz Voice-AI OS, программное обеспечение, система"
+        },
+        "ar": {
+            "title": "ThinkX",
+            "description": "التمازج بين العلم والفن. نحو 'مجتمع إبداعي' حيث يحقق كل فرد الإنجاز الذاتي.",
+            "keywords": "الذكاء الاصطناعي, الصوت, أنظمة الحوار الصوتية, 6thSense, ThinkX, Quantz, نظام Quantz Voice-AI OS, البرمجيات, النظام"
+        }
+    },
+    "metadata_mission": {
+        "ja": {
+            "title": "ThinkX | ThinkXの目指す世界",
+            "description": "全ての個が自己実現を果たす創造社会の実現 = 人々が創造性を発揮する道を深く追求し、表現し、他者と自己を差別化し、それでも尚孤独に陥らないどころか多様な出会いと機会を提供される社会の実現",
+            "keywords": "創造社会, 自己実現, 創造性, 技術革新"
+        },
+        "en": {
+            "title": "ThinkX | Mission",
+            "description": "Achieving a creative society where every individual can realize self-fulfillment through deep pursuit, expression of creativity, and the differentiation from others while still being provided with a diverse range of opportunities and interactions.",
+            "keywords": "creative society, self-fulfillment, creativity, innovation"
+        },
+        "zh": {
+            "title": "THinkX | 使命",
+            "description": "实现一个创造性社会，每个人都可以通过深入追求和表达创造力，与他人区分开来，同时仍然获得多样化的机会和交流。",
+            "keywords": "创造性社会, 自我实现, 创造力, 创新"
+        },
+        "es": {
+            "title": "ThinkX | Misión",
+            "description": "Lograr una sociedad creativa donde cada individuo pueda realizar su auto-realización a través de la búsqueda profunda y la expresión de la creatividad, diferenciándose de los demás mientras aún se le ofrecen diversas oportunidades e interacciones.",
+            "keywords": "sociedad creativa, autorrealización, creatividad, innovación"
+        },
+        "fr": {
+            "title": "ThinkX | Mission",
+            "description": "Atteindre une société créative où chaque individu peut réaliser son plein potentiel par une poursuite profonde et l'expression de la créativité, tout en se différenciant des autres et en bénéficiant d'une gamme diversifiée d'opportunités et d'interactions.",
+            "keywords": "société créative, accomplissement personnel, créativité, innovation"
+        },
+        "ru": {
+            "title": "ThinkX | Миссия",
+            "description": "Достижение творческого общества, где каждый человек может реализовать себя через глубокое исследование и выражение креативности, отличаясь от других, при этом получая разнообразные возможности и взаимодействия.",
+            "keywords": "творческое общество, самореализация, креативность, инновации"
+        },
+        "ar": {
+            "title": "ThinkX | المهمة",
+            "description": "تحقيق مجتمع إبداعي حيث يمكن لكل فرد تحقيق الذات من خلال السعي العميق والتعبير عن الإبداع، والتميز عن الآخرين، مع استمرار توفير مجموعة متنوعة من الفرص والتفاعلات.",
+            "keywords": "مجتمع إبداعي, تحقيق الذات, الإبداع, الابتكار"
+        }
+    },
+    "metadata_aboutus": {
+        "ja": {
+            "title": "ThinkX | 会社概要",
+            "description": "設立 2015年1月21日設立、代表取締役 大塚一輝、事業内容 先端ソフトウェアの開発と研究および第六感の定量化",
+            "keywords": "先端技術, ソフトウェア開発, 研究開発, 人工知能"
+        },
+        "en": {
+            "title": "ThinkX | About Us",
+            "description": "Founded on January 21, 2015, led by CEO Kazuki Otsuka, specializing in the development and research of cutting-edge software and the quantification of the sixth sense.",
+            "keywords": "advanced technology, software development, research and development, artificial intelligence"
+        },
+        "zh": {
+            "title": "THinkX | 关于我们",
+            "description": "成立于2015年1月21日，由大塚一輝担任首席执行官，专注于先进软件的开发与研究以及第六感的量化。",
+            "keywords": "高端技术, 软件开发, 研发, 人工智能"
+        },
+        "es": {
+            "title": "ThinkX | Acerca de Nosotros",
+            "description": "Fundada el 21 de enero de 2015, dirigida por el CEO Kazuki Otsuka, especializada en el desarrollo e investigación de software de vanguardia y la cuantificación del sexto sentido.",
+            "keywords": "tecnología avanzada, desarrollo de software, investigación y desarrollo, inteligencia artificial"
+        },
+        "fr": {
+            "title": "ThinkX | À Propos",
+            "description": "Fondée le 21 janvier 2015, dirigée par le PDG Kazuki Otsuka, spécialisée dans le développement et la recherche de logiciels de pointe et la quantification du sixième sens.",
+            "keywords": "technologie avancée, développement de logiciels, recherche et développement, intelligence artificielle"
+        },
+        "ru": {
+            "title": "ThinkX | О Нас",
+            "description": "Основана 21 января 2015 года, генеральный директор Кадзуки Оцука, специализация на разработке и исследовании передового программного обеспечения и количественной оценке шестого чувства.",
+            "keywords": "передовые технологии, разработка программного обеспечения, научные исследования и разработки, искусственный интеллект"
+        },
+        "ar": {
+            "title": "ThinkX | عن الشركة",
+            "description": "تأسست في 21 يناير 2015، بقيادة الرئيس التنفيذي كازوكي أوتسوكا، متخصصة في تطوير وبحث البرمجيات المتطورة وتقدير الحاسة السادسة.",
+            "keywords": "تكنولوجيا متقدمة، تطوير البرمجيات، البحث والتطوير، الذكاء الاصطناعي"
+        }
+    },
+    "metadata_philosophy": {
+        "ja": {
+            "title": "ThinkX | 思想",
+            "description": "コンピューターすなわち機械文明はこの先我々人間の＜芸術＞によって無限の進化をする。そのことが我々人間が宇宙に存在する意味であり、また＜芸術＞の本質的命題であったことを主張している",
+            "keywords": "科学技術, 超認知的知性, 芸術, 量子力学"
+        },
+        "en": {
+            "title": "ThinkX | Philosophy",
+            "description": "Computers, embodying the essence of mechanical civilization, will infinitely evolve through our human art. This represents the essential proposition of art and underscores our existential significance in the universe.",
+            "keywords": "scientific advancement, supercognitive intelligence, art, quantum mechanics"
+        },
+        "zh": {
+            "title": "THinkX | 理念",
+            "description": "计算机，即机械文明的本质，将通过我们的人类艺术无限进化。这代表了艺术的基本命题，并强调了我们在宇宙中的存在意义。",
+            "keywords": "科技进步, 超认知智能, 艺术, 量子力学"
+        },
+        "es": {
+            "title": "ThinkX | Filosofía",
+            "description": "Los ordenadores, que encarnan la esencia de la civilización mecánica, evolucionarán infinitamente a través de nuestro arte humano. Esto representa la proposición esencial del arte y subraya nuestro significado existencial en el universo.",
+            "keywords": "avance científico, inteligencia supercognitiva, arte, mecánica cuántica"
+        },
+        "fr": {
+            "title": "ThinkX | Philosophie",
+            "description": "Les ordinateurs, incarnant l'essence de la civilisation mécanique, évolueront indéfiniment grâce à notre art humain. Cela représente la proposition essentielle de l'art et souligne notre signification existentielle dans l'univers.",
+            "keywords": "avancement scientifique, intelligence supercognitive, art, mécanique quantique"
+        },
+        "ru": {
+            "title": "ThinkX | Философия",
+            "description": "Компьютеры, воплощение сущности механической цивилизации, будут бесконечно развиваться через наше человеческое искусство. Это представляет собой основную пропозицию искусства и подчеркивает наше существование во вселенной.",
+            "keywords": "научный прогресс, суперкогнитивная интеллектуальность, искусство, квантовая механика"
+        },
+        "ar": {
+            "title": "ThinkX | الفلسفة",
+            "description": "الحواسيب، التي تجسد جوهر الحضارة الميكانيكية، ستتطور إلى ما لا نهاية من خلال فننا الإنساني. هذا يمثل الاقتراح الأساسي للفن ويؤكد على أهميتنا الوجودية في الكون.",
+            "keywords": "التقدم العلمي, الذكاء الفائق الإدراك, الفن, ميكانيكا الكم"
+        }
+    },
+    "metadata_history": {
+        "ja": {
+            "title": "ThinkX | 沿革",
+            "description": "2015年の設立以来、音声言語技術の研究開発を行い、大手スーパーマーケットのPOSと接続したレコメンデーションシステムの開発、空間音声対話ガイドシステムCITYWALK ®の大規模実証実験などを経て、2023年には世界最速の実質応答速度を持つQuantz ® VoiceOSのプロトタイプを開発しました。",
+            "keywords": "音声言語技術, レコメンデーションシステム, Quantz, VoiceOS, 音声AI"
+        },
+        "en": {
+            "title": "ThinkX | Company History",
+            "description": "Since its establishment in 2015, ThinkX has been at the forefront of speech and language technology research and development, including the creation of recommendation systems linked to major supermarkets' POS systems, digital transformation consulting for listed companies, and the development of the CITYWALK ® spatial voice dialogue guide system. In May 2023, the company developed NeuraVoice AI, a prototype for Quantz ® VoiceOS with the world's fastest response times, surpassing Google Home.",
+            "keywords": "speech language technology, recommendation systems, Quantz, VoiceOS, voice AI"
+        },
+        "zh": {
+            "title": "THinkX | 公司历史",
+            "description": "THinkX自2015年成立以来，一直致力于语音和语言技术的研究与开发，包括开发与大型超市POS系统连接的推荐系统，以及CITYWALK ® 空间语音对话指南系统的开发。2023年5月，公司开发了Quantz ® VoiceOS的原型NeuraVoice AI，该系统的响应速度超过了Google Home，成为世界上最快的。",
+            "keywords": "语音语言技术, 推荐系统, Quantz, VoiceOS, 语音AI"
+        },
+        "es": {
+            "title": "ThinkX | Historia de la Compañía",
+            "description": "Desde su fundación en 2015, ThinkX ha liderado el desarrollo e investigación en tecnologías de voz y lenguaje, incluyendo el desarrollo de sistemas de recomendación vinculados a los POS de grandes supermercados y el sistema de guía de diálogo por voz espacial CITYWALK ®. En mayo de 2023, la compañía desarrolló NeuraVoice AI, un prototipo para Quantz ® VoiceOS con tiempos de respuesta más rápidos que Google Home.",
+            "keywords": "tecnología de voz y lenguaje, sistemas de recomendación, Quantz, VoiceOS, AI de voz"
+        },
+        "fr": {
+            "title": "ThinkX | Histoire de l'Entreprise",
+            "description": "Depuis sa création en 2015, ThinkX a été un pionnier dans la recherche et le développement de technologies de parole et de langage, développant des systèmes de recommandation connectés aux systèmes POS de grands supermarchés et le système de guide de dialogue vocal spatial CITYWALK ®. En mai 2023, l'entreprise a développé NeuraVoice AI, un prototype pour Quantz ® VoiceOS, dépassant les temps de réponse de Google Home.",
+            "keywords": "technologie de parole et langue, systèmes de recommandation, Quantz, VoiceOS, AI vocale"
+        },
+        "ru": {
+            "title": "ThinkX | История Компании",
+            "description": "С момента своего основания в 2015 году компания ThinkX была на переднем крае разработки и исследований в области технологий речи и языка, включая создание систем рекомендаций, связанных с POS-системами крупных супермаркетов, и разработку системы гидов голосового диалога в пространстве CITYWALK ®. В мае 2023 года компания разработала NeuraVoice AI, прототип Quantz ® VoiceOS, превосходящий скорость ответа Google Home.",
+            "keywords": "технологии речи и языка, системы рекомендаций, Quantz, VoiceOS, голосовой AI"
+        },
+        "ar": {
+            "title": "ThinkX | تاريخ الشركة",
+            "description": "منذ تأسيسها في عام 2015، كانت شركة ThinkX في طليعة البحث والتطوير في تقنيات الكلام واللغة، بما في ذلك إنشاء أنظمة توصية مرتبطة بأنظمة نقاط البيع في السوبرماركت الكبرى وتطوير نظام الدليل الحواري الصوتي الفضائي CITYWALK ®. في مايو 2023، طورت الشركة NeuraVoice AI، نموذجًا أوليًا لـ Quantz ® VoiceOS بأسرع أوقات استجابة في العالم، تفوق على Google Home.",
+            "keywords": "تقنيات الكلام واللغة, أنظمة التوصية, Quantz, VoiceOS, الذكاء الصوتي الاصطناعي"
+        }
+    },
+    "metadata_blognews": {
+        "ja": {
+            "title": "ThinkX | 最新情報",
+            "description": "ThinkXの最新情報です。",
+            "keywords": "最新情報, ニュース, ブログ"
+        },
+        "en": {
+            "title": "ThinkX | Blog News",
+            "description": "Stay updated with the latest news and insights from ThinkX",
+            "keywords": "latest news, updates, company blog"
+        },
+        "zh": {
+            "title": "THinkX | 博客新闻",
+            "description": "关注THinkX的最新新闻和洞察。",
+            "keywords": "最新新闻, 更新, 公司博客"
+        },
+        "es": {
+            "title": "ThinkX | Noticias del Blog",
+            "description": "Mantente al día con las últimas noticias y perspectivas de ThinkX",
+            "keywords": "últimas noticias, actualizaciones, blog de la compañía"
+        },
+        "fr": {
+            "title": "ThinkX | Nouvelles du Blog",
+            "description": "Restez informé des dernières nouvelles et perspectives de ThinkX",
+            "keywords": "dernières nouvelles, mises à jour, blog de l'entreprise"
+        },
+        "ru": {
+            "title": "ThinkX | Новости Блога",
+            "description": "Оставайтесь в курсе последних новостей и мнений от ThinkX",
+            "keywords": "последние новости, обновления, блог компании"
+        },
+        "ar": {
+            "title": "ThinkX | أخبار المدونة",
+            "description": "تابع آخر الأخبار والأفكار من ThinkX",
+            "keywords": "آخر الأخبار, التحديثات, مدونة الشركة"
+        }
+    },
+    "metadata_inquiry_product": {
+        "ja": {
+            "title": "ThinkX | 製品へのお問い合わせ",
+            "description": "製品へのお問い合わせは下記のフォームからご連絡ください。",
+            "keywords": "お問い合わせ, 製品, サポート"
+        },
+        "en": {
+            "title": "ThinkX | Product Inquiry",
+            "description": "For inquiries about our products, please contact us using the form below.",
+            "keywords": "inquiry, product, support"
+        },
+        "zh": {
+            "title": "THinkX | 产品咨询",
+            "description": "如有产品相关的任何疑问，请通过下面的表格与我们联系。",
+            "keywords": "咨询, 产品, 支持"
+        },
+        "es": {
+            "title": "ThinkX | Consulta de Producto",
+            "description": "Para consultas sobre nuestros productos, póngase en contacto con nosotros mediante el formulario a continuación.",
+            "keywords": "consulta, producto, soporte"
+        },
+        "fr": {
+            "title": "ThinkX | Demande de Renseignements sur les Produits",
+            "description": "Pour toute demande de renseignements sur nos produits, veuillez nous contacter via le formulaire ci-dessous.",
+            "keywords": "demande, produit, support"
+        },
+        "ru": {
+            "title": "ThinkX | Запрос о Продукции",
+            "description": "Для запросов о наших продуктах, пожалуйста, свяжитесь с нами через форму ниже.",
+            "keywords": "запрос, продукт, поддержка"
+        },
+        "ar": {
+            "title": "ThinkX | استفسار عن المنتج",
+            "description": "للاستفسارات المتعلقة بمنتجاتنا، يرجى التواصل معنا عبر النموذج أدناه.",
+            "keywords": "استفسار, منتج, دعم"
+        }
+    },
+    "metadata_inquiry_collaboration": {
+        "ja": {
+            "title": "ThinkX | お取引に関するお問い合わせ",
+            "description": "お取引に関するお問い合わせは下記のフォームからご連絡ください。",
+            "keywords": "お問い合わせ, お取引, サポート"
+        },
+        "en": {
+            "title": "ThinkX | Collaboration Inquiry",
+            "description": "For inquiries regarding partnerships or collaborations, please contact us using the form below.",
+            "keywords": "inquiries, collaboration, support"
+        },
+        "zh": {
+            "title": "THinkX | 合作咨询",
+            "description": "关于合作伙伴关系或合作的查询，请通过下面的表格与我们联系。",
+            "keywords": "咨询, 合作, 支持"
+        },
+        "es": {
+            "title": "ThinkX | Consulta de Colaboración",
+            "description": "Para consultas sobre asociaciones o colaboraciones, póngase en contacto con nosotros mediante el formulario a continuación.",
+            "keywords": "consultas, colaboración, soporte"
+        },
+        "fr": {
+            "title": "ThinkX | Demande de Collaboration",
+            "description": "Pour toute demande de partenariat ou de collaboration, veuillez nous contacter via le formulaire ci-dessous.",
+            "keywords": "demandes, collaboration, support"
+        },
+        "ru": {
+            "title": "ThinkX | Запрос о Сотрудничестве",
+            "description": "Для запросов, касающихся партнерства или сотрудничества, пожалуйста, свяжитесь с нами через форму ниже.",
+            "keywords": "запросы, сотрудничество, поддержка"
+        },
+        "ar": {
+            "title": "ThinkX | استفسار التعاون",
+            "description": "للاستفسارات المتعلقة بالشراكات أو التعاون، يرجى التواصل معنا عبر النموذج أدناه.",
+            "keywords": "استفسارات, تعاون, دعم"
+        }
+    },
+    "metadata_inquiry_others": {
+        "ja": {
+            "title": "ThinkX | その他のお問い合わせ",
+            "description": "その他のお問い合わせは下記のフォームからご連絡ください。",
+            "keywords": "お問い合わせ, その他, サポート"
+        },
+        "en": {
+            "title": "ThinkX | General Inquiries",
+            "description": "For all other inquiries, please contact us using the form below.",
+            "keywords": "inquiries, general, support"
+        },
+        "zh": {
+            "title": "THinkX | 其他咨询",
+            "description": "对于其他所有咨询，请通过以下表格与我们联系。",
+            "keywords": "咨询, 其他, 支持"
+        },
+        "es": {
+            "title": "ThinkX | Otras Consultas",
+            "description": "Para todas las demás consultas, póngase en contacto con nosotros mediante el formulario a continuación.",
+            "keywords": "consultas, general, soporte"
+        },
+        "fr": {
+            "title": "ThinkX | Autres Demandes",
+            "description": "Pour toutes autres demandes, veuillez nous contacter via le formulaire ci-dessous.",
+            "keywords": "demandes, général, support"
+        },
+        "ru": {
+            "title": "ThinkX | Другие Запросы",
+            "description": "Для всех остальных запросов, пожалуйста, свяжитесь с нами через форму ниже.",
+            "keywords": "запросы, общие, поддержка"
+        },
+        "ar": {
+            "title": "ThinkX | استفسارات عامة",
+            "description": "لجميع الاستفسارات الأخرى، يرجى التواصل معنا عبر النموذج أدناه.",
+            "keywords": "استفسارات, عامة, دعم"
+        }
+    },
+    "metadata_product_voiceos": {
+        "ja": {
+            "title": "ThinkX | Quantz ® Voice-AI OS",
+            "description": "\"実質応答\"世界最速の音声エンジンが「真の快適さ」を実現する。即座に本題(実質的な応答)を返し、「ありがとう」のような簡易的な応答テクニックを使用することなく800msの応答速度を実現。67万行の独自コードベース、高性能GPUスーパーコンピューター上で実行される、外部APIを一切使わず会話データが外出しない、最高レベルのデータセキュリティとプライバシー",
+            "keywords": "音声エンジン, Quantz Voice-AI OS, AI OS, 実質応答速度, 音声応答速度, 高性能GPU, プライバシー保護, データセキュリティ"
+        },
+        "en": {
+            "title": "ThinkX | Quantz ® Voice-AI OS",
+            "description": "Experience the world's fastest response with 'Real Response' Voice-AI OS, delivering true comfort without simplistic acknowledgments like 'thank you'. Achieves 800ms response time, runs on a high-performance GPU supercomputer, and uses a 670,000 line proprietary codebase without external APIs to ensure top-level data security and privacy.",
+            "keywords": "voice engine, AI OS, fast response, high-performance GPU, data security, privacy"
+        },
+        "zh": {
+            "title": "ThinkX | Quantz ® 语音人工智能操作系统",
+            "description": "体验全球最快的语音响应'实质响应'，在不使用像'谢谢'这样简单的回应技巧的情况下，实现真正的舒适体验。在高性能GPU超级计算机上，使用670,000行专有代码库运行，不依赖外部API，确保最高级别的数据安全和隐私。",
+            "keywords": "语音引擎, 人工智能操作系统, 快速响应, 高性能GPU, 数据安全, 隐私保护"
+        },
+        "es": {
+            "title": "ThinkX | Quantz ® OS de IA de Voz",
+            "description": "Experimente la respuesta más rápida del mundo con el sistema operativo de IA de voz 'Respuesta Real', proporcionando una comodidad auténtica sin respuestas simplistas como 'gracias'. Logra un tiempo de respuesta de 800 ms, opera sobre una supercomputadora con GPU de alto rendimiento y utiliza una base de código propietaria de 670,000 líneas sin APIs externas, asegurando la máxima seguridad de datos y privacidad.",
+            "keywords": "motor de voz, sistema operativo IA, respuesta rápida, GPU de alto rendimiento, seguridad de datos, privacidad"
+        },
+        "fr": {
+            "title": "ThinkX | Quantz ® OS de IA vocale",
+            "description": "Vivez la réponse la plus rapide du monde avec le système d'exploitation IA vocal 'Réponse Réelle', offrant un vrai confort sans recourir à des acquiescements simplistes comme 'merci'. Atteint un temps de réponse de 800 ms, fonctionne sur un superordinateur GPU haute performance, et utilise une base de code propriétaire de 670,000 lignes sans API externes pour garantir une sécurité des données et une confidentialité de haut niveau.",
+            "keywords": "moteur vocal, OS IA, réponse rapide, GPU haute performance, sécurité des données, confidentialité"
+        },
+        "ru": {
+            "title": "ThinkX | Quantz ® Голосовая ОС на базе ИИ",
+            "description": "Опыт самого быстрого в мире ответа с 'Реальным ответом' голосовой ОС на базе ИИ, обеспечивающий настоящий комфорт без упрощенных подтверждений, таких как 'спасибо'. Достигает времени ответа в 800 мс, работает на высокопроизводительном суперкомпьютере с GPU, использует собственную базу кода из 670,000 строк без внешних API для обеспечения высшего уровня безопасности данных и конфиденциальности.",
+            "keywords": "голосовой двигатель, ОС на базе ИИ, быстрый ответ, высокопроизводительный GPU, безопасность данных, конфиденциальность"
+        },
+        "ar": {
+            "title": "ThinkX | Quantz ® نظام تشغيل الذكاء الاصطناعي الصوتي",
+            "description": "اختبر أسرع استجابة في العالم مع نظام تشغيل الذكاء الاصطناعي الصوتي 'الاستجابة الحقيقية'، والذي يوفر راحة حقيقية بدون استخدام تقنيات الاستجابة البسيطة مثل 'شكراً'. يحقق زمن استجابة 800 مللي ثانية، يعمل على سوبر كمبيوتر بمعالجات GPU عالية الأداء، ويستخدم قاعدة بيانات كود خاصة تحتوي على 670,000 سطر بدون API خارجية لضمان أعلى مستويات الأمان للبيانات والخصوصية.",
+            "keywords": "محرك الصوت, نظام تشغيل الذكاء الاصطناعي, استجابة سريعة, GPU عالي الأداء, أمان البيانات, خصوصية"
+        }
+    },
+    "metadata_product_LSH": {
+        "ja": {
+            "title": "ThinkX | Latent Semantic Hyperspace (LSH)",
+            "description": "言葉から潜在嗜好を計算する基本アルゴリズム(特許取得済)。僅かな計算時間、コールドスタートなしで言葉からユーザーの嗜好や性格特性を分析するNLP機械学習基本アルゴリズム",
+            "keywords": "潜在意味空間, NLP, 特許取得技術, 機械学習, アルゴリズム, ユーザー嗜好分析"
+        },
+        "en": {
+            "title": "ThinkX | Latent Semantic Hyperspace (LSH)",
+            "description": "A foundational algorithm for computing latent preferences from language (patented). This NLP machine learning algorithm analyzes user preferences and personality traits with minimal computation time and no cold start.",
+            "keywords": "latent semantic space, NLP, patented technology, machine learning, algorithm, user preference analysis"
+        },
+        "zh": {
+            "title": "ThinkX | 潜在语义超空间 (LSH)",
+            "description": "从语言中计算潜在偏好的基础算法（已获得专利）。这个NLP机器学习算法可以在极小的计算时间内，无需冷启动，分析用户偏好和性格特征。",
+            "keywords": "潜在语义空间, NLP, 专利技术, 机器学习, 算法, 用户偏好分析"
+        },
+        "es": {
+            "title": "ThinkX | Espacio Semántico Latente (LSH)",
+            "description": "Un algoritmo fundamental para calcular preferencias latentes a partir del lenguaje (patentado). Este algoritmo de aprendizaje automático NLP analiza las preferencias del usuario y rasgos de personalidad con un tiempo de cómputo mínimo y sin arranque en frío.",
+            "keywords": "espacio semántico latente, NLP, tecnología patentada, aprendizaje automático, algoritmo, análisis de preferencias del usuario"
+        },
+        "fr": {
+            "title": "ThinkX | Hyperespace Sémantique Latent (LSH)",
+            "description": "Un algorithme fondamental pour calculer les préférences latentes à partir du langage (breveté). Cet algorithme d'apprentissage automatique NLP analyse les préférences des utilisateurs et les traits de personnalité avec un temps de calcul minimal et sans démarrage à froid.",
+            "keywords": "espace sémantique latent, NLP, technologie brevetée, apprentissage automatique, algorithme, analyse des préférences utilisateurs"
+        },
+        "ru": {
+            "title": "ThinkX | Латентное Семантическое Гиперпространство (LSH)",
+            "description": "Основной алгоритм для расчета латентных предпочтений на основе языка (запатентован). Этот алгоритм машинного обучения NLP анализирует предпочтения пользователей и черты личности с минимальным временем вычисления и без холодного старта.",
+            "keywords": "латентное семантическое пространство, NLP, запатентованная технология, машинное обучение, алгоритм, анализ предпочтений пользователя"
+        },
+        "ar": {
+            "title": "ThinkX | المساحة الدلالية الكامنة (LSH)",
+            "description": "خوارزمية أساسية لحساب التفضيلات الكامنة من اللغة (مُسجلة ببراءة اختراع). يقوم هذا الخوارزم لتعلم الآلة NLP بتحليل تفضيلات المستخدم وصفات الشخصية بأقل وقت حساب وبدون بدء بارد.",
+            "keywords": "المساحة الدلالية الكامنة, NLP, تقنية مسجلة ببراءة, تعلم آلي, خوارزمية, تحليل تفضيلات المستخدم"
+        }
+    },
+    "metadata_product_CITYWALK": {
+        "ja": {
+            "title": "ThinkX | CITYWALK ®",
+            "description": "長崎市で大規模実証実験を行い月間2000回のダウンロードを記録したパーソナライズド地理空間音声ガイドプラットフォーム",
+            "keywords": ""
+        },
+        "en": {
+            "title": "ThinkX | CITYWALK ®",
+            "description": "A personalized geospatial voice guide platform that recorded 2,000 downloads per month during a large-scale demonstration in Nagasaki City.",
+            "keywords": "geospatial voice guide, personalized, large-scale demonstration, Nagasaki City, CITYWALK"
+        },
+        "zh": {
+            "title": "ThinkX | CITYWALK ®",
+            "description": "在长崎市进行的大规模实证实验中，每月记录2000次下载的个性化地理空间语音导航平台。",
+            "keywords": "地理空间语音导航, 个性化, 大规模实证, 长崎市, CITYWALK"
+        },
+        "es": {
+            "title": "ThinkX | CITYWALK ®",
+            "description": "Una plataforma de guía de voz geoespacial personalizada que registró 2,000 descargas mensuales durante una demostración a gran escala en la ciudad de Nagasaki.",
+            "keywords": "guía de voz geoespacial, personalizada, demostración a gran escala, ciudad de Nagasaki, CITYWALK"
+        },
+        "fr": {
+            "title": "ThinkX | CITYWALK ®",
+            "description": "Une plateforme de guide vocal géospatial personnalisé qui a enregistré 2,000 téléchargements par mois lors d'une démonstration à grande échelle dans la ville de Nagasaki.",
+            "keywords": "guide vocal géospatial, personnalisé, démonstration à grande échelle, ville de Nagasaki, CITYWALK"
+        },
+        "ru": {
+            "title": "ThinkX | CITYWALK ®",
+            "description": "Персонализированная платформа геопространственного голосового гида, которая зарегистрировала 2000 загрузок в месяц во время крупномасштабной демонстрации в городе Нагасаки.",
+            "keywords": "геопространственный голосовой гид, персонализированный, крупномасштабная демонстрация, город Нагасаки, CITYWALK"
+        },
+        "ar": {
+            "title": "ThinkX | CITYWALK ®",
+            "description": "منصة دليل صوتي جغرافي مُخصص سجلت 2000 تحميل شهرياً خلال عرض واسع النطاق في مدينة ناغازاكي.",
+            "keywords": "دليل صوتي جغرافي, مُخصص, عرض واسع النطاق, مدينة ناغازاكي, CITYWALK"
+        }
+    },
+    "metadata_apply_regular": {
+        "ja": {
+            "title": "ThinkX | 正社員へのご応募",
+            "description": "ThinkXでは以下の職種でのスタッフを随時募集しています。・研究開発部門スタッフ・マーケティング部門スタッフ・カスタマー対応部門スタッフ・品質管理部門スタッフ・営業部門スタッフ・経営スタッフ",
+            "keywords": "ThinkX, 正社員募集, 研究開発, エンジニア, 開発者, マーケティング, カスタマー対応, 品質管理, 営業, 経営, 採用情報, スタッフ募集"
+
+        },
+        "en": {
+            "title": "ThinkX | Apply for Full-Time Positions",
+            "description": "ThinkX is continuously recruiting for the following positions: Research and Development Staff, Marketing Staff, Customer Support Staff, Quality Control Staff, Sales Staff, and Management Staff.",
+            "keywords": "ThinkX, full-time positions, job openings, research and development, engineers, developers, marketing, customer support, quality control, sales, management, recruitment, staff recruitment"
+        },
+        "zh": {
+            "title": "ThinkX | 全职职位申请",
+            "description": "ThinkX持续招聘以下职位的员工：研发部员工、市场部员工、客户服务部员工、质量控制部员工、销售部员工和管理部员工。",
+            "keywords": "ThinkX, 全职招聘, 职位空缺, 研发, 工程师, 开发人员, 市场营销, 客户支持, 质量控制, 销售, 管理, 招聘, 员工招聘"
+        },
+        "es": {
+            "title": "ThinkX | Solicitudes para Puestos a Tiempo Completo",
+            "description": "ThinkX está reclutando continuamente para los siguientes puestos: personal de Investigación y Desarrollo, personal de Marketing, personal de Atención al Cliente, personal de Control de Calidad, personal de Ventas y personal de Gestión.",
+            "keywords": "ThinkX, puestos a tiempo completo, ofertas de trabajo, investigación y desarrollo, ingenieros, desarrolladores, marketing, soporte al cliente, control de calidad, ventas, gestión, reclutamiento, selección de personal"
+        },
+        "fr": {
+            "title": "ThinkX | Postuler pour des Postes à Temps Plein",
+            "description": "ThinkX recrute continuellement pour les postes suivants : Personnel de Recherche et Développement, Personnel Marketing, Personnel de Support Client, Personnel de Contrôle Qualité, Personnel Commercial, et Personnel de Gestion.",
+            "keywords": "ThinkX, postes à temps plein, opportunités d'emploi, recherche et développement, ingénieurs, développeurs, marketing, support client, contrôle qualité, ventes, gestion, recrutement, recrutement de personnel"
+        },
+        "ru": {
+            "title": "ThinkX | Вакансии на полную ставку",
+            "description": "ThinkX постоянно ищет сотрудников на следующие должности: сотрудники отдела исследований и разработок, маркетинговый отдел, отдел обслуживания клиентов, отдел контроля качества, отдел продаж, управленческий персонал.",
+            "keywords": "ThinkX, вакансии на полную ставку, вакансии, исследования и разработка, инженеры, разработчики, маркетинг, поддержка клиентов, контроль качества, продажи, управление, набор персонала, рекрутинг"
+        },
+        "ar": {
+            "title": "ThinkX | التقديم للوظائف الدائمة",
+            "description": "تقوم ThinkX بتوظيف مستمر للمناصب التالية: موظفو البحث والتطوير، موظفو التسويق، موظفو دعم العملاء، موظفو مراقبة الجودة، موظفو المبيعات، وموظفو الإدارة.",
+            "keywords": "ThinkX, وظائف دائمة, فرص عمل, بحث وتطوير, مهندسون, مطورون, تسويق, دعم العملاء, مراقبة الجودة, مبيعات, إدارة, توظيف, توظيف الموظفين"
+        }
+    },
+    "metadata_apply_collaborator": {
+        "ja": {
+            "title": "ThinkX | 業務委託へのご応募",
+            "description": "ThinkXでは以下の職種でのスタッフを随時募集しています。・研究開発部門スタッフ・マーケティング部門スタッフ・カスタマー対応部門スタッフ・品質管理部門スタッフ・営業部門スタッフ・経営スタッフ",
+            "keywords": "ThinkX, 業務委託募集, 研究開発, エンジニア, 開発者, マーケティング, カスタマー対応, 品質管理, 営業, 経営, 採用情報, スタッフ募集"
+        },
+        "en": {
+            "title": "ThinkX | Apply for Contractual Positions",
+            "description": "ThinkX is continuously recruiting for the following contractual positions: Research and Development Staff, Marketing Staff, Customer Support Staff, Quality Control Staff, Sales Staff, and Management Staff.",
+            "keywords": "ThinkX, contractual positions, job openings, research and development, contractors, marketing, customer support, quality control, sales, management, recruitment, staff recruitment"
+        },
+        "zh": {
+            "title": "ThinkX | 合同职位申请",
+            "description": "ThinkX持续招聘以下合同职位的员工：研发部员工、市场部员工、客户服务部员工、质量控制部员工、销售部员工和管理部员工。",
+            "keywords": "ThinkX, 合同职位, 职位空缺, 研发, 合同工, 市场营销, 客户支持, 质量控制, 销售, 管理, 招聘, 员工招聘"
+        },
+        "es": {
+            "title": "ThinkX | Solicitudes para Puestos Contractuales",
+            "description": "ThinkX está reclutando continuamente para los siguientes puestos contractuales: personal de Investigación y Desarrollo, personal de Marketing, personal de Atención al Cliente, personal de Control de Calidad, personal de Ventas y personal de Gestión.",
+            "keywords": "ThinkX, puestos contractuales, ofertas de trabajo, investigación y desarrollo, contratistas, marketing, soporte al cliente, control de calidad, ventas, gestión, reclutamiento, selección de personal"
+        },
+        "fr": {
+            "title": "ThinkX | Postuler pour des Postes Contractuels",
+            "description": "ThinkX recrute continuellement pour les postes contractuels suivants : Personnel de Recherche et Développement, Personnel Marketing, Personnel de Support Client, Personnel de Contrôle Qualité, Personnel Commercial, et Personnel de Gestion.",
+            "keywords": "ThinkX, postes contractuels, opportunités d'emploi, recherche et développement, contractuels, marketing, support client, contrôle qualité, ventes, gestion, recrutement, recrutement de personnel"
+        },
+        "ru": {
+            "title": "ThinkX | Вакансии на контрактной основе",
+            "description": "ThinkX постоянно ищет сотрудников на следующие контрактные должности: сотрудники отдела исследований и разработок, маркетинговый отдел, отдел обслуживания клиентов, отдел контроля качества, отдел продаж, управленческий персонал.",
+            "keywords": "ThinkX, контрактные позиции, вакансии, исследования и разработка, контрактники, маркетинг, поддержка клиентов, контроль качества, продажи, управление, набор персонала, рекрутинг"
+        },
+        "ar": {
+            "title": "ThinkX | التقديم للوظائف التعاقدية",
+            "description": "تقوم ThinkX بتوظيف مستمر للمناصب التعاقدية التالية: موظفو البحث والتطوير، موظفو التسويق، موظفو دعم العملاء، موظفو مراقبة الجودة، موظفو المبيعات، وموظفو الإدارة.",
+            "keywords": "ThinkX, وظائف تعاقدية, فرص عمل, بحث وتطوير, متعاقدون, تسويق, دعم العملاء, مراقبة الجودة, مبيعات, إدارة, توظيف, توظيف الموظفين"
+        }
+    },
+    "metadata_apply_intern": {
+        "ja": {
+            "title": "ThinkX | インターンへのご応募",
+            "description": "ThinkXでは以下の職種でのスタッフを随時募集しています。・研究開発部門スタッフ・マーケティング部門スタッフ・カスタマー対応部門スタッフ・品質管理部門スタッフ・営業部門スタッフ・経営スタッフ",
+            "keywords": "ThinkX, インターンシップ, 長期インターン, インターン, 研究開発, エンジニア, 開発者, 採用情報, スタッフ募集"
+        },
+        "en": {
+            "title": "ThinkX | Apply for Internships",
+            "description": "ThinkX is continuously recruiting for the following positions as interns: Research and Development Staff, Marketing Staff, Customer Support Staff, Quality Control Staff, Sales Staff, and Management Staff.",
+            "keywords": "ThinkX, internships, long-term intern, intern, research and development, engineers, developers, recruitment, staff recruitment"
+        },
+        "zh": {
+            "title": "ThinkX | 实习申请",
+            "description": "ThinkX持续招聘以下实习职位的员工：研发部员工、市场部员工、客户服务部员工、质量控制部员工、销售部员工和管理部员工。",
+            "keywords": "ThinkX, 实习, 长期实习, 实习生, 研发, 工程师, 开发人员, 招聘, 员工招聘"
+        },
+        "es": {
+            "title": "ThinkX | Solicitudes para Prácticas",
+            "description": "ThinkX está reclutando continuamente para los siguientes puestos de prácticas: personal de Investigación y Desarrollo, personal de Marketing, personal de Atención al Cliente, personal de Control de Calidad, personal de Ventas y personal de Gestión.",
+            "keywords": "ThinkX, prácticas, prácticas a largo plazo, internado, investigación y desarrollo, ingenieros, desarrolladores, reclutamiento, selección de personal"
+        },
+        "fr": {
+            "title": "ThinkX | Postuler pour des Stages",
+            "description": "ThinkX recrute continuellement pour les postes de stagiaires suivants : Personnel de Recherche et Développement, Personnel Marketing, Personnel de Support Client, Personnel de Contrôle Qualité, Personnel Commercial, et Personnel de Gestion.",
+            "keywords": "ThinkX, stages, stage à long terme, stagiaire, recherche et développement, ingénieurs, développeurs, recrutement, recrutement de personnel"
+        },
+        "ru": {
+            "title": "ThinkX | Подача заявки на стажировку",
+            "description": "ThinkX постоянно ищет стажеров на следующие должности: сотрудники отдела исследований и разработок, маркетинговый отдел, отдел обслуживания клиентов, отдел контроля качества, отдел продаж, управленческий персонал.",
+            "keywords": "ThinkX, стажировки, долгосрочная стажировка, стажер, исследования и разработка, инженеры, разработчики, набор персонала, рекрутинг"
+        },
+        "ar": {
+            "title": "ThinkX | التقديم للتدريبات",
+            "description": "تقوم ThinkX بتوظيف مستمر للمناصب التالية كمتدربين: موظفو البحث والتطوير، موظفو التسويق، موظفو دعم العملاء، موظفو مراقبة الجودة، موظفو المبيعات، وموظفو الإدارة.",
+            "keywords": "ThinkX, تدريبات, تدريب طويل الأمد, متدرب, بحث وتطوير, مهندسون, مطورون, توظيف, توظيف الموظفين"
+        }
+    },
+    "metadata_ir_investor": {
+        "ja": {
+            "title": "ThinkX | 投資家向け情報",
+            "description": "投資に関する情報をご希望の方は下記のフォームよりご連絡ください。",
+            "keywords": "ThinkX, 投資, IR情報"
+        },
+        "en": {
+            "title": "ThinkX | Investor Relations",
+            "description": "For information related to investment opportunities, please contact us through the form below.",
+            "keywords": "ThinkX, investment, investor relations, IR"
+        },
+        "zh": {
+            "title": "ThinkX | 投资者关系",
+            "description": "如需投资相关信息，请通过下方表格与我们联系。",
+            "keywords": "ThinkX, 投资, 投资者关系, IR"
+        },
+        "es": {
+            "title": "ThinkX | Relaciones con Inversionistas",
+            "description": "Para información relacionada con oportunidades de inversión, por favor contáctenos a través del formulario a continuación.",
+            "keywords": "ThinkX, inversión, relaciones con inversionistas, IR"
+        },
+        "fr": {
+            "title": "ThinkX | Relations Investisseurs",
+            "description": "Pour des informations relatives aux opportunités d'investissement, veuillez nous contacter via le formulaire ci-dessous.",
+            "keywords": "ThinkX, investissement, relations investisseurs, IR"
+        },
+        "ru": {
+            "title": "ThinkX | Инвесторы",
+            "description": "Для получения информации, связанной с инвестиционными возможностями, пожалуйста, свяжитесь с нами через форму ниже.",
+            "keywords": "ThinkX, инвестиции, отношения с инвесторами, IR"
+        },
+        "ar": {
+            "title": "ThinkX | علاقات المستثمرين",
+            "description": "للحصول على معلومات متعلقة بفرص الاستثمار، يرجى التواصل معنا من خلال النموذج أدناه.",
+            "keywords": "ThinkX, استثمار, علاقات المستثمرين, IR"
+        }
+    }
+}

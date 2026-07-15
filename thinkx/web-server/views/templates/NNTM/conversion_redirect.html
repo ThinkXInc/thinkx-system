@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Download Conversion Tracking</title>
+  <!-- Add any meta tags you wish, e.g.: -->
+  <meta name="description" content="Conversion page for NNTM App download.">
+  <meta name="robots" content="noindex, nofollow">
+ <script>
+    // Redirect as soon as the DOM is ready, or with a short delay
+    document.addEventListener('DOMContentLoaded', function() {
+      // Fire the conversion event
+      //gtag('event', 'conversion', {
+      //  send_to: 'AW-CONVERSION_ID/Conversion_Label'
+      //});
+      // If you want a near-instant redirect, use setTimeout(redirect, 0) or 100ms
+      setTimeout(function(){
+        window.location.replace("https://apps.apple.com/jp/app/nntm-100-natural-brown-noise/id6742738719"); 
+      }, 1000);
+    });
+  </script> 
+</head>
+<body>
+{#<p>{{ locale_dict["redirecting"][lang] }}</p>#}
+<p>Redirecting to the App Store…</p>
+</body>
+</html>

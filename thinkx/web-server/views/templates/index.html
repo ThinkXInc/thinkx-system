@@ -1,0 +1,284 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+<div id="top" class="main-container">
+  {% include 'common/header.html' %}
+
+    <div class="top-main-content main-content">
+      <img class="top-view-arrow" src="/img/down-arrow-deep-blue.png" />
+
+      <section class="top-view">
+        <div class="top-view-message">
+          <img class="logo" src="/img/logo-icon.png"/>
+          <div class="message-container">
+            <div class="message">{{ locale_dict['top_message'][lang] }}</div>
+            {#
+            <p class="sub-message">アイデンティティを理解し、機会を提供する、ニッチ生態系システムの実現</p>
+            #}
+            {#
+            <p class="sub-message">アイデンティティを理解し、機会を提供する、「創造社会」の実現</p>
+            #}
+            {#
+            <p class="sub-message">全ての個が自己実現を果たす「創造社会」の実現</p>
+            #}
+            {#
+            <p class="sub-message">科学と芸術の融合。全ての個が自己実現を果たす「創造社会」へ。</p>
+            #}
+            <p class="sub-message">{{ locale_dict['top_sub_message'][lang]  | replace('\n', '<br>') | safe  }}</p>
+            {#
+            <p class="sub-message">全ての個が自己実現を果たす「創造社会」の実現</p>
+            #}
+            <a class="latest" href="/{{ lang }}/blognews">{{ locale_dict['top_latest_news'][lang]}}</a>
+          </div>
+        </div>
+      </div>
+
+      {#
+      <section class="main-message">
+        <h4>人間の心を理解し、機会を提供する</h4>
+      </section>
+      #}
+      <!-- vision-section -->
+      <section id="vision-section" class="vision-section">
+        <video class="vision-section-video" autoplay muted loop playsinline webkit-playsinline>
+          <source src="/video/Sitetop2025_7.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <div class="vision-section-content">
+          <h2 class="vision-section-title">{{ locale_dict['top_vision_title'][lang] }}</h2>
+          <p class="vision-section-description">{{ locale_dict['top_vision_description'][lang] }}</p>
+          <button class="vision-section-learn-more">
+            <a target="_blank" href="/video/VNMachineCloudIntro1.1.mp4"><span>{{ locale_dict['top_vision_learn_more'][lang] }}</span></a>
+          </button>
+        </div>
+      </section>
+
+      <section id="products-section" class="products-section">
+        <ul class="products featured-products">
+          <li class="product voiceOS" data-product="voice-AI-OS">
+            <div class="main-container">
+              <div class="text">
+                {#<h2 class="name">Quantz<sup>®</sup> Voice-AI OS</h2>#}
+                <h2 class="name">Programmable Multi-stage Job Realtime Agent</h2>
+                <h3 class="copy">{{ locale_dict["top_products_voiceos_copy"][lang] }}</h3>
+                <p class="description">{{ locale_dict["top_products_voiceos_desc"][lang].format("<sup>*1</sup>", "<sup>*2</sup>") | safe }}</p>
+                <a href="/{{ lang }}/products/Quantz-Voice-AI-OS">
+                  <button class="more">{{ locale_dict["top_products_more"][lang] }}</button>
+                </a>
+                <small class="annotation"><sup>*1</sup> {{ locale_dict["top_products_voiceos_annotation_1"][lang] }}</small>
+                <small class="annotation"><sup>*2</sup> {{ locale_dict["top_products_voiceos_annotation_2"][lang] }}</small>
+              </div>
+              <div class="video-container">
+                <video id="video-voice-AI-OS" muted loop playsinline webkit-playsinline>
+                  <source src="/video/QuantzVoiceAIOS_25Feb_B.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+            </div>
+
+            <div class="sub-container">
+              <!-- NEW IMAGES CONTAINER -->
+              <div class="images-container">
+                {% if lang == "ja" %}
+                  <img class="realtime_technology" 
+                       src="/img/top/thinkx_realtime_technology_JA_10.png" 
+                       alt="Real-time Technology" />
+                  {#<img class="cluster"
+                       src="/img/top/thinkx_cluster_JA_2.png" 
+                       alt="Cluster" />#}
+                {% else %}
+                  <img class="realtime_technology" 
+                       src="/img/top/thinkx_realtime_technology_9.png" 
+                       alt="Real-time Technology" />
+                  {#<img class="cluster"
+                       src="/img/top/thinkx_cluster_1.png" 
+                       alt="Cluster" />#}
+                {% endif %}
+              </div>
+            </div>
+          </li>
+
+          <li class="product quantz" data-product="quantz">
+            <div class="text">
+              <h2 class="name">Quantz<sup>®</sup> / Quantz<sup>®</sup> Interview</h2>
+              <h3 class="copy">{{ locale_dict["top_products_quantz_copy"][lang] }}</h3>
+              <p class="description">{{ locale_dict["top_products_quantz_desc"][lang] }}</p>
+              <a href="https://quantz.thinkxinc.com/{{lang}}" target="_blank"><button class="more">{{ locale_dict["top_products_more"][lang] }}</button></a>
+            </div>
+            <div class="video-container">
+              <video id="video-quantz" muted loop playsinline webkit-playsinline>
+                <source src="/video/QuantzPV_2025Feb.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </li>
+        </ul>
+
+        <ul class="products reserves">
+          <li class="product" data-product="CITYWALK">
+            <div class="text">
+              <div class="wrapper">
+                <h2 class="name">CITYWALK<sup>®</sup></h2><span class="version2">{{ locale_dict["top_products_version2"][lang] }}</span>
+              </div>
+              <h3 class="copy">Talk with where you are</h3>
+              <p class="description">{{ locale_dict["top_products_citywalk_desc"][lang] }}</p>
+              <button class="more">{{ locale_dict["top_products_more"][lang] }}</button>
+            </div>
+            <div class="video-container middle">
+              <video id="video-CITYWALK" muted loop playsinline webkit-playsinline>
+                <source src="/video/CITYWALKPV.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </li>
+          <li class="product" data-product="ILRSA">
+            <div class="text">
+              <div class="wrapper">
+                <h2 class="name">ILRSA</h2><span class="version2">{{ locale_dict["top_products_version2"][lang] }}</span>
+              </div>
+              <h3 class="copy">{{ locale_dict["top_products_ILRSA_copy"][lang] }}</h3>
+              <p class="description">{{ locale_dict["top_products_ILRSA_desc"][lang] }}</p>
+              <button class="more">{{ locale_dict["top_products_more"][lang] }}</button>
+            </div>
+            <div class="video-container middle">
+              <video id="video-ILRSA" muted loop playsinline webkit-playsinline>
+                <source src="/video/ILRSA_highlight2.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </li>
+        </ul>
+
+        <ul class="products technology">
+         <li class="product" data-product="LSH">
+            <div class="text">
+              <h2 class="name">Latent Semantic Hyperspace (LSH)</h2>
+              <h3 class="copy">{{ locale_dict["top_products_LSH_copy"][lang] }}</h3>
+              <p class="description">{{ locale_dict["top_products_LSH_desc"][lang] }}</p>
+              <a href="/products/LSH" target="_blank"><button class="more">{{ locale_dict["top_products_more"][lang] }}</button></a>
+              <a href="/documents/AAAI2022.pdf" target="_blank"><button class="more paper">{{ locale_dict["top_products_paper"][lang] }}</button></a>
+            </div>
+            {#
+            <div id="image-LSH" class="image-container middle">
+              <img
+              class="LSH_image"
+              src="/img/top/LSH5.png"
+              alt="Latent Semantic Hyperspace (LSH) Algorithm"
+            />
+            </div>
+            #}
+
+          </li>
+          <li class="product" data-product="JPTextParser">
+            <div class="text">
+              <h2 class="name">JPTextParser</h2>
+              <h3 class="copy">{{ locale_dict["top_products_JPTextParser_copy"][lang] }}</h3>
+              <p class="description">{{ locale_dict["top_products_JPTextParser_desc"][lang] }}</p>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <section id="message-section" class="message-section">
+
+
+    <h2 class="title">{{ locale_dict["top_philosophy_title"][lang] }}</h2>
+    <h3 class="subtitle">{{ locale_dict["top_philosophy_subtitle"][lang] }}</h3>
+
+      <article class="message-article">{{ locale_dict["message_philosophy"][lang] | replace('\n', '<br>') | safe }}
+{#
+科学の理論は、技術の発達と日進月歩だった。
+量子力学の発見のためには、光を制御する技術が不可欠であった。人工知能のための理論には、テラフロプスを超える計算機が不可欠であった。
+
+当社の社名は、創業者が学生の頃に読んでいたある教科書の、「科学計測とは第六感である」、という言葉から、<strong>宇宙で唯一の計算普遍性をもつコンストラクター</strong>といえる、ヒトの脳だけがもつ、<strong>＜超認知的知性＞を量化する「第六感の定量化」の概念</strong>に由来する。
+
+この宇宙全体にとってのヒトの存在意義は脳を進化させることであり、その唯一の計算能力によって宇宙全体の進化に寄与することであると仮定するならば、
+
+ヒトの作り出すある種の<strong>計算複雑性をもった＜芸術＞は、クオリアを人工的に生成する知的産物</strong>として、21世紀中には自然科学的計測の対象となることがごく自然なパラダイムとなると捉えている。
+
+そして21世紀の前半に凡庸な知性を模倣し尽くした機械知能は、2030年代にはすでにこうした＜超認知的知性＞の模倣のための学習段階に入るだろう。
+別の言い方をすれば、<strong>凡庸な知性を模倣尽くしてもなお模倣できない＜超認知的知性＞に人間の存在意義がかかっている</strong>と捉えている。
+
+そこで鍵となるのは、量子論的還元論へのさらなる理解による<strong>計算普遍性それ自身の拡張と、計算機上での物理法則とも言えるソフトウェア技術=アルゴリズム</strong>と捉えている。
+
+21世紀に入り、人類は自然界が既に完成させている自律的な計算システム、すなわち計算機とアルゴリズム、またはより身近な言い方をすれば、物理法則に基づく生命現象とそのエコシステム、を人工的に作り出そうとしてきた。
+
+コンピュータの発展は、文明の自律的発展と言う工学的な貢献のみならず、私たちの<strong>自然解釈、価値観の変化</strong>をもたらす。
+
+そのコペルニクス的なエポックメイクが私たちの呼ぶ<strong>＜科学と芸術の融合＞</strong>である。すなわち数理論理学者クリーネによる次の単純な式、超代数、ハイパーアリスメティックの肩に乗った\( X \)を人間という存在、あるいは人間のもつ<strong>＜超認知的知性＞</strong>であることを主張している。
+
+<p style="font-size: 51px;">\[ \mathcal{O}^X \]</p>
+
+平たく言うならば、<strong>コンピューターすなわち機械文明はこの先我々人間の＜芸術＞によって無限の進化をする</strong>。そのことが我々<strong>人間が宇宙に存在する意味</strong>であり、また<strong>＜芸術＞の本質的命題</strong>であったことを主張している。
+#}
+</article>
+
+
+        <h2 class="title">{{ locale_dict["top_message_title"][lang] }}</h2>
+        <h3 class="subtitle">{{ locale_dict["top_message_subtitle"][lang] }}</h3>
+
+        <article class="message-article">{{ locale_dict["message_mission"][lang] }}
+{#
+西洋的知は対象を分けることで構築されてきた。
+それでもなお、10万語の文豪の生み出すクオリアも、
+一本の旋律のサブドミナントの深さが生み出すクオリアも、計算対象とされることはない。
+
+人は真の幸福と自己実現のために「道」を必要とする。
+
+「道」はあなたを幸福にする。
+あなたと他者を分けることによって。
+
+同時に「道」はあなたを孤独にする。
+あなたと他者を分ける、その必然的な結果として。
+
+あなたはあなただけの「道」を追求し、唯一の存在となるとき、
+幸福は最大化され、同時に他者と隔てられる。
+
+個のアイデンティティのもつ複雑性に対する計算アプローチは未だ途上であるために、
+インターネットはマスメディアの時代から本質的に大きく変わっていないと私たちは考える。
+#}
+{#
+物理的限界によって閉じられた個を、
+インターネットというハイウェイはどこへも連れて行くことはない。
+
+自己を追求してもなお、人が孤独にならない方法があるだろうか。
+
+人々が創造性と才能を発揮する道を深く追求し、他者と自己を差別化し、それでも尚孤独に陥らないどころか多様な出会いと機会を提供される社会の実現、そのためのソフトウェア生態系
+#}
+
+{#
+生態系ニッチのソフトウェア的実現
+
+全ての関係性は他者理解から始まる。他者=世界のあらゆる造物。
+
+新時代の「創造社会」では、生産コストの劇的な低下により、
+現代より遥かに多くの人が「創造者」となる。
+
+全ての個が自己実現を果たす創造社会の実現
+= 人々が創造性を発揮する道を深く追求し、表現し、他者と自己を差別化し、
+それでも尚孤独に陥らないどころか多様な出会いと機会を提供される社会の実現
+
+私たちは、あなたがどれだけ他者と違っていても、そのことを理解し、機会と出会いを提供するソフトウェア生態系を作ることを使命としています。
+
+#}
+        </article>
+
+      </section>
+  </div>
+
+  {% include 'common/footer.html' %}
+</div>
+
+<script src="/js/top.js"></script>
+
+{% endblock %}
+
+{% block foot %}
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+{% endblock %}

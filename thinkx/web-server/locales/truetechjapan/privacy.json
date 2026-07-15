@@ -1,0 +1,110 @@
+{
+  "privacy_policy": {
+    "page_title": {
+      "en": "Privacy Policy",
+      "ja": "プライバシーポリシー"
+    },
+    "page_subtitle": {
+      "en": "True Tech Association Japan – Best Technology Startup 100",
+      "ja": "True Tech Association Japan — Best Technology Startup 100"
+    },
+    "last_updated": {
+      "en": "Last updated: 9 July 2025",
+      "ja": "最終更新日：2025年7月9日"
+    },
+    "intro": {
+      "en": "True Tech Association Japan (the “Association”, “we”, “our”) operates the “Best Technology Startup 100” website and associated digital services.\nThis policy explains how we collect, use and protect your personal information.",
+      "ja": "True Tech Association Japan（以下「当団体」）は「Best Technology Startup 100」ウェブサイトおよび関連デジタルサービスを運営しています。\n本ポリシーでは、当団体が取得する個人情報の取扱いについて説明します。"
+    },
+
+    "section_1_title": { "en": "1. Who We Are", "ja": "1. 当団体について" },
+    "section_1_body": {
+      "en": "We are a non‑profit body that evaluates and recognises privately‑held technology start‑ups developing proprietary technologies. Our registered office is located in Tokyo, Japan.",
+      "ja": "当団体は、独自技術を開発する未上場テクノロジースタートアップを評価・表彰する非営利団体です。本部は日本・東京都に所在します。"
+    },
+
+    "section_2_title": { "en": "2. Personal Information We Handle", "ja": "2. 取扱う個人情報" },
+    "section_2_body": {
+      "en": "Personal Information includes your name, contact details, professional profile, nomination materials, payment identifiers and technical metadata such as IP address and cookies. \nWhen a handling fee or optional services are paid we may receive limited transaction data from the payment processor.",
+      "ja": "個人情報には、氏名・連絡先・職務情報・ノミネーション資料・決済識別子・IPアドレスやCookie等の技術メタデータが含まれます。 \n手数料やオプションサービスをお支払いいただく際、決済事業者から取引情報を受領することがあります。"
+    },
+
+    "section_3_title": { "en": "3. Legal Compliance", "ja": "3. 法令遵守" },
+    "section_3_body": {
+      "en": "We comply with the Act on the Protection of Personal Information of Japan (APPI) and—where applicable—the EU GDPR and other local regulations.",
+      "ja": "当団体は、個人情報保護法（APPI）および適用される場合はEU GDPRなどの法令・ガイドラインを遵守します。"
+    },
+
+    "section_4_title": { "en": "4. How We Collect Personal Information", "ja": "4. 個人情報の取得方法" },
+    "section_4_body": {
+      "en": "Information is obtained through self‑nomination forms, third‑party recommendations, direct nomination research, payment processors and cookies/analytics generated when you visit the site.",
+      "ja": "個人情報は、自薦フォーム、他薦、当団体による直接指名調査、決済事業者、およびサイト訪問時に生成されるCookie・解析タグなどを通じて取得します。"
+    },
+
+    "section_5_title": { "en": "5. Purposes of Use", "ja": "5. 利用目的" },
+    "section_5_body": {
+      "en": "We use data to: (a) evaluate award eligibility; (b) communicate with applicants, judges and recommenders; (c) publish award results; (d) issue badges, certificates, trophies and manage related licences; (e) process handling fees and maintain accounting records; (f) improve our services; (g) respond to inquiries; and (h) ensure security and legal compliance.",
+      "ja": "取得した個人情報は、(a) アワード審査、(b) 応募者・審査員等との連絡、(c) 受賞結果の公表、(d) 認定バッジ・証書・トロフィーの発行およびライセンス管理、(e) 手数料の処理と会計記録の維持、(f) サービス改善、(g) お問い合わせ対応、(h) セキュリティ確保および法令遵守のために利用します。"
+    },
+
+    "section_6_title": { "en": "6. Sensitive Information", "ja": "6. 要配慮個人情報" },
+    "section_6_body": {
+      "en": "We do not intentionally collect data revealing race, religion, health or other special categories unless required by law or with explicit consent.",
+      "ja": "法令に基づく場合または明示的同意がある場合を除き、人種・信条・健康状態などの要配慮個人情報は取得しません。"
+    },
+
+    "section_7_title": { "en": "7. Cookies & Analytics", "ja": "7. Cookie・解析ツール" },
+    "section_7_body": {
+      "en": "Essential cookies maintain site functionality. Analytics cookies (e.g., Google Analytics) measure aggregated traffic. You may disable non‑essential cookies in your browser.",
+      "ja": "サイト機能維持のための必須Cookieを使用しています。また、Google Analytics等によるアクセス解析Cookieを設置しています。非必須Cookieはブラウザ設定で無効化できます。"
+    },
+
+    "section_8_title": { "en": "8. Provision to Third Parties", "ja": "8. 第三者提供" },
+    "section_8_body": {
+      "en": "We never sell personal data. We share it only with judges, vetted service providers, legal authorities or a successor organisation, each bound by confidentiality and data‑protection obligations.",
+      "ja": "当団体は個人情報を販売しません。守秘義務を負う審査員・委託先、法令当局、または事業承継先に限定して提供します。"
+    },
+
+    "section_9_title": { "en": "9. Cross‑border Transfers", "ja": "9. 国外移転" },
+    "section_9_body": {
+      "en": "When data are stored or processed outside Japan, we use safeguards consistent with APPI and, where applicable, GDPR Standard Contractual Clauses.",
+      "ja": "データが日本国外で処理・保存される場合、APPIおよび必要に応じGDPRの標準契約条項等に準拠した保護措置を講じます。"
+    },
+
+    "section_10_title": { "en": "10. Security Measures", "ja": "10. 安全管理措置" },
+    "section_10_body": {
+      "en": "Safeguards include a designated Data Protection Officer, role‑based access control, encryption, staff training and regular vulnerability assessments.",
+      "ja": "安全管理措置として、個人情報保護管理者の設置、権限管理、暗号化、従業員教育、定期的な脆弱性診断などを実施します。"
+    },
+
+    "section_11_title": { "en": "11. Data Retention", "ja": "11. 保有期間" },
+    "section_11_body": {
+      "en": "We retain personal data only as long as necessary for the purposes stated or to meet statutory obligations, then securely delete or anonymise it.",
+      "ja": "個人情報は利用目的達成または法定保存期間終了後、速やかに安全な方法で削除または匿名化します。"
+    },
+
+    "section_12_title": { "en": "12. Your Rights", "ja": "12. 保有個人情報に関する権利" },
+    "section_12_body": {
+      "en": "You may request notification of use, access, correction, deletion, suspension or disclosure of transfer logs. Identity verification is required.",
+      "ja": "本人または代理人は、利用目的の通知、開示、訂正、削除、利用停止、第三者提供の停止、提供記録の開示を請求できます（本人確認が必要です）。"
+    },
+
+    "section_13_title": { "en": "13. Children", "ja": "13. 未成年者" },
+    "section_13_body": {
+      "en": "The site is not directed to children under 16. We do not knowingly collect data from minors without parental consent.",
+      "ja": "本サイトは16歳未満を対象としておらず、保護者の同意なく未成年者から個人情報を取得しません。"
+    },
+
+    "section_14_title": { "en": "14. Contact Information", "ja": "14. お問い合わせ窓口" },
+    "section_14_body": {
+      "en": "Data Protection Manager: True Tech Association Japan, 7‑6‑45‑113 Akasaka, Minato‑ku, Tokyo 107‑0052, Japan. E‑mail: support{at}truetechjapan.com",
+      "ja": "個人情報保護管理者：True Tech Association Japan\n〒107‑0052 東京都港区赤坂7‑6‑45‑113\nE‑mail：support{at}truetechjapan.com"
+    },
+
+    "section_15_title": { "en": "15. Changes to This Policy", "ja": "15. プライバシーポリシーの改定" },
+    "section_15_body": {
+      "en": "We may update this Privacy Policy periodically. Significant changes will be announced on the website together with the new effective date.",
+      "ja": "本ポリシーは随時改定されることがあります。重要な変更はウェブサイト上で告知し、新しい発効日を明示します。"
+    }
+  }
+}

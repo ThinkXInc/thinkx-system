@@ -1,0 +1,47 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+
+  <article class="article" data-news-id="2023-03-20">
+    <div class="container">
+      <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}">
+          << </a></span>
+      <h2 class="title">
+        A patent was granted for a voice synthesis based guide system.
+      </h2>
+      <p class="date news-date">2023 March 20</p>
+      <div class="news-image-container">
+
+      </div>
+      <div class="main-text">
+
+        We have been granted a patent for a neural text-to-speech guide system.
+        <br>
+        <br>
+        This invention is widely applied to the construction of a user's location based voice guidance system in geospatial locations using deep learning Text-to-Speech technology. This invention further extends the prior patent by NTT to the deep learning era.
+        <br>
+        <br>
+        Document No. Patent 7242010<br/>
+        Application No. Patent Application 2022-110078<br/>
+        Inventor Kazuki Otsuka<br/>
+        Publication Date: March 20, 2023<br/>
+
+      </div>
+    </article>
+  </div>
+  {% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

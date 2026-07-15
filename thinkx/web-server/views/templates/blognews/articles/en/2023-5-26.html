@@ -1,0 +1,247 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+  <article class="article" data-news-id="2023-05-26">
+    <div class="container">
+      <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}">
+          << </a></span>
+      <h2 class="title">
+        Introducing NeuraVoice AI: ThinkX's Real-Time Voice Conversational AI Platform</h2>
+      </h2>
+      <p class="date news-date">2023 May 26</p>
+      <div class="news-image-container">
+
+      </div>
+      <div class="main-text">
+
+        <figure class="news-image news-id-2023-05-26">
+          <img class="news-id-2023-05-26" src="/img/blog/neuravoice/NV_PV_v2_Title-4K.png" alt="NeuraVoice title" />
+        </figure>
+
+        ThinkX takes a giant leap forward with NeuraVoice, a cutting-edge, real-time voice AI that redefines interactive
+        and efficient communication. Offering swift, human-like conversational performance, NeuraVoice ensures complete
+        data security by hosting all AI models on our servers.<br>
+        <br>
+
+        <video class="news-video" controls="" src="/video/neuravoice/NV_CLIP_v3_4K.mp4">
+        </video>
+
+        <br>
+        <br>
+        Imagine the AI's base knowledge as a library, with everything it needs to converse intelligently and assist you
+        effectively. By optimizing our server technology for voice data, we've achieved a response rate that's 22%
+        faster than the majority of big tech smart speaker products.
+        <br>
+        <br>
+
+        <figure class="news-image news-id-2023-05-26">
+          <img class="news-id-2023-05-26" src="/img/blog/neuravoice/NeuraVoiceSNS-Response6.png"
+            alt="Comparison of response speed between Neuravoice and other smart speakers" />
+        </figure>
+
+        <br>
+        <br>
+        Priced at just $275/month, you receive the full package – comprehensive computing resources and system – in a
+        ready-to-use format that requires minimal setup.
+        <br>
+        <br>
+        As the world's first fully managed voice AI system, NeuraVoice stands as a testament to our innovative spirit
+        and the technological advancements we've pursued since 2015, leveraging our extensive research in speech
+        language and the collective efforts of our progressive open-source community.
+        <br>
+        <br>
+        NeuraVoice is more than an AI; it's a game-changer, a tool that can effectively replace traditional roles in
+        retail counters, schools, hospitals, call centers, and more, offering a new dimension of freedom and
+        convenience.
+        <br>
+        <br>
+
+        <figure class="news-image news-id-2023-05-26">
+          <img class="news-id-2023-05-26" src="/img/blog/neuravoice/NeuraVoiceSNS-Dialogue4.png"
+            alt="Comparison of conversation content between NeuraVoice and other smart speakers" />
+        </figure>
+
+        <br>
+        <br>
+        NeuraVoice is a personal, highly knowledgeable companion that can be customized to your specific needs, all
+        while ensuring that no critical data is ever transmitted to external APIs. <br>
+        <br>
+
+        <figure class="news-image news-id-2023-05-26">
+          <img class="news-id-2023-05-26" src="/img/blog/neuravoice/NeuraVoiceSNS-Secure2.png" alt="" />
+          <!-- alt is empty because of decorative image -->
+        </figure>
+
+
+      </div>
+        <br>
+        <br>
+        <br>
+        </ul>
+
+      </div>
+  </article>
+</div>
+{% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+            const buttons = document.querySelectorAll('.plan-button');
+            const columns = document.querySelectorAll('.plan-column:not(.label)');
+
+            function selectPlan(plan) {
+              buttons.forEach((button) => {
+                if (button.dataset.plan === plan) {
+                  button.classList.add('selected');
+                } else {
+                  button.classList.remove('selected');
+                }
+              });
+
+              columns.forEach((column) => {
+                if (column.classList.contains(plan)) {
+                  column.classList.add('show')
+                } else {
+                  column.classList.remove('show')
+                }
+              });
+            }
+
+            buttons.forEach((button) => {
+              button.addEventListener('click', function () {
+                selectPlan(this.dataset.plan);
+              });
+            });
+
+            // Initialize
+            selectPlan('single');
+          });
+        </script>
+
+
+<script>
+
+  let trySingle = document.getElementById('try-single-grid');
+  let trySmallBusiness = document.getElementById('try-small-business-grid');
+  let tryEnterprise = document.getElementById('try-enterprise-grid');
+
+  function apply(
+    grid,
+    bgColor = 'white',
+    bgColorHover = '#333',
+    labelColor = '#333',
+    labelColorHover = 'white',
+    M = 10,  // Number of columns
+    N = 5,  // Number of rows
+    T = 3,  // Timestep where all cells become black
+    s = 20  // Duration for a cell to turn black
+  ) {
+    let cells = [];
+    let plans = {};
+
+    // Initializing the grid of cells
+    for (let i = 0; i < M; i++) {
+      for (let j = 0; j < N; j++) {
+        let cell = document.createElement('div');
+        cell.style.backgroundColor = bgColor;
+        cell.style.width = grid.offsetWidth / M + 'px';
+        cell.style.height = grid.offsetHeight / N + 'px';
+        cell.classList.add('cell');
+        grid.appendChild(cell);
+        cells.push(cell);
+      }
+    }
+
+    // Helper function to pick random elements
+    function pickRandomly(array, count) {
+      let picked = [];
+      for (let i = 0; i < count; i++) {
+        let index = Math.floor(Math.random() * array.length);
+        picked.push(array[index]);
+        array.splice(index, 1); // Remove picked element from the original array
+      }
+      return picked;
+    }
+
+    // Creating plans
+    let t = 0;
+    while (cells.length != 0) {
+      let n = Math.min(Math.floor((M * N) / T), cells.length);
+      let pickedCells = pickRandomly(cells, n);
+      plans[t] = pickedCells;
+      t++;
+    }
+
+    // Function to change cell color
+    function turn(cell, color, callback) {
+      cell.style.background = color;
+      setTimeout(() => {
+        if (callback) callback();
+      }, s);
+    }
+
+    var p = 0;
+    var changing = false;
+    function change(color) {
+      if (plans[p]) {
+        console.log('change ' + p)
+        for (let j = 0; j < plans[p].length; j++) {
+          turn(plans[p][j], color, j == plans[p].length - 1 ? () => {
+            p++;
+            change(color);
+          } : null);
+        }
+      } else {
+        console.log('done')
+      }
+    }
+
+    function reset(color) {
+      let cells = grid.querySelectorAll('.cell');
+      cells.forEach((cell, index) => {
+        setTimeout(() => {
+          cell.style.background = color;
+        }, s * index);
+      });
+    }
+
+    // Starting animation on mouse hover
+    grid.parentNode.addEventListener('mouseover', () => {
+      if (!changing) {
+        p = 0;
+        change(bgColorHover);
+        changing = true
+      }
+      grid.parentNode.querySelector('.button-label').style.color = labelColorHover;
+
+    });
+
+    // Reverting animation on mouse leave
+    grid.parentNode.addEventListener('mouseleave', () => {
+      reset(bgColor)
+      changing = false
+      grid.parentNode.querySelector('.button-label').style.color = labelColor;
+    });
+
+  }
+
+  apply(trySingle, bgColor = '#c7d9e2', bgColorHover = '#b6cbd5', labelColor = '#333', labelColorHover = '#333');
+  apply(trySmallBusiness, bgColor = '#c7d9e2', bgColorHover = '#b6cbd5', labelColor = '#333', labelColorHover = '#333');
+  apply(tryEnterprise, bgColor = '#c7d9e2', bgColorHover = '#b6cbd5', labelColor = '#333', labelColorHover = '#333');
+
+</script>
+{% endblock %}

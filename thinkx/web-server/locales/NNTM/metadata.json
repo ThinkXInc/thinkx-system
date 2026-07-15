@@ -1,0 +1,97 @@
+{
+    "metadata_top": {
+      "en": {
+        "title": "NNTM — Cancel Noise with Sounds of Nature.",
+        "description": "Better Sleep, Focus, Meditation. 100% naturally recorded brown noise.",
+        "keywords": "Brown Noise, Noise Block, Noise Masking, Sleep, Focus, Sounds of Nature, Meditation, Health, DSD Recording"
+      },
+      "ja": {
+        "title": "NNTM — 騒音を自然の音で打ち消す",
+        "description": "より良い睡眠、集中、瞑想。100%自然録音ブラウンノイズ",
+        "keywords": "ブラウンノイズ, 自然音, DSD録音, オーガニック, ノイズキャンセル, 騒音, 睡眠, 集中, 防音, 瞑想, 健康"
+      },
+      "zh": {
+        "title": "NNTM — 用自然之声消除噪音",
+        "description": "更好的睡眠、专注和冥想。100%自然录制棕噪声",
+        "keywords": "棕噪声, 自然音, DSD录制, 有机, 噪音屏蔽, 睡眠, 专注, 隔音, 冥想, 健康"
+      },
+      "fr": {
+        "title": "NNTM — Annulez le bruit avec des sons de la nature",
+        "description": "Meilleur sommeil, concentration, méditation. Bruit brun 100 % enregistré naturellement.",
+        "keywords": "Bruit brun, Blocage de bruit, Masquage de bruit, Sommeil, Concentration, Sons de la nature, Méditation, Santé, Enregistrement DSD"
+      },
+      "ru": {
+        "title": "NNTM — Устраняйте шум с помощью звуков природы",
+        "description": "Лучший сон, концентрация, медитация. На 100% натуральный коричневый шум.",
+        "keywords": "Коричневый шум, Блокировка шума, Маскировка шума, Сон, Концентрация, Звуки природы, Медитация, Здоровье, Запись DSD"
+      },
+      "es": {
+        "title": "NNTM — Cancela el ruido con sonidos de la naturaleza",
+        "description": "Mejor sueño, enfoque, meditación. Ruido marrón 100% grabado de forma natural.",
+        "keywords": "Ruido marrón, Bloqueo de ruido, Enmascaramiento de ruido, Sueño, Enfoque, Sonidos de la naturaleza, Meditación, Salud, Grabación DSD"
+      },
+      "de": {
+        "title": "NNTM — Lärm mit Naturklängen beseitigen",
+        "description": "Besserer Schlaf, Fokus, Meditation. 100 % natürlich aufgezeichnetes braunes Rauschen.",
+        "keywords": "Braunes Rauschen, Lärmblockierung, Geräuschmaskierung, Schlaf, Fokus, Naturklänge, Meditation, Gesundheit, DSD-Aufnahme"
+      },
+      "ko": {
+        "title": "NNTM — 자연 소리로 소음을 제거하세요",
+        "description": "더 나은 수면, 집중, 명상. 100% 자연 녹음 브라운 노이즈.",
+        "keywords": "브라운 노이즈, 소음 차단, 노이즈 마스킹, 수면, 집중, 자연 소리, 명상, 건강, DSD 녹음"
+      },
+      "ar": {
+        "title": "NNTM — ألغِ الضوضاء بأصوات الطبيعة",
+        "description": "نوم أفضل، تركيز، تأمل. ضوضاء بنية 100% مسجلة طبيعيًا.",
+        "keywords": "ضوضاء بنية, حجب الضوضاء, إخفاء الضوضاء, نوم, تركيز, أصوات الطبيعة, تأمل, صحة, تسجيل DSD"
+      }
+    },
+    "metadata_privacy": {
+      "en": {
+        "title": "NNTM — Privacy Policy",
+        "description": "Our Privacy Policy for NNTM, including GDPR user rights and data handling details.",
+        "keywords": "Privacy Policy, GDPR, user rights, personal data, data security, NNTM"
+      },
+      "ja": {
+        "title": "NNTM — プライバシーポリシー",
+        "description": "NNTMにおけるプライバシー保護方針（GDPR対応含む）",
+        "keywords": "プライバシーポリシー, GDPR, ユーザー権利, 個人データ, データセキュリティ, NNTM"
+      },
+      "zh": {
+        "title": "NNTM — 隐私政策",
+        "description": "NNTM的隐私政策，包括GDPR用户权利及数据处理细节。",
+        "keywords": "隐私政策, GDPR, 用户权利, 个人数据, 数据安全, NNTM"
+      },
+      "fr": {
+        "title": "NNTM — Politique de Confidentialité",
+        "description": "Politique de confidentialité de NNTM, incluant les droits des utilisateurs (RGPD) et les détails du traitement des données.",
+        "keywords": "Politique de Confidentialité, RGPD, droits des utilisateurs, données personnelles, sécurité des données, NNTM"
+      },
+      "es": {
+        "title": "NNTM — Política de Privacidad",
+        "description": "Política de privacidad de NNTM, con referencia a los derechos de usuario conforme al RGPD y detalles de tratamiento de datos.",
+        "keywords": "Política de Privacidad, RGPD, derechos del usuario, datos personales, seguridad de datos, NNTM"
+      },
+      "de": {
+        "title": "NNTM — Datenschutzerklärung",
+        "description": "Datenschutzerklärung für NNTM, inklusive GDPR/DSGVO-Benutzerrechte und Datenverarbeitungsdetails.",
+        "keywords": "Datenschutzerklärung, DSGVO, Nutzerrechte, personenbezogene Daten, Datensicherheit, NNTM"
+      },
+      "ar": {
+        "title": "NNTM — سياسة الخصوصية",
+        "description": "سياسة الخصوصية الخاصة بـ NNTM، بما في ذلك حقوق المستخدم وفقًا للائحة GDPR وتفاصيل معالجة البيانات.",
+        "keywords": "سياسة الخصوصية, GDPR, حقوق المستخدم, بيانات شخصية, أمان البيانات, NNTM"
+      },
+      "ru": {
+        "title": "NNTM — Политика конфиденциальности",
+        "description": "Политика конфиденциальности NNTM, включая права пользователей (GDPR) и детали обработки данных.",
+        "keywords": "Политика конфиденциальности, GDPR, права пользователей, персональные данные, безопасность данных, NNTM"
+      },
+      "ko": {
+        "title": "NNTM — 개인정보 처리방침",
+        "description": "NNTM의 개인정보 처리방침 (GDPR 사용자 권리 및 데이터 처리 내용 포함).",
+        "keywords": "개인정보 처리방침, GDPR, 사용자 권리, 개인 데이터, 데이터 보안, NNTM"
+      }
+    }
+}
+  

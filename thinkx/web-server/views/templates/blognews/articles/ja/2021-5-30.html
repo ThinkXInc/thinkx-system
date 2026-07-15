@@ -1,0 +1,50 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+    <article class="article" data-news-id="2021-05-30">
+      <div class="container">
+        <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}"><<</a></span>
+        <p class="date news-date">2021 May 30</p>
+        <h2 class="title">CITYWALK(early beta)は大規模バージョアップに向けStoreへの公開を一時停止</h2>
+        <div class="news-image-container">
+          <figure class="news-image news-id-2021-05-30">
+            <img class="news-id-2021-05-30" src="/img/citywalklogoF.png" srcset="/img/citywalklogoF@2x.png 2x" style="display: inline; max-height: 400px;"/>
+          </figure>
+        </div>
+        <div class="main-text">
+
+          CITYWALK(early beta)は次期バージョンへの大規模リニューアルに向け
+          Storeへの公開を一時的に停止しました。
+          </br>
+          </br>
+          次期バージョンでは弊社の音声言語テクノロジーをより高度に統合した
+          </br>対話的でユーザビリティの高いソフトウェアにバージョンアップされる予定です。
+          </br>
+          </br>
+          今後ともよろしくお願いいたします。
+
+        </div>
+        <div class="back-container cf">
+          <span class="back">
+            <a href="/{{ lang }}/blognews?page={{ page }}">一覧に戻る</a>
+          </span>
+        </div>
+      </div>
+    </article>
+  </div>
+  {% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

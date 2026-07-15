@@ -1,0 +1,28 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+<div id="philosophy" class="main-container">
+  {% include 'common/header.html' %}
+  <div class="philosophy-page article-page main-content">
+
+    <h2 class="title">{{ locale_dict["title_philosophy"][lang] }}</h2>
+
+    <article class="message-article">{{ locale_dict["message_philosophy"][lang] | replace('\n', '<br>') | safe }}
+    </article>
+</div>
+  {% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+{% endblock %}
+
+

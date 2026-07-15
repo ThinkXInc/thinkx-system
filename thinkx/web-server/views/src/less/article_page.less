@@ -1,0 +1,36 @@
+@tablet-width: 768px;
+@smartphone-width: 480px;
+
+div.article-page {
+    padding: 200px 0px 100px 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    h2.title {
+        font-family: "GeosansLight";
+        font-size: 27px;
+        text-align: center;
+        margin-bottom: 50px;
+        color: #757575;
+    }
+    article {
+        font-size: 19px;
+        white-space: pre-wrap;
+        max-width: 800px;
+    }
+}
+
+
+@media (min-width: @tablet-width) {
+}
+
+@media (max-width: @smartphone-width) {
+    div.article-page {
+        padding: 200px 42px 100px 42px;
+        h2.title {
+        }
+        article {
+        }
+    }
+}

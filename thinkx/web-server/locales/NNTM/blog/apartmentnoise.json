@@ -1,0 +1,379 @@
+{
+    "metadata_blog_apartmentnoise": {
+      "ja": {
+        "title": "「自然の音」でアパートやマンションの騒音から解放される",
+        "description": "NNTMは高品質な録音による自然音による、強力な騒音対策アプローチ。アパートやマンションで発生する騒音を打ち消し、睡眠や集中を守ります。",
+        "keywords": "騒音, アパート, マンション, 隣人, NNTM, ブラウンノイズ, 自然音, スピーカー, ハイレゾ, iPhone"
+      },
+      "en": {
+        "title": "Free Yourself from Apartment and Condo Noise with “Natural Sounds”",
+        "description": "NNTM is a powerful noise-reduction approach using high-quality natural recordings. It cancels out noise in apartments and condos, protecting your sleep and concentration.",
+        "keywords": "noise, apartment, condo, neighbors, NNTM, Brown Noise, natural sounds, speakers, hi-res, iPhone"
+      },
+      "zh": {
+        "title": "用「自然之音」摆脱公寓或小区噪音",
+        "description": "NNTM利用高品质的自然声音录制，提供强大的降噪方案。它能有效抵消公寓或住宅中的噪音，保护您的睡眠和专注力。",
+        "keywords": "噪音, 公寓, 住宅, 邻居, NNTM, 棕色噪音, 自然声音, 音箱, 高解析度, iPhone"
+      },
+      "es": {
+        "title": "Libérate del ruido en apartamentos y condominios con “sonidos naturales”",
+        "description": "NNTM es un enfoque poderoso de reducción de ruido basado en grabaciones naturales de alta calidad. Elimina el ruido en apartamentos y protege tu sueño y concentración.",
+        "keywords": "ruido, apartamento, condominio, vecinos, NNTM, ruido marrón, sonidos naturales, altavoces, hi-res, iPhone"
+      },
+      "fr": {
+        "title": "Se libérer du bruit en appartement ou copropriété grâce aux « sons de la nature »",
+        "description": "NNTM est une approche puissante de réduction du bruit utilisant des enregistrements naturels de haute qualité. Il supprime les nuisances sonores en appartement et protège votre sommeil et votre concentration.",
+        "keywords": "bruit, appartement, copropriété, voisins, NNTM, bruit marron, sons naturels, haut-parleurs, hi-res, iPhone"
+      },
+      "ru": {
+        "title": "Избавьтесь от шума в квартирах и домах с помощью «природных звуков»",
+        "description": "NNTM — это эффективный способ снижения шума, основанный на высококачественных записях природных звуков. Он устраняет шум в квартирах, сохраняя ваш сон и концентрацию.",
+        "keywords": "шум, квартира, дом, соседи, NNTM, коричневый шум, природные звуки, колонки, hi-res, iPhone"
+      },
+      "de": {
+        "title": "Befreien Sie sich von Wohnungslärm mit „natürlichen Klängen“",
+        "description": "NNTM ist ein leistungsstarker Ansatz zur Lärmbekämpfung durch hochwertige Naturaufnahmen. Er beseitigt Lärm in Wohnungen und schützt Ihren Schlaf sowie Ihre Konzentration.",
+        "keywords": "Lärm, Wohnung, Mehrfamilienhaus, Nachbarn, NNTM, Brown Noise, Naturklänge, Lautsprecher, Hi-Res, iPhone"
+      },
+      "ko": {
+        "title": "‘자연의 소리’로 아파트나 주택가 소음에서 벗어나세요",
+        "description": "NNTM은 고품질 자연 녹음을 활용한 강력한 소음 저감 솔루션입니다. 아파트와 주택가의 소음을 줄여 수면과 집중을 보호해 줍니다.",
+        "keywords": "소음, 아파트, 주택, 이웃, NNTM, 브라운 노이즈, 자연음, 스피커, 하이레즈, iPhone"
+      },
+      "ar": {
+        "title": "تخلص من ضوضاء الشقق والمجمعات السكنية عبر «الأصوات الطبيعية»",
+        "description": "يُعد NNTM نهجًا قويًا للحد من الضوضاء بالاعتماد على تسجيلات طبيعية عالية الجودة، ما يزيل ضوضاء الشقق والمجمعات ويحافظ على نومك وتركيزك.",
+        "keywords": "ضوضاء, شقة, مجمع سكني, جيران, NNTM, الضوضاء البنية, أصوات الطبيعة, مكبرات صوت, صوت عالي الدقة, iPhone"
+      }
+    },
+    "page_title": {
+      "ja": "「自然の音」でアパートやマンションの騒音から解放される",
+      "en": "Free Yourself from Apartment and Condo Noise with “Natural Sounds”",
+      "zh": "用「自然之音」摆脱公寓或小区噪音",
+      "es": "Libérate del ruido en apartamentos y condominios con “sonidos naturales”",
+      "fr": "Se libérer du bruit en appartement ou copropriété grâce aux « sons de la nature »",
+      "ru": "Избавьтесь от шума в квартирах и домах с помощью «природных звуков»",
+      "de": "Befreien Sie sich von Wohnungslärm mit „natürlichen Klängen“",
+      "ko": "‘자연의 소리’로 아파트나 주택가 소음에서 벗어나세요",
+      "ar": "تخلص من ضوضاء الشقق والمجمعات عبر «الأصوات الطبيعية»"
+    },
+    "page_subtitle": {
+      "ja": "",
+      "en": "",
+      "zh": "",
+      "es": "",
+      "fr": "",
+      "ru": "",
+      "de": "",
+      "ko": "",
+      "ar": ""
+    },
+    "faq2_related1": {
+      "title": {
+        "ja": "騒音対策への強力なアプローチ、「ブラウンノイズ」とは",
+        "en": "A powerful approach to noise reduction: What is Brown Noise?",
+        "zh": "应对噪音的强力方法：什么是布朗噪音？",
+        "es": "Un enfoque potente para el control de ruido: ¿Qué es el ruido marrón?",
+        "fr": "Une approche puissante pour la réduction du bruit : qu’est-ce que le bruit marron ?",
+        "ru": "Мощный подход к борьбе с шумом: что такое коричневый шум?",
+        "de": "Ein effektiver Ansatz zur Lärmbekämpfung: Was ist Brown Noise?",
+        "ko": "소음 방지를 위한 강력한 접근법: 브라운 노이즈란 무엇인가요?",
+        "ar": "نهج قوي للتعامل مع الضوضاء: ما هو الضوضاء البنية (Brown Noise)？"
+      }
+    },
+    "faq2_related2": {
+      "title": {
+        "ja": "iPhone/iPadからハイレゾ音源を再生するには",
+        "en": "How to play hi-res audio from an iPhone/iPad",
+        "zh": "如何在 iPhone/iPad 上播放高解析度音源",
+        "es": "Cómo reproducir audio de alta resolución desde un iPhone/iPad",
+        "fr": "Comment lire de l'audio haute résolution depuis un iPhone/iPad",
+        "ru": "Как воспроизводить высококачественное аудио с iPhone/iPad",
+        "de": "Wie man hochauflösendes Audio von einem iPhone/iPad abspielt",
+        "ko": "iPhone/iPad에서 고음질 오디오를 재생하는 방법",
+        "ar": "كيفية تشغيل الصوت عالي الدقة من iPhone/iPad"
+      }
+    },
+    "article": {
+      "ja": [
+        {
+          "text": "マンションやアパートの騒音で最も気になるのは、隣や上の階の足音だと思います。この周波数帯域は20Hzから400Hzに分布しています。または、隣人の話し声が気になる場合は80Hzから250Hz付近に分布しています。<strong>NNTMのナチュラル・ブラウンノイズは、健康に最大限配慮しながら、これらの騒音をマスクすることで、不快な騒音から解放</strong>します。夜中や朝方に起こされ睡眠不良に悩んでいる人に今すぐ試してほしいアプローチです。"
+        },
+        {
+          "text": "詳しくは → <a href=\"/ja/blog/brownnoisebasic\">騒音対策への強力なアプローチ、「ブラウンノイズ」とは</a>"
+        },
+        {
+          "text": "睡眠を妨げられる問題を改善するベストな方法は、NNTMをスピーカーで再生しながら、同時に耳栓を併用することです。"
+        },
+        {
+          "text": "NNTM AppをiPhoneでダウンロードしたら、スピーカーに接続し、音源を再生します。最適化された音源から好みのものを選んでください。背景音として<strong>瞑想効果が得られるのに加えて、マスキング効果によって足音などが生じても脳が騒音を無視</strong>します。"
+        },
+        {
+          "image": "use2-1_sp_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "スピーカーは数千円から数万円、またはそれ以上まで売られており、すでにお持ちのものや、どのようなものでも構いません。新たに購入する場合、ミドルクラスでおすすめなのは、SONYのSRS-XG300 <a href='https://amzn.asia/d/6g076zO' target='_blank'>https://amzn.asia/d/6g076zO</a> 26,500円 です。このスピーカーのダイナミックレンジが原音に忠実なことを検証しており、使い勝手にも優れています。"
+        },
+        {
+          "text": "最も簡単なセットアップはこのようにiPhoneとスピーカーを直接接続するものですが、NNTMの音響品質を最大限発揮するために、iPhoneとスピーカーの間にDACを接続することをおすすめします。DACは1万円前後から売られており、以下の記事で詳しく説明しています。"
+        },
+        {
+          "image": "2-3_sp_hi_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "<a href=\"/ja/blog/audiosetup\">iPhone/iPadからハイレゾ音源を再生するには</a>"
+        }
+      ],
+      "en": [
+        {
+          "text": "One of the biggest concerns regarding noise in an apartment or condo is the sound of footsteps from neighbors—either next door or from the unit above. These typically fall in the 20Hz–400Hz range. If you’re bothered by your neighbor’s conversations, those frequencies hover around 80Hz–250Hz. <strong>NNTM’s Natural Brown Noise masks these sounds with maximum consideration for your well-being, freeing you from irritating noise</strong>. This approach is highly recommended for those suffering from sleep disturbances caused by late-night or early-morning noise."
+        },
+        {
+          "text": "For more details → <a href=\"/en/blog/brownnoisebasic\">A powerful approach to noise reduction: What is Brown Noise?</a>"
+        },
+        {
+          "text": "The best way to address issues that disturb your sleep is to play NNTM through a speaker while also using earplugs."
+        },
+        {
+          "text": "After downloading the NNTM App on your iPhone, connect it to a speaker and play the sound source. Choose the optimized track you prefer. In addition to a <strong>meditative effect as background sound, the masking effect will help your brain ignore noises</strong> such as footsteps."
+        },
+        {
+          "image": "use2-1_sp_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "Speakers range from just a few thousand yen to several tens of thousands of yen—or more. Feel free to use any speaker you already have, or purchase a new one. A recommended mid-range option is SONY’s SRS-XG300 (<a href='https://amzn.asia/d/6g076zO' target='_blank'>https://amzn.asia/d/6g076zO</a>), priced at around 26,500 yen. We’ve verified its dynamic range to be faithful to the original sound, and it’s also very user-friendly."
+        },
+        {
+          "text": "The simplest setup is to connect your iPhone directly to the speaker. However, to get the most out of NNTM’s acoustic quality, we recommend placing a DAC between your iPhone and the speaker. You can find DACs for around 10,000 yen, and the article below explains more."
+        },
+        {
+          "image": "2-3_sp_hi_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "<a href=\"/en/blog/audiosetup\">How to play hi-res audio from an iPhone/iPad</a>"
+        }
+      ],
+      "zh": [
+        {
+          "text": "在公寓或住宅楼中，最常困扰人的噪音往往是邻居或楼上房客的脚步声，其频率范围大约在20Hz至400Hz。如果你对邻居的谈话声感到困扰，那么这些声音的频率通常在80Hz至250Hz之间。<strong>NNTM的天然布朗噪音在最大程度上考虑健康的同时，能够有效地掩蔽这些噪音，从而让你摆脱恼人的噪声</strong>。对于那些因夜间或清晨噪音而导致睡眠不足的人，强烈建议尝试这个方法。"
+        },
+        {
+          "text": "了解更多详情 → <a href=\"/zh/blog/brownnoisebasic\">应对噪音的强力方法：什么是布朗噪音？</a>"
+        },
+        {
+          "text": "要改善睡眠受到干扰的情况，最佳方式是在播放NNTM音源的同时佩戴耳塞。"
+        },
+        {
+          "text": "首先在iPhone上下载NNTM App，然后将其连接到音箱并播放音源。你可以从优化后的音源中选择自己喜欢的类型。除了充当<strong>背景音提供类似冥想的效果之外，掩蔽效应还可以帮助大脑忽略</strong>脚步声等噪音。"
+        },
+        {
+          "image": "use2-1_sp_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "音箱的价格从几百元到数千元不等，更高价位的也有。你可以使用现有的音箱或购买新的均可。如果要购买中档产品，推荐SONY的SRS-XG300 (<a href='https://amzn.asia/d/6g076zO' target='_blank'>https://amzn.asia/d/6g076zO</a>)，价格约26500日元。我们验证了它的动态范围对原声非常忠实，使用起来也很方便。"
+        },
+        {
+          "text": "最简单的方式是直接将iPhone与音箱连接。但如果想充分发挥NNTM的声学品质，建议在iPhone与音箱之间加入DAC。大约1万日元左右就能买到DAC，详情请参阅下文。"
+        },
+        {
+          "image": "2-3_sp_hi_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "<a href=\"/zh/blog/audiosetup\">如何在 iPhone/iPad 上播放高解析度音源</a>"
+        }
+      ],
+      "es": [
+        {
+          "text": "En los apartamentos o condominios, el ruido que más suele preocupar proviene de los pasos de los vecinos, ya sea al lado o arriba, los cuales suelen ubicarse en el rango de 20Hz a 400Hz. Si te molestan las conversaciones de tus vecinos, estas rondan los 80Hz a 250Hz. <strong>El Brown Noise natural de NNTM enmascara estos sonidos con la máxima consideración por tu salud, liberándote de ruidos molestos</strong>. Este enfoque es especialmente recomendable para quienes sufren alteraciones del sueño debido a ruidos nocturnos o de primera hora de la mañana."
+        },
+        {
+          "text": "Para más detalles → <a href=\"/es/blog/brownnoisebasic\">Un enfoque potente para el control de ruido: ¿Qué es el ruido marrón?</a>"
+        },
+        {
+          "text": "La mejor manera de abordar los problemas que perturban tu sueño es reproducir NNTM en un altavoz mientras utilizas tapones para los oídos."
+        },
+        {
+          "text": "Después de descargar la App de NNTM en tu iPhone, conéctalo a un altavoz y reproduce la fuente de sonido. Elige la pista optimizada que prefieras. Además de proporcionar un <strong>efecto meditativo como sonido de fondo, el efecto de enmascaramiento ayuda a tu cerebro a ignorar</strong> ruidos como pasos."
+        },
+        {
+          "image": "use2-1_sp_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "Los altavoces pueden costar desde unos pocos miles de yenes hasta varias decenas de miles de yenes o más. Puedes usar uno que ya tengas o comprar uno nuevo. Una opción recomendada de gama media es el SRS-XG300 de SONY (<a href='https://amzn.asia/d/6g076zO' target='_blank'>https://amzn.asia/d/6g076zO</a>), con un precio aproximado de 26.500 yenes. Hemos comprobado que su rango dinámico es fiel al sonido original y resulta muy fácil de usar."
+        },
+        {
+          "text": "La configuración más sencilla es conectar directamente el iPhone al altavoz. Sin embargo, para aprovechar al máximo la calidad acústica de NNTM, recomendamos colocar un DAC entre el iPhone y el altavoz. Los DAC se pueden encontrar por unos 10.000 yenes, y en el siguiente artículo se explica con más detalle."
+        },
+        {
+          "image": "2-3_sp_hi_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "<a href=\"/es/blog/audiosetup\">Cómo reproducir audio de alta resolución desde un iPhone/iPad</a>"
+        }
+      ],
+      "fr": [
+        {
+          "text": "Dans un appartement ou une copropriété, le bruit qui dérange le plus souvent provient des pas des voisins, qu’ils soient à côté ou à l’étage du dessus. Ces bruits se situent généralement dans la plage de 20 Hz à 400 Hz. Si ce sont les conversations des voisins qui vous gênent, elles se trouvent plutôt autour de 80 Hz à 250 Hz. <strong>Le Brown Noise naturel de NNTM masque ces sons en tenant compte de votre santé, vous libérant ainsi des nuisances sonores</strong>. Cette approche est particulièrement recommandée pour ceux qui souffrent de troubles du sommeil causés par des bruits nocturnes ou matinaux."
+        },
+        {
+          "text": "Pour plus de détails → <a href=\"/fr/blog/brownnoisebasic\">Une approche puissante pour la réduction du bruit : qu’est-ce que le bruit marron ?</a>"
+        },
+        {
+          "text": "La meilleure façon de remédier aux problèmes qui perturbent votre sommeil est de diffuser NNTM sur un haut-parleur tout en portant des bouchons d’oreilles."
+        },
+        {
+          "text": "Une fois l’application NNTM téléchargée sur votre iPhone, connectez-le à un haut-parleur et lancez la lecture. Choisissez la piste optimisée de votre choix. En plus d’un <strong>effet méditatif en bruit de fond, l’effet de masquage vous aide à ignorer</strong> des bruits tels que des pas."
+        },
+        {
+          "image": "use2-1_sp_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "Les haut-parleurs varient de quelques milliers de yens à plusieurs dizaines de milliers de yens, voire plus. Vous pouvez utiliser ceux que vous possédez déjà ou en acheter de nouveaux. Pour une gamme intermédiaire, nous recommandons le modèle SRS-XG300 de SONY (<a href='https://amzn.asia/d/6g076zO' target='_blank'>https://amzn.asia/d/6g076zO</a>), proposé à environ 26 500 yens. Nous avons vérifié que sa plage dynamique est fidèle au son original, et il est également très facile à utiliser."
+        },
+        {
+          "text": "La configuration la plus simple consiste à connecter directement l’iPhone au haut-parleur. Toutefois, pour tirer le meilleur parti de la qualité acoustique de NNTM, nous vous recommandons d’installer un DAC entre votre iPhone et le haut-parleur. On peut se procurer un DAC aux alentours de 10 000 yens, et l’article ci-dessous en explique davantage."
+        },
+        {
+          "image": "2-3_sp_hi_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "<a href=\"/fr/blog/audiosetup\">Comment lire de l'audio haute résolution depuis un iPhone/iPad</a>"
+        }
+      ],
+      "ru": [
+        {
+          "text": "В квартирах и многоквартирных домах чаще всего беспокоят звуки шагов соседей, будь то через стену или сверху. Эти шумы обычно попадают в диапазон 20–400 Гц. Если же вас раздражают разговоры соседей, то их частоты находятся примерно в диапазоне 80–250 Гц. <strong>Натуральный коричневый шум (Brown Noise) от NNTM эффективно маскирует эти звуки с максимальной заботой о вашем здоровье, избавляя вас от раздражающего шума</strong>. Этот метод особенно рекомендуется людям, которые страдают от нарушения сна из-за ночного или раннего утреннего шума."
+        },
+        {
+          "text": "Подробнее → <a href=\"/ru/blog/brownnoisebasic\">Мощный подход к борьбе с шумом: что такое коричневый шум?</a>"
+        },
+        {
+          "text": "Лучший способ справиться с шумами, которые нарушают ваш сон, — это воспроизводить NNTM через динамик, одновременно используя беруши."
+        },
+        {
+          "text": "Скачайте приложение NNTM на свой iPhone, подключите его к колонке и запустите воспроизведение. Выберите оптимизированный трек, который вам нравится. Кроме того, что он служит <strong>фоновым звуком с медитативным эффектом, эффект маскировки помогает мозгу игнорировать</strong> такие шумы, как шаги."
+        },
+        {
+          "image": "use2-1_sp_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "Цены на колонки могут варьироваться от нескольких тысяч йен до десятков тысяч йен и выше. Вы можете использовать уже имеющуюся у вас колонку или купить новую. В среднем ценовом диапазоне мы рекомендуем SONY SRS-XG300 (<a href='https://amzn.asia/d/6g076zO' target='_blank'>https://amzn.asia/d/6g076zO</a>) примерно за 26 500 йен. Мы проверили, что его динамический диапазон точно передает оригинальный звук, и пользоваться им очень удобно."
+        },
+        {
+          "text": "Самая простая настройка — напрямую подключить iPhone к колонке. Однако, чтобы максимально раскрыть акустическое качество NNTM, мы рекомендуем установить ЦАП (DAC) между iPhone и колонкой. ЦАП можно купить примерно за 10 000 йен, и в статье ниже это описано подробнее."
+        },
+        {
+          "image": "2-3_sp_hi_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "<a href=\"/ru/blog/audiosetup\">Как воспроизводить высококачественное аудио с iPhone/iPad</a>"
+        }
+      ],
+      "de": [
+        {
+          "text": "In einer Wohnung oder einem Mehrfamilienhaus sind es oft die Schritte der Nachbarn – ob nebenan oder in der oberen Etage – die am meisten stören. Diese liegen meist im Frequenzbereich von 20 Hz bis 400 Hz. Wenn Sie Gespräche Ihrer Nachbarn wahrnehmen, befinden sich diese eher im Bereich von 80 Hz bis 250 Hz. <strong>Das natürliche Brown Noise von NNTM maskiert diese Geräusche unter größtmöglicher Berücksichtigung Ihrer Gesundheit und befreit Sie von störendem Lärm</strong>. Diese Methode empfiehlt sich besonders für Menschen, die durch nächtliche oder frühmorgendliche Geräusche schlecht schlafen."
+        },
+        {
+          "text": "Weitere Informationen → <a href=\"/de/blog/brownnoisebasic\">Ein effektiver Ansatz zur Lärmbekämpfung: Was ist Brown Noise?</a>"
+        },
+        {
+          "text": "Die beste Vorgehensweise, um Schlafstörungen durch Lärm zu beheben, besteht darin, NNTM über einen Lautsprecher abzuspielen und gleichzeitig Ohrstöpsel zu verwenden."
+        },
+        {
+          "text": "Laden Sie die NNTM-App auf Ihr iPhone herunter, schließen Sie es an einen Lautsprecher an und starten Sie die Wiedergabe. Wählen Sie den für Sie passenden, optimierten Track aus. Neben <strong>einer meditativen Wirkung als Hintergrundgeräusch hilft der Maskierungseffekt Ihrem Gehirn dabei,</strong> Schrittgeräusche und Ähnliches zu ignorieren."
+        },
+        {
+          "image": "use2-1_sp_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "Lautsprecher sind ab wenigen tausend Yen bis hin zu mehreren zehntausend Yen oder sogar mehr erhältlich. Sie können jedes bereits vorhandene Gerät nutzen oder ein neues kaufen. Im mittleren Preissegment empfehlen wir den SRS-XG300 von SONY (<a href='https://amzn.asia/d/6g076zO' target='_blank'>https://amzn.asia/d/6g076zO</a>) für etwa 26.500 Yen. Wir haben festgestellt, dass sein Dynamikbereich dem Originalklang sehr nahekommt, und das Gerät ist zudem benutzerfreundlich."
+        },
+        {
+          "text": "Die einfachste Einrichtung besteht darin, das iPhone direkt mit dem Lautsprecher zu verbinden. Um jedoch die akustische Qualität von NNTM voll auszuschöpfen, empfehlen wir, einen DAC zwischen iPhone und Lautsprecher zu schalten. DACs sind bereits ab etwa 10.000 Yen erhältlich. Weitere Details finden Sie im folgenden Artikel."
+        },
+        {
+          "image": "2-3_sp_hi_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "<a href=\"/de/blog/audiosetup\">Wie man hochauflösendes Audio von einem iPhone/iPad abspielt</a>"
+        }
+      ],
+      "ko": [
+        {
+          "text": "아파트나 주택에서 가장 신경 쓰이는 소음은 옆집이나 윗집에서 들리는 발걸음 소리일 것입니다. 보통 20Hz에서 400Hz 사이의 주파수를 가지고 있습니다. 이웃의 말소리가 신경 쓰인다면, 이는 대략 80Hz에서 250Hz 근처에 분포합니다. <strong>NNTM의 자연 브라운 노이즈는 건강을 최대한 고려하면서 이러한 소음을 효과적으로 마스킹하여, 불쾌한 소음에서 해방</strong>시켜 줍니다. 밤이나 새벽의 소음 때문에 수면 장애를 겪는 분들께 특히 추천드립니다."
+        },
+        {
+          "text": "자세한 내용 보기 → <a href=\"/ko/blog/brownnoisebasic\">소음 방지를 위한 강력한 접근법: 브라운 노이즈란 무엇인가요?</a>"
+        },
+        {
+          "text": "수면을 방해받는 문제를 해결하는 최적의 방법은, 스피커로 NNTM을 재생하면서 동시에 귀마개를 착용하는 것입니다."
+        },
+        {
+          "text": "iPhone에 NNTM 앱을 다운로드한 뒤, 스피커와 연결하여 음원을 재생해 보세요. 최적화된 여러 음원 중 원하는 것을 선택하면 됩니다. <strong>배경음으로서 명상 효과</strong>도 얻을 수 있으며, 마스킹 효과를 통해 발소리 등의 소음을 뇌가 무시하게끔 도와줍니다."
+        },
+        {
+          "image": "use2-1_sp_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "스피커는 몇만 원대부터 수십만 원대 이상까지 다양하며, 이미 사용 중인 제품을 그대로 써도 되고, 새로 구매하셔도 좋습니다. 중급 모델로 추천하는 제품은 SONY의 SRS-XG300 (<a href='https://amzn.asia/d/6g076zO' target='_blank'>https://amzn.asia/d/6g076zO</a>)이며, 가격은 약 26,500엔 정도입니다. 이 스피커의 다이내믹 레인지는 원음 재현도가 뛰어나며, 사용 편의성도 우수하다고 확인했습니다."
+        },
+        {
+          "text": "가장 간단한 셋업은 이렇게 iPhone을 스피커에 직접 연결하는 것이지만, NNTM의 음향 품질을 최대한 활용하기 위해서는 iPhone과 스피커 사이에 DAC를 연결하는 것을 권장합니다. DAC는 약 1만 엔 정도부터 구매할 수 있으며, 자세한 설명은 아래 글을 참고하세요."
+        },
+        {
+          "image": "2-3_sp_hi_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "<a href=\"/ko/blog/audiosetup\">iPhone/iPad에서 고음질 오디오를 재생하는 방법</a>"
+        }
+      ],
+      "ar": [
+        {
+          "text": "في الشقق والمجمعات السكنية، غالبًا ما يكون أكثر ما يزعج الناس هو أصوات الخطوات الصادرة من الجيران في الشقة المجاورة أو من الطابق العلوي، والتي تتراوح عادةً بين 20 هرتز و400 هرتز. وإذا كانت أحاديث الجيران تزعجك، فهي عادةً تدور حول 80 هرتز إلى 250 هرتز. <strong>إن الضوضاء البنية الطبيعية من NNTM تعمل على حجب هذه الأصوات مع مراعاة صحتك إلى أقصى حد، مما يخلصك من الضجيج المزعج</strong>. يُنصح بهذا الأسلوب خاصةً لمن يعانون من اضطرابات النوم جراء الضوضاء ليلًا أو في وقت مبكر من الصباح."
+        },
+        {
+          "text": "لمزيد من التفاصيل → <a href=\"/ar/blog/brownnoisebasic\">نهج قوي للتعامل مع الضوضاء: ما هو الضوضاء البنية (Brown Noise)؟</a>"
+        },
+        {
+          "text": "أفضل طريقة لمعالجة المشاكل التي تزعج نومك هي تشغيل NNTM عبر مكبر صوت مع استخدام سدادات الأذن في الوقت نفسه."
+        },
+        {
+          "text": "بعد تنزيل تطبيق NNTM على هاتف iPhone، وصِّله بمكبر صوت وابدأ بتشغيل الصوت. اختر المقطع الصوتي المفضل لك من الخيارات المتاحة. بالإضافة إلى <strong>تأثير التأمل كصوت خلفي، يساعدك تأثير الحجب على تجاهل</strong> أصوات مثل خطوات الأقدام."
+        },
+        {
+          "image": "use2-1_sp_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "تختلف أسعار مكبرات الصوت من بضعة آلاف ين إلى عشرات الآلاف أو أكثر. يمكنك استخدام أي مكبر صوت تملكه بالفعل أو شراء جديد. نوصي بمكبر الصوت SRS-XG300 من سوني (<a href='https://amzn.asia/d/6g076zO' target='_blank'>https://amzn.asia/d/6g076zO</a>) بسعر يبلغ حوالي 26500 ين. لقد تحققنا من أن النطاق الديناميكي فيه وفيٌّ للأصوات الأصلية كما أنه سهل الاستخدام."
+        },
+        {
+          "text": "أبسط إعداد هو توصيل الـ iPhone مباشرةً بمكبر الصوت. ولكن للاستفادة القصوى من جودة NNTM الصوتية، نوصي بوضع محول صوت رقمي (DAC) بين الـ iPhone ومكبر الصوت. يمكنك العثور على DAC بسعر يقارب 10000 ين، وهناك شرحٌ مفصلٌ في المقال أدناه."
+        },
+        {
+          "image": "2-3_sp_hi_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "<a href=\"/ar/blog/audiosetup\">كيفية تشغيل الصوت عالي الدقة من iPhone/iPad</a>"
+        }
+      ]
+    }
+  }
+  

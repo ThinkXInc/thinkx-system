@@ -1,0 +1,115 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+<div id="LSH" class="product-page">
+  {% include 'common/header.html' %}
+  <div class="content-wrapper">
+    <div class="header">
+        <h1 class="title">{{ locale_dict["LSH_title"][lang] }}</h1>
+        <h3 class="subtitle">{{ locale_dict["LSH_subtitle"][lang] }}</h2>
+        {#<img class="main-image" src="/img/products/LSH/QuantzStream.png" alt="Quantz Voice-AI OS">#}
+    </div>
+    <div class="main-content">
+        <section>
+            <div class="section-image-container">
+                <img class="diagram-image" src="/img/products/LSH/LSH.png" alt="Response Technique Diagram">
+            </div>
+            <div class="section-text-container">
+                <h2>{{ locale_dict["LSH_section_1_title"][lang] }}</h2>
+                {#
+                #}
+                <article>
+{{ locale_dict["LSH_section_1_article"][lang] }}
+{#                #}
+                </article>
+            </div>
+        </section>
+
+ 
+        <section>
+            <div class="section-image-container">
+                <img class="second-image" src="/img/products/LSH/warpeace.png" alt="LSH War/Peace Analysis">
+                {#<small>Our GPU cluster Supercom3 in Ariake, Tokyo</small>#}
+            </div>
+            <div class="section-text-container">
+                <h2>{{ locale_dict["LSH_section_2_title"][lang] }}</h2>
+                <article>
+{{ locale_dict["LSH_section_2_article"][lang] }}
+                </article>
+            </div>
+        </section>
+
+       <section>
+            <div class="section-image-container">
+            </div>
+            <div class="section-text-container">
+                {#
+
+                #}
+                <h2>{{ locale_dict["LSH_section_3_title"][lang] }}</h2>
+                <article>
+{{ locale_dict["LSH_section_3_article"][lang] }}
+                </article>          
+                <a href="/documents/AAAI2022.pdf"><button class="inquiry-button">{{ locale_dict["LSH_research_paper"][lang] }}</button></a>
+            </div>
+        </section>
+
+       <section>
+            <div class="section-image-container">
+            </div>
+            <div class="section-text-container">
+                {#
+                <h2>外部APIを一切使わず会話データが外出しない、最高レベルのデータセキュリティとプライバシー</h2>
+                <article>
+音声言語モデルが単一のモデルで実現される音声対話モデルと異なり、特に音声モデルと言語モデルがモジュール化されているために、応答内容の途中監視や発話音声の切り替えといったパイプライン上のカスタマイズが柔軟に実現でき、潜在的な拡張性を維持しながら高い性能を実現しています。
+                </article>
+                #}
+                {#
+                <h2>{{ locale_dict["LSH_section_4_title"][lang] }}</h2>
+                <article>
+{{ locale_dict["LSH_section_4_article"][lang] }}
+                </article>
+                #}
+            </div>
+        </section>
+
+        {#
+        <section>
+            <div class="section-image-container">
+                <img class="button-image" src="/img/products/LSH/600PX25FPS12SEC.png" alt="Discover More Button">
+            </div>
+            <div class="section-text-container">
+                <h2>モジュール化された音声言語モデル。パイプラインを自由にカスタマイズ可能できる潜在的な拡張性</h2>
+                <article>
+外部APIを使用せず専用物理サーバー内で実行され、最高レベルのプライバシーとセキュリティ水準を実現するQuantz ® Voice-AI OSは「考えるスピードで答えが届く素早さ」と「一を聞いて十を知る賢さ」を兼ね備えます。わずかな問いから文脈を理解し、要領よく答える最先端LLMの賢さを備えながら、30語を超える複雑な長文も800msの応答速度で遅延なくシームレスに発話します。
+Quantz ® Voice-AI OSは潜在的なカスタマイズの柔軟性と高いプライバシー水準、そして実質応答の高速性による「真の快適さ」の最適なバランスを実現した音声対話エンジンです。
+                </article>
+                <h2>{{ locale_dict["LSH_section_5_title"][lang] }}</h2>
+                <article>
+{{ locale_dict["LSH_section_5_article"][lang] }}
+                </article>
+            </div>
+        </section>
+        #}
+ 
+        <div class="inquiry-section">
+            <a href="/{{lang}}/inquiry/product"><button class="inquiry-button">{{ locale_dict["LSH_inquiry_button"][lang] }}</button></a>
+        </div>
+ 
+    </div>
+  </div>
+  {% include 'common/footer.html' %}
+</div>
+
+<script src="/js/top.js"></script>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}
+
+

@@ -1,0 +1,80 @@
+{#
+    usage:
+        1. adjust const langs = {...} in the script below.
+        2. insert
+        
+            {% include 'common/lang_selector.html' %} 
+        
+        to html.
+
+    requiremnts:
+        - lang_name # current language name
+#}
+<div class="lang-selector" id="lang-selector">
+    <div class="lang-selector-button" id="lang-selector-button">
+        <img class="locale-icon" src="/img/truetechjapan/header/locale-icon.svg"/>
+        <span class="current-lang">{{ lang_name }}</span>
+        <img class="arrow-icon" src="/img/truetechjapan/header/down-arrow.svg"/>
+    </div>
+    <ul class="lang-options" id="lang-options">
+        {# Language options will be populated here by JavaScript #}
+    </ul>
+</div>
+
+<script>
+    const defaultLangs = {
+        'en': 'English',
+        'ja': '日本語',
+    }
+
+    let langs;
+    if (window.langOptions && Object.keys(window.langOptions).length > 0) {
+        langs = window.langOptions;
+    } else {
+        langs = defaultLangs;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const langOptions = document.getElementById('lang-options');
+        Object.keys(langs).forEach(lang => {
+            const li = document.createElement('li');
+            li.className = 'select';
+            li.setAttribute('data-lang', lang);
+            li.textContent = langs[lang];
+            langOptions.appendChild(li);
+        });
+
+        document.getElementById('lang-selector-button').addEventListener('click', function(e) {
+            const langSelector = document.getElementById('lang-selector');
+            e.stopPropagation();
+            if (langSelector.classList.contains('show')) {
+                langSelector.classList.remove('show');
+            } else {
+                langSelector.classList.add('show');
+            }
+        });
+
+        document.querySelectorAll('#lang-options .select').forEach(item => {
+            item.addEventListener('click', function() {
+                const selectedLang = this.getAttribute('data-lang');
+                changeLanguage(selectedLang);
+            });
+        });
+    });
+
+    function changeLanguage(lang) {
+        const path = window.location.pathname;
+        const newPath = generateNewPath(path, lang);
+        window.location.href = newPath;
+    }
+
+    function generateNewPath(currentPath, newLang) {
+        const segments = currentPath.split('/');
+        if (segments.length > 1 && Object.keys(langs).includes(segments[1])) {
+            segments[1] = newLang; // Change the language segment
+        } else {
+            segments.splice(1, 0, newLang); // Insert the language if not present
+        }
+        return segments.join('/');
+    }
+</script>

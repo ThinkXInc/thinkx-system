@@ -1,0 +1,42 @@
+# 設計決定の記録(DECISIONS)
+
+この文書は 2026-06〜07 の設計議論から**確定した決定だけ**を蒸留したもの。
+経緯・却下案・撤回された提案は含まない(原文は docs/archive/ に保存。参考・非規範)。
+**実行時の規範は常に各計画書**であり、本書と計画書が食い違う場合は計画書が優先する。
+本書の変更は人間のみが行う。
+
+| # | 決定 | 一行根拠 | 規範文書 |
+|---|---|---|---|
+| D-1 | simplicity は concat + グローバル名前空間を恒久維持。src への import/export/require は禁止 | ESM 移行案は検討の末**撤回済み**(クロスファイル継承・双方向参照・外部グローバル継承が ESM と構造的に不適合。concat の方が実行時モデルとして堅牢) | simplicity計画 大原則5 / CLAUDE.md(R-11) |
+| D-2 | JS 検証層の床 = ESLint(no-undef+自動グローバル生成)+ globals.d.ts + jsdom 特性テスト。天井 = JSDoc+checkJs(任意・範囲外)。.ts 化はしない | 床は TS バージョン変動に免疫。TS7 で JS/JSDoc 型検査面が縮小されるため checkJs は剥離可能な追加層に留める | simplicity計画 大原則6・R-04/R-05 |
+| D-3 | devDependencies / pip は exact ピン。typescript は 6.0.3 固定、7.x 昇格は意図的イベント | ゲートの意味論が無断で変わることを防ぐ | 両計画 原則 |
+| D-4 | 人間の動作チェックは機械オラクル(sha台帳・ゴールデン・lintベースライン)に置換し、**オラクル構築が全変更に先行**する | 挙動の正しさをコマンド+機械比較だけで判定するため | 両計画 項目0系 |
+| D-5 | simplicity 計画は挙動保存(quantz 現挙動=正解)。既知バグ(F-1〜F-12)は修正禁止・findings 記録のみ | 修正=未検証の新挙動の有効化 | simplicity計画 §1.5/§4 |
+| D-6 | libcommon 計画は[凍結]/[改修]の二等級制。等級は消費実態の**実測**で決定(改修面の消費者は quantz-web のみと全消費者で確定済み) | quantz-web 非稼働=破壊的改善が最も安い戦略的な窓 | libcommon計画 大原則2・§1.2 |
+| D-7 | レスポンスの正典は pydantic フォーマット族。外形 {field_name, code, message, reason} と {code, message} は PROTOCOL.md §5 が依存するため変更は追加のみ | auth プロトコル v1 が上位契約 | libcommon計画 原則6・L-2 |
+| D-8 | libcommon はホストアプリを import しない(単独 import 可能・単独テスト可能)。アプリ固有物は configure()/make_session_helper(user_loader) で注入 | レイヤ逆転(作者 NEEDSFIX マーク済み)の完遂。user_loader は将来の auth 統合の差し込み口 | libcommon計画 原則7・L-1 |
+| D-9 | auth は PROTOCOL.md v1 に従う。JWT/refresh_token は §7 の引き金成立まで実装しない。simplicity は auth 非依存(準備工事禁止) | 先回りは未検証の結合と永久凍結される未使用契約を生む | PROTOCOL.md / simplicity計画 §1.7 |
+| D-10 | 共有コードの配布は polyrepo + vendoring(焼き込み)。submodule は廃止方向。bake.sh + VERSION(タグ+tree hash)+ 焼き込み先の Edit deny + CI ハッシュ照合 | 独立凍結・変更の完全可視・AI が事故らない「ただのフォルダ」。無言フォークは deny+ハッシュで構造的に防ぐ | libcommon計画 L-8/Q-6 |
+| D-11 | vendoring カットオーバーは libcommon 検証層の完成後(v2.0.0)。それまでは submodule のまま作業 | 整備中に焼くと全サイト再焼き込みが最悪期に集中する | libcommon計画 依存関係 |
+| D-12 | monorepo は作らない。引き金((a)原子的全サイト追随の高頻度化 (b)焼き直しコストの支配 (c)横断CI)を明文化して後置 | polyrepo→monorepo は床がある世界では安く、逆は高い | docs/ROADMAP.md |
+| D-13 | ワークスペースは非 git の親ディレクトリ。root 一点アンカー・**1セッション=1計画書**・状態はファイル(git log/CHECKSUMS/findings)が持つ・セッション記憶に依存しない | 計画間の混線(ドクトリン誤適用)と文脈圧縮による欠落を構造で防ぐ | CLAUDE.md(root) |
+| D-14 | ブランチは全リポジトリ統一 **`2026refactor`**(オーナー裁定 2026-07-06。当初表記 `refactor/2026` は陳腐化)。計画書の `refactor/plan-v1` 等の表記は `2026refactor` と読み替える。1項目=1コミット+push。**例外**: simplicity は Phase 1 を `refactor/2026` で完遂・タグ済みであり、D-24 の精神(完遂アンカーを動かさない)により改名せず歴史的事実として保持する | 状態の復元可能性が広い自動実行権限の安全前提。完遂済みブランチの改名は履歴参照を濁すだけで実益がない | CLAUDE.md(root)/ Phase 2 findings |
+| D-15 | 権限は「ほぼ自動(allow広く)+要所 ask+破壊 deny」。真の安全網はブロックリストではなくコミット台帳 | ブロックリストは原理的に完成しない。復旧可能性が残余リスクを事故に格下げする | .claude/settings.json |
+| D-16 | リファクタリングは MacBook 上で実行可(fakeredis/mongomock 設計により本物のインフラ不要)。Ubuntu 必須は AWS 移行 STEP2 から | 両計画はプラットフォーム非依存に設計してある | 会話記録(archive) |
+| D-17 | dateutils は aware UTC ドクトリン(保存・演算は UTC、表示時のみ変換、naive datetime を新規に作らない)。iso8601 正名+epoch 対を追加 | 多地域分散の整合という設計目標の完遂(F-8/F-9 の解消) | libcommon計画 L-5 |
+| D-18 | Config は python+.env を維持。pydantic-settings 化は次期候補(本フェーズ禁止) | 現方式の「import時保証」がレイヤ逆転の機構だったため、検査は起動時1箇所へ。作り替えはオーナー判断 | libcommon計画 §5 |
+| D-19 | コーディングガイド(docs/conventions/ の原本2本)は本フェーズでは**非規範**。各リポジトリの規範 CLAUDE.md は計画自身が生成する(R-11/L-7)。ガイドの正規化(誤変換除去・層分解: 公理→契約→リポ→skills)は Phase 4(auth 実装)の前提作業 | 原本は現コードと部分的に矛盾(継承・ビルド記述)。矛盾した規約は AI の事前分布を濁す | docs/ROADMAP.md |
+| D-20 | バグ修正はリファクタリング計画に混ぜず、両計画完遂後の**バグ修正計画(Phase 3)**で一括実行する。線引きは「検証手段が計画内に存在するか」(存在する修正は計画内: 例 Q-3/L-5。存在しない修正は findings 経由)。findings.md は捨て場ではなく Phase 3 の入力である | 挙動保存の機械検証(ゴールデン不変)と挙動変更(修正)を同じコミット列に混ぜると、差分の意図が機械判別できなくなる | docs/ROADMAP.md Phase 3 |
+| D-21 | **パス・前提は明示する / 計画と実環境が食い違った場合の修復手順**(原文回収済み・一般化を併合): ツール・ランタイムに渡すパスは暗黙探索や暗黙の glob 展開に依存せず、glob パターン等で明示列挙する。計画書のコマンド・コード・前提が実環境(ツール版差を含む)で機能しない場合は、findings に記録し、挙動不変(src/dist 不変)を保つ最小の明示化・最小置換を提案し、計画書が「そのまま使うこと」と指定した箇所の変更は承認を得てから適用する。反映先が deny 領域の場合は編集可能な文書に代行記録し、最終反映先を明記する | 暗黙探索はツールのバージョンで挙動が変わり環境差で無言に壊れる(実測: node 23 で `node --test test/` は探索されず exit 1、`'test/**/*.test.js'` の明示で安定)。0-2 ハーネス欠陥・R-10 事実誤認の修復でも同手順の有効性が実証済み | simplicity計画 0-2 / findings.md / CLAUDE.md(root)§環境の注意(反映済み) |
+| D-22 | **Security exception**: セキュリティ疑い(credential/token 漏えい・XSS・CSRF・open redirect・認可バイパス・任意ホストへの token 送信・secrets 混入・CI secrets 露出)は findings 処理に流さず即停止・人間へ報告。記録に exploit 手順・秘密値を書かない | 通常バグの「後で一括修正」は脆弱性には適用できない(放置期間そのものがリスク)。挙動保存原則は不変 | 両計画書 発見事項ルール |
+| D-23 | ワークスペース制御文書の git 管理(採否は人間判断・未決)を行う場合、`git add -A` を**禁止**し、明示 allowlist(`.gitignore` に各レポ+`.env*`/`*.pem`/`*.key`/`*.log` 等を列挙 → `git add .gitignore CLAUDE.md docs` → status 確認)による。`.claude/` は settings.local.json・credentials の有無を精査してから対象化を判断 | 親ディレクトリは秘匿情報・個人設定が混入しうる場所であり、包括 add は漏えい経路になる | docs/DECISIONS.md(本行) |
+| D-24 | **完遂タグは動かさない。** 完遂タグ(例 `refactor-v1-complete`)は完遂時点の不変アンカーとして固定する。後続の正本化・文書強化・セキュリティレビュー反映など、成果物(dist sha・全ゲート結果)を変えない変更では、既存タグを付け替えない。必要なら新タグ(例 `-v1.6` 等)で表す。成果物が不変ならタグ追加すら必須ではない(実体が同一のため) | タグ移動は force push を要し(deny)、履歴上の「完遂の意味」を濁す。挙動保存(dist sha 不変)なら完遂の実体は同一であり、新規タグも冗長になりうる。この規則で「タグをどうするか」の再確認を不要にする | docs/DECISIONS.md(本行)/ CLAUDE.md(root)§ブランチ・push規約(人間反映) |
+| D-25 | **auth 前倒しトラック**: auth のベース実装を Phase 2 完了を待たず thinkx-system/auth で並行開発する。必須4条件 = (1)現行 libcommon に対して書く(未来 API の推測コード禁止) (2)auth/CLAUDE.md が実装より先 (3)libcommon はスナップショット vendoring(pre-v2.0.0 + sha 記録・編集禁止) (4)Phase 2 完了時の「auth 追随」項目を予約(Q-4 と同型)。詳細は docs/AUTH_TRACK.md | 依存の実体を精査すると、動く面([改修])の到達形は L-1 に署名まで確定済み=吸収すべき差分が既知。契約(PROTOCOL.md)は凍結済み。副次的に auth が L-1 の設計検証(2番目の消費者)を兼ねる | docs/AUTH_TRACK.md |
+| D-26 | GPT Pro による auth 実装は**層で分けて扱う**: プロトコル層(protocol.py)は保持・移植、ハンドラ層は規約準拠で再構築、契約に無い追加(/v1/users/me・別名群)は捨てる、契約の穴(認証輸送手段)は PROTOCOL.md 側に書き足す | 「何を作るか(ワイヤ契約)」は正確だったが「どう書くか(作法)」が渡っていなかった——規約を渡さず委譲した場合の実証事故。CLAUDE.md 先行(D-25 条件2)の必要性の根拠 | docs/AUTH_TRACK.md / auth スレッド記録 |
+| D-27 | **制御文書の配置は正本(outputs)からの機械コピーで行い、手作業配置に依存しない。** Phase 4a で AUTH_TRACK.md と settings.json の auth deny 2行が正本に存在したのにライブ未配置だった(実行者 findings #1/#2)。D-23(ワークスペース git 管理)の採否を**未決から「採用」へ格上げすることを強く推奨**。制御文書のみを親 git で追跡し、配置は git 管理下の1経路に統一する | 手作業配置は漏れる(実測3件目: D-21喪失・D-24番号衝突・本件)。settings の deny 漏れは auth セッションが vendored libcommon を無防備で扱う実リスクだった(tree_sha256 照合で結果的に無編集を確認できたのは二重防御の片方が効いたため) | docs/DECISIONS.md(本行)/ D-23 |
+| D-28 | **インフラは I トラックとしてワークスペースに統合**: 箱=terraform(staging/prod を env で作り分け)・中身=AWS 非依存 bash(setup/)・運用=runbooks。terraform apply/destroy は承認制(明らかに自動でよい箇所は実績を見て人間が緩める)。tfstate/tfvars/pem/credentials は実行者から読み書き禁止 | 課金・サービス停止・秘匿情報に直結する操作は構造で承認制にする(D-15 と同思想)。中身を bash に分離することで AWS 依存を箱だけに限定 | infra/CLAUDE.md / .claude/settings.json |
+| D-29 | **STEP2 の受け入れ試験は S トラック/Q-2 のゴールデンを転用**: 各サイトの route golden((rule,status) 全 GET)をステージング LB への curl 照合に使う。transformism は S トラック未適用のため、載せる前にカットオーバー要否を人間が判断 | リファクタの安全網と移行の受け入れ試験を同一物にする(二重投資の排除)。未検証のサイトを検証済みと同列に扱わない | docs/ROADMAP.md I トラック / infra/CLAUDE.md |
+| D-30 | **検証は成果物の再生成後に実行する**(build 工程を持つリポジトリでは build → test の順を厳守。古い dist への green は検証ではない) | Phase 3 S-6 で実測: 旧 dist でテストして green と誤認し、失敗ゲートのまま push する事故が発生。フォローアップで修復済みだが、順序は規則で強制すべき | CLAUDE.md(root)§環境の注意 |
+| D-31 | **コード規約を `docs/coding_guides/` に置き、規範とする**。bash は観測系(status/logs)と変更系(setup/deploy)を分け、観測系では `exit`・`set -e`・裸の `cd` を禁止(source 時に呼び出し元シェルを破壊するため)。infra/docs でなくワークスペース直下に置く | bash はどのリポジトリでも書かれる横断的関心事。infra 配下に置くと他リポジトリで参照されない。規約の不在が実際に事故(status.sh がシェルを2度落とした)を生んだため、規範レイヤーに昇格させる | `docs/coding_guides/` / ルート CLAUDE.md「コード規約」節 |
+| D-32 | **本番構築=再現性検証・staging=正解の参照**(production は monorepo 前提でゼロから新設: terraform apply → setup/*.sh → monorepo clone → run → 全ゴールデン sweep。露出した抜けは手作業で埋めて先に進まず infra/ に反映してから次へ — 完了指標は「同じ手順をもう一度流せば素通りすること」。既存 staging はカットオーバーまで不触で「正解の参照」とし、後に prod と同一手順で再構築。全体順序: M → prod 新設 → カットオーバー → staging 再構築 → E 発効) | 抜けの露出を失敗でなく成果と定義しないと、構築者(人間・実行者とも)がその場しのぎで埋めて再現性が壊れる。staging を先に壊すと prod 構築中の参照を失う | ROADMAP I-STEP2/2b/3 / infra/CLAUDE.md「構築の指針」節 |
+| D-35 | **libcommon / simplicity は monorepo に取り込まず、独立 git のまま canonical(版カタログ)として生存させる**(サーバーには不要 — 稼働は各サイトの焼き込み snapshot。canonical が要るのは編集マシンでの bake と還流時のみ。旧系列の派生[v2.0.0→v2.0.1]は canonical 上の通常の git 操作。還流忘れ=幽霊版の事故は PR ゲートの機械照合で塞ぐ: 各 snapshot の tree_sha が canonical の VERSION タグの bake 結果と一致すること) | 本番に届く内容変更は snapshot diff として monorepo が既に全記録しており、canonical を内包しても得る情報がほぼ無い。版カタログには独立 git の標準機能(タグ・分岐・版間 diff)がそのまま最適。移行作業もゼロ(既存リポジトリが生き続けるだけ) | M 計画(取り込みリスト修正済み)/ E 文書(還流義務+ガード)/ 将来: tree_sha 照合ゲート |

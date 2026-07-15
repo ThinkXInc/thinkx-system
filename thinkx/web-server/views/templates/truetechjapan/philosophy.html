@@ -1,0 +1,27 @@
+{% extends "truetechjapan/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+{% include 'truetechjapan/common/header.html' %}
+<div id="truetech-philosophy" class="main-container">
+
+  <div class="about-page article-page main-content">
+    <!-- Page title -->
+    <h2 class="title">{{ locale_dict["philosophy_title"][lang] }}</h2>
+
+    <!-- Main body text -->
+    <article class="main-text">
+      {{ locale_dict["philosophy_message"][lang] | replace('\n', '<br>') | safe }}
+    </article>
+  </div>
+
+</div>
+
+{% include 'truetechjapan/common/footer.html' %}
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

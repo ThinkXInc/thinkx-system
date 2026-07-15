@@ -1,0 +1,41 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+
+  <article class="article" data-news-id="2021-10-30">
+    <div class="container">
+      <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}">
+          << </a></span>
+      <h2 class="title">
+        プレシリーズA第三者割当増資を実施
+      </h2>
+      <p class="date news-date">2021 Oct 30</p>
+      <div class="news-image-container">
+
+      </div>
+      <div class="main-text">
+
+        ThinkX株式会社は、マネックスベンチャーズ株式会社を無限責任組合員とするMV2号投資事業有限責任組合、株式会社アドウェイズを引受先とする、プレシリーズA第三者割当増資を実施しました。
+        <br>
+        <br>
+        今回の資金調達により、世界に通用するソフトウェア製品を開発し、我が国の地位の向上、文化的水準の向上、経済的向上に貢献するよう努めてまいります。
+        <br>
+      </div>
+    </article>
+  </div>
+  {% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

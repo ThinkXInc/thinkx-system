@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- ─────────── TOP ─────────── -->
+  <url>
+    <loc>https://truetechjapan.com</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://truetechjapan"/>
+    <xhtml:link rel="alternate" hreflang="ja"        href="https://truetechjapan/ja"/>
+    <xhtml:link rel="alternate" hreflang="en"        href="https://truetechjapan/en"/>
+    <lastmod>2025-07-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- ─────────── ABOUT ─────────── -->
+  <url>
+    <loc>https://truetechjapan.com/ja/about</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://truetechjapan.com/ja/about"/>
+    <xhtml:link rel="alternate" hreflang="ja"        href="https://truetechjapan.com/ja/about"/>
+    <xhtml:link rel="alternate" hreflang="en"        href="https://truetechjapan.com/en/about"/>
+    <lastmod>2025-07-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- ─────────── PHILOSOPHY ─────────── -->
+  <url>
+    <loc>https://truetechjapan.com/ja/philosophy</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://truetechjapan.com/ja/philosophy"/>
+    <xhtml:link rel="alternate" hreflang="ja"        href="https://truetechjapan.com/ja/philosophy"/>
+    <xhtml:link rel="alternate" hreflang="en"        href="https://truetechjapan.com/en/philosophy"/>
+    <lastmod>2025-07-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- ─────────── ORGANIZATION ─────────── -->
+  <url>
+    <loc>https://truetechjapan.com/ja/organization</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://truetechjapan.com/ja/organization"/>
+    <xhtml:link rel="alternate" hreflang="ja"        href="https://truetechjapan.com/ja/organization"/>
+    <xhtml:link rel="alternate" hreflang="en"        href="https://truetechjapan.com/en/organization"/>
+    <lastmod>2025-07-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- ─────────── PRIVACY ─────────── -->
+  <url>
+    <loc>https://truetechjapan.com/ja/privacy</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://truetechjapan.com/ja/privacy"/>
+    <xhtml:link rel="alternate" hreflang="ja"        href="https://truetechjapan.com/ja/privacy"/>
+    <xhtml:link rel="alternate" hreflang="en"        href="https://truetechjapan.com/en/privacy"/>
+    <lastmod>2025-07-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- ─────────── ENTRY ─────────── -->
+  <url>
+    <loc>https://truetechjapan.com/ja/entry</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://truetechjapan.com/ja/entry"/>
+    <xhtml:link rel="alternate" hreflang="ja"        href="https://truetechjapan.com/ja/entry"/>
+    <xhtml:link rel="alternate" hreflang="en"        href="https://truetechjapan.com/en/entry"/>
+    <lastmod>2025-07-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- ─────────── INQUIRY ─────────── -->
+  <url>
+    <loc>https://truetechjapan.com/ja/inquiry</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://truetechjapan.com/ja/inquiry"/>
+    <xhtml:link rel="alternate" hreflang="ja"        href="https://truetechjapan.com/ja/inquiry"/>
+    <xhtml:link rel="alternate" hreflang="en"        href="https://truetechjapan.com/en/inquiry"/>
+    <lastmod>2025-07-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+</urlset>

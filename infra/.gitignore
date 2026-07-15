@@ -1,0 +1,20 @@
+# secrets / state — 絶対にコミットしない
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+*.pem
+*.key
+.terraform/
+.terraform.lock.hcl
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+
+# nginx conf のバックアップ(setup が作る)
+*.conf.bak
+
+certs/*
+deploykeys/*
+env/*

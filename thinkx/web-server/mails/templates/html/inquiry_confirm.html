@@ -1,0 +1,28 @@
+{%extends "html/base.html" %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+<section style="color: #333; margin-bottom: 20px; padding: 30px 37px;">
+    <div style="color: #616161; padding: 40px 10px;">
+        <div style="margin-bottom: 10px; color: #616161;">
+            {{ body1 }}
+        </div>
+        <div style="margin-bottom: 10px; margin-top: 33px; color: #868686;">
+            <ul style="list-style: none;">
+                <li>{{ name_label }} {{ name }}</li>
+                <li>{{ email_label }} {{ email }}</li>
+                <li>{{ phone_label }} {{ phone }}</li>
+                <li>{{ job_title_label }} {{ job_title }}</li>
+                <li>{{ company_name_label }} {{ company_name }}</li>
+                <li>{{ message_label }} {{ message }}</li>
+            </ul>
+        </div>
+        <div style="margin-top: 37px;" clas="team">
+            {{ body2 }}
+            {{ support_email }}
+        </div>
+  </div>
+</section>
+{% endblock %}

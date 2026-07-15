@@ -1,0 +1,142 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+<div id="voiceos" class="product-page">
+  {% include 'common/header.html' %}
+  <div class="content-wrapper">
+    <div class="header">
+        <h1 class="title">{{ locale_dict["voiceos_title"][lang] }}</h1>
+        <h3 class="subtitle">{{ locale_dict["voiceos_subtitle"][lang] }}</h2>
+        {#<img class="main-image" src="/img/products/voiceos/QuantzStream.png" alt="Quantz Voice-AI OS">#}
+    </div>
+    <div class="main-content">
+        <section>
+            <div class="section-image-container">
+                {% if lang == "ja" %}
+                <img class="diagram-image" src="/img/products/voiceos/diagram_v8B_HD_ja.png" alt="Response Technique Diagram">
+                {% elif lang == "en" %}
+                <img class="diagram-image" src="/img/products/voiceos/diagram_v8B_HD_en.png" alt="Response Technique Diagram">
+                {% else %}
+                <img class="diagram-image" src="/img/products/voiceos/diagram_v8B_HD_en.png" alt="Response Technique Diagram">
+                {% endif %}
+            </div>
+            <div class="section-text-container">
+                <h2>{{ locale_dict["voiceos_section_1_title"][lang] }}</h2>
+                {#
+                <h2>即座に本題(実質的な応答)を返し、「ありがとう」のような簡易的な応答テクニックを使用することなく800msの応答速度を実現。</h2>
+                #}
+                <article>
+{{ locale_dict["voiceos_section_1_article"][lang] }}
+{#一般的なAPIベースの音声対話エンジンは"1秒の壁"を超えることが難しく、「ありがとうございます」「わかりました」といった予備的な応答をまず返し、その間にメインの応答を準備する「フィラー（相槌）テクニック」が用いられます。
+このテクニックの問題点は、数字上は応答速度1秒未満を達成するものの、本題を話し始めるまでに都度1秒~2秒かかるため、特に会話を続けるほどストレスを感じます。
+Quantz ® Voice-AI OSはこのテクニックを用いず、即座に本題（実質応答）を800msで返す、世界初のLLMベース音声対話エンジンです。
+                #}
+                </article>
+            </div>
+        </section>
+
+ 
+        <section>
+            <div class="section-image-container">
+                {% if lang == "ja" %}
+                <img class="response-image" src="/img/products/voiceos/blue_v2_HD_ja.png" alt="Voice AI Response Speed">
+                {% elif lang == "en" %}
+                <img class="response-image" src="/img/products/voiceos/blue_v2_HD_en.png" alt="Voice AI Response Speed">
+                {% else %}
+                <img class="response-image" src="/img/products/voiceos/blue_v2_HD_en.png" alt="Voice AI Response Speed">
+                {% endif %}
+                {#<small>Our GPU cluster Supercom3 in Ariake, Tokyo</small>#}
+            </div>
+            <div class="section-text-container">
+                {#
+                <h2>"実質応答速度"で1秒の壁を超える</h2>
+                <article>
+Quantz ® Voice-AI OSは67万行の独自のコードベースからなる、”真に快適な対話の実現”のために最適化されたハイパフォーマンス音声AIシステムです（4件の特許技術を含む。うち2件は出願中）。
+独自のバイト転送プロトコルにより、TCP/IP通信のオーバーヘッドを削減し、大量のデータ転送を1台のサーバーで完結する、NLP（自然言語処理）と音声処理パイプラインの超並列実装を特徴としています。
+Quantz ® Voice-AI OSはThinkXが管理し、高セキュリティ要件を満たすハウジングスペースに格納された専用のGPUスーパーコンピューター上で動作します。
+                </article>
+                #}
+                <h2>{{ locale_dict["voiceos_section_2_title"][lang] }}</h2>
+                <article>
+{{ locale_dict["voiceos_section_2_article"][lang] }}
+                </article>
+            </div>
+        </section>
+
+       <section>
+            <div class="section-image-container">
+                <img src="/img/products/voiceos/Supercom3.jpg" alt="GPU cluster Supercom3" class="gpu-image">
+                <small class="annotation">{{ locale_dict["voiceos_gpu_cluster"][lang] }}</small>
+            </div>
+            <div class="section-text-container">
+                {#
+                <h2>67万行の独自コードベース、高性能GPUスーパーコンピューター上で実行される、対話の"真の快適さ"に最適化された音声AI OS</h2>
+                <article>
+Quantz ® Voice-AI OSは高い安全性要件を満たしたデータセンター内の物理サーバー上に構築され、ChatGPT APIやEleven Labs API等に代表される外部のAPIを一切使用しません。（オープンソースLLM Meta Llama3を微調整したモデルを、独自に実装したLLM Parallel Inference Adapterによる100~並列/GPU [2500トークン~/秒] 推論で実行）
+そのため、システムユーザーにとって重要な、会話情報を外部企業に露出することがなく、最高レベルのプライバシー保護とセキュリティを実現します。
+                </article>
+                #}
+                <h2>{{ locale_dict["voiceos_section_3_title"][lang] }}</h2>
+                <article>
+{{ locale_dict["voiceos_section_3_article"][lang] }}
+                </article>          
+            </div>
+        </section>
+
+       <section>
+            <div class="section-image-container">
+            </div>
+            <div class="section-text-container">
+                {#
+                <h2>外部APIを一切使わず会話データが外出しない、最高レベルのデータセキュリティとプライバシー</h2>
+                <article>
+音声言語モデルが単一のモデルで実現される音声対話モデルと異なり、特に音声モデルと言語モデルがモジュール化されているために、応答内容の途中監視や発話音声の切り替えといったパイプライン上のカスタマイズが柔軟に実現でき、潜在的な拡張性を維持しながら高い性能を実現しています。
+                </article>
+                #}
+                <h2>{{ locale_dict["voiceos_section_4_title"][lang] }}</h2>
+                <article>
+{{ locale_dict["voiceos_section_4_article"][lang] }}
+                </article>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-image-container">
+                <img class="button-image" src="/img/products/voiceos/600PX25FPS12SEC.png" alt="Discover More Button">
+            </div>
+            <div class="section-text-container">
+                {#
+                <h2>モジュール化された音声言語モデル。パイプラインを自由にカスタマイズ可能できる潜在的な拡張性</h2>
+                <article>
+外部APIを使用せず専用物理サーバー内で実行され、最高レベルのプライバシーとセキュリティ水準を実現するQuantz ® Voice-AI OSは「考えるスピードで答えが届く素早さ」と「一を聞いて十を知る賢さ」を兼ね備えます。わずかな問いから文脈を理解し、要領よく答える最先端LLMの賢さを備えながら、30語を超える複雑な長文も800msの応答速度で遅延なくシームレスに発話します。
+Quantz ® Voice-AI OSは潜在的なカスタマイズの柔軟性と高いプライバシー水準、そして実質応答の高速性による「真の快適さ」の最適なバランスを実現した音声対話エンジンです。
+                </article>
+                #}
+                <h2>{{ locale_dict["voiceos_section_5_title"][lang] }}</h2>
+                <article>
+{{ locale_dict["voiceos_section_5_article"][lang] }}
+                </article>
+            </div>
+        </section>
+ 
+        <div class="inquiry-section">
+            <a href="/{{lang}}/inquiry/product"><button class="inquiry-button">{{ locale_dict["voiceos_inquiry_button"][lang] }}</button></a>
+        </div>
+ 
+    </div>
+  </div>
+  {% include 'common/footer.html' %}
+</div>
+
+<script src="/js/top.js"></script>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}
+
+

@@ -1,0 +1,54 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+
+    <article class="article" data-news-id="2020-03-04">
+      <div class="container">
+        <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}"><<</a></span>
+        <p class="date news-date">2020 Mar 4</p>
+        <h2 class="title">Our Paper「Privacy-Preserving Fast and Exact Linear Equations Solver with Fully Homomorphic Encryption」Published on 29 Feb.</h2>
+        <div class="news-image-container">
+
+        </div>
+        <div class="main-text">
+
+
+          「Privacy-Preserving Fast and Exact Linear Equations Solver with Fully Homomorphic Encryption」<br/><br/>
+
+(Keita Arimitsu and Kazuki Otsuka : Cryptology ePrint Archive 2020/02/29)</br>
+<a href="https://eprint.iacr.org/2020/272.pdf">https://eprint.iacr.org/2020/272.pdf</a><br/><br/>
+
+          </br>
+            Privacy and machine learning often appear to be incompatible due to their nature: privacy means data should be kept from others while machine learning requires a large amount of data. Among several possible solutions to this problem, Fully Homomorphic Encryption (FHE) has been a center of intensive researches in this field. FHE enables linear operations on ciphertext. To take advantage of this property, many protocols to achieve statistical operations have been proposed. However, many of them are impractical. Some of the approaches introduce cryptosystems that are not familiar. Moreover, most of their protocols are approximation which might sensitively depend on our choice of parameters. In this paper, we propose fast, simple, and exact privacy-preserving linear equation solver using FHE. Our two-party protocol is secure against at least semi-honest model, and we can exactly calculate the model even without the bootstrapping.
+
+          </br>
+          </br>
+          Keywords: <B>Fully homomorphic encryption, Machine learning, Privacy-preserving</B>
+        </div>
+        <figure class="news-image news-id-2020-03-04">
+            <img class="news-id-2020-03-04" src="/img/ciphernet-image.png" srcset="/img/ciphernet-image@2x.png 2x"/>
+          </figure>
+        <div class="back-container cf">
+          <span class="back">
+            <a href="/{{ lang }}/blognews?page={{ page }}">一覧に戻る</a>
+          </span>
+        </div>
+      </div>
+    </article>
+  </div>
+  {% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

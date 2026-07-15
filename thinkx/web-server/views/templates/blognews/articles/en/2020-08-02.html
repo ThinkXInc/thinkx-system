@@ -1,0 +1,65 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+  <article class="article" data-news-id="2020-04-14">
+    <div class="container">
+      <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}">
+          << </a></span>
+      <p class="date news-date">2020 Aug 02</p>
+      <h2 class="title">"Basic Computer Science Lecture" Delivered by Representative Otsuka for Internal and External Audiences</h2>
+      <div class="news-image-container">
+        <figure class="news-image news-id-2020-04-14">
+        </figure>
+      </div>
+      <div class="main-text">
+
+        President Otsuka presented a lecture on the essential principles of computer architecture and algorithms, primarily intended for our internal staff from non-computer science backgrounds and the interested general public.
+        <br>
+        <br>
+        The course was divided into two parts:
+        <br>
+        Part I: "20 lectures for the fastest and most comprehensive overview of computer architecture and design"<br>
+        Part II: "20 lectures for the fastest comprehensive review of algorithms and data structures"
+        <br>
+        <br>
+        Kicking off with the topic "What is Digital?", the course spanned over two weeks, beginning from the fifth week of July.
+        <br>
+        It was designed as a "computer science course for adults" that allowed participants to swiftly grasp the concepts of computer design, algorithms,<br>
+        computational quantities, without any prerequisite knowledge and regardless of their arts or science background.<br>
+        <br>
+        <br>
+        Both internal and external participants, along with other individuals interested in computer science, highly appreciated the course, finding it to be understandable and engaging..<br>
+        <br>
+        <br>
+        <br>
+        The complete text of this course will soon be accessible on our blog and other platforms.
+        <br>
+        <br>
+
+        <span class="contact-mail">info@thinkxinc.com</span><br>
+        <br>
+      </div>
+      <div class="back-container cf">
+        <span class="back">
+          <a href="/{{ lang }}/blognews?page={{ page }}">Back to list</a>
+        </span>
+      </div>
+    </div>
+  </article>
+</div>
+{% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

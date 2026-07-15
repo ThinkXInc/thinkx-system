@@ -1,0 +1,92 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+    <article class="article" data-news-id="2020-04-14">
+      <div class="container">
+        <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}"><<</a></span>
+        <p class="date news-date">2020 Apr 14</p>
+        <h2 class="title">代表大塚が「プライバシー保護AI(秘匿計算)とコロナウイルスCOVID-19-早期収束に向けて」のテーマでオンライン公開講座を行いました</h2>
+        <div class="news-image-container">
+          <figure class="news-image news-id-2020-04-14">
+            <img class="news-id-2020-04-14" src="/img/dscv1top.jpeg" srcset="/img/dscv1top@2x.jpeg 2x"/>
+          </figure>
+        </div>
+        <div class="main-text">
+
+          コロナウイルス(COVID-19)の感染拡大を受けて、弊社代表大塚が最新のCipherNetテクノロジー(プライバシー保護AI・秘匿計算)の解説と現社会状況への応用に関してディスカッションするオンライン公開講座を行いました。</br>
+          当日はシンクタンク、ベンチャーキャピタル、企業経営者、地方自治体の方々をはじめ13名の方にご参加いただきました。</br>
+          ThinkX社ではCITYWALK事業をはじめ、研究開発を行っている最先端技術を社会貢献のために活用する取り組みを続けて参ります。</br></br>
+
+          ------------------------------------------------------------------------</br>
+          ■「Deep Society Club vol. 1」</br>
+          </br>
+          コロナウイルスによる緊急事態宣言後でも在宅勤務ができない業務が企業には多く残っています。</br>
+          もし100万人の仕事をリモートワーク化できれば100万人分の通勤を減らし，接触率を減らし、感染拡大を遅らせることができます。</br>
+個人情報の持ち出しが禁止され、出社しなければ仕事ができない業務を特定し、</br>
+その業務で扱う情報を最新の暗号技術（準同型暗号による秘匿計算技術)により持ち帰っても仕事ができる状況を作れば</br>
+          これを実現できる可能性があります。
+          </br>
+今回、秘匿計算(プライバシー保護AI)とは何か、という基本からはじめ、そのメリット、デメリット、最新の状況などを伝え、</br>
+実効性のある社会的な応用についてディスカッションをします。</br>
+          </br>
+          ■「Deep Society Club」 とは</br>
+          テクノロジーによる社会問題の解決をデザインする</br>
+          オンライン、ディスカッション型公開講座です。</br>
+          </br>
+          ■ Presenter</br>
+          ThinkX株式会社 代表・研究者 大塚一輝</br>
+          https://thinkxinc.com/</br>
+          </br>
+          </br>
+          ■ 第一部目次</br>
+          秘匿計算とは何か</br>
+          秘匿計算でできること~プライバシーデータを暗号化したまま計算</br>
+          利点・困難な点</br>
+          最新の技術動向</br>
+          どのような場面に役に立つのか</br>
+          リモートワーク人口を増やし感染拡大を阻止するために、ディスカッション</br>
+          </br>
+          ■ タイムライン</br>
+          第一部 秘密計算とは何か-プライバシーデータを暗号化したまま計算する 20分</br>
+          第二部 リモートワーク人口を増やし感染拡大を遅らせるために(ディスカッション) 30分</br>
+          ------------------------------------------------------------------------</br>
+          </br>
+
+
+
+          <a class="download-link" href="https://www.slideshare.net/KazukiOtsuka/deep-society-club-vol1-ai-231929995/KazukiOtsuka/deep-society-club-vol1-ai-231929995" target="_blank" download>当日のスライド</a>
+          </br>
+          </br>
+          <!---->
+
+
+          </br>
+          プライバシー保護AI(秘匿計算)についての詳細は</br>
+          <span class="contact-mail">sales@thinkxinc.com</span></br>
+          </br>
+          までお問い合わせください。
+        </div>
+        <div class="back-container cf">
+          <span class="back">
+            <a href="/{{ lang }}/blognews?page={{ page }}">一覧に戻る</a>
+          </span>
+        </div>
+      </div>
+    </article>
+  </div>
+  {% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

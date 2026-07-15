@@ -1,0 +1,92 @@
+{
+    "LSH_title": {
+        "ja": "Latent Semantic Hyperspace (LSH)",
+        "en": "Latent Semantic Hyperspace (LSH)",
+        "zh": "Latent Semantic Hyperspace (LSH)",
+        "es": "Latent Semantic Hyperspace (LSH)",
+        "ru": "Latent Semantic Hyperspace (LSH)",
+        "fr": "Latent Semantic Hyperspace (LSH)",
+        "ar": "Latent Semantic Hyperspace (LSH)"
+    },
+    "LSH_subtitle": {
+        "ja": "ユーザーの潜在趣向を文書記述から解析するパーソナライゼーションアルゴリズム",
+        "en": "A personalization algorithm that analyzes users’ potential interests from textual descriptions.",
+        "zh": "从文本描述中分析用户潜在偏好的个性化算法",
+        "es": "Un algoritmo de personalización que analiza los intereses potenciales del usuario a partir de descripciones textuales.",
+        "ru": "Алгоритм персонализации, анализирующий потенциальные интересы пользователей на основе текстовых описаний.",
+        "fr": "Un algorithme de personnalisation qui analyse les intérêts potentiels des utilisateurs à partir de descriptions textuelles.",
+        "ar": "خوارزمية تخصيص تحلل اهتمامات المستخدم المحتملة بالاعتماد على الأوصاف النصية."
+    },
+    "LSH_section_1_title": {
+        "ja": "ユーザーの記述文章から定性的趣味傾向（先進的な、ポップな、ラグジュアリな、モダンな、等）を僅かな計算量で読み取り、商品提案や応答のズレを解消。多様な趣味趣向への的確なパーソナライゼーションを実現する。",
+        "en": "Analzes users’ qualitative taste preferences (e.g. avant-garde, pop, luxury, modern, etc.) from texts written by the user with minimal computational overhead, and achieving accurate personalization for diverse tastes.",
+        "zh": "通过对用户撰写的文本进行分析，以极少的计算量识别他们的定性品味偏好（如前卫、流行、奢华、现代等），消除产品推荐和回复中的不匹配，从而实现对多样化喜好的精准个性化。",
+        "es": "A partir del texto escrito por el usuario y con un mínimo de recursos de cálculo, identifica sus preferencias cualitativas (vanguardistas, pop, lujosas, modernas, etc.), elimina discrepancias en las recomendaciones y respuestas de productos, y logra una personalización precisa para gustos diversos.",
+        "ru": "Анализируя тексты, написанные пользователями, с минимальными вычислительными затратами, выявляет их качественные предпочтения (например, авангардные, поп, роскошные, современные и т. д.), устраняет несоответствия в товарных рекомендациях и ответах, обеспечивая точную персонализацию для самых разных вкусов.",
+        "fr": "En analysant les textes rédigés par les utilisateurs avec un minimum de ressources de calcul, identifie leurs préférences qualitatives (avant-gardistes, pop, luxueuses, modernes, etc.), corrige les écarts dans les recommandations et réponses, et offre une personnalisation précise pour des goûts variés.",
+        "ar": "يقوم بتحليل النصوص التي يكتبها المستخدمون بأقل قدر من العمليات الحسابية لتحديد تفضيلاتهم النوعية (مثل الأساليب المتقدمة، البوب، الفاخرة، العصرية، إلخ)، وإزالة أي عدم تطابق في توصيات المنتجات والردود، مما يحقق تخصيصًا دقيقًا لمختلف الأذواق."
+    },
+    "LSH_section_1_article": {
+        "ja": "言語超空間上の幾何学特性と独自の機械学習数理アルゴリズムより、\nユーザーの行動データの蓄積を必要とせず、テキストからそれを記述したユーザーの趣向やパーソナリティ特性を、反意語で定義される概念群と語彙埋め込み空間における独自の意味超平面アルゴリズムにより、僅かな計算時間で解析します。\nこれによって、行動履歴からや初期の情報の少ないユーザーについて見えにくかった嗜好性を推測し、サービスの商品提案能力、レコメンデーション、パーソナライゼーション能力を向上させます。\n(特許取得済み: 特許番号 7393772)",
+        "en": "Leveraging the geometric properties of a linguistic hyperspace and our proprietary mathematical machine-learning algorithm, we can analyze a user’s preferences and personality traits described in text without relying on accumulated behavioral data. This is achieved through a unique semantic hyperplane algorithm in the vocabulary embedding space, which defines conceptual groups by antonyms, and operates within minimal computation time. As a result, we infer subtle inclinations of users who have scant behavioral histories or limited initial information, thus enhancing the service’s product suggestion, recommendation, and personalization capabilities. \n(Patent granted: Patent No. 7393772)",
+        "zh": "基于语言超空间的几何特性以及我们独创的机器学习数学算法，无需大量累积用户行为数据，仅通过用户文本描述，即可利用依托反义词定义的概念群和词汇嵌入空间中的独特语义超平面算法，在极短的计算时间内解析用户的偏好和个性特征。由此，我们得以推测出那些行为记录不足或初始信息有限的用户难以察觉的嗜好特性，从而提升服务在商品推荐、个性化与定制化建议等方面的能力。（已获专利：专利号 7393772）",
+        "es": "Basándonos en las propiedades geométricas de un hiperespacio lingüístico y en nuestro propio algoritmo matemático de aprendizaje automático, podemos analizar las preferencias y rasgos de personalidad descritos en el texto sin necesitar la acumulación de datos de comportamiento. Esto se logra mediante un algoritmo de hiperplano semántico único en el espacio de incrustación de vocabulario, que define grupos conceptuales a través de antónimos y opera con un tiempo de cálculo mínimo. Gracias a este enfoque, inferimos tendencias sutiles incluso en usuarios con un historial de comportamiento limitado o información inicial escasa, mejorando así la capacidad de la plataforma para la recomendación de productos, la personalización y las sugerencias. (Patente concedida: N.º de patente 7393772)",
+        "ru": "Используя геометрические свойства лингвистического гиперпространства и собственный математический алгоритм машинного обучения, мы можем анализировать предпочтения и особенности личности пользователя, описанные в тексте, без необходимости в крупных массивах поведенческих данных. Для этого применяется наш уникальный алгоритм семантической гиперплоскости в пространстве встраивания слов, который определяет концептуальные группы через антонимы и требует минимальных вычислительных ресурсов. Таким образом, мы выявляем скрытые предпочтения у пользователей с недостаточной историей действий или небольшим объёмом исходной информации, повышая возможности сервиса в области продуктовых рекомендаций, персонализации и рекомендационных систем. (Патент получен: патент № 7393772)",
+        "fr": "En s'appuyant sur les propriétés géométriques d’un hyperespace linguistique et notre algorithme propriétaire de machine learning, nous analysons les préférences et les traits de personnalité décrits dans le texte d’un utilisateur, sans exiger l’accumulation de données comportementales. Notre algorithme de superplan sémantique unique, situé dans l’espace d’embedding lexical et basé sur des groupes conceptuels définis par des antonymes, fonctionne avec un temps de calcul minimal. De cette façon, nous déduisons les inclinaisons difficiles à discerner chez les utilisateurs disposant de peu d’historique ou d’informations initiales, améliorant ainsi les capacités de recommandation, de proposition de produits et de personnalisation du service. (Brevet obtenu : numéro 7393772)",
+        "ar": "باستخدام الخصائص الهندسية للفضاء اللغوي الفائق وخوارزمية التعلم الآلي الرياضية الخاصة بنا، يمكننا تحليل تفضيلات المستخدم وسماته الشخصية الموصوفة في النص دون الحاجة إلى تراكم البيانات السلوكية. يتحقق ذلك من خلال خوارزمية فريدة في فضاء تضمين المفردات تقوم على تعريف المجموعات المفاهيمية اعتمادًا على الأضداد، وذلك في وقت حسابي ضئيل. ومن خلال هذا النهج، يمكننا استنتاج التفضيلات الخفية لدى المستخدمين ذوي المعلومات المحدودة أو السجلات السلوكية القليلة، مما يعزز قدرات الخدمة في اقتراح المنتجات والتوصيات والتخصيص. (حاصل على براءة اختراع: رقم البراءة 7393772)"
+    },
+    "LSH_section_2_title": {
+        "ja": "従来のレコメンデーションの課題、初期の行動データ蓄積不足によるコールドスタート問題も解決。",
+        "en": "It also solves the cold start problem caused by insufficient accumulation of initial behavioral data, a longstanding challenge in conventional recommendation systems.",
+        "zh": "同时也解决了传统推荐系统中由于初始行为数据不足而导致的冷启动问题。",
+        "es": "También resuelve el problema de inicio en frío ocasionado por la falta de acumulación de datos de comportamiento inicial, un desafío recurrente en los sistemas de recomendación convencionales.",
+        "ru": "Также устраняет проблему холодного старта, вызванную недостаточным накоплением начальных поведенческих данных, что является давней задачей традиционных систем рекомендаций.",
+        "fr": "Il résout également le problème de cold start dû à un manque de données comportementales initiales, un défi de longue date dans les systèmes de recommandation classiques.",
+        "ar": "كما يعالج مشكلة البداية الباردة الناتجة عن نقص تراكم بيانات السلوك الأولي، وهي تحدٍّ قديم تواجهه أنظمة التوصيات التقليدية."
+    },
+    "LSH_section_2_article": {
+        "ja": "従来のレコメンデーションアルゴリズムでは行動データが蓄積されるまで機能せず、肝心の新規ユーザーにとっては何ら無力でした。この問題はコールドスタート問題（データが蓄積されなければ動作しない問題）と呼ばれ、従来のアルゴリズムの致命的欠点でした。\nLSHアルゴリズムは行動データの蓄積を必要とせず、ユーザーの僅かな記述文書さえあれば即座に関心傾向を導き出すことができます。そのため、サービスにとって特に重要な初期のユーザーに対しても、すぐにパーソナライゼーションを行うことができます。",
+        "en": "In conventional recommendation algorithms, they do not work until enough behavioral data has been accumulated, rendering them powerless for new users who are actually critical. This issue is known as the cold start problem (where systems cannot operate without accumulated data), representing a fatal flaw in traditional algorithms. In contrast, the LSH algorithm does not require the accumulation of behavioral data. Even a brief descriptive text from the user is enough to instantly infer their interests. Consequently, it can immediately provide personalization for new users at the crucial initial stage.",
+        "zh": "在传统的推荐算法中，只有在累积了足够的行为数据后它们才能正常运作，对于实际上最关键的新用户而言几乎毫无作用。这个问题被称为冷启动问题（如果没有积累数据就无法运行），是传统算法的致命缺陷。相较之下，LSH 算法无需累积行为数据，只需用户提供一小段描述性文本，就能立即推断其兴趣倾向。因此，它能够在新用户最初使用时就即时提供个性化服务。",
+        "es": "En los algoritmos de recomendación convencionales, no funcionan hasta que se ha acumulado suficiente información de comportamiento, lo que los vuelve ineficaces para los nuevos usuarios, precisamente los más importantes. Este problema se conoce como el problema de arranque en frío (o cold start), un defecto fatal de los algoritmos tradicionales. Por el contrario, el algoritmo LSH no requiere la acumulación de datos de comportamiento; basta con un breve texto descriptivo del usuario para inferir de inmediato sus intereses. De este modo, puede ofrecer personalización inmediata incluso a los nuevos usuarios en su etapa inicial.",
+        "ru": "В традиционных алгоритмах рекомендаций они не работают, пока не накопится достаточно данных о поведении, что делает их бессильными для новых пользователей, которые особенно важны. Эта проблема известна как проблема холодного старта (когда система не может функционировать без накопленных данных) и является критическим недостатком традиционных алгоритмов. В отличие от них, алгоритм LSH не требует накопления поведенческих данных: достаточно лишь краткого описательного текста от пользователя, чтобы мгновенно определить его интересы. Благодаря этому персонализацию можно предоставить сразу же, даже для новых пользователей на самом раннем этапе.",
+        "fr": "Dans les algorithmes de recommandation classiques, ils ne fonctionnent pas tant qu’un certain volume de données comportementales n’est pas accumulé, ce qui les rend impuissants pour les nouveaux utilisateurs, pourtant cruciaux. Ce problème est appelé le problème de cold start (les systèmes ne fonctionnent pas sans données accumulées), un défaut majeur des algorithmes traditionnels. À l’inverse, l’algorithme LSH n’a pas besoin d’accumuler des données comportementales : il lui suffit d’un bref texte descriptif de l’utilisateur pour déduire immédiatement ses préférences. Ainsi, il peut fournir une personnalisation immédiate même aux nouveaux utilisateurs dès leurs premières interactions.",
+        "ar": "لا تعمل خوارزميات التوصية التقليدية حتى تتراكم بيانات سلوكية كافية، مما يجعلها عاجزة أمام المستخدمين الجدد الذين يعدّون الأساس في غاية الأهمية. يُعرَف هذا الإشكال بمشكلة البداية الباردة (حيث لا تعمل الأنظمة دون بيانات متراكمة)، وهو عيبٌ جوهري في الخوارزميات التقليدية. أما خوارزمية LSH، فلا تحتاج إلى تراكم بيانات سلوكية؛ إذ يكفي وجود نص وصفي موجز من المستخدم لاستخلاص ميوله على الفور. وبذلك، يمكن توفير تجربة مخصصة مباشرةً حتى للمستخدمين الجدد في مراحلهم الأولى."
+    },
+    "LSH_section_3_title": {
+        "ja": "ポストマスメディア時代の、多様で細分化された現代人の趣味趣向を的確に補える。",
+        "en": "In this post–mass media era, it can precisely address the increasingly diverse and niche interests of modern audiences.",
+        "zh": "在后大众传媒时代，它能够精准地满足当代人日益多元且细分化的兴趣与喜好。",
+        "es": "En esta era posterior a los medios masivos, puede complementar de manera precisa los gustos y preferencias cada vez más diversos y segmentados de la sociedad actual.",
+        "ru": "В эпоху пост-массовых медиа он способен точно удовлетворять все более разнообразные и специализированные вкусы и предпочтения современных людей.",
+        "fr": "Dans cette ère post-médias de masse, il peut répondre avec précision à la diversité et à la segmentation croissantes des goûts et préférences du public moderne.",
+        "ar": "في عصر ما بعد وسائل الإعلام الجماهيرية، بإمكانه تلبية الأذواق والميول المتنوعة والمتخصصة لجمهور اليوم على نحو دقيق."
+    },
+    "LSH_section_3_article": {
+        "ja": "従来の行動データベースのレコメンデーションアルゴリズムは結局常に大多数に人気の商品を提案することで精度が担保されており、多様化した趣味趣向には機能していない問題が指摘されていました。\n一方でマスメディアが消失しつつある現代の環境で多様化する興味関心に耐えるパーソナライゼーションアルゴリズムが必要とされており、LSHアルゴリズムは、独自の言語超空間幾何学により、シンプルなものが好き、変わったものが好き、派手なものが好き、堅実なものが好き、60年代のものが好き、などのニッチな興味のベクトルを任意に定義し、拾い上げることができます。",
+        "en": "Traditional behavior data-based recommendation algorithms have ensured their accuracy by consistently proposing products popular among the majority eventually, which has led to criticism that they do not effectively cater to diverse tastes and preferences.\nMeanwhile, in today's environment where mass media is gradually disappearing, there is a growing need for personalization algorithms that can handle increasingly diversified interests.\nBy leveraging its unique linguistic hyper-spatial geometry, the LSH algorithm can arbitrarily define and capture niche interest vectors, such as liking simple things, liking unusual things, liking flashy things, liking practical things, or liking things from the 60s.",
+        "zh": "传统的行为数据库推荐算法最终通过不断推荐大多数人喜欢的热门商品来保证其精准度，因此被批评无法满足多样化的兴趣和偏好需求。\n与此同时，在当前大众媒体逐渐消失的环境中，需要能够应对日益多元化兴趣的个性化算法。\n借助其独特的语言超空间几何学，LSH 算法能够任意定义并捕捉各种小众兴趣向量，例如喜欢简单的东西、喜欢奇特的东西、喜欢华丽的东西、喜欢务实的东西、或者喜欢 60 年代风格的东西等。",
+        "es": "Los algoritmos de recomendación basados en bases de datos de comportamiento, en última instancia, han garantizado su precisión sugiriendo siempre productos populares entre la mayoría, lo que ha suscitado críticas por no responder adecuadamente a los gustos y preferencias más diversos.\nAl mismo tiempo, en el entorno actual donde los medios de comunicación de masas están desapareciendo gradualmente, se hace necesaria la existencia de algoritmos de personalización capaces de adaptarse a intereses cada vez más diversos.\nGracias a su exclusiva geometría hiperespacial del lenguaje, el algoritmo LSH puede definir y captar libremente vectores de interés de nicho, como a quienes les gustan las cosas simples, las cosas inusuales, las cosas llamativas, las cosas prácticas o las cosas de los años 60.",
+        "ru": "Традиционные алгоритмы рекомендаций, основанные на поведенческих базах данных, в конечном итоге обеспечивают точность, постоянно предлагая товары, популярные у большинства, и подвергаются критике за неспособность учитывать разнообразные вкусы и предпочтения.\nМежду тем, в современных условиях, когда массовые медиа постепенно исчезают, возникает потребность в алгоритмах персонализации, способных удовлетворять всё более разнообразные интересы.\nБлагодаря своей уникальной лингвистической гиперпространственной геометрии, алгоритм LSH может произвольно задавать и улавливать нишевые векторы интересов, такие как любовь к простым вещам, необычным вещам, броским вещам, практичным вещам или к вещам 60-х годов.",
+        "fr": "Les algorithmes de recommandation fondés sur des bases de données comportementales garantissent finalement leur précision en proposant systématiquement des produits populaires auprès de la majorité, ce qui a suscité des critiques quant à leur incapacité à répondre à une diversité de goûts et de préférences.\nDans le contexte actuel où les médias de masse disparaissent peu à peu, il est nécessaire de disposer d’algorithmes de personnalisation capables de s’adapter à des centres d’intérêt de plus en plus variés.\nGrâce à sa géométrie hyper-spatiale linguistique unique, l’algorithme LSH peut définir et identifier librement des vecteurs d’intérêts de niche, par exemple pour ceux qui aiment les choses simples, les choses insolites, les choses voyantes, les choses pragmatiques ou encore les objets des années 60.",
+        "ar": "في نهاية المطاف، تضمن خوارزميات التوصية التقليدية القائمة على قواعد بيانات السلوك دقتها من خلال اقتراح منتجات تحظى بشعبية لدى الأغلبية باستمرار، وقد تعرضت لانتقادات بسبب عدم استجابتها لمدى تنوع الأذواق والاهتمامات.\nوفي الوقت نفسه، ومع تراجع وسائل الإعلام الجماهيرية في العصر الحالي، تزداد الحاجة إلى خوارزميات للتخصيص قادرة على التعامل مع اهتمامات متزايدة التنوع.\nوبفضل هندستها الفريدة فائقة الأبعاد اللغوية، يمكن لخوارزمية LSH تحديد والتقاط متجهات الاهتمامات المتخصصة بشكل مرن، مثل من يحب الأشياء البسيطة، أو غير الاعتيادية، أو البارزة، أو العملية، أو أشياء من حقبة الستينيات."
+    },
+    "LSH_research_paper": {
+        "ja": "この製品の研究論文",
+        "en": "Research paper for this product",
+        "zh": "该产品的研究论文",
+        "es": "Artículo de investigación sobre este producto",
+        "ru": "Научная статья об этом продукте",
+        "fr": "Article de recherche sur ce produit",
+        "ar": "ورقة بحثية حول هذا المنتج"
+    },
+    "LSH_inquiry_button": {
+        "ja": "この製品について問い合わせる",
+        "en": "Inquire About This Product",
+        "zh": "询问此产品",
+        "es": "Consultar sobre este producto",
+        "ru": "Запросить информацию о продукте",
+        "fr": "Demander des informations sur ce produit",
+        "ar": "استفسر عن هذا المنتج"
+    }
+}

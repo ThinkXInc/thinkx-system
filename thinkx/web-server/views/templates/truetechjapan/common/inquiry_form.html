@@ -1,0 +1,135 @@
+{# 
+    Insert form to html:
+
+        {% from "inquiry.html" import inquiry_form %}
+
+
+        {{ inquiry_form('inquiry-form', '/inquiry') }}
+
+    Customize the color of message:
+
+        p.message.error { 
+            color: red; 
+        } 
+        p.message.success { 
+            color: green 
+        } 
+
+#}
+{% macro inquiry_form(id, url,
+    place_holder_name="Your Name",
+    place_holder_email="Email",
+    place_holder_phone="Phone",
+    place_holder_job_title="Job Title",
+    place_holder_company_name="Company Name",
+    place_holder_message="How can we assist you?",
+    value_submit_button="Submit",
+    requirement_error="$0 can not be empty.",
+    format_error="$0 is invalid format.",
+    submit_success="Successfully sent.",
+    submit_failed="Failed to send.",
+    required_fields=["name", "email", "message"]
+    ) %}
+<form class="inquiry-form {{ id }}" id="{{ id }}">
+    <div class="input-fields">
+        <input type="text" name="name" placeholder="{{ place_holder_name }}">
+        <input type="email" name="email" placeholder="{{ place_holder_email }}">
+        <input type="text" name="phone" placeholder="{{ place_holder_phone }}">
+        <input type="text" name="job_title" placeholder="{{ place_holder_job_title }}">
+        <input type="text" name="company_name" placeholder="{{ place_holder_company_name }}">
+        <textarea name="message" rows="4" placeholder="{{ place_holder_message }}"></textarea>
+    </div>
+    <div class="submit">
+        <input type="submit" value="{{ value_submit_button }}">
+    </div>
+    <p class="message"></p>
+</form>
+
+<script>
+    (function () {
+        const form = document.querySelector("#{{ id }}");
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();
+    
+            function getFieldValue(fieldName) {
+                const field = form.querySelector(`input[name="${fieldName}"]`) 
+                                || form.querySelector(`textarea[name="${fieldName}"]`);
+                return field ? field.value : '';
+            }
+
+            const formData = {
+                'name': getFieldValue("name"),
+                'email': getFieldValue("email"),
+                'phone': getFieldValue("phone"),
+                'job_title': getFieldValue("job_title"),
+                'company_name': getFieldValue("company_name"),
+                'message': getFieldValue("message")
+            };
+
+            const enableSubmitButton = (enabled) => {
+                form.querySelector('input[type="submit"]').disabled = !enabled;
+            };
+
+            enableSubmitButton(false);
+
+            function inject(message, values) {
+                return message.replace(/\$(\d+)/g, (match, index) => values[index] || match);
+            }
+
+            const validate = (formData) => {
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                for (const field of {{ required_fields | tojson }}) {
+                    if (!formData[field]) {
+                        const label = form.querySelector(`[name="${field}"]`).placeholder;
+                        return [false, inject('{{ requirement_error }}', [label])];
+                    }
+                }
+                if (formData.email && !emailPattern.test(formData.email)) {
+                    const label = form.querySelector(`[name="email"]`).placeholder;
+                    return [false, inject('{{ format_error }}', [label])];
+                }
+                return [true, ''];
+            };
+
+            const [isValid, errorMsg] = validate(formData);
+            if (!isValid) {
+                showMessage('error', errorMsg);
+                enableSubmitButton(true);
+                return;
+            }
+
+            fetch('{{ url }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;charset=UTF-8'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    showMessage('success', '{{ submit_success | safe }}');
+                    clearInputs();
+                } else {
+                    showMessage('error', '{{ submit_failed | safe }}');
+                }
+                enableSubmitButton(true);
+            })
+            .catch(() => {
+                showMessage('error', '{{ submit_failed | safe }}');
+                enableSubmitButton(true);
+            });
+    
+            function clearInputs() {
+                form.querySelector('input[name="name"]').value = '';
+                form.querySelector('input[name="email"]').value = '';
+                form.querySelector('input[name="phone"]').value = '';
+                form.querySelector('input[name="job_title"]').value = '';
+                form.querySelector('input[name="company_name"]').value = '';
+                form.querySelector('textarea[name="message"]').value = '';
+            }
+        });
+    })();
+</script>
+{% endmacro %}

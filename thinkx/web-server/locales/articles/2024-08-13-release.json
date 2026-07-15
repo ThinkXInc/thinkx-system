@@ -1,0 +1,66 @@
+{
+  "metadata_blog_2024-11-25-hr": {
+    "ja": {
+      "title": "「Quantz ®」の提供を開始",
+      "description": "「Quantz ®」の提供を開始",
+      "keywords": "ThinkX, Quantz, カスタムノーコードリアルタイム音声対話エージェントシステム"
+    },
+    "en": {
+      "title": "Launch of 'Quantz®'",
+      "description": "Launch of 'Quantz®'",
+      "keywords": "ThinkX, Quantz, custom no-code real-time voice dialogue agent system"
+    },
+    "zh": {
+      "title": "正式推出「Quantz®」",
+      "description": "正式推出「Quantz®」",
+      "keywords": "ThinkX, Quantz, 自定义无代码实时语音对话代理系统"
+    },
+    "es": {
+      "title": "Lanzamiento de 'Quantz®'",
+      "description": "Lanzamiento de 'Quantz®'",
+      "keywords": "ThinkX, Quantz, sistema de agente de diálogo de voz en tiempo real sin código personalizado"
+    },
+    "ru": {
+      "title": "Запуск «Quantz®»",
+      "description": "Запуск «Quantz®»",
+      "keywords": "ThinkX, Quantz, настраиваемая система голосового диалогового агента в реальном времени без кода"
+    },
+    "fr": {
+      "title": "Lancement de « Quantz® »",
+      "description": "Lancement de « Quantz® »",
+      "keywords": "ThinkX, Quantz, système d'agent de dialogue vocal en temps réel sans code personnalisé"
+    },
+    "ar": {
+      "title": "إطلاق “Quantz®”",
+      "description": "إطلاق “Quantz®”",
+      "keywords": "ThinkX, Quantz, نظام وكيل حوار صوتي في الوقت الفعلي بدون كود مخصص"
+    }
+  },
+  "article_title": {
+    "ja": "「Quantz ®」の提供を開始",
+    "en": "Launch of 'Quantz®'",
+    "zh": "正式推出「Quantz®」",
+    "es": "Lanzamiento de 'Quantz®'",
+    "ru": "Запуск «Quantz®»",
+    "fr": "Lancement de « Quantz® »",
+    "ar": "إطلاق “Quantz®”"
+  },
+  "article_date": {
+    "ja": "2024年08月13日",
+    "en": "August 13, 2024",
+    "zh": "2024年8月13日",
+    "es": "13 de agosto de 2024",
+    "ru": "13 августа 2024 г.",
+    "fr": "13 août 2024",
+    "ar": "13 أغسطس 2024"
+  },
+  "article_main": {
+    "ja": "ThinkX（東京都港区、代表取締役 大塚一輝）は、2024年1月に開発した、独自の高速音声レスポンスと効率的な同時リクエスト処理性能をもつQuantz Streamエンジンをベースにした、「カスタムノーコードリアルタイム音声対話エージェントシステムQuantz®」の提供を開始。\n\nQuantz ® <a target=\"_blank\" href=\"https://quantz.thinkxinc.com\">https://quantz.thinkxinc.com</a>\n\n・67万行を超える独自の基盤システム\n・Webサイトにスクリプトを貼り付けるだけで10分で高度なLLMベースカスタム音声対話を既存のシステムに統合可能\n・高速レスポンスと効率的な同時リクエスト並列処理性能を、vLLMを拡張し最適化された独自のLLM Parallel Inference Adapter™で実現\n・外部APIを用いず、LLM、音声認識、音声合成を含むすべてのモジュールが自社サーバー（ThinkX Supercom 3）内で完結し、完全なプライバシーを維持\n\nリリース <a href=\"https://x.com/ThinkX_AI/status/1823327218241855620\" target=\"_blank\">https://x.com/ThinkX_AI/status/1823327218241855620</a>\n技術特徴の詳細\n<a target=\"_blank\" href=\"/{{lang}}/products/Quantz-Voice-AI-OS\">https://thinkxinc.com/{{lang}}/products/Quantz-Voice-AI-OS</a>",
+    "en": "ThinkX (Minato-ku, Tokyo; CEO: Kazuki Otsuka) has commenced offering the “Custom No-Code Real-Time Voice Dialogue Agent System Quantz®,” based on its proprietary Quantz Stream engine—developed in January 2024—which features unique high-speed voice response and efficient simultaneous request handling performance.\n\nQuantz ® <a target=\"_blank\" href=\"https://quantz.thinkxinc.com\">https://quantz.thinkxinc.com</a>\n\n• A proprietary platform system with over 670,000 lines of code\n• By simply embedding a script on your website, you can integrate advanced LLM-based custom voice interaction into existing systems in just 10 minutes\n• Realizes high-speed response and efficient concurrent request processing via an independently developed LLM Parallel Inference Adapter™, which extends and optimizes vLLM\n• Maintains complete privacy by operating entirely on ThinkX’s own server (ThinkX Supercom 3) without using external APIs, including all modules for LLM, speech recognition, and speech synthesis\n\nRelease <a href=\"https://x.com/ThinkX_AI/status/1823327218241855620\" target=\"_blank\">https://x.com/ThinkX_AI/status/1823327218241855620</a>\nTechnical details\n<a target=\"_blank\" href=\"/{{lang}}/products/Quantz-Voice-AI-OS\">https://thinkxinc.com/{{lang}}/products/Quantz-Voice-AI-OS</a>",
+    "zh": "ThinkX（总部位于东京都港区，代表董事兼首席执行官：大塚一辉）基于其于2024年1月开发的专有Quantz Stream引擎（具有独特的高速语音响应和高效的同时请求处理性能），开始提供“无代码定制实时语音对话代理系统Quantz®”。\n\nQuantz ® <a target=\"_blank\" href=\"https://quantz.thinkxinc.com\">https://quantz.thinkxinc.com</a>\n\n• 超过67万行的专有系统平台\n• 只需在网站上嵌入脚本，即可在10分钟内将基于LLM的高级自定义语音交互集成到现有系统\n• 通过扩展和优化vLLM而开发的专有LLM Parallel Inference Adapter™，实现高速响应和高效的并发请求并行处理性能\n• 包括LLM、语音识别和语音合成在内的所有模块均在ThinkX自有服务器（ThinkX Supercom 3）上独立运行，无需外部API，完全保持隐私\n\n发布信息 <a href=\"https://x.com/ThinkX_AI/status/1823327218241855620\" target=\"_blank\">https://x.com/ThinkX_AI/status/1823327218241855620</a>\n技术特性详情\n<a target=\"_blank\" href=\"/{{lang}}/products/Quantz-Voice-AI-OS\">https://thinkxinc.com/{{lang}}/products/Quantz-Voice-AI-OS</a>",
+    "es": "ThinkX (Minato-ku, Tokio; Director Ejecutivo: Kazuki Otsuka) ha comenzado a ofrecer el “Sistema de agente de diálogo de voz en tiempo real sin código personalizado Quantz®”, basado en su motor Quantz Stream, desarrollado en enero de 2024, que cuenta con un rendimiento único de respuesta de voz de alta velocidad y una gestión eficiente de solicitudes simultáneas.\n\nQuantz ® <a target=\"_blank\" href=\"https://quantz.thinkxinc.com\">https://quantz.thinkxinc.com</a>\n\n• Plataforma propia con más de 670.000 líneas de código\n• Con solo insertar un script en el sitio web, se puede integrar en 10 minutos la interacción de voz personalizada basada en LLM en los sistemas existentes\n• Ofrece respuestas de alta velocidad y un procesamiento eficiente de solicitudes simultáneas mediante el LLM Parallel Inference Adapter™, una extensión y optimización independiente de vLLM\n• Mantiene la privacidad completa al ejecutar todos los módulos (LLM, reconocimiento y síntesis de voz) en el servidor propio de ThinkX (ThinkX Supercom 3), sin recurrir a API externas\n\nLanzamiento <a href=\"https://x.com/ThinkX_AI/status/1823327218241855620\" target=\"_blank\">https://x.com/ThinkX_AI/status/1823327218241855620</a>\nDetalles de las características técnicas\n<a target=\"_blank\" href=\"/{{lang}}/products/Quantz-Voice-AI-OS\">https://thinkxinc.com/{{lang}}/products/Quantz-Voice-AI-OS</a>",
+    "ru": "Компания ThinkX (район Минато, Токио; генеральный директор: Кадзуки Оцука) объявила о начале предоставления «Пользовательской безкодовой системы голосового диалогового агента в реальном времени Quantz®», основанной на собственном движке Quantz Stream, разработанном в январе 2024 года. Данный движок обеспечивает уникальную высокоскоростную голосовую реакцию и эффективную обработку нескольких одновременных запросов.\n\nQuantz ® <a target=\"_blank\" href=\"https://quantz.thinkxinc.com\">https://quantz.thinkxinc.com</a>\n\n• Собственная платформа, содержащая более 670 000 строк кода\n• Достаточно внедрить скрипт на свой сайт, чтобы всего за 10 минут интегрировать продвинутые голосовые взаимодействия на основе LLM в существующие системы\n• Обеспечивает высокоскоростной отклик и эффективную параллельную обработку нескольких запросов одновременно благодаря собственной технологии LLM Parallel Inference Adapter™, расширяющей и оптимизирующей vLLM\n• Полная конфиденциальность: все модули — включая LLM, распознавание речи и синтез речи — работают на собственном сервере ThinkX (ThinkX Supercom 3) без использования внешних API\n\nРелиз <a href=\"https://x.com/ThinkX_AI/status/1823327218241855620\" target=\"_blank\">https://x.com/ThinkX_AI/status/1823327218241855620</a>\nПодробная информация о технических характеристиках\n<a target=\"_blank\" href=\"/{{lang}}/products/Quantz-Voice-AI-OS\">https://thinkxinc.com/{{lang}}/products/Quantz-Voice-AI-OS</a>",
+    "fr": "ThinkX (Minato-ku, Tokyo ; PDG : Kazuki Otsuka) annonce le lancement du « Système d’agent de dialogue vocal en temps réel sans code personnalisé Quantz® », basé sur son moteur Quantz Stream développé en janvier 2024, qui offre une réponse vocale ultra-rapide et une gestion efficace des requêtes simultanées.\n\nQuantz ® <a target=\"_blank\" href=\"https://quantz.thinkxinc.com\">https://quantz.thinkxinc.com</a>\n\n• Une plateforme propriétaire avec plus de 670 000 lignes de code\n• En insérant simplement un script sur votre site web, vous pouvez intégrer en 10 minutes un système de dialogue vocal personnalisé basé sur un LLM dans vos systèmes existants\n• Permet une réponse ultra-rapide et un traitement efficace des requêtes simultanées via le LLM Parallel Inference Adapter™ développé en interne, qui étend et optimise vLLM\n• Préserve la confidentialité totale : tous les modules, y compris le LLM, la reconnaissance et la synthèse vocales, fonctionnent exclusivement sur le serveur de ThinkX (ThinkX Supercom 3), sans recourir à des API externes\n\nAnnonce <a href=\"https://x.com/ThinkX_AI/status/1823327218241855620\" target=\"_blank\">https://x.com/ThinkX_AI/status/1823327218241855620</a>\nDétails des caractéristiques techniques\n<a target=\"_blank\" href=\"/{{lang}}/products/Quantz-Voice-AI-OS\">https://thinkxinc.com/{{lang}}/products/Quantz-Voice-AI-OS</a>",
+    "ar": "أطلقت شركة ThinkX (ميناتو كو، طوكيو؛ الرئيس التنفيذي: كازوكي أوتسوكا) نظام الوكيل الحواري الصوتي في الوقت الفعلي بدون كود مخصص Quantz®، المستند إلى محرك Quantz Stream الذي طُوِّر في يناير 2024 والمتميز باستجابة صوتية عالية السرعة وقدرة فعالة على معالجة الطلبات المتزامنة.\n\nQuantz ® <a target=\"_blank\" href=\"https://quantz.thinkxinc.com\">https://quantz.thinkxinc.com</a>\n\n• منصة برمجية مملوكة للشركة تحتوي على أكثر من 670 ألف سطر برمجي\n• يكفي تضمين سكريبت على موقع الويب لدمج تفاعل صوتي متقدم قائم على نماذج لغوية ضخمة (LLM) في الأنظمة الحالية في غضون 10 دقائق فقط\n• يحقق استجابة فائقة السرعة ومعالجة متوازية فعالة للطلبات المتزامنة عبر LLM Parallel Inference Adapter™ المطوَّر خصيصًا، والذي يوسّع ويحسّن vLLM\n• لا يتم استخدام أي واجهات برمجة خارجية؛ فجميع الوحدات، بما فيها LLM والتعرف على الصوت والتركيب الصوتي، تعمل كليًا على خادم ThinkX (ThinkX Supercom 3) مما يضمن خصوصية تامة\n\nالرابط الرسمي <a href=\"https://x.com/ThinkX_AI/status/1823327218241855620\" target=\"_blank\">https://x.com/ThinkX_AI/status/1823327218241855620</a>\nللاطّلاع على التفاصيل التقنية\n<a target=\"_blank\" href=\"/{{lang}}/products/Quantz-Voice-AI-OS\">https://thinkxinc.com/{{lang}}/products/Quantz-Voice-AI-OS</a>"
+  }
+}

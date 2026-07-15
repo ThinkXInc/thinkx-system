@@ -1,0 +1,36 @@
+# monorepo root .gitignore
+# 注意: ワークスペースの .gitignore(各サブリポジトリ名を無視)とは別物。
+# monorepo ではサブフォルダ(thinkx/ 等)は追跡対象なので無視しない。
+# 秘密パターンは M-4 で集約・拡張する。
+
+# OS / editor
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Node
+node_modules/
+
+# local-only claude settings
+.claude/settings.local.json
+
+# secrets (M-4 で機械検査・拡張)
+*.pem
+*.key
+*.tfvars
+*.tfstate
+*.tfstate.*
+.env
+**/.env
+!**/.env.example
+credentials
+
+# デザイン原本(.ai/.png の作業ファイル群・配信不要・大容量)。サイト配信は web-server/views/ 側。
+transformism/design/

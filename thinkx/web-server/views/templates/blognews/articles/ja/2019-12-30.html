@@ -1,0 +1,47 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+
+    <article class="article" data-news-id="2019-12-30">
+      <div class="container">
+        <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}"><<</a></span>
+        <p class="date news-date">2019 Dec 30</p>
+        <h2 class="title">組織体制以降のお知らせ</h2>
+        <div class="news-image-container">
+          <figure class="news-image news-id-2019-12-30">
+            <!--<img class="news-id-2019-12-30" src="/img/expo.jpg" srcset="/img/expo@2x.jpg 2x"/>-->
+          </figure>
+        </div>
+        <div class="main-text">
+          先端情報技術の研究開発組織として2015年1月に設立した6th Sense, Ltd(代表取締役 大塚一輝)</br>
+          はこれまでに培った音声自然言語処理技術をはじめとするAI関連技術群、</br>
+          レコメンド技術、大規模分散処理基盤、暗号技術、110万事象の構造化済みWikiデータ、等の成果を集約して</br>
+          開発を進める新たなソフトウェアサービスを中心とした組織に移行するため、</br>
+          2019年12月をもちまして、ThinkX,Incに組織変更をいたしました。</br>
+          </br>
+          今後とも引き続きよろしくお願いいたします。
+        </div>
+        <div class="back-container cf">
+          <span class="back">
+            <a href="/{{ lang }}/blognews?page={{ page }}">一覧に戻る</a>
+          </span>
+        </div>
+      </div>
+    </article>
+  </div>
+  {% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

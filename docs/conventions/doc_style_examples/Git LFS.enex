@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export4.dtd">
+<en-export export-date="20260712T042736Z" application="Evernote" version="11.24.3">
+  <note>
+    <title>Git LFS</title>
+    <created>20241204T060150Z</created>
+    <updated>20241204T060458Z</updated>
+    <note-attributes>
+      <author>大塚一輝</author>
+    </note-attributes>
+    <content>
+      <![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd"><en-note><div><br/></div><div>Git LFS</div><div><br/></div><div><br/></div><div>Prerequisite</div><div style="--en-codeblock:true; --en-lineWrapping:false;box-sizing: border-box; padding: 8px; font-family: Monaco, Menlo, Consolas, &quot;Courier New&quot;, monospace; font-size: 12px; color: rgb(51, 51, 51); border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; background-color: rgb(251, 250, 248); border: 1px solid rgba(0, 0, 0, 0.14902); background-position: initial initial; background-repeat: initial initial;"><div>cd /src/quantz/processing-server/tts4/pretrained_checkpoints</div><div>git lfs install</div></div><div><br/></div><div>Push new file</div><div>*add と track両方必要</div><div style="--en-codeblock:true; --en-lineWrapping:false;box-sizing: border-box; padding: 8px; font-family: Monaco, Menlo, Consolas, &quot;Courier New&quot;, monospace; font-size: 12px; color: rgb(51, 51, 51); border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; background-color: rgb(251, 250, 248); border: 1px solid rgba(0, 0, 0, 0.14902); background-position: initial initial; background-repeat: initial initial;"><div>cd /src/quantz/processing-server/tts4/pretrained_checkpoints</div><div>git lfs track JP_moraspeech_182000_v2.pth</div><div>git add -f JP_moraspeech_182000_v2.pth</div></div><div><br/></div><div>Pull</div><div style="--en-codeblock:true; --en-lineWrapping:false;box-sizing: border-box; padding: 8px; font-family: Monaco, Menlo, Consolas, &quot;Courier New&quot;, monospace; font-size: 12px; color: rgb(51, 51, 51); border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; background-color: rgb(251, 250, 248); border: 1px solid rgba(0, 0, 0, 0.14902); background-position: initial initial; background-repeat: initial initial;"><div>cd /src/quantz/processing-server/tts4/pretrained_checkpoints</div><div>git lfs pull</div></div><div><br/></div><div><br/></div><div>認識されているファイルの確認</div><div>*なければadd か trackがない?</div><div style="--en-codeblock:true; --en-lineWrapping:false;box-sizing: border-box; padding: 8px; font-family: Monaco, Menlo, Consolas, &quot;Courier New&quot;, monospace; font-size: 12px; color: rgb(51, 51, 51); border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; background-color: rgb(251, 250, 248); border: 1px solid rgba(0, 0, 0, 0.14902); background-position: initial initial; background-repeat: initial initial;"><div>cd /src/quantz/processing-server/tts4/pretrained_checkpoints</div><div>git lfs ls-files</div></div><div><br/></div></en-note>      ]]>
+    </content>
+  </note>
+</en-export>

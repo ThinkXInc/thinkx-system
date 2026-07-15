@@ -1,0 +1,577 @@
+{
+    "metadata_blog_bestsleep": {
+      "ja": {
+        "title": "自然ブラウンノイズで最高の睡眠を手にいれる",
+        "description": "NNTMは最高品質の自然録音、ブラウンノイズをベースにさらに広範なノイズマスク効果になるようデザイン。",
+        "keywords": "睡眠, 自然, NNTM, ブラウンノイズ, 自然音, スピーカー, ハイレゾ, iPhone"
+      },
+      "en": {
+        "title": "Achieve the Best Sleep with Natural Brown Noise",
+        "description": "NNTM is designed to deliver the highest-quality natural recordings based on Brown Noise, further expanding its noise-masking effect.",
+        "keywords": "sleep, nature, NNTM, brown noise, natural sound, speaker, hi-res, iPhone"
+      },
+      "zh": {
+        "title": "通过自然布朗噪音获得最优质的睡眠",
+        "description": "NNTM以布朗噪音为基础，使用高品质的自然录音，并进一步扩展噪音掩蔽效果。",
+        "keywords": "睡眠, 自然, NNTM, 布朗噪音, 自然音, 音箱, 高解析度, iPhone"
+      },
+      "es": {
+        "title": "Logra el mejor sueño con Brown Noise natural",
+        "description": "NNTM se basa en grabaciones naturales de alta calidad, diseñadas a partir de Brown Noise para ampliar aún más el efecto de enmascaramiento de ruido.",
+        "keywords": "sueño, naturaleza, NNTM, ruido marrón, sonido natural, altavoz, alta resolución, iPhone"
+      },
+      "fr": {
+        "title": "Obtenez le meilleur sommeil grâce au Brown Noise naturel",
+        "description": "NNTM est conçu pour offrir des enregistrements naturels de haute qualité basés sur le Brown Noise, en élargissant encore l’effet de masquage du bruit.",
+        "keywords": "sommeil, nature, NNTM, brown noise, son naturel, enceinte, haute résolution, iPhone"
+      },
+      "ru": {
+        "title": "Лучший сон с помощью натурального коричневого шума",
+        "description": "NNTM создан на основе коричневого шума и высококачественных записей из природы, расширяя эффект маскировки шума.",
+        "keywords": "сон, природа, NNTM, коричневый шум, природный звук, колонка, хай-рез, iPhone"
+      },
+      "de": {
+        "title": "Mit natürlichem Brown Noise zum besten Schlaf",
+        "description": "NNTM bietet hochqualitative Naturaufnahmen auf Basis von Brown Noise und erweitert dessen Geräuschmaskierungseffekt.",
+        "keywords": "Schlaf, Natur, NNTM, Brown Noise, Naturklang, Lautsprecher, Hi-Res, iPhone"
+      },
+      "ko": {
+        "title": "자연 브라운 노이즈로 최고의 수면을 얻는 방법",
+        "description": "NNTM은 고품질 자연 녹음을 기반으로 한 브라운 노이즈를 더욱 확장된 노이즈 마스킹 효과로 설계했습니다.",
+        "keywords": "수면, 자연, NNTM, 브라운 노이즈, 자연음, 스피커, 고음질, iPhone"
+      },
+      "ar": {
+        "title": "احصل على أفضل نوم مع الضوضاء البنية الطبيعية",
+        "description": "تم تصميم NNTM لتوفير تسجيلات طبيعية عالية الجودة تستند إلى الضوضاء البنية مع توسيع تأثير حجب الضوضاء.",
+        "keywords": "نوم, طبيعة, NNTM, الضوضاء البنية, صوت طبيعي, مكبر صوت, صوت عالي الدقة, iPhone"
+      }
+    },
+    "page_title": {
+      "ja": "自然ブラウンノイズで最高の睡眠を手にいれる",
+      "en": "Achieve the Best Sleep with Natural Brown Noise",
+      "zh": "通过自然布朗噪音获得最优质的睡眠",
+      "es": "Logra el mejor sueño con Brown Noise natural",
+      "fr": "Obtenez le meilleur sommeil grâce au Brown Noise naturel",
+      "ru": "Лучший сон с помощью натурального коричневого шума",
+      "de": "Mit natürlichem Brown Noise zum besten Schlaf",
+      "ko": "자연 브라운 노이즈로 최고의 수면을 얻는 방법",
+      "ar": "احصل على أفضل نوم مع الضوضاء البنية الطبيعية"
+    },
+    "page_subtitle": {
+      "ja": "",
+      "en": "",
+      "zh": "",
+      "es": "",
+      "fr": "",
+      "ru": "",
+      "de": "",
+      "ko": "",
+      "ar": ""
+    },
+    "article": {
+      "ja": [
+        {
+          "text": "マシュー・ウォーカーによるベストセラー「WHY WE SLEEP（睡眠こそ最強の解決策である）」によれば、睡眠時間が7時間を下回ると免疫システムが破壊され、がんのリスクは2倍になり、さらに睡眠負債が蓄積された人は、アルコールを摂取した人と同様な注意力低下、反応時間の遅延につながると指摘しています。"
+        },
+        {
+          "text": "一方、睡眠を妨げる騒音は自分ではコントロールできない問題です。突発的にランダムに生じる物音から防御するのは容易ではありません。耳栓のカバーできる範囲は22~23dbであり、特に急に強く鳴る低い足音などを遮断する能力には限界があります。"
+        },
+        {
+          "text": "ブラウンノイズは、こうした耳栓でもカバーしきれない音域の騒音を脳が知覚しにくくするよう、マスキングします。"
+        },
+        {
+          "text": "詳しくは → <a href=\"/{{ lang }}/blog/brownnoisebasic\">騒音対策への強力なアプローチ、「ブラウンノイズ」とは</a>"
+        },
+        {
+          "text": "<strong>耳栓をつけてさらにブラウンノイズを鳴らすことが、良質な睡眠を確保する最強の方法と言っても過言ではありません。</strong>"
+        },
+        {
+          "text": "しかし、人工的に生成されたブラウンノイズを長時間聴くことの身体への効果は科学的にも明らかでなく、7時間以上聴取し続けるには、より身体に良い音、つまり、よりオーガニックな、自然由来の音であることがよいはずです。"
+        },
+        {
+          "text": "特に、ハイレゾ音源は自然の音の複雑なパターンを忠実に再生することができます。"
+        },
+        {
+          "text": "NNTMはブラウンノイズの特性を活かしながら、さらに日常の広範な騒音をカバーしマスキングするようデザインされ、2.8MHz DSD方式で厳選された場所から録音された、最高品質のハイレゾ音源ブラウンノイズです。"
+        },
+        {
+          "text": "方法は次の通りです。"
+        },
+        {
+          "head": "用意するもの"
+        },
+        {
+          "text": "・iPhoneまたはiPad<br>・スピーカー<br>・耳栓"
+        },
+        {
+          "head": "手順 (1)"
+        },
+        {
+          "text": "以下のリンクからNNTM Appをダウンロードしてください。<br><a href=\"/conversion_redirect/\">NNTMのナチュラル・ブラウンノイズを無料でダウンロードする</a>"
+        },
+        {
+          "head": "手順 (2)"
+        },
+        {
+          "text": "スピーカーとiPhoneをケーブルで接続し、音源を選択して再生します。<br><br>スピーカーは数千円から数万円、またはそれ以上まで売られており、すでにお持ちのものや、どのようなものでも構いません。"
+        },
+        {
+          "head": "手順 (3) [オプション]"
+        },
+        {
+          "text": "ハイレゾの性能をフルで活かし、さらに高品質な音環境を得るためには、外部DACを使用することをおすすめします。<br><br>外部DACはAmazonで9千円程度から購入できます。以下の記事で詳しく説明しています。<br><a href=\"/{{ lang }}/blog/audiosetup\">iPhone/iPadからハイレゾ音源を再生するには</a><br><br>外部DACとiPhoneまたはiPadをUSB-CまたはLightningケーブルで接続し、DACとスピーカーをオーディオケーブルで接続して再生します。<br><br>粒の細かな生に近いリアルな音質を感じられると思います。"
+        }
+      ],
+      "en": [
+        {
+          "text": "According to Matthew Walker’s bestseller, “WHY WE SLEEP,” getting fewer than seven hours of sleep damages the immune system and doubles the risk of cancer. He also points out that people with accumulated sleep debt experience a decrease in alertness and delayed reaction time comparable to those who have consumed alcohol."
+        },
+        {
+          "text": "Meanwhile, noise that disrupts sleep is a factor beyond one’s own control. It’s not easy to protect yourself from sudden, random sounds. Earplugs can reduce noise by about 22–23 dB, but they have limitations, especially with low, sudden footstep noises."
+        },
+        {
+          "text": "Brown Noise masks these noise ranges that even earplugs fail to cover by making them less perceivable to the brain."
+        },
+        {
+          "text": "For more details → <a href=\"/{{ lang }}/blog/brownnoisebasic\">A powerful approach to noise reduction: What is Brown Noise?</a>"
+        },
+        {
+          "text": "<strong>Wearing earplugs and playing Brown Noise together can be said to be the most effective way to ensure quality sleep.</strong>"
+        },
+        {
+          "text": "However, the long-term bodily effects of artificially generated Brown Noise are not yet scientifically clear. If you plan to listen for more than seven hours, it’s better to opt for a more organic, naturally derived sound that is gentler on the body."
+        },
+        {
+          "text": "In particular, hi-res audio sources can faithfully reproduce the complex patterns of natural sounds."
+        },
+        {
+          "text": "NNTM leverages the characteristics of Brown Noise and is further designed to cover a broad range of everyday noises. It’s a high-resolution Brown Noise recording captured in carefully selected locations using the 2.8 MHz DSD format."
+        },
+        {
+          "text": "Here’s how you can use it:"
+        },
+        {
+          "head": "What You Need"
+        },
+        {
+          "text": "• iPhone or iPad<br>• Speaker<br>• Earplugs"
+        },
+        {
+          "head": "Step (1)"
+        },
+        {
+          "text": "Download the NNTM App from the link below.<br><a href=\"/conversion_redirect/\">Download NNTM’s Natural Brown Noise for free</a>"
+        },
+        {
+          "head": "Step (2)"
+        },
+        {
+          "text": "Connect your speaker and iPhone with a cable, select the audio source, and start playback.<br><br>Speakers are available from as low as a few dozen dollars to much higher; you can use any speaker you already have."
+        },
+        {
+          "head": "Step (3) [Optional]"
+        },
+        {
+          "text": "To take full advantage of hi-res quality and create an even better audio environment, we recommend using an external DAC.<br><br>You can purchase an external DAC from around $70 on Amazon. More details can be found in the article below:<br><a href=\"/{{ lang }}/blog/audiosetup\">How to play hi-res audio from an iPhone/iPad</a><br><br>Connect the external DAC to your iPhone or iPad via a USB-C or Lightning cable, then connect the DAC to the speaker with an audio cable.<br><br>You’ll likely notice a more detailed, lifelike sound quality."
+        }
+      ],
+      "zh": [
+        {
+          "text": "根据马修·沃克（Matthew Walker）的畅销书《WHY WE SLEEP》所述，如果睡眠时间少于7小时，免疫系统会受到破坏，患癌风险会翻倍。而且，他指出，长期累积的睡眠不足会导致专注力下降和反应时间延迟，与饮酒后的状态相似。"
+        },
+        {
+          "text": "与此同时，干扰睡眠的噪音往往是我们无法控制的。要防御突然且随机出现的声音并不容易。耳塞一般能降低约22–23分贝的噪音，但对于突发的低频脚步声等，遮蔽能力仍然有限。"
+        },
+        {
+          "text": "布朗噪音可以掩蔽这些耳塞无法完全覆盖的噪音频段，让大脑更难察觉到这些噪音。"
+        },
+        {
+          "text": "更多详情 → <a href=\"/{{ lang }}/blog/brownnoisebasic\">应对噪音的强力方法：什么是布朗噪音？</a>"
+        },
+        {
+          "text": "<strong>佩戴耳塞并同时播放布朗噪音，可以说是确保高质量睡眠的最强方法。</strong>"
+        },
+        {
+          "text": "然而，目前对于长期聆听人工合成的布朗噪音对身体的影响尚无定论。如果需要持续收听超过7小时，选择更有机、更接近自然的声音对身体更为有益。"
+        },
+        {
+          "text": "尤其是高解析度（Hi-Res）音源，能够忠实再现自然声音的复杂模式。"
+        },
+        {
+          "text": "NNTM在继承布朗噪音特性的同时，进一步设计覆盖更广泛的日常噪音，并采用2.8MHz DSD方式在精心挑选的地点录音，打造高品质的布朗噪音Hi-Res音源。"
+        },
+        {
+          "text": "使用方法如下："
+        },
+        {
+          "head": "准备物品"
+        },
+        {
+          "text": "• iPhone 或 iPad<br>• 音箱<br>• 耳塞"
+        },
+        {
+          "head": "步骤 (1)"
+        },
+        {
+          "text": "从以下链接下载NNTM应用：<br><a href=\"/conversion_redirect/\">免费下载 NNTM 的天然布朗噪音</a>"
+        },
+        {
+          "head": "步骤 (2)"
+        },
+        {
+          "text": "用线缆将音箱与iPhone相连，选择音源并开始播放。<br><br>音箱的价格从几百元到几千元不等，也可以使用现有的任意音箱。"
+        },
+        {
+          "head": "步骤 (3) [可选]"
+        },
+        {
+          "text": "如果想充分利用高解析度音源并获得更高品质的音效环境，推荐使用外置DAC。<br><br>外置DAC在亚马逊上售价约几百元起，详情可参考以下文章：<br><a href=\"/{{ lang }}/blog/audiosetup\">如何在 iPhone/iPad 上播放高解析度音源</a><br><br>使用USB-C或Lightning数据线将外置DAC与iPhone或iPad连接，然后用音频线将DAC与音箱连接进行播放。<br><br>你会感受到更加细腻、逼真的音质。"
+        }
+      ],
+      "es": [
+        {
+          "text": "Según el libro superventas de Matthew Walker, “WHY WE SLEEP”, dormir menos de 7 horas daña el sistema inmunológico y duplica el riesgo de cáncer. Además, señala que las personas con una deuda de sueño acumulada experimentan una disminución de la atención y un aumento en el tiempo de reacción similares a los de alguien que ha consumido alcohol."
+        },
+        {
+          "text": "Por otro lado, el ruido que perturba el sueño es un factor que no podemos controlar. No es fácil protegerse de ruidos repentinos y aleatorios. Los tapones para los oídos pueden reducir alrededor de 22–23 dB de ruido, pero tienen sus limitaciones, especialmente frente a pisadas graves y repentinas."
+        },
+        {
+          "text": "El ruido marrón (Brown Noise) enmascara esas frecuencias que los tapones no pueden cubrir por completo, haciendo que el cerebro perciba menos estos sonidos."
+        },
+        {
+          "text": "Más información → <a href=\"/{{ lang }}/blog/brownnoisebasic\">Un enfoque potente para el control de ruido: ¿Qué es el ruido marrón?</a>"
+        },
+        {
+          "text": "<strong>Usar tapones y reproducir ruido marrón al mismo tiempo es, sin duda, la mejor forma de asegurar un sueño de calidad.</strong>"
+        },
+        {
+          "text": "Sin embargo, no se conocen con exactitud los efectos a largo plazo de escuchar ruido marrón sintético durante muchas horas. Si planeas escucharlo más de 7 horas seguidas, es preferible optar por un sonido más orgánico, proveniente de fuentes naturales, que sea más beneficioso para el cuerpo."
+        },
+        {
+          "text": "En particular, los archivos de audio en alta resolución pueden reproducir con fidelidad los complejos patrones sonoros de la naturaleza."
+        },
+        {
+          "text": "NNTM aprovecha las características del ruido marrón y está diseñado para cubrir una gama más amplia de ruidos cotidianos. Se trata de una grabación de ruido marrón en alta resolución obtenida en lugares cuidadosamente seleccionados con el formato DSD de 2,8 MHz."
+        },
+        {
+          "text": "Cómo usarlo:"
+        },
+        {
+          "head": "Qué necesitas"
+        },
+        {
+          "text": "• iPhone o iPad<br>• Altavoz<br>• Tapones para los oídos"
+        },
+        {
+          "head": "Paso (1)"
+        },
+        {
+          "text": "Descarga la app de NNTM en el siguiente enlace.<br><a href=\"/conversion_redirect/\">Descarga gratis el ruido marrón natural de NNTM</a>"
+        },
+        {
+          "head": "Paso (2)"
+        },
+        {
+          "text": "Conecta el altavoz al iPhone mediante un cable, selecciona la pista y comienza la reproducción.<br><br>Los altavoces pueden costar desde unos cuantos euros hasta precios más elevados. Puedes usar cualquier altavoz que ya tengas."
+        },
+        {
+          "head": "Paso (3) [Opcional]"
+        },
+        {
+          "text": "Para aprovechar al máximo la calidad de alta resolución y conseguir un entorno de sonido superior, se recomienda usar un DAC externo.<br><br>Un DAC externo puede comprarse por alrededor de 70 euros en Amazon. Más detalles en el siguiente artículo:<br><a href=\"/{{ lang }}/blog/audiosetup\">Cómo reproducir audio de alta resolución desde un iPhone/iPad</a><br><br>Conecta el DAC externo al iPhone o iPad con un cable USB-C o Lightning, luego el DAC al altavoz con un cable de audio.<br><br>Notarás una calidad de sonido más detallada y realista."
+        }
+      ],
+      "fr": [
+        {
+          "text": "Selon le best-seller de Matthew Walker, « WHY WE SLEEP », dormir moins de 7 heures affaiblit le système immunitaire et double le risque de cancer. Il souligne également que les personnes ayant accumulé une dette de sommeil présentent une diminution de l’attention et un temps de réaction retardé comparables à ceux d’une personne ayant consommé de l’alcool."
+        },
+        {
+          "text": "Par ailleurs, le bruit qui perturbe le sommeil est un facteur que l’on ne peut pas contrôler. Il est difficile de se protéger contre des bruits soudains et aléatoires. Les bouchons d’oreilles peuvent atténuer d’environ 22–23 dB, mais ils ont leurs limites, notamment face à des bruits de pas graves et soudains."
+        },
+        {
+          "text": "Le Brown Noise masque les plages de fréquences que les bouchons d’oreilles ne peuvent pas couvrir complètement, ce qui rend ces sons moins perceptibles pour le cerveau."
+        },
+        {
+          "text": "Pour en savoir plus → <a href=\"/{{ lang }}/blog/brownnoisebasic\">Une approche puissante pour la réduction du bruit : qu’est-ce que le bruit marron ?</a>"
+        },
+        {
+          "text": "<strong>Porter des bouchons d’oreilles et diffuser du Brown Noise est sans doute la meilleure façon de garantir un sommeil de qualité.</strong>"
+        },
+        {
+          "text": "Cependant, on ne connaît pas encore précisément les effets à long terme de l’écoute prolongée d’un Brown Noise artificiel. Si vous envisagez de l’écouter plus de 7 heures, il est préférable d’opter pour un son plus organique, d’origine naturelle, meilleur pour le corps."
+        },
+        {
+          "text": "En particulier, l’audio haute résolution permet de reproduire fidèlement la complexité des sons naturels."
+        },
+        {
+          "text": "NNTM exploite les caractéristiques du Brown Noise et est conçu pour couvrir un éventail plus large de bruits du quotidien. Il s’agit d’un enregistrement haute résolution réalisé en 2,8 MHz DSD dans des lieux soigneusement sélectionnés."
+        },
+        {
+          "text": "Voici comment procéder :"
+        },
+        {
+          "head": "Matériel nécessaire"
+        },
+        {
+          "text": "• iPhone ou iPad<br>• Enceinte<br>• Bouchons d’oreilles"
+        },
+        {
+          "head": "Étape (1)"
+        },
+        {
+          "text": "Téléchargez l’application NNTM via le lien ci-dessous.<br><a href=\"/conversion_redirect/\">Télécharger gratuitement le Brown Noise naturel de NNTM</a>"
+        },
+        {
+          "head": "Étape (2)"
+        },
+        {
+          "text": "Branchez votre iPhone à l’enceinte avec un câble, sélectionnez la source audio et lancez la lecture.<br><br>Les enceintes sont disponibles à partir de quelques dizaines d’euros jusqu’à des prix plus élevés. Vous pouvez utiliser n’importe quelle enceinte que vous possédez déjà."
+        },
+        {
+          "head": "Étape (3) [Optionnel]"
+        },
+        {
+          "text": "Pour profiter pleinement de la haute résolution et obtenir un environnement sonore supérieur, nous vous recommandons d’utiliser un DAC externe.<br><br>Vous pouvez vous procurer un DAC externe pour environ 70 € sur Amazon. Pour plus de détails, consultez l’article suivant :<br><a href=\"/{{ lang }}/blog/audiosetup\">Comment lire de l’audio haute résolution depuis un iPhone/iPad</a><br><br>Connectez votre DAC externe à l’iPhone ou l’iPad via un câble USB-C ou Lightning, puis le DAC à l’enceinte via un câble audio.<br><br>Vous apprécierez une qualité sonore plus fine et réaliste."
+        }
+      ],
+      "ru": [
+        {
+          "text": "По словам Мэттью Уокера, автора бестселлера «Почему мы спим» (WHY WE SLEEP), если спать меньше семи часов, иммунная система ослабевает, а риск рака удваивается. Также он отмечает, что люди с накопленным «долгом сна» испытывают такое же снижение внимания и замедление реакции, как и те, кто употреблял алкоголь."
+        },
+        {
+          "text": "При этом шум, мешающий сну, — фактор, который сложно контролировать самостоятельно. Нелегко защититься от внезапных и случайных звуков. Беруши могут уменьшать шум примерно на 22–23 дБ, но у них есть ограничения, особенно перед внезапными низкочастотными звуками шагов."
+        },
+        {
+          "text": "Коричневый шум (Brown Noise) «маскирует» эти шумовые диапазоны, которые беруши не могут полностью поглотить, делая их менее заметными для мозга."
+        },
+        {
+          "text": "Подробнее → <a href=\"/{{ lang }}/blog/brownnoisebasic\">Мощный подход к борьбе с шумом: что такое коричневый шум?</a>"
+        },
+        {
+          "text": "<strong>Использовать беруши и одновременно воспроизводить коричневый шум — один из самых действенных способов обеспечить качественный сон.</strong>"
+        },
+        {
+          "text": "Однако научные данные о том, как длительное прослушивание искусственно сгенерированного коричневого шума влияет на организм, пока ограничены. Если вы планируете слушать его более 7 часов подряд, лучше выбрать более «органический», естественный по происхождению звук, который будет мягче воздействовать на тело."
+        },
+        {
+          "text": "Особенно это касается Hi-Res аудио, способного точно передавать сложные звуковые паттерны природы."
+        },
+        {
+          "text": "NNTM использует характеристики коричневого шума и дополнительно спроектирован таким образом, чтобы охватывать более широкий спектр бытовых шумов. Это высококачественная запись коричневого шума, полученная в тщательно отобранных локациях с использованием формата DSD 2,8 МГц."
+        },
+        {
+          "text": "Как им пользоваться:"
+        },
+        {
+          "head": "Что понадобится"
+        },
+        {
+          "text": "• iPhone или iPad<br>• Колонки (акустическая система)<br>• Беруши"
+        },
+        {
+          "head": "Шаг (1)"
+        },
+        {
+          "text": "Скачайте приложение NNTM по ссылке ниже.<br><a href=\"/conversion_redirect/\">Скачать натуральный коричневый шум NNTM бесплатно</a>"
+        },
+        {
+          "head": "Шаг (2)"
+        },
+        {
+          "text": "Подключите колонки к iPhone с помощью кабеля, выберите звуковой файл и начните воспроизведение.<br><br>Колонки можно купить по цене от нескольких десятков долларов и выше. Подойдёт любая акустика, которая у вас уже есть."
+        },
+        {
+          "head": "Шаг (3) [Дополнительно]"
+        },
+        {
+          "text": "Чтобы в полной мере оценить преимущества высококачественного звука и создать более качественные условия для прослушивания, рекомендуется использовать внешний ЦАП (DAC).<br><br>Внешний DAC можно купить на Amazon примерно от 70 долларов. Подробности в статье:<br><a href=\"/{{ lang }}/blog/audiosetup\">Как воспроизводить высококачественный аудио с iPhone/iPad</a><br><br>Подключите внешний DAC к iPhone или iPad через USB-C или Lightning-кабель, затем соедините DAC с колонками аудиокабелем.<br><br>Вы ощутите более детальный и реалистичный звук."
+        }
+      ],
+      "de": [
+        {
+          "text": "Laut Matthew Walkers Bestseller „WHY WE SLEEP“ wird das Immunsystem geschwächt, wenn man weniger als sieben Stunden schläft, und das Krebsrisiko verdoppelt sich. Außerdem weist er darauf hin, dass bei Menschen mit einem großen Schlafdefizit die Aufmerksamkeit in etwa genauso stark sinkt und die Reaktionszeit so stark verzögert ist wie bei Personen, die Alkohol konsumiert haben."
+        },
+        {
+          "text": "Geräusche, die den Schlaf stören, sind hingegen oft kaum kontrollierbar. Es ist nicht leicht, sich vor plötzlichen, zufälligen Geräuschen zu schützen. Ohrstöpsel können den Lärm um etwa 22–23 dB reduzieren, stoßen jedoch bei tiefen, plötzlich auftretenden Geräuschen wie Schritten an ihre Grenzen."
+        },
+        {
+          "text": "Brown Noise maskiert jene Frequenzbereiche, die selbst von Ohrstöpseln nicht vollständig abgedeckt werden, und macht sie für das Gehirn weniger wahrnehmbar."
+        },
+        {
+          "text": "Weitere Infos → <a href=\"/{{ lang }}/blog/brownnoisebasic\">Ein effektiver Ansatz zur Lärmbekämpfung: Was ist Brown Noise?</a>"
+        },
+        {
+          "text": "<strong>Ohrstöpsel zu tragen und gleichzeitig Brown Noise abzuspielen, ist eine der wirksamsten Methoden, um guten Schlaf zu gewährleisten.</strong>"
+        },
+        {
+          "text": "Die langfristigen Auswirkungen des stundenlangen Hörens von künstlich erzeugtem Brown Noise sind wissenschaftlich noch nicht vollständig geklärt. Wenn Sie es länger als sieben Stunden hören möchten, empfiehlt sich ein organischer, natürlich gewonnener Klang, der für den Körper bekömmlicher ist."
+        },
+        {
+          "text": "Vor allem Hi-Res-Audiodateien können die komplexen Klangmuster der Natur originalgetreu wiedergeben."
+        },
+        {
+          "text": "NNTM baut auf den Eigenschaften des Brown Noise auf und ist zusätzlich so konzipiert, dass es einen großen Bereich alltäglicher Geräusche abdeckt. Es handelt sich um ein hochauflösendes Brown Noise, das in sorgfältig ausgewählten Locations im 2,8-MHz-DSD-Format aufgenommen wurde."
+        },
+        {
+          "text": "So wenden Sie es an:"
+        },
+        {
+          "head": "Benötigte Ausstattung"
+        },
+        {
+          "text": "• iPhone oder iPad<br>• Lautsprecher<br>• Ohrstöpsel"
+        },
+        {
+          "head": "Schritt (1)"
+        },
+        {
+          "text": "Laden Sie die NNTM-App über den folgenden Link herunter.<br><a href=\"/conversion_redirect/\">NNTMs natürliches Brown Noise kostenlos herunterladen</a>"
+        },
+        {
+          "head": "Schritt (2)"
+        },
+        {
+          "text": "Verbinden Sie den Lautsprecher mit dem iPhone über ein Kabel, wählen Sie die Audioquelle und starten Sie die Wiedergabe.<br><br>Lautsprecher sind ab wenigen Euro bis hin zu höheren Preisklassen erhältlich. Sie können jeden beliebigen Lautsprecher verwenden, den Sie bereits besitzen."
+        },
+        {
+          "head": "Schritt (3) [Optional]"
+        },
+        {
+          "text": "Um das volle Potenzial von Hi-Res zu nutzen und eine noch bessere Klangumgebung zu schaffen, empfiehlt sich die Verwendung eines externen DAC.<br><br>Einen externen DAC erhalten Sie ab ca. 70 € bei Amazon. Weitere Details finden Sie im folgenden Artikel:<br><a href=\"/{{ lang }}/blog/audiosetup\">Wie man hochauflösendes Audio von einem iPhone/iPad abspielt</a><br><br>Verbinden Sie den externen DAC über ein USB-C- oder Lightning-Kabel mit Ihrem iPhone oder iPad und schließen Sie den DAC dann mit einem Audiokabel an den Lautsprecher an.<br><br>Sie werden einen detaillierteren und lebendigeren Klang wahrnehmen."
+        }
+      ],
+      "ko": [
+        {
+          "text": "매슈 워커(Matthew Walker)의 베스트셀러 《Why We Sleep》에 따르면, 수면 시간이 7시간 미만일 경우 면역 체계가 손상되고 암 발병 위험이 2배로 증가한다고 합니다. 또한 수면 부족이 누적된 사람은 알코올을 섭취한 사람과 유사한 주의력 저하, 반응 속도 지연을 겪는다고 지적합니다."
+        },
+        {
+          "text": "반면, 수면을 방해하는 소음은 스스로 통제하기 어려운 문제입니다. 갑작스럽고 무작위로 발생하는 소리를 완벽히 막기란 쉽지 않습니다. 일반적인 귀마개는 약 22~23dB 정도 차단이 가능하지만, 갑작스럽게 크게 들리는 낮은 주파수의 발소리 등에는 한계가 있습니다."
+        },
+        {
+          "text": "브라운 노이즈는 이러한 귀마개로도 완전히 막을 수 없는 주파수 대역의 소음을 뇌가 인식하기 어렵도록 ‘마스킹’해 줍니다."
+        },
+        {
+          "text": "자세한 내용 → <a href=\"/{{ lang }}/blog/brownnoisebasic\">소음 방지를 위한 강력한 접근법: 브라운 노이즈란 무엇인가요?</a>"
+        },
+        {
+          "text": "<strong>귀마개를 착용한 상태에서 브라운 노이즈를 동시에 재생하는 것이, 양질의 수면을 확보하는 가장 강력한 방법이라고 해도 과언이 아닙니다.</strong>"
+        },
+        {
+          "text": "다만, 인위적으로 생성된 브라운 노이즈를 장시간 듣는 것이 신체에 미치는 영향은 아직 과학적으로 명확히 밝혀지지 않았습니다. 7시간 이상 청취해야 한다면, 더 유기적이고 자연적인 소리가 몸에 좋을 것입니다."
+        },
+        {
+          "text": "특히 하이레조(Hi-Res) 음원은 자연음의 복잡한 패턴을 충실하게 재현할 수 있습니다."
+        },
+        {
+          "text": "NNTM은 브라운 노이즈의 특성을 살리면서 일상 소음을 폭넓게 커버하도록 디자인되었으며, 2.8MHz DSD 방식으로 엄선된 장소에서 녹음한 고품질 하이레조 브라운 노이즈입니다."
+        },
+        {
+          "text": "방법은 다음과 같습니다."
+        },
+        {
+          "head": "준비물"
+        },
+        {
+          "text": "• iPhone 또는 iPad<br>• 스피커<br>• 귀마개"
+        },
+        {
+          "head": "단계 (1)"
+        },
+        {
+          "text": "아래 링크에서 NNTM App을 다운로드하세요.<br><a href=\"/conversion_redirect/\">NNTM의 자연 브라운 노이즈 무료 다운로드</a>"
+        },
+        {
+          "head": "단계 (2)"
+        },
+        {
+          "text": "스피커와 iPhone을 케이블로 연결하고, 원하는 음원을 선택하여 재생합니다.<br><br>스피커는 수만 원대부터 다양한 가격대로 판매되고 있으며, 이미 가지고 있는 어떤 스피커든 사용 가능합니다."
+        },
+        {
+          "head": "단계 (3) [옵션]"
+        },
+        {
+          "text": "하이레조 성능을 최대한 활용하고 더욱 고품질의 음향 환경을 얻으려면 외장 DAC 사용을 추천합니다.<br><br>외장 DAC는 아마존에서 약 7만 원대부터 구매가 가능합니다. 자세한 내용은 아래 글을 참고하세요.<br><a href=\"/{{ lang }}/blog/audiosetup\">iPhone/iPad에서 고음질 오디오를 재생하는 방법</a><br><br>외장 DAC를 iPhone 또는 iPad에 USB-C 혹은 Lightning 케이블로 연결한 뒤, DAC와 스피커는 오디오 케이블로 연결해 재생합니다.<br><br>더욱 미세하고 사실적인 사운드를 체감할 수 있을 것입니다."
+        }
+      ],
+      "ar": [
+        {
+          "text": "وفقًا لكتاب “WHY WE SLEEP” للكاتب ماثيو ووكر، فإن النوم أقل من سبع ساعات يُضعف الجهاز المناعي ويضاعف خطر الإصابة بالسرطان. ويشير أيضًا إلى أن تراكم ديون النوم يؤدي إلى انخفاض في مستوى الانتباه وتأخير في سرعة الاستجابة يشبه ما يحدث لدى من يتعاطى الكحول."
+        },
+        {
+          "text": "من جهة أخرى، فإن الضوضاء التي تعيق النوم هي عامل لا يمكن التحكم فيه بسهولة. من الصعب الحماية من الأصوات المفاجئة والعشوائية. يمكن لسدادات الأذن تقليل الضوضاء بنحو 22–23 ديسيبل، ولكنها تظل محدودة الفعالية خصوصًا مع الأصوات المنخفضة والمفاجئة مثل خطوات القدم العالية."
+        },
+        {
+          "text": "الضوضاء البنية (Brown Noise) تقوم بإخفاء هذه النطاقات الصوتية التي لا تتمكن سدادات الأذن من تغطيتها بالكامل، مما يجعل الدماغ أقل قدرة على إدراكها."
+        },
+        {
+          "text": "لمزيد من التفاصيل → <a href=\"/{{ lang }}/blog/brownnoisebasic\">نهج قوي للتعامل مع الضوضاء: ما هو الضوضاء البنية (Brown Noise)؟</a>"
+        },
+        {
+          "text": "<strong>ارتداء سدادات الأذن وتشغيل الضوضاء البنية في آن واحد قد يكون أفضل طريقة لضمان نومٍ عالي الجودة.</strong>"
+        },
+        {
+          "text": "ومع ذلك، لا تزال التأثيرات العلمية للاستماع لفترات طويلة إلى الضوضاء البنية الصناعية غير واضحة تمامًا. إذا كنت تخطط للاستماع لأكثر من سبع ساعات، فالأفضل استخدام صوت أكثر طبيعية ومشتق من مصادر عضوية، لكونه ألطف على الجسم."
+        },
+        {
+          "text": "خصوصًا أن الصوت عالي الدقة (Hi-Res) قادر على إعادة إنتاج الأنماط المعقدة للأصوات الطبيعية بدقة كبيرة."
+        },
+        {
+          "text": "يستفيد NNTM من خصائص الضوضاء البنية، وقد تم تصميمه أيضًا للتعامل مع مدى واسع من الضوضاء اليومية. وهو تسجيل عالي الدقة للضوضاء البنية، تم التقاطه في مواقع منتقاة بعناية باستخدام صيغة DSD بدقة 2.8 ميجاهرتز."
+        },
+        {
+          "text": "طريقة الاستخدام كالتالي:"
+        },
+        {
+          "head": "المستلزمات"
+        },
+        {
+          "text": "• iPhone أو iPad<br>• مكبر صوت<br>• سدادات أذن"
+        },
+        {
+          "head": "الخطوة (1)"
+        },
+        {
+          "text": "قم بتنزيل تطبيق NNTM عبر الرابط التالي.<br><a href=\"/conversion_redirect/\">تنزيل الضوضاء البنية الطبيعية من NNTM مجانًا</a>"
+        },
+        {
+          "head": "الخطوة (2)"
+        },
+        {
+          "text": "وصِّل مكبر الصوت بـ iPhone باستخدام كابل، ثم اختر ملف الصوت وابدأ التشغيل.<br><br>تتوفر مكبرات الصوت بأسعار تبدأ من بضعة دولارات وقد تصل إلى مستويات أعلى. يمكنك استخدام أي مكبر صوت لديك."
+        },
+        {
+          "head": "الخطوة (3) [اختياري]"
+        },
+        {
+          "text": "لاستخدام إمكانات الصوت عالي الدقة بشكل كامل والحصول على بيئة صوتية أكثر جودة، يُنصح باستخدام DAC خارجي.<br><br>يمكن شراء DAC خارجي بسعر يبدأ من حوالي 70 دولارًا على أمازون. اطلع على المزيد من التفاصيل في المقال التالي:<br><a href=\"/{{ lang }}/blog/audiosetup\">كيفية تشغيل الصوت عالي الدقة من iPhone/iPad</a><br><br>قم بتوصيل الـDAC الخارجي بـ iPhone أو iPad عبر كابل USB-C أو Lightning، ثم وصِّل الـDAC بمكبر الصوت عبر كابل صوتي.<br><br>ستلاحظ جودة صوت أكثر دقة وواقعية."
+        }
+      ]
+    },
+    "faq2_related1": {
+      "title": {
+        "ja": "騒音対策への強力なアプローチ、「ブラウンノイズ」とは",
+        "en": "A powerful approach to noise reduction: What is Brown Noise?",
+        "zh": "应对噪音的强力方法：什么是布朗噪音？",
+        "es": "Un enfoque potente para el control de ruido: ¿Qué es el ruido marrón?",
+        "fr": "Une approche puissante pour la réduction du bruit : qu’est-ce que le bruit marron ?",
+        "ru": "Мощный подход к борьбе с шумом: что такое коричневый шум?",
+        "de": "Ein effektiver Ansatz zur Lärmbekämpfung: Was ist Brown Noise?",
+        "ko": "소음 방지를 위한 강력한 접근법: 브라운 노이즈란 무엇인가요?",
+        "ar": "نهج قوي للتعامل مع الضوضاء: ما هو الضوضاء البنية (Brown Noise)؟"
+      }
+    },
+    "faq2_related2": {
+      "title": {
+        "ja": "iPhone/iPadからハイレゾ音源を再生するには",
+        "en": "How to play hi-res audio from an iPhone/iPad",
+        "zh": "如何在 iPhone/iPad 上播放高解析度音源",
+        "es": "Cómo reproducir audio de alta resolución desde un iPhone/iPad",
+        "fr": "Comment lire de l'audio haute résolution depuis un iPhone/iPad",
+        "ru": "Как воспроизводить высококачественный аудио с iPhone/iPad",
+        "de": "Wie man hochauflösendes Audio von einem iPhone/iPad abspielt",
+        "ko": "iPhone/iPad에서 고음질 오디오를 재생하는 방법",
+        "ar": "كيفية تشغيل الصوت عالي الدقة من iPhone/iPad"
+      }
+    }
+  }
+  

@@ -1,0 +1,48 @@
+{# 
+    Insert lang select button to html:
+
+        {{ lang_selector('top', {'English': '/', '日本語': '/ja/'}) }}
+
+#}
+{% macro lang_selector(page_id, lang_name, href_dict) %}
+<div class="lang-selector-backdrop" id="lang-selector-backdrop"></div>
+<div class="lang-selector" id="lang-selector-button">
+    <div class="current-lang">
+        <img class="globe-icon" src="/img/globe.svg"/>
+        {{ lang_name }}
+        <img class="arrow-icon" src="/img/dropdown-arrow.svg"/>
+    </div>
+    <ul class="lang-options" id="lang-options">
+        {% for lang_name, link in href_dict.items() %}
+        <li class="select">
+            <a href="/{{ link }}">{{ lang_name }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<script>
+// Select DOM elements
+const languageSelectorButton = document.getElementById('lang-selector-button');
+const languageOptions = document.getElementById('lang-options');
+const languageSelectorBackdrop = document.getElementById('lang-selector-backdrop');
+
+// Add the click listener to the language selector button
+languageSelectorButton.addEventListener('click', toggleLanguageOptions);
+
+// Add the click listener to the language selector backdrop
+languageSelectorBackdrop.addEventListener('click', toggleLanguageOptions);
+
+// Toggle the display of the language options
+function toggleLanguageOptions(e) {
+    e.stopPropagation();
+    if (languageOptions.classList.contains('show')) {
+        languageOptions.classList.remove('show');
+        languageSelectorBackdrop.classList.remove('show');
+    } else {
+        languageOptions.classList.add('show');
+        languageSelectorBackdrop.classList.add('show');
+    }
+}
+</script>
+{% endmacro %}

@@ -1,0 +1,14 @@
+[Unit]
+Description=uWSGI(transformism)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/src/transformism/web-server
+ExecStart=/src/transformism/web-server/venv/bin/uwsgi --ini /src/transformism/web-server/uwsgi/uwsgi.ini
+User=kaz
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

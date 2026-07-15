@@ -1,0 +1,61 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+
+    <article class="article" data-news-id="2020-11-10">
+      <div class="container">
+        <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}"><<</a></span>
+        <p class="date news-date">2020 Nov 11</p>
+        <h2 class="title">観光庁「誘客多角化のための魅力的な滞在コンテンツ造成」実証事業にCITYWALKが採択されました。</h2>
+        <div class="news-image-container">
+          <figure class="news-image news-id-2020-11-10">
+            <img class="news-id-2020-11-10" src="/img/citywalk_nagasaki.png" srcset="/img/citywalk_nagasaki@2x.png 2x"/>
+          </figure>
+        </div>
+        <div class="main-text">
+          観光庁「誘客多角化のための魅力的な滞在コンテンツ造成」実証事業に、</br>
+          CITYWALKを用いた長崎市での事業が採択されました。</br>
+          </br>
+          長崎市を代表する観光施設群「グラバー園」「出島」「伊王島 i+Land nagasaki」を舞台に非接触のスマートガイドを提供、</br>
+          動画PRを交えた総合シティプロモーションを実施します。</br>
+          </br>
+          タイトル『AIを活用した「密」回避による安全・安心な旅と地域固有の価値を伝える非接触案内の仕組みづくり』</br>
+          </br>
+         【関係団体】</br>
+          長崎市、長崎国際コンベンション協会、株式会社SAIKOH!、</br>
+          長崎南山手グラバーパートナーズ、出島VOF、KPG HOTEL&RESORT i+Land nagasaki</br>
+          </br>
+         【事業主体】KTNテレビ長崎</br>
+         【企画・総合プロデュース】ThinkX株式会社</br>
+           </br>
+           </br>
+          withコロナ時代の新しい旅、3密を回避しながらの安心・安全の旅行の仕組みが求められています。</br>
+          土地固有の魅力を伝える音声案内システムCITYWALKを使用して、</br>
+          長崎市を訪れる旅行者が自身のスマートフォンとイヤホンだけで旅行者の属性に合った最適な旅の情報を受け取れる新しいガイドの仕組みを構築します。</br>
+
+        </br>
+        </div>
+        <div class="back-container cf">
+          <span class="back">
+            <a href="/{{ lang }}/blognews?page={{ page }}">一覧に戻る</a>
+          </span>
+        </div>
+      </div>
+    </article>
+  </div>
+  {% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

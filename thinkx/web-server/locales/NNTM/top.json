@@ -1,0 +1,388 @@
+{
+    "header_copy_sub": {
+        "ja": "騒音を自然の音で打ち消す。\n100%自然録音のナチュラル・ブラウンノイズ。",
+        "en": "Cancel Noise with Sounds of Nature.\n100% naturally recorded brown noise.",
+        "zh": "用自然之声消除噪音。\n100%自然录制的棕噪声。",
+        "es": "Cancela el ruido con sonidos de la naturaleza.\nRuido marrón 100% grabado al natural.",
+        "fr": "Annule le bruit avec des sons de la nature.\nBruit brun 100% enregistré au naturel.",
+        "ru": "Устраняй шум звуками природы.\n100% натуральный коричневый шум.",
+        "de": "Beseitige den Lärm mit Naturklängen.\n100% natürliches braunes Rauschen.",
+        "ko": "소음을 자연의 소리로 없애라.\n100% 자연 녹음 브라운 노이즈.",
+        "ar": "تخلّص من الضوضاء بأصوات الطبيعة.\nضوضاء بنية 100% مسجلة طبيعياً."
+    },
+    "header_copy_main": {
+        "ja": "より良い睡眠、集中、瞑想",
+        "en": "Better Sleep, Focus, Meditation",
+        "zh": "更好的睡眠、专注、冥想",
+        "es": "Mejor sueño, enfoque, meditación",
+        "fr": "Meilleur sommeil, concentration, méditation",
+        "ru": "Лучший сон, сосредоточенность, медитация",
+        "de": "Besserer Schlaf, Fokus, Meditation",
+        "ko": "더 나은 수면, 집중, 명상",
+        "ar": "نوم أفضل، تركيز، تأمل"
+    },
+    "learn_more": {
+        "ja": "さらに詳しく",
+        "en": "Learn More",
+        "zh": "了解更多",
+        "es": "Saber más",
+        "fr": "En savoir plus",
+        "ru": "Узнать больше",
+        "de": "Mehr erfahren",
+        "ko": "자세히 알아보기",
+        "ar": "تعرف على المزيد"
+    },
+    "sleep_main": {
+        "ja": "騒音で眠れない",
+        "en": "Can’t Sleep Due to Noise",
+        "zh": "噪音干扰无法入睡",
+        "es": "¿No puedes dormir por el ruido?",
+        "fr": "Tu n’arrives pas à dormir à cause du bruit ?",
+        "ru": "Не можешь уснуть из-за шума?",
+        "de": "Kannst d | replace('\n', '<br>') | safeu wegen Lärm nicht schlafen?",
+        "ko": "소음 때문에 잠을 못 자?",
+        "ar": "لا تستطيع النوم بسبب الضوضاء؟"
+    },
+    "sleep_sub": {
+        "ja": "もっと質の高い睡眠を手に入れる",
+        "en": "Achieve Better Quality Sleep",
+        "zh": "获得更优质的睡眠",
+        "es": "Consigue un sueño de mejor calidad",
+        "fr": "Obtiens un sommeil de meilleure qualité",
+        "ru": "Добейся сна лучшего качества",
+        "de": "Erreiche besseren Schlaf",
+        "ko": "더 나은 수면을 얻어",
+        "ar": "احصل على نوم بجودة أفضل"
+    },
+    "focus_main": {
+        "ja": "オフィスで周りの人の声や雑音が気になる",
+        "en": "Distracted by Voices or Noise at the Office",
+        "zh": "办公室里的人声或杂音让你分心",
+        "es": "¿Te distraen las voces o el ruido en la oficina?",
+        "fr": "Distrait par les voix ou le bruit au bureau ?",
+        "ru": "Отвлекают голоса или шум в офисе?",
+        "de": "Lenken dich Stimmen oder Lärm im Büro ab?",
+        "ko": "사무실에서 사람 목소리나 소음에 신경 쓰여?",
+        "ar": "هل تشتتك الأصوات أو الضوضاء في المكتب؟"
+    },
+    "focus_sub": {
+        "ja": "仕事や勉強に没頭する",
+        "en": "Immerse Yourself in Work or Study",
+        "zh": "专注于工作或学习",
+        "es": "Sumérgete en el trabajo o el estudio",
+        "fr": "Plonge-toi dans le travail ou les études",
+        "ru": "Погрузись в работу или учёбу",
+        "de": "Tauche in Arbeit oder Studium ein",
+        "ko": "일이나 공부에 몰두해",
+        "ar": "انغمس في العمل أو الدراسة"
+    },
+    "meditation_main": {
+        "ja": "人工音、低品質なサウンドを長時間聴く健康上の懸念",
+        "en": "Health Concerns from Long-Term Artificial or Low-Quality Sound",
+        "zh": "长时间听人工或低质音效的健康隐患",
+        "es": "Preocupaciones de salud por escuchar sonidos artificiales o de baja calidad por mucho tiempo",
+        "fr": "Risques pour la santé liés à l’écoute prolongée de sons artificiels ou de basse qualité",
+        "ru": "Опасения для здоровья от долгого прослушивания искусственных или низкокачественных звуков",
+        "de": "Gesundheitsrisiken durch langes Hören von künstlichen oder minderwertigen Klängen",
+        "ko": "인공 음이나 저품질 사운드를 오래 들으면 건강 우려",
+        "ar": "مخاوف صحية من الاستماع طويل الأمد لأصوات اصطناعية أو منخفضة الجودة"
+    },
+    "meditation_sub": {
+        "ja": "騒音から解放され、身体に良い瞑想効果を実践",
+        "en": "Break Free from Noise and Enjoy Healthy Meditation Benefits",
+        "zh": "摆脱噪音，体验有益身心的冥想效果",
+        "es": "Libérate del ruido y disfruta de beneficios meditativos saludables",
+        "fr": "Libère-toi du bruit et profite des bienfaits d’une méditation saine",
+        "ru": "Освободись от шума и наслаждайся полезными эффектами медитации",
+        "de": "Befreie dich vom Lärm und nutze gesunde Meditationsvorteile",
+        "ko": "소음에서 벗어나 건강한 명상 효과를 누려",
+        "ar": "تحرر من الضوضاء واستمتع بفوائد تأمل صحية"
+    },
+    "intro_copy": {
+        "ja": "目に見えない音は軽視されている",
+        "en": "Sounds that can’t be seen are often overlooked.",
+        "zh": "看不见的声音常被忽视。",
+        "es": "Los sonidos que no se ven suelen pasarse por alto.",
+        "fr": "Les sons invisibles sont souvent négligés.",
+        "ru": "Звуки, которые нельзя увидеть, часто упускают из виду.",
+        "de": "Unsichtbare Klänge werden oft übersehen。",
+        "ko": "보이지 않는 소리는 종종 무시된다.",
+        "ar": "الأصوات التي لا تُرى غالبًا ما يتم تجاهلها."
+    },
+    "intro_story": {
+        "ja": "現代社会では人工的な騒音が溢れていますが、壁や耳栓のような方法はしばしば十分ではありません。\nそのため、多くの人々が、睡眠障害やオフィス環境での集中力の欠如に悩まされています。\n\nブラウンノイズは騒音に近い周波数帯の音を流すことで騒音をマスクし、知覚しにくくする強力な方法です。\n\nしかし、人工的に生成された音を長時間聴くことによる影響は、科学的に不明な点が多くあります。\n\nNNTM（ナチュラル・ノイズ・セラピー＆メディテーション）は、古代より人々が川などの自然の音を利用して騒音を遮断し、音響的なプライバシーを守ってきたことからヒントを得て開発された、100%自然録音によるブラウンノイズです。\n\n人体の健康に最大限配慮しながら、人工的な騒音をシャットダウンすることで、高いパフォーマンス、質の高い睡眠、ストレスの軽減を実現します。",
+        "en": "In today’s society, artificial noise abounds, yet methods like walls or earplugs are often insufficient.\nAs a result, many people struggle with sleep disorders or a lack of concentration in office environments.\n\nBrown noise is a powerful method that masks noise by playing sounds in a frequency range similar to the noise itself, making it less perceptible.\n\nHowever, the long-term effects of listening to artificially generated sounds remain scientifically unclear.\n\nNNTM (Natural Noise Therapy & Meditation) is a 100% naturally recorded brown noise, inspired by how people since ancient times used the sounds of nature, such as rivers, to block noise and protect acoustic privacy.\n\nDesigned with maximum consideration for human health, it shuts down artificial noise to deliver high performance, quality sleep, and stress reduction.",
+        "zh": "在现代社会，人工噪音无处不在，然而墙壁或耳塞等方法往往不够有效。\n因此，许多人饱受睡眠障碍或办公环境中注意力不足的困扰。\n\n棕噪声通过播放与噪音相近频率范围的声音来掩盖噪音，使其难以被感知，是一种强有力的方法。\n\n然而，长时间聆听人工生成的声音的影响在科学上仍有许多未知。\n\nNNTM（自然噪音疗法与冥想）是一种 100% 自然录制的棕噪声，其灵感来自古代人们如何利用河流等大自然之声来遮挡噪音并保护声音隐私。\n\n在最大限度关注人体健康的同时，它通过消除人工噪音，实现高效率、优质睡眠和减压。",
+        "es": "En la sociedad actual, el ruido artificial abunda, pero métodos como paredes o tapones suelen ser insuficientes.\nPor ello, muchas personas enfrentan trastornos del sueño o falta de concentración en entornos de oficina.\n\nEl ruido marrón es un método potente que enmascara el ruido al emitir sonidos en un rango de frecuencias similar, haciéndolo menos perceptible.\n\nSin embargo, los efectos a largo plazo de escuchar sonidos generados artificialmente aún no están claros científicamente.\n\nNNTM (Terapia Natural de Ruido y Meditación) es un ruido marrón 100% grabado de forma natural, inspirado en cómo las personas desde la antigüedad usaban los sonidos de la naturaleza —como los ríos— para bloquear el ruido y proteger su privacidad acústica.\n\nDiseñado con la máxima consideración por la salud humana, elimina el ruido artificial para ofrecer un alto rendimiento, un sueño de calidad y reducir el estrés.",
+        "fr": "Dans la société moderne, le bruit artificiel abonde, mais des méthodes comme les murs ou les bouchons d’oreilles sont souvent insuffisantes.\nEn conséquence, beaucoup de gens souffrent de troubles du sommeil ou d’un manque de concentration dans les environnements de bureau.\n\nLe bruit brun est une méthode puissante qui masque le bruit en diffusant des sons dans une gamme de fréquences proche de celle du bruit, le rendant moins perceptible.\n\nCependant, les effets à long terme de l’écoute de sons générés artificiellement restent scientifiquement incertains.\n\nNNTM (Thérapie Naturelle du Bruit et Méditation) est un bruit brun 100% enregistré naturellement, inspiré par la façon dont, depuis l’Antiquité, on utilisait les sons de la nature — comme ceux des rivières — pour bloquer le bruit et préserver l’intimité acoustique.\n\nConçu avec un soin maximal pour la santé humaine, il élimine le bruit artificiel afin d’offrir de hautes performances, un sommeil de qualité et une réduction du stress.",
+        "ru": "В современном обществе искусственный шум встречается повсюду, но такие методы, как стены или беруши, часто оказываются недостаточными.\nИз-за этого многие страдают от нарушений сна и нехватки концентрации в офисах.\n\nКоричневый шум — это мощный метод, который маскирует шум, воспроизводя звуки в частотном диапазоне, близком к шуму, делая его менее заметным.\n\nОднако долгосрочные последствия прослушивания искусственно созданных звуков остаются во многом неизученными с научной точки зрения.\n\nNNTM (Натуральная Шумотерапия и Медитация) — это 100% натурально записанный коричневый шум, вдохновлённый тем, как ещё в древности люди использовали звуки природы (например, шум рек), чтобы блокировать посторонний шум и сохранять акустическую приватность.\n\nРазработанный с максимальной заботой о здоровье, он устраняет искусственный шум и обеспечивает высокую работоспособность, качественный сон и снижение стресса.",
+        "de": "In der modernen Gesellschaft gibt es reichlich künstlichen Lärm, doch Methoden wie Wände oder Ohrstöpsel sind oft unzureichend.\nDaher leiden viele Menschen unter Schlafstörungen oder mangelnder Konzentration im Büro.\n\nBraunes Rauschen ist eine starke Methode, die Lärm maskiert, indem sie Töne in einem ähnlichen Frequenzbereich wie der Lärm abspielt und ihn dadurch weniger wahrnehmbar macht.\n\nDie Langzeitwirkungen des Hörens künstlich erzeugter Klänge sind jedoch wissenschaftlich noch nicht eindeutig geklärt.\n\nNNTM (Natürliche Lärmtherapie & Meditation) ist ein 100% natürlich aufgenommenes braunes Rauschen, inspiriert davon, wie Menschen schon in der Antike Klänge der Natur – zum Beispiel Flüsse – nutzten, um Lärm zu blockieren und akustische Privatsphäre zu schützen.\n\nMit größter Rücksicht auf die menschliche Gesundheit entwickelt, schaltet es künstlichen Lärm aus, um hohe Leistungsfähigkeit, erholsamen Schlaf und Stressabbau zu ermöglichen.",
+        "ko": "현대 사회에서는 인공 소음이 넘쳐나지만, 벽이나 귀마개 같은 방법은 종종 충분하지 않습니다.\n그 결과, 많은 사람들이 수면 장애나 사무실 환경에서의 집중력 부족으로 고통받고 있습니다.\n\n브라운 노이즈는 소음과 유사한 주파수 대역의 소리를 재생해 소음을 가려 인식하기 어렵게 만드는 강력한 방법입니다.\n\n그러나 인공적으로 생성된 소리를 장시간 청취했을 때의 영향은 과학적으로 여전히 불분명한 부분이 많습니다.\n\nNNTM(내추럴 노이즈 테라피 & 메디테이션)은 고대부터 사람들이 강 등 자연의 소리를 활용해 소음을 차단하고 음향적 프라이버시를 지켜온 점에 착안해 개발된, 100% 자연 녹음 브라운 노이즈입니다.\n\n인체 건강을 최대한 고려하면서 인공 소음을 차단하여 높은 퍼포먼스, 질 높은 수면, 스트레스 감소 효과를 실현합니다.",
+        "ar": "في المجتمع الحديث، تنتشر الضوضاء الاصطناعية بكثرة، لكن الطرق مثل الجدران أو سدادات الأذن غالبًا ما تكون غير كافية.\nونتيجة لذلك، يعاني الكثيرون من اضطرابات النوم أو نقص التركيز في بيئات المكاتب.\n\nالضوضاء البنية هي طريقة قوية لإخفاء الضوضاء من خلال تشغيل أصوات ضمن نطاق تردد مشابه للضوضاء نفسها، مما يجعلها أقل إدراكًا.\n\nومع ذلك، فإن التأثيرات طويلة المدى للاستماع إلى الأصوات المولدة اصطناعيًا لا تزال غير واضحة علميًا.\n\nNNTM (العلاج الطبيعي بالضوضاء والتأمل) هو ضوضاء بنية مسجلة طبيعيًا بنسبة 100%، مستوحاة من كيفية استخدام الناس منذ القدم لأصوات الطبيعة مثل أصوات الأنهار لحجب الضوضاء والحفاظ على الخصوصية الصوتية.\n\nصُمِّم بأقصى قدر من الاهتمام بصحة الإنسان، حيث يقضي على الضوضاء الاصطناعية ليمنح أداءً عاليًا، ونومًا مريحًا، وتقليلًا للتوتر."
+    },
+    "design_copy": {
+        "ja": "日常の騒音を広くカバーするようデザインされた100%自然音",
+        "en": "100% Nature Sounds, Designed to Cover Everyday Noise",
+        "zh": "100%大自然之声，专为覆盖日常噪音而设计",
+        "es": "Sonidos 100% de la naturaleza, diseñados para cubrir el ruido cotidiano",
+        "fr": "Sons 100% de la nature, conçus pour couvrir les bruits quotidiens",
+        "ru": "100% звуки природы, разработанные для покрытия повседневного шума",
+        "de": "100% Naturklänge, entwickelt zur Abdeckung alltäglichen Lärms",
+        "ko": "일상 소음을 포괄하도록 설계된 100% 자연의 소리",
+        "ar": "أصوات الطبيعة بنسبة 100% مصممة لتغطية الضوضاء اليومية"
+    },
+    "design_description": {
+        "ja": "NNTM<sup>TM</sup>のナチュラル・ブラウン・ノイズは100%自然録音でありながら、日常の騒音と同じ周波数範囲に均等に広がるように設計されています。これにより、騒音の原因となる広範な周波数帯域を打ち消し、心身の健康に配慮しながらノイズレス環境を実現します。",
+        "en": "NNTM<sup>TM</sup>’s nature-based brown noise, while 100% recorded from real sounds of nature, is designed to spread evenly across the same frequency range as everyday sounds. This coverage of broad noise-inducing frequencies helps maintain a noise-free environment that supports both mental and physical well-being.",
+        "zh": "NNTM<sup>TM</sup>的源自大自然的棕噪声虽为100%自然录制，却设计为均匀分布于与日常噪音相同的频率范围。通过覆盖广泛的噪音频段，可在关注身心健康的同时实现无噪环境。",
+        "es": "El ruido marrón de NNTM<sup>TM</sup> proveniente de la naturaleza, aunque grabado al 100% de forma orgánica, está diseñado para distribuirse uniformemente en el mismo rango de frecuencias que los sonidos cotidianos. Esta cobertura de amplias frecuencias que generan ruido ayuda a mantener un entorno libre de ruidos que favorece el bienestar mental y físico.",
+        "fr": "Le bruit brun de NNTM<sup>TM</sup>, issu de la nature et enregistré à 100% de manière authentique, est conçu pour se répartir uniformément sur la même gamme de fréquences que les sons du quotidien. Cette couverture des larges fréquences génératrices de bruit contribue à maintenir un environnement silencieux qui soutient le bien-être mental et physique.",
+        "ru": "Природный коричневый шум NNTM<sup>TM</sup>, на 100% записанный из реальных звуков природы, спроектирован так, чтобы равномерно охватывать тот же частотный диапазон, что и повседневные шумы. Благодаря этому широкому спектру подавления шумов обеспечивается бесшумная среда, полезная для психического и физического здоровья.",
+        "de": "Das aus der Natur stammende braune Rauschen von NNTM<sup>TM</sup>, obwohl zu 100% aus echten Naturaufnahmen entstanden, ist so konzipiert, dass es sich gleichmäßig über denselben Frequenzbereich wie Alltagsgeräusche erstreckt. Diese Abdeckung breiter, lärmerzeugender Frequenzen schafft eine ruhige Umgebung, die geistiges und körperliches Wohlbefinden fördert.",
+        "ko": "NNTM<sup>TM</sup>의 자연에서 비롯된 브라운 노이즈는 100% 실제 자연 소리를 녹음했음에도 불구하고, 일상 소음과 동일한 주파수 범위에 고르게 퍼지도록 설계되었습니다. 이를 통해 광범위한 소음 주파수를 상쇄하고, 심신 건강을 고려한 무소음 환경을 실현합니다.",
+        "ar": "ضوضاء NNTM<sup>TM</sup> البنية المستمدة من الطبيعة، ورغم تسجيلها بنسبة 100% من أصوات طبيعية حقيقية، إلا أنها مصممة للانتشار بالتساوي عبر نفس نطاق الترددات للأصوات اليومية. تغطية هذه الترددات الواسعة المسببة للضوضاء تساعد في الحفاظ على بيئة خالية من الضوضاء تدعم الصحة النفسية والجسدية."
+    },
+    "high_fidelity_title": {
+        "ja": "原音への高忠実録音による精神的安らぎと瞑想効果",
+        "en": "High-Fidelity Recordings in Pristine Environments",
+        "zh": "高保真录音带来的精神宁静与冥想效果",
+        "es": "Grabaciones de alta fidelidad para paz mental y meditación",
+        "fr": "Enregistrements haute fidélité pour la sérénité et la méditation",
+        "ru": "Высокоточные записи для душевного покоя и медитации",
+        "de": "Hochwertige Aufnahmen für geistige Ruhe und Meditation",
+        "ko": "원음에 충실한 녹음으로 정신적 안정과 명상 효과",
+        "ar": "تسجيلات عالية الدقة لبيئات نقية"
+    },
+    "high_fidelity_description": {
+        "ja": "2.8MHz Direct Stream Digital（DSD）方式<sup>*1</sup>による忠実度の高い高品質録音により、本物の自然の音を聞くことができます。<sup>*2</sup>\n\n標高1,000メートル以上の山岳地帯で、これらの音を何度もテストを重ねながら慎重に収集しました。さまざまな日常的な騒音を効果的にカバーしながら、長時間のリスニングでも快適な音質を維持できる、心地のよい最高品質の自然音。私たちが自ら日常的に使用し、効果を実証しています。\n\nさらに昼間のオフィスでの集中に適した音や、睡眠時に適した音など、シーンに応じて最適なサウンドを選択できます。",
+        "en": "Experience the authentic sounds<sup>*2</sup> of nature through high-fidelity 2.8MHz DSD<sup>*1</sup> recordings captured at altitudes above 1,000 meters, repeatedly tested for optimal quality.\n\nThese highest-quality nature recordings effectively cover everyday noise while remaining comfortable for extended listening. We use them daily, proving their effectiveness.\n\nChoose from various options suited to different scenarios, such as boosting focus in the office or supporting better sleep.",
+        "zh": "通过2.8MHz Direct Stream Digital（DSD）方式<sup>*1</sup>的高保真录音，您可以听到真实的自然之声<sup>*2</sup>，它们是在海拔1,000米以上的山区经过多次测试后精心采集的。\n\n这些最高品质的自然录音能有效覆盖日常噪音，同时在长时间聆听时保持舒适音质。我们每天都在使用，并已验证其有效性。\n\n此外，您可以根据不同场景选择最优的声音，例如在白天的办公室提高专注力或在睡眠时获得更好的休息效果。",
+        "es": "Disfruta de los auténticos sonidos<sup>*2</sup> de la naturaleza gracias a grabaciones de alta fidelidad en 2.8MHz DSD<sup>*1</sup>, realizadas a más de 1.000 metros de altitud y probadas repetidamente para garantizar la mejor calidad.\n\nEstas grabaciones de la más alta calidad cubren eficazmente el ruido cotidiano y conservan una comodidad auditiva incluso en escuchas prolongadas. Las usamos a diario y hemos comprobado su eficacia.\n\nElige entre diversas opciones adecuadas para distintos escenarios, como mejorar la concentración en la oficina o favorecer un mejor sueño.",
+        "fr": "Découvrez les sons authentiques<sup>*2</sup> de la nature grâce à des enregistrements haute fidélité en 2.8MHz DSD<sup>*1</sup>, réalisés à plus de 1 000 mètres d’altitude et testés à maintes reprises pour une qualité optimale.\n\nCes enregistrements de la plus haute qualité couvrent efficacement les bruits du quotidien, tout en restant confortables lors d’une écoute prolongée. Nous les utilisons quotidiennement et avons constaté leur efficacité.\n\nChoisissez parmi différentes options adaptées à divers contextes, par exemple pour renforcer la concentration au bureau ou favoriser un meilleur sommeil.",
+        "ru": "Ощутите подлинные звуки<sup>*2</sup> природы благодаря высококачественным записям в формате 2.8MHz DSD<sup>*1</sup>, полученным на высоте свыше 1 000 метров и многократно протестированным для обеспечения оптимального качества.\n\nЭти записи высочайшего уровня эффективно маскируют повседневный шум и остаются комфортными для длительного прослушивания. Мы используем их ежедневно и подтверждаем их эффективность.\n\nВыберите из различных вариантов, подходящих для разных ситуаций, например для повышения концентрации в офисе или для улучшения сна.",
+        "de": "Erlebe die authentischen Klänge<sup>*2</sup> der Natur durch hochpräzise 2.8MHz DSD<sup>*1</sup>-Aufnahmen, die in Höhenlagen über 1.000 Metern mehrfach getestet wurden, um optimale Qualität zu gewährleisten.\n\nDiese erstklassigen Naturaufnahmen decken alltägliche Geräusche effektiv ab und bleiben auch bei langem Hören angenehm. Wir nutzen sie täglich und haben ihre Wirksamkeit bewiesen.\n\nWähle aus verschiedenen Optionen, die auf unterschiedliche Szenarien zugeschnitten sind, etwa für bessere Konzentration im Büro oder erholsameren Schlaf.",
+        "ko": "2.8MHz Direct Stream Digital(DSD)<sup>*1</sup> 방식의 고음질 녹음으로, 해발 1,000미터 이상 산악 지대에서 여러 차례 테스트를 거쳐 수집된 진정한 자연 소리<sup>*2</sup>를 경험하세요.\n\n이 최고 품질의 자연 녹음은 일상 소음을 효과적으로 덮으면서도 장시간 청취에 편안함을 유지합니다. 저희는 일상적으로 사용하며 그 효과를 입증했습니다.\n\n또한 사무실 집중력 향상이나 수면 개선 등 다양한 상황에 맞춰 최적의 사운드를 선택할 수 있습니다.",
+        "ar": "اكتشف الأصوات الحقيقية<sup>*2</sup> للطبيعة من خلال تسجيلات عالية الدقة بتقنية 2.8MHz DSD<sup>*1</sup> جُمعت على ارتفاعات تزيد عن 1000 متر وخضعت لاختبارات متكررة لضمان الجودة المثلى.\n\nهذه التسجيلات الطبيعية فائقة الجودة تغطي الضوضاء اليومية بفعالية مع الحفاظ على راحة الاستماع لفترات طويلة. نستخدمها يوميًا ونؤكد فعاليتها.\n\nاختر من خيارات متنوعة تناسب سيناريوهات مختلفة، مثل تعزيز التركيز في المكتب أو دعم نوم أفضل."
+       },
+    "caption_1": {
+        "ja": "*1  広帯域を直接1bitデジタルデータに変換、音声信号の大小をパルス波形密度（濃淡）で表現する方式です。\nこの波形は空間を伝わる音の疎密波と同様のもので、音波そのものに近い形をしています。DSD方式を用いたオーディオファイルの特徴は、原理上100kHzをはるかに超える非常に広い再生帯域と、可聴帯域内での十分なダイナミックレンジの双方が同時に確保でき、原音をより忠実に再現できる点にあります。",
+        "en": "*1 DSD (Direct Stream Digital) converts wideband signals directly into 1-bit digital data, representing sound amplitude through pulse waveform density.\nThis waveform closely resembles the compression and rarefaction of sound waves in space, mirroring natural sound. DSD offers an exceptionally wide playback range—far exceeding 100kHz—along with ample dynamic range in the audible spectrum, enabling truer reproduction of the original sound.",
+        "zh": "*1 DSD（直接流数字）将宽频信号直接转换为1位数字数据，通过脉冲波形密度表示声音大小。\n这种波形类似于空间中传播的声波疏密，与自然声音接近。DSD音频的特点是能同时提供远超100kHz的超宽播放频带和可听范围内充足的动态范围，更忠实地再现原始声音。",
+        "es": "*1 DSD (Direct Stream Digital) convierte señales de banda ancha directamente en datos digitales de 1 bit, representando la amplitud del sonido mediante la densidad de ondas de pulso.\nEsta forma de onda es similar a las ondas de compresión y rarefacción del sonido en el espacio, acercándose al sonido natural. Los archivos DSD destacan por ofrecer un rango de reproducción extremadamente amplio (muy superior a 100kHz) y un rango dinámico suficiente en el espectro audible, logrando una reproducción más fiel del sonido original.",
+        "fr": "*1 Le DSD (Direct Stream Digital) convertit les signaux large bande directement en données numériques 1 bit, exprimant l’amplitude sonore par la densité des ondes pulsées.\nCette forme d’onde ressemble aux ondes de compression et de raréfaction du son dans l’espace, proche du son naturel. Les fichiers DSD se distinguent par une plage de reproduction extrêmement large (bien au-delà de 100kHz) et une dynamique suffisante dans le spectre audible, permettant une reproduction plus fidèle du son original.",
+        "ru": "*1 DSD (Direct Stream Digital) преобразует широкополосные сигналы напрямую в 1-битные цифровые данные, отображая амплитуду звука через плотность импульсных волн.\nЭта форма волны схожа с волнами сжатия и разрежения звука в пространстве, близка к естественному звуку. Особенность DSD — чрезвычайно широкий диапазон воспроизведения (значительно выше 100kHz) и достаточный динамический диапазон в слышимом спектре, что обеспечивает более точное воспроизведение исходного звука.",
+        "de": "*1 DSD (Direct Stream Digital) wandelt Breitbandsignale direkt in 1-Bit-Digitaldaten um und stellt die Klangamplitude durch die Dichte von Impulswellen dar.\nDiese Wellenform ähnelt den Verdichtungs- und Ausdehnungswellen des Schalls im Raum und kommt natürlichem Klang nahe. DSD bietet einen extrem breiten Wiedergabebereich (weit über 100kHz) und einen ausreichenden Dynamikbereich im Hörspektrum, was eine präzisere Wiedergabe des Originalklangs ermöglicht.",
+        "ko": "*1 DSD(Direct Stream Digital)는 광대역 신호를 직접 1비트 디지털 데이터로 변환하며, 소리의 크기를 펄스 파형 밀도로 표현합니다.\n이 파형은 공간을 전달하는 소리의 압축과 희박 파동과 유사해 자연 소리에 가깝습니다. DSD 방식 오디오 파일은 100kHz를 훨씬 초과하는 매우 넓은 재생 대역과 가청 범위 내 충분한 다이내믹 레인지를 동시에 확보하여 원음을 더 충실히 재현합니다.",
+        "ar": "*1 تقوم تقنية DSD (Direct Stream Digital) بتحويل الإشارات عريضة النطاق مباشرة إلى بيانات رقمية 1 بت، معبرة عن سعة الصوت من خلال كثافة موجة النبض.\nهذا الشكل الموجي يشبه موجات الضغط والتفريغ للصوت في الفضاء، مقاربًا للصوت الطبيعي. توفر DSD نطاق تشغيل واسع للغاية - يتجاوز 100kHz بكثير - مع نطاق ديناميكي وافٍ في الطيف السمعي، مما يتيح إعادة إنتاج أكثر دقة للصوت الأصلي."
+    },
+    "caption_2": {
+        "ja": "*2 製品で使用されている音源はiPhoneで再生可能な上限である192kHz PCM方式に変換。",
+        "en": "*2 The audio used in this product is converted to 192kHz PCM format, the maximum playable on iPhone.",
+        "zh": "*2 本产品使用的音源已转换为iPhone可播放的上限格式，即192kHz PCM。",
+        "es": "*2 El audio usado en este producto se convierte al formato PCM de 192kHz, el máximo reproducible en iPhone.",
+        "fr": "*2 Les sons utilisés dans ce produit sont convertis au format PCM 192kHz, la limite maximale pour une lecture sur iPhone.",
+        "ru": "*2 Звуки, используемые в продукте, конвертированы в формат PCM 192kHz, максимальный для воспроизведения на iPhone.",
+        "de": "*2 Die in diesem Produkt verwendeten Klänge wurden in das 192kHz PCM-Format konvertiert, die maximale Wiedergabegrenze auf dem iPhone.",
+        "ko": "*2 이 제품에 사용된 음원은 iPhone에서 재생 가능한 최대 192kHz PCM 형식으로 변환되었습니다.",
+        "ar": "*2 الصوت المستخدم في هذا المنتج تم تحويله إلى تنسيق PCM 192kHz، وهو الحد الأقصى القابل للتشغيل على iPhone."
+    },
+    "download_title": {
+        "ja": "NNTM<sup>TM</sup>の100%ナチュラル・ブラウン・ノイズをダウンロードし、より良い睡眠、騒音からの解放、仕事への集中と瞑想効果を日常に取り入れる。",
+        "en": "Download NNTM<sup>TM</sup>’s 100% Natural Brown Noise for better sleep, noise relief, enhanced work focus, and meditation benefits in your daily life.",
+        "zh": "下载NNTM<sup>TM</sup>的100%自然棕噪声，将更好的睡眠、噪音解放、工作专注和冥想效果融入日常生活中。",
+        "es": "Descarga el Ruido Marrón 100% Natural de NNTM<sup>TM</sup> para disfrutar de un mejor sueño, alivio del ruido, concentración en el trabajo y beneficios de meditación en tu día a día。",
+        "fr": "Téléchargez le Bruit Brun 100% Naturel de NNTM<sup>TM</sup> pour un meilleur sommeil, un soulagement du bruit, une concentration au travail et des bienfaits méditatifs au quotidien。",
+        "ru": "Скачайте 100% натуральный коричневый шум NNTM<sup>TM</sup>, чтобы привнести в повседневную жизнь лучший сон, избавление от шума, концентрацию на работе и эффекты медитации.",
+        "de": "Lade das 100% natürliche braune Rauschen von NNTM<sup>TM</sup> herunter, um besseren Schlaf, Lärmbefreiung, Arbeitsfokus und Meditationsvorteile in deinen Alltag zu bringen.",
+        "ko": "NNTM<sup>TM</sup>의 100% 자연 브라운 노이즈를 다운로드하여 더 나은 수면, 소음 해방, 업무 집중, 명상 효과를 일상에 더하세요。",
+        "ar": "قم بتحميل ضوضاء NNTM<sup>TM</sup> البنية الطبيعية 100% لنوم أفضل، والتحرر من الضوضاء، والتركيز في العمل، وفوائد التأمل في حياتك اليومية."
+    },
+    "app_name": {
+        "ja": "NNTM — 自然の音で騒音を消す",
+        "en": "NNTM: 100% Natural Brown Noise",
+        "zh": "NNTM — 100%自然录制棕噪声",
+        "es": "NNTM — Bloqueo de ruido, sueño",
+        "fr": "NNTM — Blocage du bruit",
+        "ru": "NNTM — Блокировка шума, сон",
+        "de": "NNTM — Lärmblockierung, Schlaf",
+        "ko": "NNTM — 소음 차단, 수면, 집중, 명상",
+        "ar": "NNTM — حجب الضوضاء، نوم"
+    },
+    "app_subtitle": {
+        "ja": "より良い睡眠、集中、瞑想",
+        "en": "Sleep, Focus, Meditation",
+        "zh": "降噪、睡眠、专注、冥想",
+        "es": "Ruido marrón 100% natural",
+        "fr": "Sommeil, concentration",
+        "ru": "Натуральный коричневый шум",
+        "de": "Natürliches braunes Rauschen",
+        "ko": "자연 녹음 브라운 노이즈",
+        "ar": "نوم، تركيز، تأمل"
+    },
+    "app_install_button": {
+        "ja": "今すぐ無料でダウンロード",
+        "en": "Download for free now",
+        "zh": "立即免费下载",
+        "es": "Descárgalo gratis ahora",
+        "fr": "Téléchargez gratuitement maintenant",
+        "ru": "Скачать бесплатно сейчас",
+        "de": "Jetzt kostenlos herunterladen",
+        "ko": "지금 무료로 다운로드",
+        "ar": "حمّل مجانًا الآن"
+    },
+    "faq_title": {
+        "ja": "FAQ",
+        "en": "FAQ",
+        "zh": "FAQ",
+        "es": "FAQ",
+        "fr": "FAQ",
+        "ru": "FAQ",
+        "de": "FAQ",
+        "ko": "FAQ",
+        "ar": "الأسئلة الشائعة"
+    },
+    "faq_q1": {
+        "ja": "NNTMを聞く最適なオーディオ機器は何ですか？",
+        "en": "What’s the best audio equipment for listening to NNTM?",
+        "zh": "听NNTM®的最佳音频设备是什么？",
+        "es": "¿Cuál es el mejor equipo de audio para escuchar NNTM?",
+        "fr": "Quel est le meilleur équipement audio pour écouter NNTM ?",
+        "ru": "Какое аудиооборудование лучше всего подходит для прослушивания NNTM?",
+        "de": "Welche Audioausrüstung ist am besten geeignet, um NNTM zu hören?",
+        "ko": "NNTM을 듣기에 가장 적합한 오디오 장비는 무엇인가요?",
+        "ar": "ما هو أفضل جهاز صوتي للاستماع إلى NNTM؟"
+      },
+      "faq_a1": {
+        "ja": "NNTMの無料音源は最大96kHz 24bit、プロ用音源は192kHz 24bit PCMまたはDSD形式で再生できます（DSD再生機能は2025年4月以降に追加予定）。高品質音源の性能をフルに発揮するには、外部DAC(Digital Analogue Converter)デバイスをイヤホン、ヘッドホン、またはスピーカー等の最終出力機器と端末の間に接続してください。詳しい方法は以下の記事で説明しています。",
+        "en": "Using speakers, headphones, or earphones with a dynamic range faithful to the original sound ensures the balance of the sound’s frequency bands is preserved. When playing from an iPhone, it supports 192kHz PCM or DSD formats (DSD playback functionality will be added after April 2025). For best results, speakers, earphones, or headphones should at least support high-resolution audio playback.",
+        "zh": "使用动态范围忠实于原音的扬声器、头戴式耳机或入耳式耳机，可以保持声音包含的频段平衡。从iPhone播放时，支持192kHz PCM或DSD格式（DSD播放功能将于2025年4月后添加）。扬声器、耳机或头戴式耳机至少需支持高分辨率音频播放以获得最佳效果。",
+        "es": "Usar altavoces, auriculares o audífonos con un rango dinámico fiel al sonido original asegura que se mantenga el equilibrio de las bandas de frecuencia del sonido. Al reproducir desde un iPhone, es compatible con formatos 192kHz PCM o DSD (la función de reproducción DSD se añadirá después de abril de 2025). Para mejores resultados, los altavoces, audífonos o auriculares deben ser compatibles al menos con la reproducción de audio de alta resolución.",
+        "fr": "L’utilisation d’enceintes, de casques ou d’écouteurs avec une plage dynamique fidèle au son original garantit l’équilibre des bandes de fréquences du son. Lors de la lecture depuis un iPhone, les formats 192kHz PCM ou DSD sont pris en charge (la fonctionnalité de lecture DSD sera ajoutée après avril 2025). Pour des résultats optimaux, les enceintes, écouteurs ou casques doivent au moins supporter la lecture audio haute résolution.",
+        "ru": "Использование динамиков, наушников или вкладышей с динамическим диапазоном, верным оригинальному звуку, сохраняет баланс частотных диапазонов звука. При воспроизведении с iPhone поддерживаются форматы 192kHz PCM или DSD (функция воспроизведения DSD будет добавлена после апреля 2025 года). Для наилучшего результата динамики, наушники или вкладыши должны поддерживать воспроизведение аудио высокого разрешения.",
+        "de": "Die Verwendung von Lautsprechern, Kopfhörern oder Ohrhörern mit einem dem Originalklang treuen Dynamikbereich sorgt für eine ausgewogene Wiedergabe der Frequenzbänder. Bei der Wiedergabe von einem iPhone werden 192kHz PCM- oder DSD-Formate unterstützt (die DSD-Wiedergabefunktion wird ab April 2025 hinzugefügt). Für optimale Ergebnisse sollten Lautsprecher, Ohrhörer oder Kopfhörer mindestens die Wiedergabe von High-Resolution-Audio unterstützen.",
+        "ko": "원음에 충실한 다이내믹 레인지를 가진 스피커, 헤드폰, 이어폰을 사용하면 소리의 주파수 대역 균형이 유지됩니다. iPhone에서 재생할 경우 192kHz PCM 또는 DSD 형식을 지원하며(DSD 재생 기능은 2025년 4월 이후 추가 예정입니다). 최적의 효과를 위해 스피커, 이어폰, 헤드폰은 최소한 고해상도 오디오 재생을 지원해야 합니다.",
+        "ar": "استخدام مكبرات صوت أو سماعات رأس أو سماعات أذن ذات نطاق ديناميكي يحافظ على الصوت الأصلي يضمن الحفاظ على توازن نطاقات التردد. عند التشغيل من iPhone، يدعم تنسيقات 192kHz PCM أو DSD (سيتم إضافة وظيفة تشغيل DSD بعد أبريل 2025). للحصول على أفضل النتائج، يجب أن تدعم مكبرات الصوت أو سماعات الأذن أو سماعات الرأس تشغيل الصوت عالي الدقة."
+      },
+      "faq1_related1": {
+        "title": {
+          "ja": "iPhone/iPadからハイレゾ音源を再生するには",
+          "en": "How to play hi-res audio from an iPhone/iPad",
+          "zh": "如何在 iPhone/iPad 上播放高解析度音源",
+          "es": "Cómo reproducir audio de alta resolución desde un iPhone/iPad",
+          "fr": "Comment lire de l'audio haute résolution depuis un iPhone/iPad",
+          "ru": "Как воспроизводить высококачественное аудио с iPhone/iPad",
+          "de": "Wie man hochauflösendes Audio von einem iPhone/iPad abspielt",
+          "ko": "iPhone/iPad에서 고음질 오디오를 재생하는 방법",
+          "ar": "كيفية تشغيل الصوت عالي الدقة من iPhone/iPad"
+        },
+        "url": "/blog/audiosetup"
+      },
+      "faq_q2": {
+        "ja": "ブラウンノイズとは何ですか？",
+        "en": "What is Brown Noise?",
+        "zh": "什么是布朗噪音？",
+        "es": "¿Qué es el ruido marrón (Brown Noise)?",
+        "fr": "Qu’est-ce que le bruit marron (Brown Noise) ?",
+        "ru": "Что такое коричневый шум (Brown Noise)?",
+        "de": "Was ist Brown Noise (Braunes Rauschen)?",
+        "ko": "브라운 노이즈(Brown Noise)란 무엇인가요?",
+        "ar": "ما هو الضوضاء البنية (Brown Noise)؟"
+      },
+      "faq2_related1": {
+        "title": {
+          "ja": "騒音対策への強力なアプローチ、「ブラウンノイズ」とは",
+          "en": "A powerful approach to noise reduction: What is Brown Noise?",
+          "zh": "应对噪音的强力方法：什么是布朗噪音？",
+          "es": "Un enfoque potente para el control de ruido: ¿Qué es el ruido marrón?",
+          "fr": "Une approche puissante pour la réduction du bruit : qu’est-ce que le bruit marron ?",
+          "ru": "Мощный подход к борьбе с шумом: что такое коричневый шум?",
+          "de": "Ein effektiver Ansatz zur Lärmbekämpfung: Was ist Brown Noise?",
+          "ko": "소음 방지를 위한 강력한 접근법: 브라운 노이즈란 무엇인가요?",
+          "ar": "نهج قوي للتعامل مع الضوضاء: ما هو الضوضاء البنية (Brown Noise)؟"
+        },
+        "url": "/blog/brownnoisebasic"
+      },
+      "faq_a2": {
+        "ja": "人間の生活で生じる騒音の周波数は概ね、数十Hz～数千Hz程度の中音域と言われています。ブラウンノイズとはこの人間の生活音と近い、低～中周波数域の密度が高いノイズであり、この性質によって、生活から発生する騒音をマスクする（かき消す）効果があります。詳しくは以下の記事で説明しています。",
+        "en": "In daily life, noise typically lies in the midrange of tens of hertz to thousands of hertz. Brown Noise is a type of noise that has a high density in the low to mid-frequency range, similar to everyday sounds. Because of this characteristic, it effectively masks (cancels out) everyday noise. For more details, please see the following article.",
+        "zh": "人们日常生活中产生的噪音频率通常在几十赫兹到几千赫兹的中频范围内。布朗噪音是一种在低至中频范围内具有高密度的噪音，与日常生活声音相近。正因为这种特性，它能够掩盖（消除）生活中产生的噪音。详情请参阅以下文章。",
+        "es": "Se dice que la frecuencia del ruido en la vida cotidiana suele encontrarse en un rango medio de decenas de hercios a miles de hercios. El ruido marrón (Brown Noise) es un tipo de ruido con alta densidad en el rango de frecuencias bajas a medias, similar a los sonidos cotidianos. Gracias a esta característica, puede enmascarar (anular) el ruido generado en la vida diaria. Para más detalles, consulte el siguiente artículo.",
+        "fr": "On dit que la fréquence du bruit produit dans la vie quotidienne se situe généralement entre quelques dizaines de hertz et quelques milliers de hertz, c’est-à-dire dans la plage médiane. Le bruit marron (Brown Noise) est un type de bruit ayant une forte densité dans les basses et moyennes fréquences, proches des sons du quotidien. Grâce à cette caractéristique, il masque (ou annule) efficacement les bruits de la vie courante. Pour en savoir plus, veuillez consulter l’article ci-dessous.",
+        "ru": "Частота шума, возникающего в повседневной жизни, обычно находится в диапазоне от нескольких десятков до нескольких тысяч герц, то есть в среднем диапазоне. Коричневый шум (Brown Noise) — это вид шума с высокой плотностью в низко- и среднечастотных диапазонах, схожих со звуками повседневной жизни. Благодаря этому свойству, он может маскировать (подавлять) повседневный шум. Подробности см. в статье ниже.",
+        "de": "Die Frequenz des Lärms, der im Alltag entsteht, liegt in der Regel im mittleren Bereich von einigen Dutzend bis zu einigen Tausend Hertz. Brown Noise (braunes Rauschen) ist eine Form von Rauschen mit einer hohen Dichte im tiefen bis mittleren Frequenzbereich, ähnlich den Geräuschen des Alltags. Dank dieser Eigenschaft kann es Alltagsgeräusche maskieren (überdecken). Weitere Informationen finden Sie im folgenden Artikel.",
+        "ko": "일상생활에서 발생하는 소음의 주파수는 일반적으로 수십 헤르츠부터 수천 헤르츠까지의 중음역대라고 합니다. 브라운 노이즈(Brown Noise)는 이러한 일상생활 소리와 비슷한 저음~중음역대에서 밀도가 높은 노이즈로, 이 특성으로 인해 생활 소음을 마스킹(상쇄)하는 효과가 있습니다. 자세한 내용은 아래 기사를 참고하세요.",
+        "ar": "يُقال إن تردد الضوضاء في الحياة اليومية يتراوح عمومًا بين عشرات الهرتز وآلاف الهرتز في النطاق المتوسط. الضوضاء البنية (Brown Noise) هي نوع من الضوضاء ذات كثافة عالية في النطاق المنخفض إلى المتوسط، وتشبه ضوضاء الحياة اليومية. وبفضل هذه الخاصية، يمكنها إخفاء (إلغاء) الضوضاء اليومية. لمزيدٍ من التفاصيل، يُرجى الاطلاع على المقال التالي."
+      },
+        "faq_q3": {
+          "ja": "NNTMはどのような場面に効果がありますか？",
+          "en": "In what situations is NNTM effective?",
+          "zh": "NNTM在什么情况下能发挥效果？",
+          "es": "¿En qué situaciones es efectivo NNTM?",
+          "fr": "Dans quelles situations NNTM est-il efficace ?",
+          "ru": "В каких случаях NNTM эффективен?",
+          "de": "In welchen Situationen ist NNTM wirksam?",
+          "ko": "NNTM은 어떤 상황에서 효과가 있나요?",
+          "ar": "في أي مواقف يكون NNTM فعّالاً؟"
+        },
+        "faq_a3": {
+          "ja": "NNTMは良質な睡眠、仕事や勉強での集中に、特に効果を発揮します。例えば家族の活動時間が様々で、起こされてしまう、アパートやマンションの隣人や外の音が気になる、オフィスで話し声やキーボードのタイプ音を遮断したい、といった騒音対策に強力な効果があります。ヨガ、バスタイム、瞑想にも使用でき、自然に忠実な高品質録音が精神の安定をもたらします。詳しくは以下の記事で説明しています。",
+          "en": "NNTM is particularly effective for achieving quality sleep and improving focus during work or study. For example, it provides powerful noise masking in situations where you might be disturbed by differing family schedules, bothered by neighbors or outside noises in an apartment, or want to block out chatter and typing sounds in an office. It can also be used during yoga, bath time, or meditation, offering high-quality recordings faithful to nature that help stabilize the mind. For more details, please refer to the article below.",
+          "zh": "NNTM在帮助获得高质量睡眠，以及在工作和学习时提高专注力方面尤为有效。举例来说，当您因家庭成员作息时间不同而被打扰，或对公寓或邻居噪音感到烦恼，或想在办公室中屏蔽谈话声和键盘声时，NNTM都能提供强大的噪音掩盖效果。此外，NNTM也适用于瑜伽、沐浴和冥想等场合，其忠实于自然的高品质录音能带来精神上的安定。详情请参阅下文。",
+          "es": "NNTM es particularmente eficaz para lograr un sueño de calidad y mejorar la concentración durante el trabajo o el estudio. Por ejemplo, ofrece una potente protección contra el ruido en situaciones en las que te molestan los diferentes horarios familiares, los ruidos de los vecinos o del exterior en un apartamento, o si quieres bloquear el murmullo y los sonidos del teclado en una oficina. También puede utilizarse durante sesiones de yoga, en el baño o durante la meditación, gracias a grabaciones de alta calidad fieles a la naturaleza que ayudan a estabilizar la mente. Para más detalles, consulta el artículo a continuación.",
+          "fr": "NNTM est particulièrement efficace pour favoriser un sommeil de qualité et améliorer la concentration au travail ou lors d’études. Par exemple, il offre une forte protection contre les nuisances sonores dans les situations où vous pouvez être dérangé par des horaires familiaux décalés, gêné par le bruit de voisins ou de l’extérieur dans un appartement, ou désireux de bloquer les conversations et le bruit de clavier au bureau. Il peut également être utilisé pendant des séances de yoga, dans le bain ou pour la méditation, grâce à des enregistrements haute qualité fidèles à la nature qui stabilisent l’esprit. Pour plus de détails, veuillez consulter l’article ci-dessous.",
+          "ru": "NNTM особенно эффективно для улучшения качества сна и повышения концентрации во время работы или учебы. Например, оно обеспечивает мощное подавление шума в ситуациях, когда вас могут беспокоить разный режим дня у членов семьи, шум соседей или внешний шум в квартире, а также если вы хотите заглушить разговоры и звуки клавиатуры в офисе. Кроме того, NNTM можно использовать во время занятий йогой, принятия ванны или медитации, благодаря высококачественным записям, точно передающим природные звуки и способствующим успокоению сознания. Подробности см. в статье ниже.",
+          "de": "NNTM ist besonders effektiv, wenn es um einen erholsamen Schlaf und eine bessere Konzentration bei der Arbeit oder beim Lernen geht. Es bietet zum Beispiel eine starke Geräuschmaskierung, wenn Sie durch unterschiedliche Tagesabläufe in der Familie gestört werden, sich von Nachbarn oder Außengeräuschen in einer Wohnung belästigt fühlen oder in einem Büro Gesprächslärm und Tastaturklacken ausblenden möchten. Zudem kann NNTM bei Yoga, beim Baden oder bei der Meditation eingesetzt werden. Die naturgetreuen, hochqualitativen Aufnahmen fördern dabei die mentale Stabilität. Weitere Informationen finden Sie im folgenden Artikel.",
+          "ko": "NNTM은 양질의 수면 확보와 업무 및 학습 시 집중력 향상에 특히 효과적입니다. 예를 들어, 가족 구성원의 생활 패턴이 달라 잠에서 깨거나, 아파트나 이웃 소음이 신경 쓰이거나, 사무실에서 대화 소리나 키보드 소리를 차단하고 싶을 때 강력한 소음 마스킹 효과를 제공합니다. 또한 요가, 목욕, 명상 시에도 사용할 수 있으며, 자연에 충실한 고음질 녹음은 정신의 안정을 도와줍니다. 자세한 내용은 아래 기사를 참고하세요.",
+          "ar": "يُعد NNTM فعّالًا بشكل خاص في تعزيز النوم الجيد وتحسين التركيز أثناء العمل أو الدراسة. على سبيل المثال، يوفر خاصية إخفاء الضوضاء بكفاءة في حال كنت تتعرض للإزعاج بسبب اختلاف مواعيد أفراد الأسرة أو ضوضاء الجيران أو الضوضاء الخارجية في شقة، أو ترغب في حجب أصوات المحادثات ولوحات المفاتيح في المكتب. كما يمكن استخدامه أثناء ممارسة اليوغا أو أثناء الاستحمام أو التأمل، حيث تقدم التسجيلات عالية الجودة والمخلصة للطبيعة دعماً لاستقرار العقل. لمزيدٍ من التفاصيل، اطلع على المقال التالي."
+        },
+        "faq3_related1": {
+            "title": {
+                "ja": "「自然の音」でアパートやマンションの騒音から解放される",
+                "en": "Be freed from apartment or condo noise with “natural sounds”",
+                "zh": "使用「自然之声」摆脱公寓或高层住宅的噪音",
+                "es": "Libérate del ruido de apartamentos o condominios con «sonidos de la naturaleza»",
+                "fr": "Libérez-vous du bruit en appartement ou en immeuble grâce aux « sons de la nature »",
+                "ru": "Освободитесь от шума в квартире или доме с помощью «звуков природы»",
+                "de": "Befreie dich von Lärm in Wohnung oder Mehrfamilienhaus durch „natürliche Klänge“",
+                "ko": "‘자연의 소리’로 아파트나 맨션 소음에서 벗어나기",
+                "ar": "تخلّص من ضوضاء الشقق أو المباني السكنية باستخدام «أصوات الطبيعة»"
+            },
+            "url": "/blog/apartmentnoise"
+        },
+        "faq3_related2": {
+            "title": {
+                "ja": "自然ブラウンノイズで最高の睡眠を手にいれる",
+                "en": "Achieve the Best Sleep with Natural Brown Noise",
+                "zh": "通过自然布朗噪音获得最优质的睡眠",
+                "es": "Logra el mejor sueño con Brown Noise natural",
+                "fr": "Obtenez le meilleur sommeil grâce au Brown Noise naturel",
+                "ru": "Лучший сон с помощью натурального коричневого шума",
+                "de": "Mit natürlichem Brown Noise zum besten Schlaf",
+                "ko": "자연 브라운 노이즈로 최고의 수면을 얻는 방법",
+                "ar": "احصل على أفضل نوم مع الضوضاء البنية الطبيعية"
+            },
+            "url": "/blog/bestsleep"
+        },
+        "faq_q4": {
+            "ja": "NNTMはどのような経緯で開発されたものですか？",
+            "en": "How was NNTM developed?",
+            "zh": "NNTM是如何开发的？",
+            "es": "¿Cómo se desarrolló NNTM?",
+            "fr": "Comment NNTM a-t-il été développé ?",
+            "ru": "Каким образом был разработан NNTM?",
+            "de": "Wie wurde NNTM entwickelt?",
+            "ko": "NNTM은 어떻게 개발되었나요?",
+            "ar": "كيف تم تطوير NNTM؟"
+          },
+          "faq_a4": {
+            "ja": "NNTMは、開発者自身がマンションの隣人の深夜・早朝の騒音に悩まされ、人工的なブラウンノイズでは健康面での不安があると感じたことがきっかけで生まれました。そこで、人間にとってリラックス効果が高い「自然の音」に注目しました。山や川などの環境音を2.8MHz DSD形式で録音し、騒音と同じ周波数帯をカバーしつつも身体に負担をかけない自然由来のノイズ音源を作成することで完成度を高めていきました。NNTM Appに収録されている音源は、開発者自身が2年以上実際に睡眠時や仕事で使用してきた音源を、iPhoneからでも高音質で気軽に利用できるようにiOSアプリで提供したものです。",
+            "en": "NNTM was born out of the developer’s personal struggle with late-night and early-morning noise from neighbors in their apartment, along with concerns about the health effects of artificial brown noise. This led to a focus on the calming effect of “natural sounds” for humans. Mountain and river sounds were recorded in 2.8MHz DSD format, covering the same frequency range as typical noise while placing minimal burden on the body. By continually refining these nature-based noise sources, a high degree of fidelity was achieved. The recordings featured in the NNTM App were personally used by the developer for over two years during sleep and work, and are now offered in an iOS app so that anyone can easily enjoy them in high quality via iPhone.",
+            "zh": "NNTM的诞生源于开发者本人备受公寓深夜和清晨噪音困扰的经历，以及对人工布朗噪音的健康影响产生担忧。由此，开发者将注意力转向对人类极具放松效果的“自然之声”。他们以2.8MHz DSD格式录制了山川等环境声音，既覆盖了常见噪音的频率范围，又不会给身体带来负担。通过不断改进这种自然噪音源，最终达到了高度的完善。NNTM App中收录的音源，是开发者在睡眠和工作中亲身使用超过两年的录音，并通过iOS应用提供，使用户可以在iPhone上轻松享受高品质的聆听体验。",
+            "es": "NNTM surgió a partir de la experiencia personal del desarrollador, quien se sentía perturbado por los ruidos de los vecinos durante la noche y la madrugada en su apartamento, y a la vez le preocupaban los posibles efectos en la salud del ruido marrón artificial. Esto lo llevó a enfocarse en el efecto relajante que tienen los “sonidos de la naturaleza” en las personas. Se grabaron sonidos de montaña y río en formato DSD de 2.8MHz, cubriendo el mismo rango de frecuencias que el ruido habitual sin afectar al cuerpo. Mediante sucesivas mejoras de estas fuentes de ruido naturales, se alcanzó un alto nivel de calidad. Los audios incluidos en la app NNTM fueron utilizados personalmente por el desarrollador durante más de dos años para dormir y trabajar, y ahora se ofrecen en una aplicación iOS para facilitar una experiencia de alta calidad incluso desde un iPhone.",
+            "fr": "NNTM est né de la propre expérience du développeur, qui était gêné par le bruit nocturne et matinal de ses voisins en appartement et préoccupé par les éventuels effets sur la santé du bruit marron artificiel. Cela l'a conduit à se concentrer sur l'effet apaisant des « sons de la nature » pour l'homme. Des sons de montagne et de rivière ont été enregistrés en format DSD 2,8 MHz pour couvrir la même gamme de fréquences que le bruit courant, tout en épargnant l'organisme. En perfectionnant progressivement ces sources sonores issues de la nature, on a atteint un haut niveau de qualité. Les enregistrements inclus dans l'application NNTM sont ceux que le développeur a utilisés personnellement pendant plus de deux ans, aussi bien pour dormir que pour travailler, et sont désormais proposés via une application iOS afin que chacun puisse en profiter facilement en haute qualité depuis un iPhone.",
+            "ru": "NNTM появился в результате личной борьбы разработчика с шумом от соседей в многоквартирном доме глубокой ночью и ранним утром, а также из-за озабоченности возможным негативным влиянием искусственного коричневого шума на здоровье. Это привело к идее воспользоваться успокаивающим действием «звуков природы» для человека. Были записаны шумы гор и рек в формате 2,8 МГц DSD, которые покрывают тот же диапазон частот, что и обычный шум, но без вреда для организма. Повторно дорабатывая эти природные шумовые источники, удалось добиться высокой точности. Аудиоматериалы, представленные в приложении NNTM, основаны на записях, которые разработчик сам использовал более двух лет во время сна и работы, и теперь они доступны через iOS-приложение, чтобы любой пользователь мог легко наслаждаться ими в высоком качестве прямо со своего iPhone.",
+            "de": "NNTM entstand aus den persönlichen Erfahrungen des Entwicklers, der unter dem nächtlichen und morgendlichen Lärm seiner Nachbarn in einem Mehrparteienhaus litt und sich zudem um mögliche gesundheitliche Auswirkungen künstlichen Brown Noises sorgte. Daher konzentrierte er sich auf die entspannende Wirkung „natürlicher Geräusche“ für den Menschen. Dafür wurden Berg- und Flussgeräusche im 2,8 MHz-DSD-Format aufgenommen, um den gleichen Frequenzbereich wie typischer Lärm abzudecken, dabei aber den Körper möglichst wenig zu belasten. Durch die wiederholte Verfeinerung dieser Naturgeräuschquellen wurde ein hoher Qualitätsstandard erreicht. Die im NNTM App enthaltenen Aufnahmen basieren auf Klangmaterial, das der Entwickler über zwei Jahre hinweg persönlich zum Schlafen und Arbeiten nutzte. Nun sind sie in einer iOS-App verfügbar, damit jeder sie in hoher Qualität direkt über das iPhone nutzen kann.",
+            "ko": "NNTM은 개발자가 아파트 이웃의 심야 및 이른 아침 소음으로 큰 스트레스를 받았으며, 인공적인 브라운 노이즈에 대한 건강상의 우려도 가지고 있던 경험에서 시작되었습니다. 이에 사람에게 높은 이완 효과를 주는 ‘자연의 소리’에 집중하게 되었습니다. 산과 강 같은 환경음을 2.8MHz DSD 포맷으로 녹음하여 일반적인 소음과 같은 주파수 대역을 커버하면서도 신체에 부담을 주지 않는 자연 유래 노이즈를 만들어 완성도를 높였습니다. NNTM App에 수록된 음원은 개발자가 2년 넘게 실제로 수면과 작업 시간에 사용해 온 녹음이며, iPhone에서도 쉽게 고음질로 즐길 수 있도록 iOS 앱 형태로 제공하고 있습니다.",
+            "ar": "انطلق NNTM من معاناة المُطوِّر الشخصية مع الضجيج الذي يصدره جيرانه في وقت متأخر من الليل وباكر الصباح في شقته، فضلاً عن مخاوفه من التأثيرات الصحية للضوضاء البنية الاصطناعية. وبدافع من ذلك، ركّز على التأثير المهدئ لما يُعرف بـ “الأصوات الطبيعية” على الإنسان. فقد سجّل أصوات الجبال والأنهار بدقة 2.8 ميجاهرتز بصيغة DSD، بحيث تُغطي نفس نطاق الترددات الذي تُغطيه الضوضاء المعتادة لكن دون إلحاق ضرر بالجسم. وقد تم تحقيق مستوى عالٍ من الإتقان عبر تحسين متكرر لتلك المصادر الطبيعية للضوضاء. أما المواد الصوتية الموجودة في تطبيق NNTM، فقد استخدمها المُطوِّر شخصيًا لأكثر من عامين أثناء النوم والعمل، والآن بات بالإمكان الاستمتاع بها بجودة عالية بسهولة عبر هواتف الآيفون من خلال تطبيق iOS."
+          }
+}

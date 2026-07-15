@@ -1,0 +1,20 @@
+{
+    "404": {
+        "ja": "要求されたページがみつかりませんでした。",
+        "en": "This page could not be found.",
+        "zh": "未找到该页面。",
+        "fr": "Cette page n'a pas été trouvée.",
+        "es": "No se pudo encontrar esta página.",
+        "ru": "Страница не найдена.",
+        "ar": "لم يتم العثور على هذه الصفحة."
+    },
+    "500": {
+        "ja": "うーん…何か問題が起こっています。",
+        "en": "Umm... something is wrong.",
+        "zh": "嗯...出问题了。",
+        "fr": "Euh... quelque chose ne va pas.",
+        "es": "Umm... algo está mal.",
+        "ru": "Эмм... что-то не так.",
+        "ar": "أمم... هناك خطأ ما."
+    }
+}

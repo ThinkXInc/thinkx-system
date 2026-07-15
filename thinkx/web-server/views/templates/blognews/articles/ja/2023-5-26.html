@@ -1,0 +1,248 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+  <article class="article" data-news-id="2023-05-26">
+    <div class="container">
+      <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}">
+          << </a></span>
+      <h2 class="title">
+        人間のように会話する、完全マネージド型リアルタイム音声対話AIプラットフォーム「NeuraVoice」を発表
+      </h2>
+      <p class="date news-date">2023 May 26</p>
+      <div class="news-image-container">
+
+      </div>
+      <div class="main-text">
+
+        <figure class="news-image news-id-2023-05-26">
+          <img class="news-id-2023-05-26" src="/img/blog/neuravoice/NV_PV_v2_Title-4K.png" alt="NeuraVoice title"/>
+        </figure>
+
+        ThinkXは、全てのモデルがサーバー内にあり情報が漏洩せずビジネス利用可能で、人間に近い高速な応答性能でインタラクティブに会話するリアルタイム音声AIプラットフォーム、NeuraVoiceを発表しました。<br>
+        <br>
+        独自に微調整されたLLM、図書館の情報を全て学習したような並外れた知識。過去の会話を記憶し、独自の自然言語ベースレコメンデーションアルゴリズム（日・米特許出願中）によるパーソナライズ能力で個々人に合わせた最適な応答。
+        音声データに最適化されたHyperStreamテクノロジーによりビッグテックスマートスピーカー製品より22%高速なレスポンス。<br>
+
+        <br />
+        セキュアでシームレス、そして完全にインタラクティブな音声AIは、私たちのように話すことができます。<br />
+        <br />
+        完全なコンピューティングリソースとシステムが用意され、月額$275で面倒なセットアップなしで使用可能。初めてのフルマネージド音声AIプラットフォーム。<br />
+        <br>
+        この最先端のテクノロジーは2015年から蓄積してきた音声言語の研究資産と最先端のオープンソースコミュニティの努力により実現されています。
+        <br />
+        わたしたちの音声AIは窓口、店舗、学校、病院、コールセンターといった応対を代替します。
+        NeuraVoiceは何度も繰り返す説明や案内を人間に代わって行い、毎日の労働負荷をなくし、人間性を解放します。
+        <br>
+        <br>
+        
+        <br />
+
+        <video class="news-video" controls="" src="/video/neuravoice/NV_CLIP_v3_4K.mp4">
+        </video>
+
+        <br />
+        <br />
+        <br />
+        音声対話に最適化されたHyperStreamテクノロジーと最先端のコンピューティングシステム。<br />
+        <br />
+        既存最先端システムに比べ1.3倍の高速化、平均応答時間2300ms以下の遅延を実現。ビッグテックのスマートスピーカーより21%速いレスポンス。 <br />
+        <br />
+
+        <figure class="news-image news-id-2023-05-26">
+          <img class="news-id-2023-05-26" src="/img/blog/neuravoice/NeuraVoiceSNS-Response6.png"  alt="Comparison of response speed between Neuravoice and other smart speakers"/>
+        </figure>
+
+        <br />
+        <br />
+        これは、あなたが今まで知っていたものとは違います。 <br />
+        <br />
+        並外れた知識を備えたパーソナルコンパニオン。あなたのニーズに合わせてカスタマイズ可能。 <br />
+        <br />
+
+        <div class="news-image-container">
+          <figure class="news-image news-id-2023-05-26">
+            <img class="news-id-2023-05-26" src="/img/blog/neuravoice/NeuraVoiceSNS-Dialogue4.png" alt="Comparison of conversation content between NeuraVoice and other smart speakers"/>
+          </figure>
+        </div>
+
+        <br />
+        すべてのAIモデルは、私たちのクローズドシステム内に存在します。外部APIへの重要なデータの送信はありません。 <br />
+        <br />
+
+        <figure class="news-image news-id-2023-05-26">
+          <img class="news-id-2023-05-26" src="/img/blog/neuravoice/NeuraVoiceSNS-Secure2.png" alt=""/> <!-- alt is empty because of decorative image -->
+        </figure>
+
+            </div>
+        <br />
+        <br />
+        <br />
+        <br />
+        </ul>
+
+      </div>
+</article>
+</div>
+{% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+            const buttons = document.querySelectorAll('.plan-button');
+            const columns = document.querySelectorAll('.plan-column:not(.label)');
+
+            function selectPlan(plan) {
+              buttons.forEach((button) => {
+                if (button.dataset.plan === plan) {
+                  button.classList.add('selected');
+                } else {
+                  button.classList.remove('selected');
+                }
+              });
+
+              columns.forEach((column) => {
+                if (column.classList.contains(plan)) {
+                  column.classList.add('show')
+                } else {
+                  column.classList.remove('show')
+                }
+              });
+            }
+
+            buttons.forEach((button) => {
+              button.addEventListener('click', function () {
+                selectPlan(this.dataset.plan);
+              });
+            });
+
+            // Initialize
+            selectPlan('single');
+          });
+        </script>
+
+
+<script>
+
+  let trySingle = document.getElementById('try-single-grid');
+  let trySmallBusiness = document.getElementById('try-small-business-grid');
+  let tryEnterprise = document.getElementById('try-enterprise-grid');
+
+  function apply(
+    grid,
+    bgColor = 'white',
+    bgColorHover = '#333',
+    labelColor = '#333',
+    labelColorHover = 'white',
+    M = 10,  // Number of columns
+    N = 5,  // Number of rows
+    T = 3,  // Timestep where all cells become black
+    s = 20  // Duration for a cell to turn black
+  ) {
+    let cells = [];
+    let plans = {};
+
+    // Initializing the grid of cells
+    for (let i = 0; i < M; i++) {
+      for (let j = 0; j < N; j++) {
+        let cell = document.createElement('div');
+        cell.style.backgroundColor = bgColor;
+        cell.style.width = grid.offsetWidth / M + 'px';
+        cell.style.height = grid.offsetHeight / N + 'px';
+        cell.classList.add('cell');
+        grid.appendChild(cell);
+        cells.push(cell);
+      }
+    }
+
+    // Helper function to pick random elements
+    function pickRandomly(array, count) {
+      let picked = [];
+      for (let i = 0; i < count; i++) {
+        let index = Math.floor(Math.random() * array.length);
+        picked.push(array[index]);
+        array.splice(index, 1); // Remove picked element from the original array
+      }
+      return picked;
+    }
+
+    // Creating plans
+    let t = 0;
+    while (cells.length != 0) {
+      let n = Math.min(Math.floor((M * N) / T), cells.length);
+      let pickedCells = pickRandomly(cells, n);
+      plans[t] = pickedCells;
+      t++;
+    }
+
+    // Function to change cell color
+    function turn(cell, color, callback) {
+      cell.style.background = color;
+      setTimeout(() => {
+        if (callback) callback();
+      }, s);
+    }
+
+    var p = 0;
+    var changing = false;
+    function change(color) {
+      if (plans[p]) {
+        console.log('change ' + p)
+        for (let j = 0; j < plans[p].length; j++) {
+          turn(plans[p][j], color, j == plans[p].length - 1 ? () => {
+            p++;
+            change(color);
+          } : null);
+        }
+      } else {
+        console.log('done')
+      }
+    }
+
+    function reset(color) {
+      let cells = grid.querySelectorAll('.cell');
+      cells.forEach((cell, index) => {
+        setTimeout(() => {
+          cell.style.background = color;
+        }, s * index);
+      });
+    }
+
+    // Starting animation on mouse hover
+    grid.parentNode.addEventListener('mouseover', () => {
+      if (!changing) {
+        p = 0;
+        change(bgColorHover);
+        changing = true
+      }
+      grid.parentNode.querySelector('.button-label').style.color = labelColorHover;
+
+    });
+
+    // Reverting animation on mouse leave
+    grid.parentNode.addEventListener('mouseleave', () => {
+      reset(bgColor)
+      changing = false
+      grid.parentNode.querySelector('.button-label').style.color = labelColor;
+    });
+
+  }
+
+  apply(trySingle, bgColor = '#c7d9e2', bgColorHover = '#b6cbd5', labelColor = '#333', labelColorHover = '#333');
+  apply(trySmallBusiness, bgColor = '#c7d9e2', bgColorHover = '#b6cbd5', labelColor = '#333', labelColorHover = '#333');
+  apply(tryEnterprise, bgColor = '#c7d9e2', bgColorHover = '#b6cbd5', labelColor = '#333', labelColorHover = '#333');
+
+</script>
+{% endblock %}

@@ -1,0 +1,76 @@
+@error-red: #8f2a2a;
+@success-blue: #2a5e78;
+@inquiry-form-bg: #f3f3f3;
+@inquiry-submit-bg: #c7d9e2;
+@inquiry-submit-bg-hover: #9cbbca;
+@border: #b8ced9;
+@cubic-bezier1: cubic-bezier(.65,0,.34,1);
+
+form.inquiry-form { 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    div.input-fields {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 600px;
+ 
+        input, textarea {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 14px 11px;
+            border: 1px solid #dddddd;
+            border-radius: 4px;
+        }
+        textarea {
+            height: 160px;
+        }
+    }
+    div.submit {
+        input[type=submit] {
+            cursor: pointer;
+            width: 120px;
+            padding: 11px 0;
+            color: #fff;
+            background-color: #3c3c3c;
+            border: none;
+            border-radius: 3px;
+            transition: all 0.4s @cubic-bezier1;
+        }
+        input[type=submit]:hover {
+            background-color: #000;
+        }
+    }
+    p.message.error {
+        color: @error-red;
+    }
+    p.message.success {
+        color: @success-blue;
+    } 
+}
+
+@media (min-width: @tablet-width) {
+}
+
+@media (max-width: @smartphone-width) {
+    form.inquiry-form { 
+        div.input-fields {
+            width: 81vw;
+            input, textarea {
+            }
+            textarea {
+            }
+        }
+        div.submit {
+            input[type=submit] {
+            }
+            input[type=submit]:hover {
+            }
+        }
+        p.message.error {
+        }
+        p.message.success {
+        } 
+    }
+}

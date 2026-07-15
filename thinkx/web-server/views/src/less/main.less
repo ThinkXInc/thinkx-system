@@ -1,0 +1,92 @@
+// main_.less
+
+@black: #000;
+@white: #FFF;
+@light-gray: #CCC;
+@gray: #B3B3B3;
+@deep-gray: #999;
+@alert-red: #b14545;
+
+@base-cyan: #0085b0;
+@base-yellow: #c7bb00;
+@base-magenta: #ae00ac;
+@base-light-cyan: #8CB7C3;
+
+@footer-bg: #4D4D4D;
+@bg-gray: #dedede;
+@bg-gray-dark: #3B3B3B;
+
+@text-gray: #808080;
+@blue: #3b57c1;
+@green: #00799e;
+
+//@font-face {
+//    font-family: 'GeosansLight';
+//    src: url('/fonts/GeosansLight.ttf?-b7qzp2') format('truetype');
+//    font-weight: normal;
+//    font-style: normal;
+//}
+
+@import 'reset.less';
+
+// --------------- mixin
+
+@import 'mixin.less';
+
+// --------------- tools
+
+@import 'error_pages.less';
+@import 'lang_selector.less';
+@import '/macro/inquiry.less';
+
+// ---------------- common
+@import 'header.less';
+@import 'footer.less';
+@import 'top.less';
+
+// ----------------- pages
+@import 'product_page.less';
+@import 'article_page.less';
+@import 'inquiry_page.less';
+@import 'apply_page.less';
+@import 'about_us.less';
+@import 'ir_page.less';
+
+@import 'blog_list.less';
+@import 'blog_content.less';
+
+// ----------------- others
+@import 'NNTM/top.less';
+@import 'NNTM/appbanner.less';
+@import 'NNTM/blog.less';
+@import 'NNTM/privacy_policy.less';
+@import 'truetechjapan/top.less';
+@import 'truetechjapan/article.less';
+@import 'truetechjapan/privacy.less';
+@import 'truetechjapan/organization.less';
+@import 'truetechjapan/common.less';
+
+// --------------- style
+
+@cubic-bezier1: cubic-bezier(.65,0,.34,1);
+
+html {
+    background-color: @white;
+    font-family: "yu-gothic-pr6n", sans-serif;
+}
+body {
+    margin: 0;
+    opacity: 0;
+    //font-family: sans-serif, 'Roboto';
+    font-weight: 400;
+    font-style: normal;
+}
+body.show {
+    opacity: 1;
+    .transition(opacity, .2s);
+}
+
+body.standby {
+    opacity: 0;
+}
+

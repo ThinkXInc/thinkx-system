@@ -1,0 +1,38 @@
+.DS_Store
+*.sw[a-z]
+*.pyc
+Session.vim
+!.gitkeep
+.idea
+venv*
+.envrc
+.env
+*.pickle
+*.rdb
+.python-version
+.ipynb_checkpoints
+
+opus
+
+# local
+local/stdout
+local/nginx.pid
+local/mongodb/db/*
+local/redis/dumps/*
+
+# playbooks
+playbooks/*.retry
+
+# web-server
+web-server/nginx/cache
+web-server/mongodb/logs
+web-server/mongodb/data
+web-server/mongodb/local*
+web-server/mongodb/mongod.lock
+web-server/redis_session/data/*
+web-server/redis_session/logs/*
+web-server/views/css/*
+web-server/views/js/*
+web-server/views/video/*
+web-server/views/node_modules/
+web-server/views/package-lock.json

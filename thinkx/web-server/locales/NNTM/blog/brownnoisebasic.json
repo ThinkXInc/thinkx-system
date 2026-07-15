@@ -1,0 +1,507 @@
+{
+    "metadata_blog_brownnoisebasic": {
+        "ja": {
+          "title": "騒音対策への強力なアプローチ、「ブラウンノイズ」とは",
+          "description": "ブラウンノイズ（Brown Noise）の特徴や、騒音をマスキングする仕組み、その安心感をもたらす効果などを解説。さらにNNTMが提供するナチュラル・ブラウンノイズの音響デザイン、なぜ高品質な自然音にこだわるのかを説明。",
+          "keywords": "ブラウンノイズ, ノイズ, 騒音, マスキング, 生活音, NNTM, 自然音, 上の階, 話し声, 車の音, いびき, 音域"
+        },
+        "en": {
+          "title": "A Powerful Approach to Noise Control: What Is Brown Noise?",
+          "description": "An overview of Brown Noise, how it masks disturbing sounds, its reassuring effect, and the acoustic design of NNTM's natural Brown Noise—plus why high-quality natural sound matters.",
+          "keywords": "Brown Noise, noise, masking, everyday sounds, NNTM, natural sound, upstairs noise, voices, car noise, snoring, frequency range"
+        },
+        "zh": {
+          "title": "对抗噪音的有力方法：什么是布朗噪声？",
+          "description": "介绍布朗噪音的特征、如何有效消除噪音及带来安心效果，以及NNTM提供的天然布朗噪音声学设计，以及为什么注重高品质自然音。",
+          "keywords": "布朗噪音, 噪音, 消除噪音, 日常声音, NNTM, 自然音, 楼上噪音, 说话声, 汽车声, 打鼾, 频率范围"
+        },
+        "es": {
+          "title": "Un enfoque poderoso para el control del ruido: ¿Qué es el ruido marrón?",
+          "description": "Una visión general del Brown Noise, cómo cancela sonidos molestos, el efecto de tranquilidad que produce y el diseño acústico del Brown Noise natural de NNTM, además de por qué es importante el sonido natural de alta calidad.",
+          "keywords": "Brown Noise, cancelación de ruido, sonidos cotidianos, NNTM, sonido natural, ruidos del piso de arriba, voces, ruido de coches, ronquidos, rango de frecuencias"
+        },
+        "fr": {
+          "title": "Une approche puissante pour lutter contre le bruit : qu’est-ce que le bruit brun ?",
+          "description": "Un aperçu du Brown Noise, sa capacité à annuler les bruits gênants et son effet rassurant, ainsi que la conception acoustique du Brown Noise naturel de NNTM et l’importance d’un son naturel de haute qualité.",
+          "keywords": "Brown Noise, annulation du bruit, bruits quotidiens, NNTM, son naturel, bruit de l’étage supérieur, voix, bruit de voiture, ronflements, plage de fréquences"
+        },
+        "ru": {
+          "title": "Мощный метод борьбы с шумом: что такое коричневый шум?",
+          "description": "Обзор коричневого шума: как он подавляет раздражающие звуки, успокаивающий эффект и акустический дизайн натурального коричневого шума NNTM, а также почему так важен высококачественный природный звук.",
+          "keywords": "коричневый шум, шумоподавление, бытовые звуки, NNTM, природный звук, шум сверху, голоса, шум машин, храп, частотный диапазон"
+        },
+        "de": {
+          "title": "Ein kraftvoller Ansatz zur Lärmbekämpfung: Was ist Braunes Rauschen?",
+          "description": "Eine Übersicht über Brown Noise, wie es störende Geräusche unterdrückt, seine beruhigende Wirkung und das akustische Design von NNTMs natürlichem Brown Noise – sowie warum hochqualitativer Naturklang wichtig ist.",
+          "keywords": "Brown Noise, Lärmunterdrückung, Alltagsgeräusche, NNTM, Naturklang, Schritte von oben, Stimmen, Autogeräusche, Schnarchen, Frequenzbereich"
+        },
+        "ko": {
+          "title": "소음 해결을 위한 강력한 접근법: 브라운 노이즈란?",
+          "description": "브라운 노이즈의 특징, 소음을 효과적으로 캔슬링하는 원리와 편안함을 주는 효과, NNTM의 자연 브라운 노이즈 음향 설계, 그리고 왜 고품질 자연음을 중시하는지에 대한 소개입니다.",
+          "keywords": "브라운 노이즈, 소음 캔슬링, 일상 소음, NNTM, 자연음, 윗층 소음, 말소리, 자동차 소음, 코골이, 주파수 범위"
+        },
+        "ar": {
+          "title": "نهج قوي للحد من الضوضاء: ما هو الضوضاء البنية؟",
+          "description": "نظرة شاملة على الضوضاء البنية وكيفية إلغائها للأصوات المزعجة وتأثيرها المطمئن، بالإضافة إلى التصميم الصوتي للضوضاء البنية الطبيعية التي تقدمها NNTM، وسبب التركيز على الصوت الطبيعي عالي الجودة.",
+          "keywords": "الضوضاء البنية, إلغاء الضوضاء, الأصوات اليومية, NNTM, الصوت الطبيعي, ضوضاء الطابق العلوي, الأصوات البشرية, ضجيج السيارات, الشخير, نطاق التردد"
+        }
+      },
+    "page_title": {
+        "ja": "騒音対策への強力なアプローチ、「ブラウンノイズ」とは",
+        "en": "A Powerful Approach to Noise Control: What Is Brown Noise?",
+        "zh": "对抗噪音的有力方法：什么是布朗噪声？",
+        "es": "Un enfoque poderoso para el control del ruido: ¿Qué es el ruido marrón?",
+        "fr": "Une approche puissante pour lutter contre le bruit : qu’est-ce que le bruit brun ?",
+        "ru": "Мощный метод борьбы с шумом: что такое коричневый шум?",
+        "de": "Ein kraftvoller Ansatz zur Lärmbekämpfung: Was ist Braunes Rauschen?",
+        "ko": "소음 해결을 위한 강력한 접근법: 브라운 노이즈란?",
+        "ar": "نهج قوي للحد من الضوضاء: ما هو الضوضاء البنية؟"
+      },
+      "page_subtitle": {
+        "ja": "",
+        "en": "",
+        "zh": "",
+        "es": "",
+        "fr": "",
+        "ru": "",
+        "de": "",
+        "ko": "",
+        "ar": ""
+      },
+    "article": {
+      "ja": [
+        {
+          "head": "ブラウンノイズは生活音に音域が近い"
+        },
+        {
+          "text": "ブラウンノイズ（Brown Noise）とは、<strong>ノイズ（雑音）の中でも、低音域〜中音域のエネルギーが特に豊富である特徴をもつノイズ</strong>の一種です。<br><br>人間の生活で発生する騒音は、<strong>数十Hz〜数千Hz程度の中音域に集中している</strong>と言われています。"
+        },
+        {
+          "text": "例えば、<br><strong>・足音や上の階の人の歩く音 - 20Hz〜400Hz<br>・話し声 - 男性85Hz ~ 180Hz、女性165Hz ~ 255Hz<br>・食器のぶつかる音 - 200Hz ~ 10kHz<br>・赤ちゃんの泣き声 - 300Hz ~ 3kHz<br>・外を走る車の音 - 50Hz ~ 2kHz<br>・いびき - 50Hz ~ 500Hz</strong>"
+        },
+        {
+          "image": "bands.png",
+          "caption": "代表的な騒音の周波数帯域は数十Hz~数百Hzを中心に分布している"
+        },
+        {
+          "text": "このように、代表的な騒音の周波数帯域は数十Hz〜数百Hzを中心に、数千Hz程度まで分布しています。<br><br><strong>ブラウンノイズはまさに、この帯域に強く分布しているため、生活音を「マスキング（かき消す）」効果</strong>があります。<br>さらに深いトーンが強調されていることで、耳障りに感じにくく、安心感を与えます。"
+        },
+        {
+          "head": "ブラウンノイズが騒音を「消す」仕組み"
+        },
+        {
+          "text": "人間の聴覚は単に入ってくる音をそのまま知覚せず、脳で一時的な処理をして重要な音とそうでない音を無意識的に区別しています。<br>脳は絶えず入ってくる音をフィルターにかけ、その音を無視すべきか判断しているのです。<br><br>ブラウンノイズが存在すると、脳はそれを一定の背景音として認識します。これが脳にとっての知覚の「ベースライン」を作ります。ここから相対的に離れたピーク音をもった音だけが注目され、それ以外は無視されるのです。ブラウンノイズは、人の注意を喚起する可能性のある音に対してのベースラインを引き上げることによって、上記に列挙したような不快な音が鳴っても、無視できるための土台を作ります。"
+        },
+        {
+          "image": "baseline.png",
+          "caption": "ブラウンノイズが背景音となり、騒音を無視するベースラインレベルを引き上げる"
+        },
+        {
+          "head": "ホワイトノイズとブラウンノイズの違い"
+        },
+        {
+          "text": "類似のノイズとして<strong>ホワイトノイズ（White Noise）</strong>がありますが、ホワイトノイズは<strong>ブラウンノイズよりも均質に音域が分布しており、人によっては耳障りに感じることがあります</strong>。一方ブラウンノイズは、より深いトーンが強調され、海や胎児がお腹の中にいるときを想起させるような安心感があります。<br><br>また、ブラウンノイズはその音域的な特徴によって、生活で発生する騒音との重なりが大きく、マスキング効果に優れています。"
+        },
+        {
+          "head": "NNTMは100%自然由来でありながら、日常の騒音を広くカバーする"
+        },
+        {
+          "image": "compare_ja_A.png",
+          "caption": "NNTMはブラウンノイズの特徴を活かしながらさらにカバー範囲を広げている",
+          "style": "background-color: #000; color: #fff; max-width: 73%;  margin: 60px auto;"
+        },
+        {
+          "text": "ブラウンノイズを人工的に生成することは可能ですが、人工的に生成された音を長時間聴くことによる影響は、科学的にも明らかではありません。<br><br>NNTM音源は、自然への敬意から、<strong>自然に忠実な高品質録音を志向し開発されています</strong>。山岳地帯で入念に選ばれた場所で録音され、またブラウンノイズのもつ特徴を継承しながら、さらに日常の騒音を広くカバーするようにデザインされています。<br><br>山や森や川のような自然が発生させる音がもつ複雑なパターンは、人間の精神や身体に良い影響を与えることが多くの研究によって示唆されています。<br><br>自然由来のブラウンノイズによって、<strong>身体に最大限配慮しながら、足音、話し声、車の音、マンションやアパートの隣人の騒音、などの不快な音を遮断</strong>することで、生活の質を向上させることができます。"
+        },
+        {
+          "text": "<a href=\"/conversion_redirect/\">NNTMのナチュラル・ブラウンノイズを無料でダウンロードする</a>"
+        }
+      ],
+      "en": [
+        {
+          "head": "Brown Noise Has a Similar Frequency Range to Everyday Sounds"
+        },
+        {
+          "text": "Brown Noise is a type of noise (unwanted sound) characterized by especially abundant energy in the low to mid frequency range.<br><br>It is said that much of the noise generated by human activity is concentrated in the midrange of tens to thousands of Hz."
+        },
+        {
+          "text": "For example,<br><strong>- Footsteps and sounds from people walking upstairs: 20Hz–400Hz<br>- Human voices: 85Hz–180Hz for men, 165Hz–255Hz for women<br>- Clashing dishes: 200Hz–10kHz<br>- A baby’s cry: 300Hz–3kHz<br>- Passing cars: 50Hz–2kHz<br>- Snoring: 50Hz–500Hz</strong>"
+        },
+        {
+          "image": "bands.png",
+          "caption": "Typical noise frequency bands center around tens to hundreds of Hz"
+        },
+        {
+          "text": "As you can see, the frequency bands of everyday noises range from tens of Hz up to a few thousand Hz, generally centered around tens to hundreds of Hz.<br><br><strong>Brown Noise is strongly distributed in this range, giving it a powerful effect in “masking” (drowning out) everyday sounds.</strong><br>Furthermore, because it emphasizes deeper tones, it is less likely to sound grating and provides a sense of comfort."
+        },
+        {
+          "head": "How Brown Noise Cancels Out Noise"
+        },
+        {
+          "text": "Human hearing does not simply perceive incoming sounds as they are. Instead, the brain temporarily processes them and unconsciously distinguishes important sounds from unimportant ones.<br>The brain is constantly filtering incoming sounds and deciding whether or not to ignore them.<br><br>When Brown Noise is present, the brain recognizes it as a constant background sound. This creates a “baseline” in the brain’s perception. Only sounds that peak significantly above this baseline stand out; everything else is ignored. By raising the baseline for sounds that might grab our attention, Brown Noise helps create a foundation that makes it easier to disregard unpleasant noises like those listed above."
+        },
+        {
+          "image": "baseline.png",
+          "caption": "Brown Noise becomes the background sound, raising the baseline level where noise is ignored"
+        },
+        {
+          "head": "The Difference Between White Noise and Brown Noise"
+        },
+        {
+          "text": "A similar type of noise is <strong>White Noise</strong>. White Noise distributes energy more evenly across frequencies than Brown Noise, and some people find it harsh. In contrast, Brown Noise emphasizes deeper tones, providing a comforting quality reminiscent of the ocean or the womb.<br><br>Because of its specific frequency characteristics, Brown Noise also overlaps effectively with many everyday noises, making it excellent for masking."
+        },
+        {
+          "head": "NNTM Is 100% Naturally Derived Yet Covers a Wide Range of Everyday Noises"
+        },
+        {
+          "image": "compare_ja_A.png",
+          "caption": "Building on the qualities of Brown Noise, NNTM further expands its coverage range",
+          "style": "background-color: #000; color: #fff; max-width: 73%;  margin: 60px auto;"
+        },
+        {
+          "text": "It is possible to generate Brown Noise artificially, but the scientific effects of prolonged exposure to artificially generated sounds are not yet fully understood.<br><br>Out of respect for nature, the NNTM sound source was developed to produce high-quality recordings that remain faithful to the natural environment. They were recorded in carefully selected mountainous locations and designed not only to inherit the characteristics of Brown Noise but also to cover a broader range of everyday noises.<br><br>Many studies suggest that the complex sound patterns created by natural environments—such as mountains, forests, or rivers—can have positive effects on both mental and physical well-being.<br><br>By using Brown Noise derived from nature, you can effectively block unpleasant sounds like footsteps, voices, cars, or noise from neighbors in apartments—while caring for your body—to improve your quality of life."
+        },
+        {
+          "text": "<a href=\"/conversion_redirect/\">Download NNTM’s Natural Brown Noise for Free</a>"
+        }
+      ],
+      "zh": [
+        {
+          "head": "布朗噪声与日常生活噪音的频段相似"
+        },
+        {
+          "text": "布朗噪声（Brown Noise）是一种噪声（不需要的声音），其特点是在低频到中频范围具有特别丰富的能量。<br><br>据说，人类日常生活中产生的噪音大多集中在几十赫兹到数千赫兹左右的中频段。"
+        },
+        {
+          "text": "例如：<br><strong>- 脚步声以及楼上行走的声音：20Hz–400Hz<br>- 人声：男性85Hz–180Hz、女性165Hz–255Hz<br>- 碗碟碰撞：200Hz–10kHz<br>- 婴儿啼哭：300Hz–3kHz<br>- 外面行驶的汽车声：50Hz–2kHz<br>- 打鼾：50Hz–500Hz</strong>"
+        },
+        {
+          "image": "bands.png",
+          "caption": "典型的噪音频段主要集中在几十赫兹到几百赫兹之间"
+        },
+        {
+          "text": "如上所示，日常噪音的频率范围大致在几十赫兹到数千赫兹之间，通常集中在几十到几百赫兹这个区段。<br><br><strong>布朗噪声刚好分布在这些频段中，因此能有效“掩蔽”（消除）生活噪音</strong>。<br>此外，它更突出低沉的频率，因此听起来不那么刺耳，还能带来一种安心感。"
+        },
+        {
+          "head": "布朗噪声是如何消除噪音的"
+        },
+        {
+          "text": "人耳并不是被动地接收所有传入的声音，而是会在大脑中对其进行短暂处理，无意识地区分重要与不重要的声音。<br>大脑会不断地对输入的声音进行过滤，判断哪些需要忽略。<br><br>当布朗噪声存在时，大脑会将其识别为一个稳定的背景音，从而建立一个“基准线”——只有那些在这个基准线之上明显突出的声音才会引起注意，而其他声音会被自动忽略。通过提高我们对可能会引起注意的声音的基准线，布朗噪声可以提供一个屏蔽噪音的基础，让脚步声、讲话声、婴儿哭声等令人不快的声音变得更容易被忽略。"
+        },
+        {
+          "image": "baseline.png",
+          "caption": "布朗噪声成为背景音，提高了忽略噪音的阈值"
+        },
+        {
+          "head": "白噪声和布朗噪声的区别"
+        },
+        {
+          "text": "类似的噪声还有 <strong>白噪声（White Noise）</strong>。白噪声在整个频段上分布更均匀，对某些人而言会显得刺耳。而布朗噪声则强调更深沉的音调，让人联想到海浪或胎儿在母体中所听到的声音，从而产生放松感。<br><br>此外，由于布朗噪声的频率特性与日常噪音有较大重叠，因此在掩蔽效果上表现尤为出色。"
+        },
+        {
+          "head": "NNTM 以 100% 天然录音为基础，仍能覆盖广泛的日常噪音"
+        },
+        {
+          "image": "compare_ja_A.png",
+          "caption": "基于布朗噪声的特性，NNTM 进一步拓宽了噪音覆盖范围",
+          "style": "background-color: #000; color: #fff; max-width: 73%;  margin: 60px auto;"
+        },
+        {
+          "text": "虽然可以通过软件程序人造生成布朗噪声，但长时间聆听人工合成的声音对人体是否有影响，目前并没有明确的科学结论。<br><br>NNTM 出于对自然的尊重，以<strong>高品质、忠于自然环境</strong>的理念来开发音源。在精心挑选的山地环境中进行录音，一方面延续了布朗噪声的特性，另一方面又能在更宽的范围内覆盖日常噪音。<br><br>许多研究表明，大自然（如山川、森林、河流等）所产生的复杂声音模式对人的身心都可能产生积极影响。<br><br>通过使用来源于自然的布朗噪声，在照顾身体健康的同时，有效阻隔脚步声、说话声、汽车声、邻居噪音等令人不快的声音，从而提升生活质量。"
+        },
+        {
+          "text": "<a href=\"/conversion_redirect/\">免费下载 NNTM 的天然布朗噪声</a>"
+        }
+      ],
+      "es": [
+        {
+          "head": "El Brown Noise se acerca a las frecuencias de los sonidos cotidianos"
+        },
+        {
+          "text": "El Brown Noise (ruido marrón) es un tipo de ruido (sonido no deseado) caracterizado por una energía especialmente abundante en las frecuencias bajas y medias.<br><br>Se dice que gran parte del ruido generado por la actividad humana se concentra en el rango medio, entre decenas y miles de hercios (Hz)."
+        },
+        {
+          "text": "Por ejemplo,<br><strong>- Pasos y sonidos de personas caminando en el piso de arriba: 20 Hz–400 Hz<br>- Voz humana: 85 Hz–180 Hz (hombres), 165 Hz–255 Hz (mujeres)<br>- Choque de platos: 200 Hz–10 kHz<br>- Llanto de bebé: 300 Hz–3 kHz<br>- Autos circulando: 50 Hz–2 kHz<br>- Ronquidos: 50 Hz–500 Hz</strong>"
+        },
+        {
+          "image": "bands.png",
+          "caption": "Las bandas de frecuencia típicas de ruido se concentran principalmente entre decenas y cientos de Hz"
+        },
+        {
+          "text": "Como puedes observar, las frecuencias del ruido cotidiano abarcan desde unas decenas de Hz hasta unos pocos miles de Hz, en su mayoría centradas entre decenas y cientos de Hz.<br><br><strong>El Brown Noise se distribuye con fuerza en este rango, por lo que ejerce un efecto potente para “enmascarar” (disimular) los sonidos de la vida diaria.</strong><br>Además, al recalcar tonos más profundos, tiende a resultar menos estridente y aporta una sensación de confort."
+        },
+        {
+          "head": "Cómo el Brown Noise cancela el ruido"
+        },
+        {
+          "text": "La audición humana no percibe simplemente los sonidos tal cual llegan; el cerebro lleva a cabo un procesamiento temporal que, de forma inconsciente, distingue cuáles sonidos son importantes y cuáles no.<br>El cerebro filtra constantemente los sonidos que entran y decide si debe ignorarlos o no.<br><br>Cuando hay Brown Noise, el cerebro lo reconoce como un sonido de fondo constante. Esto crea una “línea base” en la percepción del cerebro. Solo los sonidos con picos muy por encima de esa línea base destacan; el resto se ignora. Al subir ese umbral para los ruidos que podrían captar nuestra atención, el Brown Noise ayuda a establecer una base que facilita ignorar sonidos molestos como los mencionados anteriormente."
+        },
+        {
+          "image": "baseline.png",
+          "caption": "El Brown Noise se convierte en el sonido de fondo, elevando el nivel de referencia para ignorar el ruido"
+        },
+        {
+          "head": "La diferencia entre el White Noise y el Brown Noise"
+        },
+        {
+          "text": "Existe un tipo de ruido similar llamado <strong>White Noise (ruido blanco)</strong>. El White Noise distribuye la energía de manera más uniforme en todo el espectro de frecuencias que el Brown Noise, y a algunas personas les parece molesto. En cambio, el Brown Noise hace énfasis en los tonos más graves, brindando una sensación reconfortante que recuerda al mar o al estado del feto en el vientre.<br><br>Debido a sus características de frecuencia, el Brown Noise se superpone de manera efectiva con muchos de los ruidos cotidianos, lo que lo hace muy útil para enmascarar estos sonidos."
+        },
+        {
+          "head": "NNTM es 100% de origen natural y, aun así, cubre una amplia gama de ruidos cotidianos"
+        },
+        {
+          "image": "compare_ja_A.png",
+          "caption": "Basándose en las cualidades del Brown Noise, NNTM amplía aún más su rango de cobertura",
+          "style": "background-color: #000; color: #fff; max-width: 73%;  margin: 60px auto;"
+        },
+        {
+          "text": "Es posible generar Brown Noise de forma artificial, pero los efectos científicos de escuchar durante mucho tiempo sonidos completamente sintéticos no se conocen con exactitud.<br><br>Por respeto a la naturaleza, la fuente de sonido de NNTM se desarrolló para ofrecer grabaciones de alta calidad que sean fieles al entorno natural. Se realizaron grabaciones en zonas montañosas cuidadosamente elegidas, diseñadas para heredar las características del Brown Noise y, además, abarcar un rango más amplio de ruidos cotidianos.<br><br>Diversos estudios señalan que los patrones de sonido complejos producidos por entornos naturales, como montañas, bosques o ríos, pueden tener efectos positivos en la salud mental y física.<br><br>Al emplear Brown Noise de origen natural, puedes bloquear de manera efectiva ruidos desagradables —como pasos, voces, coches o el ruido de vecinos en apartamentos— sin comprometer tu bienestar, mejorando así tu calidad de vida."
+        },
+        {
+          "text": "<a href=\"/conversion_redirect/\">Descarga gratis el Brown Noise natural de NNTM</a>"
+        }
+      ],
+      "fr": [
+        {
+          "head": "Le Brown Noise a une gamme de fréquences similaire à celle des sons du quotidien"
+        },
+        {
+          "text": "Le Brown Noise est un type de bruit (son indésirable) caractérisé par une énergie particulièrement abondante dans les basses et moyennes fréquences.<br><br>On dit qu’une grande partie du bruit généré par l’activité humaine se situe dans la plage allant de quelques dizaines à plusieurs milliers de Hz."
+        },
+        {
+          "text": "Par exemple,<br><strong>- Bruits de pas et bruits de personnes marchant à l’étage supérieur : 20 Hz–400 Hz<br>- Voix humaines : 85 Hz–180 Hz pour les hommes, 165 Hz–255 Hz pour les femmes<br>- Bruit de vaisselle qui s’entrechoque : 200 Hz–10 kHz<br>- Pleurs de bébé : 300 Hz–3 kHz<br>- Voitures qui passent : 50 Hz–2 kHz<br>- Ronflements : 50 Hz–500 Hz</strong>"
+        },
+        {
+          "image": "bands.png",
+          "caption": "Les bandes de fréquences typiques du bruit se situent principalement entre quelques dizaines et quelques centaines de Hz"
+        },
+        {
+          "text": "Comme vous pouvez le constater, les bandes de fréquences des bruits quotidiens vont de quelques dizaines de Hz à plusieurs milliers de Hz, avec un pic autour de quelques dizaines à quelques centaines de Hz.<br><br><strong>Le Brown Noise est fortement présent dans cette plage, ce qui lui donne un grand pouvoir de « masquage » (noyer) les sons du quotidien.</strong><br>De plus, comme il met l’accent sur les tonalités plus graves, il est moins susceptible d’agresser l’oreille et procure un sentiment de confort."
+        },
+        {
+          "head": "Comment le Brown Noise annule-t-il le bruit ?"
+        },
+        {
+          "text": "L’audition humaine ne se contente pas de percevoir les sons entrants tels quels ; le cerveau les traite temporairement et distingue inconsciemment les sons importants de ceux qui le sont moins.<br>Notre cerveau filtre en permanence les sons et décide s’il doit ou non les ignorer.<br><br>En présence de Brown Noise, le cerveau le reconnaît comme un bruit de fond constant. Cela crée une « ligne de base » dans notre perception. Seuls les sons dont l’amplitude dépasse nettement cette ligne de base se démarquent ; tous les autres sont ignorés. En élevant ainsi ce seuil d’attention, le Brown Noise crée un contexte qui facilite l’ignorance des bruits désagréables, comme ceux mentionnés plus haut."
+        },
+        {
+          "image": "baseline.png",
+          "caption": "Le Brown Noise devient le son de fond, relevant le seuil à partir duquel le bruit est ignoré"
+        },
+        {
+          "head": "La différence entre White Noise et Brown Noise"
+        },
+        {
+          "text": "Un autre type de bruit similaire est le <strong>White Noise</strong>. Le White Noise répartit l’énergie plus uniformément sur l’ensemble des fréquences que le Brown Noise, et certaines personnes le trouvent agressif. En revanche, le Brown Noise met l’accent sur les tonalités plus graves, offrant un aspect réconfortant qui rappelle l’océan ou le ventre maternel.<br><br>Grâce à ses caractéristiques particulières, le Brown Noise se superpose efficacement aux bruits du quotidien, ce qui le rend particulièrement performant pour le masquage."
+        },
+        {
+          "head": "NNTM est 100 % naturel tout en couvrant un large éventail de bruits quotidiens"
+        },
+        {
+          "image": "compare_ja_A.png",
+          "caption": "En s’appuyant sur les qualités du Brown Noise, NNTM élargit encore sa plage de couverture",
+          "style": "background-color: #000; color: #fff; max-width: 73%;  margin: 60px auto;"
+        },
+        {
+          "text": "Il est possible de générer artificiellement du Brown Noise, mais les effets scientifiques d’une exposition prolongée à des sons artificiels restent à ce jour peu étudiés.<br><br>Par respect pour la nature, la source sonore NNTM a été développée pour fournir des enregistrements de haute qualité, fidèles à l’environnement naturel. Réalisés dans des zones montagneuses soigneusement sélectionnées, ces enregistrements héritent des caractéristiques propres au Brown Noise tout en couvrant un large éventail de bruits quotidiens.<br><br>De nombreuses études suggèrent que la complexité sonore des environnements naturels—tels que les montagnes, les forêts ou les rivières—peut avoir des effets positifs sur le bien-être mental et physique.<br><br>En utilisant un Brown Noise d’origine naturelle, vous pourrez bloquer efficacement les bruits désagréables comme les pas, les voix, le bruit des voitures ou celui des voisins en appartement—tout en préservant votre santé—et ainsi améliorer votre qualité de vie."
+        },
+        {
+          "text": "<a href=\"/conversion_redirect/\">Téléchargez gratuitement le Brown Noise naturel de NNTM</a>"
+        }
+      ],
+      "ru": [
+        {
+          "head": "Коричневый шум имеет частотный диапазон, схожий с повседневными звуками"
+        },
+        {
+          "text": "Коричневый шум (Brown Noise) — это разновидность шума (нежелательного звука), которая характеризуется особенно высокой энергетической плотностью в низком и среднем частотном диапазоне.<br><br>Считается, что значительная часть шума, возникающего в результате человеческой деятельности, сосредоточена в диапазоне от нескольких десятков до нескольких тысяч Гц."
+        },
+        {
+          "text": "Например,<br><strong>- Шаги и звуки от людей, идущих наверху: 20–400 Гц<br>- Человеческий голос: 85–180 Гц (мужчины), 165–255 Гц (женщины)<br>- Звяканье посуды: 200 Гц – 10 кГц<br>- Плач ребёнка: 300 Гц – 3 кГц<br>- Проезжающие автомобили: 50–2000 Гц<br>- Храп: 50–500 Гц</strong>"
+        },
+        {
+          "image": "bands.png",
+          "caption": "Типичные частотные диапазоны повседневных шумов сосредоточены в области от нескольких десятков до нескольких сотен Гц"
+        },
+        {
+          "text": "Как видно, диапазоны повседневного шума могут простираться от десятков Гц вплоть до нескольких тысяч Гц, чаще всего сосредотачиваясь в области от нескольких десятков до нескольких сотен Гц.<br><br><strong>Коричневый шум обладает сильным распределением именно в этом диапазоне, поэтому он эффективно «маскирует» (заглушает) бытовые звуки.</strong><br>Более того, за счёт подчёркнутых низких тонов коричневый шум воспринимается менее резким и создаёт чувство комфорта."
+        },
+        {
+          "head": "Как коричневый шум подавляет нежелательные звуки"
+        },
+        {
+          "text": "Человеческий слух не просто улавливает все входящие звуки как есть; мозг временно обрабатывает их и на бессознательном уровне отличает важные звуки от несущественных.<br>Мы постоянно фильтруем поступающую слуховую информацию, определяя, что следует игнорировать.<br><br>Когда присутствует коричневый шум, мозг распознаёт его как постоянный фоновый звук. Это формирует так называемую «базовую линию» восприятия. Только звуки, которые ощутимо превышают эту линию, выделяются на общем фоне, тогда как все остальные игнорируются. Повышая эту «базовую линию» для звуков, которые могут привлечь внимание, коричневый шум помогает создать основу, позволяющую не реагировать на неприятные шумы, упомянутые выше."
+        },
+        {
+          "image": "baseline.png",
+          "caption": "Коричневый шум становится фоновым, повышая уровень «базовой линии», за которым мозг игнорирует шум"
+        },
+        {
+          "head": "Разница между белым шумом и коричневым шумом"
+        },
+        {
+          "text": "Схожим видом шума является <strong>белый шум</strong>. У белого шума энергия равномернее распределена по всему спектру, и некоторые люди могут воспринимать его как более резкий. В то же время коричневый шум подчёркивает более низкие частоты, создавая успокаивающее ощущение, напоминающее шум моря или звуки в утробе.<br><br>Кроме того, благодаря своим частотным характеристикам, коричневый шум хорошо перекрывает многие бытовые звуки, что делает его особенно эффективным для маскировки."
+        },
+        {
+          "head": "NNTM создан на 100% из природных источников, при этом охватывает широкий спектр бытовых шумов"
+        },
+        {
+          "image": "compare_ja_A.png",
+          "caption": "NNTM расширяет охват, опираясь на характеристики коричневого шума",
+          "style": "background-color: #000; color: #fff; max-width: 73%;  margin: 60px auto;"
+        },
+        {
+          "text": "Коричневый шум можно генерировать искусственно, но научные данные о последствиях длительного прослушивания синтезированных шумов пока ограничены.<br><br>В стремлении сохранить уважение к природе, источник звука NNTM разработан так, чтобы воспроизводить высококачественные записи реальных природных звуков. Материалы записывались в тщательно выбранных горных районах и были доработаны таким образом, чтобы не только унаследовать особенности коричневого шума, но и охватить более широкий спектр повседневных шумов.<br><br>Многие исследования указывают на то, что сложные звуковые паттерны, производимые естественной средой — горами, лесами или реками — благотворно влияют на психическое и физическое состояние человека.<br><br>Используя коричневый шум природного происхождения, можно эффективно блокировать такие неприятные звуки, как шаги, голоса, шум автомобилей или соседский шум в многоквартирных домах — и при этом беречь здоровье, повышая общее качество жизни."
+        },
+        {
+          "text": "<a href=\"/conversion_redirect/\">Скачать натуральный коричневый шум от NNTM бесплатно</a>"
+        }
+      ],
+      "de": [
+        {
+          "head": "Braunes Rauschen hat einen ähnlichen Frequenzbereich wie Alltagsgeräusche"
+        },
+        {
+          "text": "Braunes Rauschen (Brown Noise) ist eine Art von <strong>Geräusch (Rauschen), das sich durch einen besonders hohen Anteil an Energie im Tief- bis Mittelfrequenzbereich</strong> auszeichnet.<br><br>Viele der Geräusche, die durch menschliche Aktivitäten entstehen, konzentrieren sich <strong>hauptsächlich auf mittlere Frequenzen von einigen Dutzend Hertz bis zu mehreren Tausend Hertz</strong>."
+        },
+        {
+          "text": "Beispiele:<br><strong>• Schritte und Gehgeräusche aus oberen Etagen – 20Hz bis 400Hz<br>• Menschliche Stimmen – Männer: 85Hz bis 180Hz, Frauen: 165Hz bis 255Hz<br>• Klirrende Geschirrgeräusche – 200Hz bis 10kHz<br>• Babygeschrei – 300Hz bis 3kHz<br>• Vorbeifahrende Autos – 50Hz bis 2kHz<br>• Schnarchen – 50Hz bis 500Hz</strong>"
+        },
+        {
+          "image": "bands.png",
+          "caption": "Typische Frequenzbereiche von Alltagslärm liegen oft zwischen einigen Dutzend und mehreren Hundert Hertz"
+        },
+        {
+          "text": "Wie man sieht, verteilen sich die Frequenzbereiche vieler Alltagsgeräusche größtenteils zwischen einigen Dutzend Hertz und einigen Tausend Hertz, wobei der Schwerpunkt häufig im Bereich von einigen Dutzend bis ein paar Hundert Hertz liegt.<br><br><strong>Da Braunes Rauschen in genau diesem Bereich stark vertreten ist, besitzt es eine hervorragende Fähigkeit, Alltagsgeräusche zu „maskieren“ (zu überdecken).</strong><br>Durch die Betonung tieferer Frequenzen wird es zudem seltener als störend empfunden und vermittelt ein Gefühl von Geborgenheit."
+        },
+        {
+          "head": "Wie Braunes Rauschen Lärm „auslöscht“"
+        },
+        {
+          "text": "Das menschliche Gehör nimmt ankommende Geräusche nicht einfach unverändert wahr. Stattdessen werden sie vom Gehirn vorübergehend verarbeitet, um wichtige von unwichtigen Geräuschen unbewusst zu unterscheiden.<br>Das Gehirn filtert ständig alle eingehenden Schallreize und entscheidet, welche ignoriert werden können.<br><br>Wenn Braunes Rauschen präsent ist, erkennt das Gehirn dieses als konstantes Hintergrundgeräusch. Dadurch entsteht in der Wahrnehmung eine Art „Baseline“. Nur Geräusche, die stark über diese Baseline hinausragen, fallen noch auf; alle anderen werden ausgeblendet. Indem Braunes Rauschen diese Grundlinie für potenziell auffällige Geräusche anhebt, hilft es, unangenehme Geräusche (wie oben aufgeführt) leichter zu ignorieren."
+        },
+        {
+          "image": "baseline.png",
+          "caption": "Braunes Rauschen dient als konstante Hintergrundkulisse und hebt die Baseline an, ab der Geräusche ignoriert werden"
+        },
+        {
+          "head": "Unterschied zwischen Weißem Rauschen und Braunem Rauschen"
+        },
+        {
+          "text": "Eine ähnliche Rauschform ist das <strong>Weiße Rauschen (White Noise)</strong>. Weißes Rauschen verteilt seine Energie gleichmäßiger über alle Frequenzen, was manche Menschen als unangenehm empfinden können. Braunes Rauschen hingegen betont tiefere Töne und vermittelt ein beruhigendes Gefühl, das an Meeresrauschen oder den Klang im Mutterleib erinnern kann.<br><br>Aufgrund seiner Frequenzcharakteristik überdeckt Braunes Rauschen außerdem viele Alltagsgeräusche besonders effektiv, was es zu einer ausgezeichneten Wahl für Maskierungseffekte macht."
+        },
+        {
+          "head": "NNTM ist zu 100 % natürlichen Ursprungs und deckt dennoch vielfältige Alltagsgeräusche ab"
+        },
+        {
+          "image": "compare_ja_A.png",
+          "caption": "NNTM nutzt die Eigenschaften des Braunen Rauschens und erweitert den Abdeckungsbereich zusätzlich",
+          "style": "background-color: #000; color: #fff; max-width: 73%;  margin: 60px auto;"
+        },
+        {
+          "text": "Es ist zwar möglich, Braunes Rauschen künstlich zu erzeugen, doch die wissenschaftlichen Erkenntnisse zu den Auswirkungen einer langfristigen Exposition gegenüber künstlich erzeugten Geräuschen sind noch nicht eindeutig.<br><br>Aus Respekt vor der Natur wurde die NNTM-Klangquelle entwickelt, um <strong>hochwertige Aufnahmen zu produzieren, die der natürlichen Umgebung so treu wie möglich bleiben</strong>. Die Sounds wurden an sorgfältig ausgewählten Orten im Gebirge aufgenommen und so designt, dass sie nicht nur die charakteristischen Eigenschaften des Braunen Rauschens aufweisen, sondern auch ein noch breiteres Spektrum von Alltagsgeräuschen abdecken.<br><br>Zahlreiche Studien weisen darauf hin, dass komplexe Klangmuster in natürlichen Umgebungen – wie in Bergen, Wäldern oder an Flüssen – positive Auswirkungen auf unsere psychische und körperliche Gesundheit haben können.<br><br>Durch natürliches Braunes Rauschen lassen sich <strong>unangenehme Geräusche wie Schritte, Stimmen, Autolärm oder Nachbarschaftslärm in Wohnungen und Mehrfamilienhäusern abschirmen</strong>, während gleichzeitig der Körper entlastet wird – so lässt sich die Lebensqualität deutlich steigern."
+        },
+        {
+          "text": "<a href=\"/conversion_redirect/\">NNTMs natürliches Braunes Rauschen kostenlos herunterladen</a>"
+        }
+      ],
+      "ko": [
+        {
+          "head": "브라운 노이즈는 일상 생활 소리와 유사한 주파수 범위를 지닙니다"
+        },
+        {
+          "text": "브라운 노이즈(Brown Noise)는 저음역대에서 중간음역대에 이르는 주파수 대역에 에너지가 특히 풍부한 <strong>노이즈(원치 않는 잡음)</strong>의 한 종류입니다.<br><br>우리 주변에서 발생하는 많은 소음은 보통 수십 Hz에서 수천 Hz에 이르는 중간 주파수 대역에 집중되어 있다고 알려져 있습니다."
+        },
+        {
+          "text": "예를 들어,<br><strong>- 윗층 사람이 걷는 발소리: 20Hz–400Hz<br>- 사람의 목소리: 남성 85Hz–180Hz, 여성 165Hz–255Hz<br>- 접시 부딪히는 소리: 200Hz–10kHz<br>- 아기 울음소리: 300Hz–3kHz<br>- 지나가는 차량 소음: 50Hz–2kHz<br>- 코골이: 50Hz–500Hz</strong>"
+        },
+        {
+          "image": "bands.png",
+          "caption": "일상에서 흔히 발생하는 소음은 수십 Hz~수백 Hz 정도의 주파수 대역을 중심으로 분포함"
+        },
+        {
+          "text": "이처럼 일상 소음의 주파수 대역은 대체로 수십 Hz에서 수천 Hz까지 분포하며, 주로 수십~수백 Hz 영역에 집중되는 경향이 있습니다.<br><br><strong>브라운 노이즈는 이 영역에 강하게 분포하기 때문에, 일상 소음을 ‘마스킹(덮어버리는)’하는 데 매우 효과적</strong>입니다.<br>또한 더 깊은 톤이 강조되어 귀에 거슬리지 않고 오히려 편안한 느낌을 줍니다."
+        },
+        {
+          "head": "브라운 노이즈로 소음을 ‘지우는’ 원리"
+        },
+        {
+          "text": "사람의 청각은 단순히 들어오는 모든 소리를 그대로 인식하지 않고, 뇌에서 잠시 처리한 뒤 중요도에 따라 무의식적으로 구분합니다.<br>뇌는 끊임없이 들려오는 소리를 필터링하며, 무시할 것과 주목할 것을 결정합니다.<br><br>브라운 노이즈가 있을 때, 뇌는 이를 일정한 배경음으로 인식하여 청각의 ‘기준선(baseline)’을 형성합니다. 이 기준선을 크게 넘는 피크음만 눈에 띄고, 나머지는 무시됩니다. 즉, 주의를 끌 수 있는 소리에 대한 기준선을 높임으로써, 위에서 열거한 불쾌한 소음이 들리더라도 무시하기가 더 쉬워지는 것입니다."
+        },
+        {
+          "image": "baseline.png",
+          "caption": "브라운 노이즈가 배경음이 되어, 소음을 무시하는 기준선 레벨을 높여줌"
+        },
+        {
+          "head": "화이트 노이즈와 브라운 노이즈의 차이"
+        },
+        {
+          "text": "비슷한 노이즈로 <strong>화이트 노이즈(White Noise)</strong>가 있습니다. 화이트 노이즈는 브라운 노이즈에 비해 주파수 대역이 좀 더 균일하게 분포되어 있어, 사람에 따라 거슬린다고 느낄 수 있습니다. 반면 브라운 노이즈는 더 낮은 톤을 강조하기 때문에, 바다 소리나 태아가 자궁 속에서 듣는 소리를 연상시키며 편안함을 줍니다.<br><br>그리고 주파수 특성상, 브라운 노이즈는 일상적으로 발생하는 소음과 주파수 영역이 크게 겹쳐 마스킹 효과가 뛰어난 편입니다."
+        },
+        {
+          "head": "NNTM은 100% 자연에서 유래하면서도, 일상 소음을 폭넓게 커버합니다"
+        },
+        {
+          "image": "compare_ja_A.png",
+          "caption": "브라운 노이즈의 장점을 살리면서, NNTM은 커버 범위를 더욱 확장합니다",
+          "style": "background-color: #000; color: #fff; max-width: 73%;  margin: 60px auto;"
+        },
+        {
+          "text": "브라운 노이즈를 인공적으로 생성하는 것도 가능하지만, 합성된 소리를 장시간 들었을 때의 과학적 영향은 아직 명확하게 밝혀지지 않았습니다.<br><br>자연을 존중하는 마음으로, NNTM 음원은 <strong>자연 환경을 충실히 담아낸 고품질 녹음</strong>을 지향하며 개발되었습니다. 엄선한 산악 지역에서 녹음되었고, 브라운 노이즈의 특징을 이어받으면서 동시에 일상 소음을 폭넓게 커버하도록 설계되었습니다.<br><br>산이나 숲, 강 등 자연환경이 만들어내는 복잡한 사운드 패턴은 인체와 정신에 긍정적인 영향을 준다는 연구가 많습니다.<br><br>자연에서 비롯된 브라운 노이즈를 활용해 <strong>발소리, 말소리, 자동차 소음, 이웃 간 소음</strong> 등 불쾌한 소리를 효율적으로 차단하면서도 몸에 무리가 가지 않도록 하여, 생활의 질을 높일 수 있습니다."
+        },
+        {
+          "text": "<a href=\"/conversion_redirect/\">NNTM의 자연 브라운 노이즈 무료 다운로드</a>"
+        }
+      ],
+      "ar": [
+        {
+          "head": "الضوضاء البنية قريبة من نطاق ترددات الأصوات اليومية"
+        },
+        {
+          "text": "الضوضاء البنية (Brown Noise) هي نوع من الضوضاء (صوت غير مرغوب فيه) يتميّز بوفرة خاصة في الطاقة ضمن النطاقات الترددية المنخفضة والمتوسطة.<br><br>ويُقال إن جزءًا كبيرًا من الضوضاء الناتجة عن الأنشطة البشرية يتركّز في النطاق المتوسط، أي من بضع عشرات الهرتز إلى بضعة آلاف الهرتز."
+        },
+        {
+          "text": "على سبيل المثال:<br><strong>- أصوات الخطوات وصوت المشي في الطابق العلوي: 20Hz–400Hz<br>- الصوت البشري: الرجال 85Hz–180Hz، النساء 165Hz–255Hz<br>- اصطدام الأطباق: 200Hz–10kHz<br>- بكاء الأطفال: 300Hz–3kHz<br>- السيارات المارة: 50Hz–2kHz<br>- الشخير: 50Hz–500Hz</strong>"
+        },
+        {
+          "image": "bands.png",
+          "caption": "تتركز نطاقات التردد النموذجية للضوضاء غالبًا في نطاق عشرات إلى بضع مئات الهرتز"
+        },
+        {
+          "text": "وكما تلاحظ، فإن نطاقات تردد الضوضاء اليومية تمتد من عشرات الهرتز إلى بضعة آلاف الهرتز، متمركزة بصورة رئيسية في المجال الذي يتراوح بين عشرات ومئات الهرتز.<br><br><strong>تنتشر الضوضاء البنية بشكل واضح ضمن هذا النطاق، مما يتيح لها قدرة قوية على “إخفاء” (أو حجب) الأصوات اليومية.</strong><br>وبفضل تركيزها على النغمات الأعمق، يقل احتمال أن تبدو مزعجة، وتضفي شعورًا بالارتياح."
+        },
+        {
+          "head": "كيف تعمل الضوضاء البنية على إلغاء الضوضاء"
+        },
+        {
+          "text": "لا يقتصر السمع البشري على التقاط الأصوات كما هي، بل يجري الدماغ معالجة مؤقتة ويفرز دون وعي بين الأصوات المهمة وغير المهمة.<br>فالدماغ يقوم على الدوام بترشيح الأصوات الواردة، ويقرر ما إذا كان عليه تجاهلها أم لا.<br><br>عندما تكون الضوضاء البنية موجودة، يتعرّفها الدماغ بوصفها صوتًا خلفيًا ثابتًا، مما يكوّن “خط الأساس” للإدراك. عندئذٍ لا يبرز إلا الصوت الذي يتجاوز هذا الخط بشكل واضح، بينما يتجاهل الدماغ ما عداه. عبر رفع هذا الخط الأساسي للأصوات التي قد تسترعي الانتباه، تمهد الضوضاء البنية الأساس لتجاهل الأصوات المزعجة مثل تلك المذكورة سابقًا."
+        },
+        {
+          "image": "baseline.png",
+          "caption": "تصبح الضوضاء البنية بمثابة صوت خلفي يرفع مستوى الأساس الذي يتم عنده تجاهل الضوضاء"
+        },
+        {
+          "head": "الفرق بين الضوضاء البيضاء والضوضاء البنية"
+        },
+        {
+          "text": "هناك نوع مماثل من الضوضاء يُدعى <strong>الضوضاء البيضاء (White Noise)</strong>. ففي الضوضاء البيضاء، تتوزع الطاقة بشكل متساوٍ عبر نطاق واسع من الترددات، وقد يجدها بعض الأشخاص مزعجة. أما الضوضاء البنية فتركّز بشكل أكبر على النغمات المنخفضة الأعمق، مما يضفي شعورًا بالهدوء يشبه صوت البحر أو ما يسمعه الجنين في الرحم.<br><br>وبسبب خصائصها الترددية، تغطي الضوضاء البنية العديد من الأصوات اليومية بكفاءة، مما يجعلها خيارًا ممتازًا لحجب الضوضاء."
+        },
+        {
+          "head": "NNTM طبيعي 100% لكنه يغطي نطاقًا واسعًا من الأصوات اليومية"
+        },
+        {
+          "image": "compare_ja_A.png",
+          "caption": "استنادًا إلى مزايا الضوضاء البنية، يقوم NNTM بتوسيع نطاق تغطيته بشكل أكبر",
+          "style": "background-color: #000; color: #fff; max-width: 73%;  margin: 60px auto;"
+        },
+        {
+          "text": "بالإمكان توليد الضوضاء البنية بشكل صناعي، إلا أن التأثيرات العلمية الناجمة عن الاستماع إليها لفترات طويلة بتركيبة مصطنعة تمامًا لم تُحسم بعد.<br><br>واستنادًا إلى احترام الطبيعة، طوّرت NNTM مصدرًا صوتيًا يهدف إلى تسجيل عالي الجودة يظل وفيًا للبيئة الطبيعية. فقد تم تسجيله في مناطق جبلية مختارة بعناية، مع تصميم يأخذ في الحسبان خصائص الضوضاء البنية، إلى جانب توسيع نطاق تغطيتها لتشمل المزيد من الأصوات اليومية.<br><br>وتشير العديد من الدراسات إلى أن الأنماط الصوتية المعقدة التي تتسم بها الأماكن الطبيعية — كالجِبال أو الغابات أو الأنهار — قد يكون لها آثار إيجابية على الصحة النفسية والبدنية.<br><br>ومع اعتماد الضوضاء البنية المشتقة طبيعيًا، يمكنك حجب أصوات مزعجة مثل الخطوات، والكلام، والسيارات، وضوضاء الجيران في المباني، مع مراعاة سلامة جسمك، مما يحسن جودة حياتك."
+        },
+        {
+          "text": "<a href=\"/conversion_redirect/\">حمّل مجانًا الضوضاء البنية الطبيعية من NNTM</a>"
+        }
+      ]
+  
+    }
+  }
+  

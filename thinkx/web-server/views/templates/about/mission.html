@@ -1,0 +1,26 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+<div id="mission" class="main-container">
+  {% include 'common/header.html' %}
+  <div class="mission-page article-page main-content">
+
+    <h2 class="title">{{ locale_dict["title_mission"][lang] }}</h2>
+
+    <article class="message-article">{{ locale_dict["message_mission"][lang] }}</article>
+</div>
+  {% include 'common/footer.html' %}
+</div>
+
+<script src="/js/top.js"></script>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}
+
+

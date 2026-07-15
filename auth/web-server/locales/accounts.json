@@ -1,0 +1,26 @@
+{
+    "signin_success": {
+        "en": "Signed in.",
+        "ja": "ログインしました。"
+    },
+    "user_already_exists": {
+        "en": "An account already exists for {0}.",
+        "ja": "{0} のアカウントは既に存在します。"
+    },
+    "user_not_found_with_email": {
+        "en": "No account found for {0}.",
+        "ja": "{0} のアカウントが見つかりません。"
+    },
+    "google_oauth_failed": {
+        "en": "Google sign-in could not be verified.",
+        "ja": "Google ログインを検証できませんでした。"
+    },
+    "email_format": {
+        "en": "Please enter a valid email address.",
+        "ja": "有効なメールアドレスを入力してください。"
+    },
+    "invalid_password_format": {
+        "en": "Password must be 8+ characters with upper, lower and numeric characters.",
+        "ja": "パスワードは大文字・小文字・数字を含む8文字以上にしてください。"
+    }
+}

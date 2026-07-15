@@ -1,0 +1,14 @@
+defscrollback 10000
+escape ^t^t
+zombie "^d^r"
+hardstatus alwayslastline I%wI
+vbell off
+
+# nginx
+screen -t nginx 2 sh -c '/usr/local/bin/nginx -p`pwd` -c `pwd`/nginx/nginx.conf'
+# uwsgi
+screen -t uwsgi 3 sh -c 'uwsgi --ini uwsgi/uwsgi.ini'
+# build
+screen -t build 1 sh -c 'cd ../web-server/views && . ./watchappviews.sh'
+
+

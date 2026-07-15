@@ -1,0 +1,50 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+  <article class="article" data-news-id="2019-12-30">
+    <div class="container">
+      <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}">
+          << </a></span>
+      <p class="date news-date">2019 Dec 30</p>
+      <h2 class="title">Introducing Our Revised Organizational Structure</h2>
+      <div class="news-image-container">
+        <figure class="news-image news-id-2019-12-30">
+          <!--<img class="news-id-2019-12-30" src="/img/expo.jpg" srcset="/img/expo@2x.jpg 2x"/>-->
+        </figure>
+      </div>
+      <div class="main-text">
+        Established in January 2015 as an advanced IT research and development entity, 6th Sense, Ltd. (President: Kazuki Otsuka) has embarked on an organizational metamorphosis. 
+        <br>
+        As of December 2019, we have transitioned into ThinkX,Inc, ushering in a new era of our organization with a focus on software services.
+        <br>
+        Our renewed focus will be on the consolidation and development of AI-related technologies we have fostered till date. 
+        <br>
+        These include, but are not limited to, natural language processing for speech, recommendation technology, large-scale distributed processing infrastructure, cryptography technology, and over 1.1 million events of structured wiki data.
+        <br>
+        <br>
+        We eagerly anticipate this exciting chapter and remain steadfast in our commitment to delivering exceptional service.
+      </div>
+      <div class="back-container cf">
+        <span class="back">
+          <a href="/{{ lang }}/blognews?page={{ page }}">Back to list</a>
+        </span>
+      </div>
+    </div>
+  </article>
+</div>
+{% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

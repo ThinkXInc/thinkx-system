@@ -1,0 +1,64 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+
+  <article class="article" data-news-id="2021-3-10">
+    <div class="container">
+      <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}">
+          << </a></span>
+      <p class="date news-date">2021 Mar 10</p>
+      <h2 class="title">Second Nagasaki City VLOG, Featuring Chinese KOL 摇君柠, Now Live on Weibo, Japan's Leading SNS Platform</h2>
+      <div class="news-image-container">
+        </figure>
+      </div>
+      <div class="main-text">
+        Weibo, China's largest social networking platform, is thrilled to announce the release of a new video: an inbound tour of Nagasaki City. This video, co-produced by our team and Chinese KOL Jianle Wang (摇君柠), who is based in Japan and boasts over 510,000 followers, has achieved considerable success.<br>
+        <br>
+        <strong>Within the first five days of its release, the video accumulated 1.3 million views (2.33 million PV).</strong>.
+        <br>
+        It was also featured on the account "林萍在日本," which has an impressive 5.74 million followers.<br>
+        <br>
+        <strong>Under the theme of "Finding China in Japan," our objective was to showcase Nagasaki as a city with special significance for the Chinese population—a destination that Chinese travelers can relate to. We aimed to tell the city's unique story</strong>,
+        <br>
+        highlighting not just its beauty and intrigue, but also how it aligns with its characteristic atmosphere, which is crucial for attracting visitors.<br>
+        <br>
+        It's unusual for an official promotional video to be produced in the full-length, high-resolution Ultra HD 4K vlog format. However, for this project, we embraced advanced editing techniques and the latest video equipment to create a trailblazing vlog video.
+        <br>
+        <br>
+        On Weibo, the video elicited comments such as,<strong>"I never knew that Nagasaki has such a deep connection with China. It's fascinating—I hope to visit in person someday,"</strong> and <br>
+        <strong>"The kimonos and scenery are stunning. I'll definitely return once the pandemic subsides."</strong>
+        <br>
+        <br>
+        Total views, as of March 16, 2021, stand at 1.3 million (2.66 million PV).<br>
+        The VLOG can be viewed at the following Weibo link: [长崎VLOG - 时空胶囊的旅行]<a href="https://weibo.com/5184885445/K5J0di1Md">长崎VLOG - 时空胶囊的旅行 </a><br>
+        <br>
+        To watch the video in 4K high quality, please visit the link provided.<br>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/y1ZFs1iZTfU" frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe><br>
+        <br>
+      </div>
+      <div class="back-container cf">
+        <span class="back">
+          <a href="/{{ lang }}/blognews?page={{ page }}">Back to list</a>
+        </span>
+      </div>
+    </div>
+  </article>
+</div>
+{% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container talk">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+    <article class="article" data-news-id="{{ news_id }}">
+      <div class="container">
+        <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}">
+          << </a></span>
+        <h2 class="title">
+        {{ locale_dict["article_title"][lang]  | replace('\n', '<br>') | safe }}
+        </h2>
+        <p class="date news-date">
+          {{ locale_dict["article_date"][lang] }}
+        </p>
+        <h4 class="guest">
+          {{ locale_dict["article_guest"][lang] }}
+        </h4>
+        <div class="main-image-container">
+        </div>
+        <div class="main-text">
+          <span class="intro">
+          {{ locale_dict["article_intro"][lang] | replace('\n', '<br>')  | safe }}
+          </span>
+
+          <div class="conversation-block">
+            {% for line in locale_dict.article_conversation[lang] %}
+              {% if 'head' in line %}
+              <div class="conversation-line head">
+              {% elif 'footnote' in line %}
+              <div class="conversation-line footnote">
+              {% else %}
+              <div class="conversation-line">
+              {% endif %}
+          
+                {% if 'sub' in line %}
+                  <!-- If the line has a 'sub' key, render it differently -->
+                  <span class="sub">{{ line.sub }}</span>
+          
+                {% elif 'head' in line %}
+                  <!-- If the line has a 'head' key, render it as a heading -->
+                  <h5 class="head">{{ line.head }}</h5>
+          
+                {% elif 'image' in line and 'caption' in line %}
+                  <!-- If the line has both 'image' and 'caption', show an image block -->
+                  <div class="image-container">
+                    <img src="/img/blog/{{ news_id}}/{{ line.image }}" alt="{{ line.caption }}">
+                    <p class="caption">{{ line.caption }}</p>
+                  </div>
+          
+                {% elif 'footnote' in line %}
+                  <!-- If the line has a 'footnote' key, render it -->
+                  <div class="footnote-block">
+                    {{ line.footnote | replace('\n', '<br>') | safe }}
+                  </div>
+
+                {% else %}
+                  <!-- Otherwise, render as a normal speaker/text line -->
+                  <span class="conversation-speaker">{{ line.speaker }}</span>
+                  <span class="conversation-text">
+                    {{ line.text | replace('\n', '<br>') | safe }}
+                  </span>
+                {% endif %}
+          
+              </div>
+            {% endfor %}
+          </div>
+
+          <div class="profile">
+            <img src="/img/blog/{{ news_id }}/profile.jpg"/>
+            <span class="bio">
+              {{ locale_dict["article_bio"][lang] | replace('\n', '<br>') | safe  }}
+            </span>
+          </div>
+        </div>
+    </article>
+  </div>
+  {% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

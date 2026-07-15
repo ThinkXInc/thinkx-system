@@ -1,0 +1,89 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+  <article class="article" data-news-id="2021-08-13">
+    <div class="container">
+      <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}">
+          << </a></span>
+      <p class="date news-date">2021 Aug 13</p>
+      <h2 class="title">Introducing NeuraVoice2 Beta: Ultra-Fast, High-Quality Text-to-Speech Neural System</h2>
+      <div class="news-image-container">
+
+      </div>
+      <div class="main-text">
+        In 2017, we initiated research on end-to-end speech synthesis using deep learning technology. Now, after numerous upgrades, we're pleased to introduce NeuraVoice2 Beta. It's set a new benchmark for GPU inference in the Real Time Factor (the ratio of the time length of speech data to the time taken for synthesis), achieving an impressive 0.0227.
+        <br>
+        For more information, please refer to these articles:
+        <br>
+        <br>
+
+        PRTimes<br>
+        <a
+          href="https://prtimes.jp/main/html/rd/p/000000004.000054712.html">https://prtimes.jp/main/html/rd/p/000000004.000054712.html</a><br><br>
+        Sankei News<br>
+        <a
+          href="https://www.sankei.com/economy/news/210813/prl2108130102-n1.html">https://www.sankei.com/economy/news/210813/prl2108130102-n1.html</a><br><br>
+        ASCII Startup<br>
+        <a href="https://ascii.jp/elem/000/004/065/4065833/">https://ascii.jp/elem/000/004/065/4065833/</a><br><br>
+        CNET JAPAN<br>
+        <a href="https://japan.cnet.com/release/30579140/">https://japan.cnet.com/release/30579140/</a><br><br>
+        <br>
+        <br>
+
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/Amw3z6DkfhM" title="YouTube video player"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+
+
+        <br>
+        <br>
+        <h3>NeuraVoice2 Beta offers several outstanding features:</h3>
+        <ul>
+          　 <li style="font-weight: 300;">・High-speed, high-quality speech synthesis with a Real Time Factor (RTF) of 0.01~1.1*1.</li>
+          　 <li style="font-weight: 300;">・Accurate reading of numbers up to 1,000 trillion digits, including special notations such as superscripts.
+            　</li>
+          　 <li style="font-weight: 300;">・Adjustable speech speed, pitch, and intensity.</li>
+          　 <li style="font-weight: 300;">・Advanced settings for stemming, reading symbols, eliminating stop words, and reading keywords only.</li>
+          　 <li style="font-weight: 300;">・Compatibility with the same algorithm across multiple languages.</li>
+          　 <li style="font-weight: 300;">・Customized speech synthesis with the preparation of original training data to capture a specific speaker's voice or certain group of words.</li>
+        </ul>
+        <br>
+
+
+      </div>
+      <figure class="news-image news-id-2021-08-13">
+        <img class="news-id-2021-08-13" src="/img/NeuraVoiceDiagram.png" srcset="/img/NeuraVoiceDiagram@2x.png 2x" />
+      </figure>
+      <br>
+
+      We are excited to incorporate this product into CITYWALK, a voice guidance system currently under development by ThinkX. 
+      <br>
+      Primarily, we expect to offer NeuraVoice2 Beta to customers requiring high-speed speech synthesis, particularly in edge devices with limited communication environments.<br>
+      <br>
+      For more information or product introductions, please contact us at inquiry@thinkxinc.com.<br>
+      <br>
+      <div class="back-container cf">
+        <span class="back">
+          <a href="/{{ lang }}/blognews?page={{ page }}">Back to list</a>
+        </span>
+      </div>
+    </div>
+  </article>
+</div>
+{% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

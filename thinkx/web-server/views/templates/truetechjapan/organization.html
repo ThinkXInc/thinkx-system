@@ -1,0 +1,45 @@
+{% extends "truetechjapan/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+{% include 'truetechjapan/common/header.html' %}
+<div id="truetech-organization" class="main-container">
+      <div class="main-content">
+          <h3 class="members_title">{{ locale_dict.members_title[lang] }}</h3>
+          <ul class="members">
+              {% for line in locale_dict.members[lang] %}
+                  <li class="member"> 
+                      <span class="role">{{ line["role"] }}</span>
+
+                      <div class="container">
+                        <span class="name">
+                            <p class="name_kanji">{{ line["name"] }}</p>
+                            <p class="name_hira">{{ line["name_hira"] }}</p>
+                        </span>
+                        <span class="profile">{{ line["profile"] }}</span>
+                      </div>
+                  </li>
+              {% endfor %}
+          </ul>
+
+          <div class="organization">
+            <span class="name">{{ locale_dict.organization[lang]["name"] }} </span>
+            <span class="address">{{ locale_dict.organization[lang]["address"] }}</span>
+            {#<span class="mail">{{ locale_dict.organization[lang]["mail"] }}</span>#}
+            <span class="parent_title">{{ locale_dict.organization[lang]["parent_title"] }} </span>
+            <span class="parent">{{ locale_dict.organization[lang]["parent"] }} <a href="{{ locale_dict.organization[lang]['parent_url'] }}">{{ locale_dict.organization[lang]['parent_url'] }}</a>  </span>
+            {# <span class="parent_url">{{ locale_dict.organization[lang]["parent_url"] }}</span> #}
+          </div>
+      </div>
+</div>
+{% include 'truetechjapan/common/footer.html' %}
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}
+
+

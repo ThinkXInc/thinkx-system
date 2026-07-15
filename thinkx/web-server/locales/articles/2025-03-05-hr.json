@@ -1,0 +1,66 @@
+{
+  "metadata_blog_2025-03-05-hr": {
+    "ja": {
+      "title": "清水謙多郎 東京大学名誉教授がアドバイザーに就任",
+      "description": "清水謙多郎 東京大学名誉教授がアドバイザーに就任",
+      "keywords": "ThinkX, アドバイザー, 顧問, 清水謙多郎, 東京大学名誉教授"
+    },
+    "en": {
+      "title": "Professor Emeritus Kentaro Shimizu of the University of Tokyo Appointed as Advisor",
+      "description": "Professor Emeritus Kentaro Shimizu of the University of Tokyo Appointed as Advisor",
+      "keywords": "ThinkX, Advisor, Consultant, Kentaro Shimizu, University of Tokyo Professor Emeritus"
+    },
+    "zh": {
+      "title": "清水谦多郎（东京大学名誉教授）就任顾问",
+      "description": "清水谦多郎（东京大学名誉教授）就任顾问",
+      "keywords": "ThinkX, 顾问, 清水谦多郎, 东京大学名誉教授"
+    },
+    "es": {
+      "title": "El profesor emérito de la Universidad de Tokio, Kentaro Shimizu, ha sido nombrado asesor",
+      "description": "El profesor emérito de la Universidad de Tokio, Kentaro Shimizu, ha sido nombrado asesor",
+      "keywords": "ThinkX, asesor, consultor, Kentaro Shimizu, profesor emérito de la Universidad de Tokio"
+    },
+    "ru": {
+      "title": "Эмерит-профессор Токийского университета Кэнтаро Симизу назначен советником",
+      "description": "Эмерит-профессор Токийского университета Кэнтаро Симизу назначен советником",
+      "keywords": "ThinkX, советник, консультант, Кэнтаро Симизу, эмерит-профессор Токийского университета"
+    },
+    "fr": {
+      "title": "Le Professeur émérite de l'Université de Tokyo, Kentaro Shimizu, nommé conseiller",
+      "description": "Le Professeur émérite de l'Université de Tokyo, Kentaro Shimizu, nommé conseiller",
+      "keywords": "ThinkX, conseiller, consultant, Kentaro Shimizu, Professeur émérite de l'Université de Tokyo"
+    },
+    "ar": {
+      "title": "تعيين الأستاذ الفخري بجامعة طوكيو كنتارو شيميزو مستشارًا",
+      "description": "تعيين الأستاذ الفخري بجامعة طوكيو كنتارو شيميزو مستشارًا",
+      "keywords": "ThinkX, مستشار, استشاري, كنتارو شيميزو, الأستاذ الفخري بجامعة طوكيو"
+    }
+  },
+  "article_title": {
+    "ja": "【顧問】清水謙多郎 東京大学名誉教授がアドバイザーに就任",
+    "en": "[Advisor] Professor Emeritus Kentaro Shimizu of the University of Tokyo Joins as an Advisor",
+    "zh": "【顾问】东京大学名誉教授清水谦多郎受聘为顾问",
+    "es": "[Asesor] El profesor emérito de la Universidad de Tokio, Kentaro Shimizu, ha sido nombrado asesor",
+    "ru": "[Советник] Эмерит-профессор Токийского университета Кэнтаро Симизу назначен советником",
+    "fr": "[Conseiller] Le Professeur émérite de l'Université de Tokyo, Kentaro Shimizu, est nommé conseiller",
+    "ar": "[مستشار] تعيين الأستاذ الفخري بجامعة طوكيو كنتارو شيميزو مستشارًا"
+  },
+  "article_date": {
+    "ja": "2025年3月5日",
+    "en": "March 5, 2025",
+    "zh": "2025年3月5日",
+    "es": "5 de marzo de 2025",
+    "ru": "5 марта 2025 г.",
+    "fr": "5 mars 2025",
+    "ar": "5 مارس 2025"
+  },
+  "article_main": {
+    "ja": "この度、MDシミューションやタンパク質3D構造予測をはじめとするバイオインフォマティクス分野で長年活躍されてきた、清水謙多郎東京大学名誉教授がアドバイザーに就任しました。\n\n清水謙多郎（しみず・けんたろう）\n1938年生まれ。東京大学名誉教授。後藤英一研究室でパラメトロンコンピューターの開発に貢献ののち、1980年代初頭にバイオインフォマティクスに主軸を移し、機械学習を用いたタンパク質3D構造予測の先駆者として、また分子動力学シミュレーションによるタンパク質折り畳みとリガンド結合の研究で、創薬や生物学の理解に大きな影響を与える。\n\nインタビュー：<a href=\"/{{ lang }}/blognews/2025-03-05-talk\">AI×HPCで深化する生物学計算のパラダイム─パラメトロンからバイオインフォマティクスへ 清水謙多郎教授インタビュー</a>",
+    "en": "We are pleased to announce that Kentaro Shimizu, Professor Emeritus at the University of Tokyo, who has had a distinguished career in the field of bioinformatics—including MD simulations and protein 3D structure prediction—has been appointed as an advisor.\n\nKentaro Shimizu (しみず・けんたろう)\nBorn in 1938. Professor Emeritus at the University of Tokyo. After contributing to the development of parametron computers in Eiichi Goto’s laboratory, he shifted his primary focus to bioinformatics in the early 1980s. He is recognized as a pioneer in protein 3D structure prediction using machine learning, and his studies on protein folding and ligand binding through molecular dynamics simulations have greatly influenced drug discovery and our understanding of biology.\n\nInterview: <a href=\"/{{ lang }}/blognews/2025-03-05-talk\">The Paradigm of Computational Biology Deepened by AI×HPC—From Parametrons to Bioinformatics: An Interview with Prof. Kentaro Shimizu</a>",
+    "zh": "我们很高兴地宣布，长期以来在包括分子动力学模拟及蛋白质三维结构预测在内的生物信息学领域取得卓越成就的东京大学名誉教授清水谦多郎先生，现已正式就任本公司的顾问。\n\n清水谦多郎（しみず・けんたろう）\n1938年出生，东京大学名誉教授。他曾在后藤英一研究室参与参数电子计算机的开发，随后在 20 世纪 80 年代初期将研究重点转向生物信息学。他是利用机器学习进行蛋白质三维结构预测的先驱，并通过分子动力学模拟研究蛋白质折叠和配体结合，对新药研发和生命科学研究产生了深远影响。\n\n采访：<a href=\"/{{ lang }}/blognews/2025-03-05-talk\">AI×HPC 深化生物计算范式——从参数电子到生物信息学：清水谦多郎教授访谈</a>",
+    "es": "Nos complace anunciar que el Profesor Emérito de la Universidad de Tokio, Kentaro Shimizu, quien ha tenido una distinguida trayectoria en el campo de la bioinformática —incluyendo simulaciones de dinámica molecular (MD) y la predicción de la estructura 3D de proteínas— ha sido nombrado asesor.\n\nKentaro Shimizu (しみず・けんたろう)\nNacido en 1938. Profesor Emérito de la Universidad de Tokio. Tras contribuir al desarrollo de computadoras de parametrones en el laboratorio del Dr. Eiichi Goto, cambió su enfoque principal a la bioinformática a principios de la década de 1980. Es reconocido como pionero en la predicción de la estructura 3D de proteínas mediante el uso de aprendizaje automático. Sus estudios en el plegamiento de proteínas y la unión de ligandos a través de simulaciones de dinámica molecular han influido significativamente en el descubrimiento de fármacos y en la comprensión de la biología.\n\nEntrevista: <a href=\"/{{ lang }}/blognews/2025-03-05-talk\">El paradigma de la computación biológica profundizado por AI×HPC — de los parametrones a la bioinformática: Entrevista con el Prof. Kentaro Shimizu</a>",
+    "ru": "С радостью сообщаем, что Кентаро Симидзу, почётный профессор Токийского университета, который многие годы работает в сфере биоинформатики (включая МД-симуляции и предсказание 3D-структуры белков), назначен советником.\n\nКентаро Симидзу (しみず・けんたろう)\nРодился в 1938 году. Почётный профессор Токийского университета. После вклада в разработку параметронных компьютеров в лаборатории Эйити Гото, в начале 1980-х годов сосредоточил своё внимание на биоинформатике. Является пионером предсказания 3D-структуры белков с использованием машинного обучения. Его исследования по свёртыванию белков и связыванию лигандов с помощью молекулярной динамики оказали значительное влияние на разработку лекарств и понимание биологии.\n\nИнтервью: <a href=\"/{{ lang }}/blognews/2025-03-05-talk\">Парадигма вычислительной биологии в эпоху AI×HPC — от параметронов к биоинформатике: интервью с профессором Кентаро Симидзу</a>",
+    "fr": "Nous avons le plaisir d’annoncer la nomination en tant que conseiller de Kentaro Shimizu, Professeur émérite de l’Université de Tokyo, qui a mené une longue carrière dans le domaine de la bio-informatique, incluant notamment les simulations de dynamique moléculaire et la prédiction de la structure 3D des protéines.\n\nKentaro Shimizu (しみず・けんたろう)\nNé en 1938. Professeur émérite de l’Université de Tokyo. Après avoir contribué au développement d’ordinateurs à paramétrons dans le laboratoire d’Eiichi Goto, il a orienté ses recherches vers la bio-informatique au début des années 1980. Il est reconnu comme un pionnier de la prédiction de la structure 3D des protéines par apprentissage automatique. Ses travaux sur le repliement des protéines et la liaison des ligands via des simulations de dynamique moléculaire ont considérablement influencé la découverte de médicaments et la compréhension de la biologie.\n\nInterview : <a href=\"/{{ lang }}/blognews/2025-03-05-talk\">Le paradigme du calcul biologique approfondi par l’IA×HPC — des paramétrons à la bio-informatique : entretien avec le Professeur Kentaro Shimizu</a>",
+    "ar": "يسرنا أن نعلن عن تعيين كنتارو شيميزو، الأستاذ الفخري بجامعة طوكيو، الذي حقق مسيرة متميزة في مجال المعلوماتية الحيوية، بما في ذلك المحاكاة بالديناميكا الجزيئية والتنبؤ بالهيكل ثلاثي الأبعاد للبروتين، كمستشار لدينا.\n\nكنتارو شيميزو (しみず・けんたろう)\nمواليد عام 1938. أستاذ فخري بجامعة طوكيو. بعد مساهمته في تطوير حواسيب بارامترون في مختبر إييتشي غوتو، حوّل تركيزه إلى مجال المعلوماتية الحيوية في أوائل الثمانينيات. يُعد رائدًا في مجال التنبؤ بالهيكل ثلاثي الأبعاد للبروتين باستخدام تقنيات التعلم الآلي، وقد أثرت أبحاثه حول طيّ البروتين والارتباط بالجزيئات (اللايغندات) من خلال المحاكاة بالديناميكا الجزيئية بشكل كبير على تطوير الأدوية وفهم علم الأحياء.\n\nالمقابلة: <a href=\"/{{ lang }}/blognews/2025-03-05-talk\">التحول في نموذج الحساب البيولوجي عبر الذكاء الاصطناعي × الحوسبة عالية الأداء — من البارامترون إلى المعلوماتية الحيوية: مقابلة مع الأستاذ كنتارو شيميزو</a>"
+  }
+}

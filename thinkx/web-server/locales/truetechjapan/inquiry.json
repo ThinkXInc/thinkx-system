@@ -1,0 +1,110 @@
+{
+    "inquiry_page_title": {
+        "ja": "お問い合わせ",
+        "en": "",
+        "zh": "",
+        "fr": "",
+        "es": "",
+        "ru": "",
+        "ar": ""
+    },
+    "name_label": {
+        "ja": "お名前",
+        "en": "Name",
+        "zh": "姓名",
+        "fr": "Nom",
+        "es": "Nombre",
+        "ru": "Имя",
+        "ar": "الاسم"
+    },
+    "email_label": {
+        "ja": "メールアドレス",
+        "en": "Email Address",
+        "zh": "电子邮件地址",
+        "fr": "Adresse e-mail",
+        "es": "Dirección de correo electrónico",
+        "ru": "Электронный адрес",
+        "ar": "عنوان البريد الإلكتروني"
+    },
+    "phone_label": {
+        "ja": "電話番号",
+        "en": "Phone Number",
+        "zh": "电话号码",
+        "fr": "Numéro de téléphone",
+        "es": "Número de teléfono",
+        "ru": "Номер телефона",
+        "ar": "رقم الهاتف"
+    },
+    "job_title_label": {
+        "ja": "職名",
+        "en": "Job Title",
+        "zh": "职位",
+        "fr": "Poste",
+        "es": "Título del trabajo",
+        "ru": "Должность",
+        "ar": "المسمى الوظيفي"
+    },
+    "company_name_label": {
+        "ja": "所属・会社名",
+        "en": "Company Name",
+        "zh": "公司名称",
+        "fr": "Nom de l'entreprise",
+        "es": "Nombre de la empresa",
+        "ru": "Название компании",
+        "ar": "اسم الشركة"
+    },
+    "message_label": {
+        "ja": "お問い合わせ内容",
+        "en": "Inquiry Message",
+        "zh": "咨询内容",
+        "fr": "Message de la demande",
+        "es": "Mensaje de consulta",
+        "ru": "Сообщение запроса",
+        "ar": "رسالة الاستفسار"
+    },
+    "submit_label": {
+        "ja": "送信",
+        "en": "Submit",
+        "zh": "提交",
+        "fr": "Soumettre",
+        "es": "Enviar",
+        "ru": "Отправить",
+        "ar": "إرسال"
+    },
+    "requirement_error": {
+        "ja": "$0は必須です。",
+        "en": "$0 is required.",
+        "zh": "$0是必需的。",
+        "fr": "$0 est requis.",
+        "es": "$0 es requerido.",
+        "ru": "$0 требуется.",
+        "ar": "$0 مطلوب."
+    },
+    "format_error": {
+        "ja": "$0を正しい形式で入力してください。",
+        "en": "Please enter $0 in the correct format.",
+        "zh": "请以正确的格式输入$0。",
+        "fr": "Veuillez saisir $0 dans le format correct.",
+        "es": "Por favor, introduzca $0 en el formato correcto.",
+        "ru": "Пожалуйста, введите $0 в правильном формате.",
+        "ar": "الرجاء إدخال $0 بالتنسيق الصحيح."
+    },
+    "submit_success": {
+        "ja": "正常に送信されました。",
+        "en": "Successfully sent.",
+        "zh": "成功发送。",
+        "fr": "Envoyé avec succès.",
+        "es": "Enviado con éxito.",
+        "ru": "Успешно отправлено.",
+        "ar": "تم الإرسال بنجاح."
+    },
+    "submit_failed": {
+        "ja": "送信に失敗しました。inquiry@thinkxinc.comまでご連絡ください。",
+        "en": "Failed to send. Please contact inquiry@thinkxinc.com.",
+        "zh": "发送失败，请联系 inquiry@thinkxinc.com。",
+        "fr": "Échec de l'envoi. Veuillez contacter inquiry@thinkxinc.com.",
+        "es": "Fallo al enviar. Por favor, contacte a inquiry@thinkxinc.com.",
+        "ru": "Не удалось отправить. Пожалуйста, свяжитесь с inquiry@thinkxinc.com.",
+        "ar": "فشل في الإرسال. الرجاء التواصل على inquiry@thinkxinc.com."
+    }
+}

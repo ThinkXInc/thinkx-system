@@ -1,0 +1,78 @@
+<header id="truetech-header">
+  <div class="main-header-container">
+    <!-- header left -->
+    <div class="header-left">
+      <div class="company-logo">
+        <a href="/">
+        <picture>
+            <source media="(max-width: 710px)" srcset="/img/truetechjapan/header/header-logo-sp.png">
+            <img class="header-logo" src="/img/truetechjapan/header/header-logo-v3.png" alt="Logo">
+        </picture>
+        {#
+           <img class="header-logo" src="/img/truetechjapan/header/header-logo.png" alt="Logo">
+           #}
+        </a>
+      </div>
+    </div>
+    <!-- header left -->
+
+    <!-- header menu -->
+    <div class="header-menu">
+
+      <div class="header-menu-mobile">
+        <img id="header-menu-icon" class="men-icon" src="/img/truetechjapan/header/menu-icon.svg"/>
+        <img id="header-menu-arrow" class="arrow-icon" src="/img/truetechjapan/header/down-arrow.svg"/>
+      </div>
+
+      <div class="header-menu-content">
+        <ul class="header-menu-list">
+            {# About #}
+            <li class="menu-content">
+                <a href="/{{ lang }}/about">{{ locale_dict['menu_content_about'][lang] }}</a>
+            </li>
+            {# WHY #}
+            <li class="menu-content">
+                <a href="/{{ lang }}/philosophy">{{ locale_dict['menu_content_philosophy'][lang] }}</a>
+            </li>
+            {# download pdf #}
+            <li class="menu-content">
+                <a href="/documents/truetechjapan/BestTech100.pdf">{{ locale_dict['menu_content_pdf'][lang] }}</a>
+            </li>
+            {# inquiry #}
+            <li class="menu-content">
+                <a href="/{{ lang }}/inquiry">{{ locale_dict['menu_content_inquiry'][lang] }}</a>
+            </li>
+            {# organization #}
+            <li class="menu-content">
+                <a href="/{{ lang }}/organization">{{ locale_dict['menu_content_organization'][lang] }}</a>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- header right -->
+    <div class="header-right">
+        <div class="button-wrapper">
+            <a class="entry-button" href="/{{ lang }}/entry">
+                {{ locale_dict["entry_button"][lang] }}
+            </a>
+        </div>
+        <div class="header-locale">
+          {% include 'truetechjapan/common/lang_selector.html' %}
+        </div>
+    </div>
+  </div>
+</header>
+
+{# Toggle mobile menu #}
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const $headerMenuMobile = document.querySelector('.header-menu-mobile');
+    const $headerMenuContent = document.querySelector('.header-menu-content');
+
+    $headerMenuMobile.addEventListener('click', function() {
+        this.classList.toggle('open');
+        $headerMenuContent.classList.toggle('open');
+    });
+});
+</script>

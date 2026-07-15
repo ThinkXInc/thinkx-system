@@ -1,0 +1,27 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+<div id="blognews" class="main-container">
+  {% include 'common/header.html' %}
+  <div class="blognews-page article-page main-content">
+
+    <h2 class="title">最新情報</h2>
+
+    <article class="message-article">
+旧サイトより以降中です。過去の情報は以下のリンク先からご覧ください。
+      <a href="https://thinkxinc.com/{{ lang }}/blognews">旧サイトに遷移する</a>
+    </article>
+  </div>
+  {% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}
+
+

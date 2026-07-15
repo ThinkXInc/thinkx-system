@@ -1,0 +1,66 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+    <article class="article" data-news-id="2020-04-14">
+      <div class="container">
+        <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}"><<</a></span>
+        <p class="date news-date">2020 Aug 02</p>
+        <h2 class="title">代表大塚が社内外向けに「コンピューターサイエンス基礎レクチャー」を行いました。</h2>
+        <div class="news-image-container">
+          <figure class="news-image news-id-2020-04-14">
+          </figure>
+        </div>
+        <div class="main-text">
+
+          主にコンピューターサイエンスやそれに類する専攻でない社内スタッフ、また社外の一般の方々に向けて、</br>
+          代表大塚が計算機アーキテクチャとアルゴリズムの基礎講座を行いました。</br>
+          </br>
+          第一部 「計算機の構成と設計を最速で総整理する20講」</br>
+          第二部 「アルゴリズムとデータ構造を最速で総整理する20講」</br>
+          </br>
+          デジタルとは何か、からはじまり、"大人のためのコンピューターサイエンス講座"として</br>
+          文系理系問わず、事前知識なしでコンピューターの設計や</br>
+          アルゴリズムと計算量の考え方を短時間で理解できる内容を</br>
+          7月第5週からの2週にかけてお伝えしました。</br>
+          </br>
+
+          社内のみならず、外部のコラボレーターの方々、およびその他コンピューターサイエンスに関心のある</br>
+          外部の方にもご参加いただき、分かり易く面白かったと好評を頂きました。</br>
+          </br>
+          </br></br>
+          本講座のテキストはブログ等で公開を予定しております。
+          </br>
+
+          </br>
+
+          <!---->
+
+
+          </br>
+          <span class="contact-mail">info@thinkxinc.com</span></br>
+          </br>
+        </div>
+        <div class="back-container cf">
+          <span class="back">
+            <a href="/{{ lang }}/blognews?page={{ page }}">一覧に戻る</a>
+          </span>
+        </div>
+      </div>
+    </article>
+  </div>
+  {% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

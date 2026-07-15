@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+
+# OS
+.DS_Store
+
+# Secrets / local environment (config.py holds dummy local values and IS tracked;
+# real secrets live only in .env which is never committed)
+.env
+.env.*
+*.pem
+*.key

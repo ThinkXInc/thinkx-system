@@ -1,0 +1,127 @@
+<header id="main-header">
+  <div class="main-header-container">
+    <!-- header left -->
+    <div class="header-left">
+      <div class="company-logo">
+        <a href="/">
+          <img id="header-logo-name" src="/img/thinkx-logo/logo-text.png" alt="ThinkX Logo Name">
+          <img id="header-logo-icon" class="logo" src="/img/thinkx-logo/logo-icon.png" alt="ThinkX Logo Icon">
+        </a>
+      </div>
+    </div>
+    <!-- header left -->
+    <!-- header right -->
+    <div class="header-right">
+      <div class="header-menu-mobile">
+        <img id="header-menu-icon" class="men-icon" src="/img/menu-icon.svg"/>
+        <img id="header-menu-arrow" class="arrow-icon" src="/img/down-arrow.svg"/>
+      </div>
+      <div class="header-menu-content">
+        <ul class="header-menu-list">
+          <li class="menu-content">
+            <div class="title-container">
+              <h4 class="title about-title-container">{{ locale_dict['menu_title_about'][lang] }}</h4>
+              <img class="arrow-icon about-arrow" src="/img/down-arrow.svg"/>
+            </div>
+            <ul class="list">
+              <li class="sub-menu-content"><a href="/{{ lang }}/">{{ locale_dict['menu_content_home'][lang] }}</a></li>
+              <li class="sub-menu-content"><a href="/{{ lang }}/mission">{{ locale_dict['menu_content_mission'][lang] }}</a></li>
+              <li class="sub-menu-content"><a href="/{{ lang }}/philosophy">{{ locale_dict['menu_content_philosophy'][lang] }}</a></li>
+              <li class="sub-menu-content"><a href="/{{ lang }}/about">{{ locale_dict['menu_content_about'][lang] }}</a></li>
+              <li class="sub-menu-content"><a href="/{{ lang }}/history">{{ locale_dict['menu_content_history'][lang] }}</a></li>
+              {#<li class="sub-menu-content"><a href="/team">チーム</a></li>#}
+            </ul>
+          </li>
+          <li class="menu-content">
+            <div class="title-container">
+              <h4 class="title product-title-container">{{ locale_dict['menu_title_product'][lang] }}</h4>
+              <img class="arrow-icon product-arrow" src="/img/down-arrow.svg"/>
+            </div>
+            <ul class="list">
+              <li class="sub-menu-content"><a href="/{{ lang }}/products/Quantz-Voice-AI-OS">Quantz<sup>®</sup> Voice AI OS</a></li>
+              <li class="sub-menu-content"><a href="https://quantz.thinkxinc.com/{{lang}}" target="_blank">Quantz<sup>®</sup></a></li>
+              <li class="sub-menu-content"><a href="/">ILRSA</a></li>
+              <li class="sub-menu-content"><a href="/">CITYWALK</a></li>
+              <li class="sub-menu-content"><a href="/{{ lang }}/products/LSH">Latent Semantic Hyperspace (LSH)</a></li>
+              <li class="sub-menu-content"><a href="/">JPTextParser</a></li>
+              <li class="sub-menu-content"><a href="https://nntmapp.com/{{ lang }}/">NNTM</a></li>
+            </ul>
+          </li>
+          <li class="menu-content">
+            <div class="title-container">
+              <h4 class="title">{{ locale_dict['menu_title_blog'][lang] }}</h4>
+              <img class="arrow-icon blog-arrow" src="/img/down-arrow.svg"/>
+            </div>
+            <ul class="list">
+              <li class="sub-menu-content"><a href="/{{ lang }}/blognews">{{ locale_dict['menu_content_news'][lang] }}</a></li>
+              {# #TODO: このメニューの時点で関心によって分岐したい 
+              <li class="sub-menu-content"><a href="/">最新のニュース</a></li>
+              <li class="sub-menu-content"><a href="/">技術情報</a></li>
+              #}
+            </ul>
+          </li>
+          {#
+          <li class="menu-content">
+            <div class="title-container">
+              <h4 class="title">チーム</h4>
+              <img class="arrow-icon blog-arrow" src="/img/down-arrow.svg"/>
+            </div>
+            <ul class="list">
+              <li class="sub-menu-content"><a href="/">チーム</a></li>
+            </ul>
+          </li>
+          #}
+          <li class="menu-content">
+            <div class="title-container">
+              <h4 class="title">{{ locale_dict['menu_title_application'][lang] }}</h4>
+              <img class="arrow-icon blog-arrow" src="/img/down-arrow.svg"/>
+            </div>
+            <ul class="list">
+              <li class="sub-menu-content"><a href="/{{ lang }}/apply/regular">{{ locale_dict['menu_content_regular'][lang] }}</a></li>
+              <li class="sub-menu-content"><a href="/{{ lang }}/apply/intern">{{ locale_dict['menu_content_intern'][lang] }}</a></li>
+              <li class="sub-menu-content"><a href="/{{ lang }}/apply/collaborator">{{ locale_dict['menu_content_collaborator'][lang] }}</a></li>
+            </ul>
+          </li>
+          <li class="menu-content">
+            <div class="title-container">
+              <h4 class="title">{{ locale_dict['menu_title_ir'][lang] }}</h4>
+              <img class="arrow-icon blog-arrow" src="/img/down-arrow.svg"/>
+            </div>
+            <ul class="list">
+              <li class="sub-menu-content"><a href="/{{ lang }}/ir/investor">{{ locale_dict['menu_content_investor'][lang] }}</a></li>
+            </ul>
+          </li>
+          <li class="menu-content">
+            <div class="title-container">
+              <h4 class="title">{{ locale_dict['menu_title_inquiry'][lang] }}</h4>
+              <img class="arrow-icon blog-arrow" src="/img/down-arrow.svg"/>
+            </div>
+            <ul class="list">
+              <li class="sub-menu-content"><a href="/{{ lang }}/inquiry/product">{{ locale_dict['menu_content_inquiry_product'][lang] }}</a></li>
+              <li class="sub-menu-content"><a href="/{{ lang }}/inquiry/collaboration">{{ locale_dict['menu_content_inquiry_collaboration'][lang] }}</a></li>
+              <li class="sub-menu-content"><a href="/{{ lang }}/inquiry/others">{{ locale_dict['menu_content_inquiry_others'][lang] }}</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="header-locale">
+        {% include 'common/lang_selector.html' %}
+      </div>
+    </div>
+    <!-- header right -->
+  </div>
+</header>
+
+{# Toggle mobile menu #}
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const $headerMenuMobile = document.querySelector('.header-menu-mobile');
+    const $headerMenuContent = document.querySelector('.header-menu-content');
+
+    $headerMenuMobile.addEventListener('click', function() {
+        this.classList.toggle('open');
+        $headerMenuContent.classList.toggle('open');
+    });
+});
+</script>

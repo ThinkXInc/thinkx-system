@@ -1,0 +1,131 @@
+        div.app_banner {
+            border-radius: 3px;
+            background: #e5e5e5; /* New background color */
+            padding: 40px;
+            margin-bottom: 120px;
+
+            div.app_banner_wrapper {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                min-height: 220px;
+                align-items: stretch;
+                gap: 30px;
+
+                /* Left column: app icon */
+                img.appicon {
+                    width: 300px; /* Icon bigger */
+                    object-fit: cover;
+                }
+
+                /* Center column: app info - left-aligned */
+                div.app_info {
+                    font-family: Arial, sans-serif;
+                    display: flex;
+                    flex-direction: column;
+                    height: 100%;
+                    align-items: flex-start;
+                    justify-content: flex-start;
+                    margin-top: 60px;
+
+                    h2.app_name {
+                        font-size: 33px; /* Slightly bigger if desired */
+                        font-weight: 700;
+                        margin-bottom: 8px;
+                    }
+                    p.app_subtitle {
+                        color: #6b6b6b;
+                        margin: 0;
+                        font-size: 16px;
+                        line-height: 1.4;
+                    }
+                    a.app_install_button {
+                        cursor: pointer;
+                        display: inline-block;
+                        background: #007bff;
+                        color: #fff;
+                        padding: 11px 23px;
+                        border-radius: 25px;
+                        margin-top: 30px;
+                        text-decoration: none;
+                        font-size: 16px;
+                        font-weight: 600;
+                        transition: background 0.3s cubic-bezier(0.65, 0, 0.34, 1);
+
+                        span.install_button_text {
+                            display: block;
+                            text-align: center;
+                        }
+
+                        &:hover {
+                            background: #0056b3; /* Darker blue on hover */
+                            text-decoration: none;
+                        }
+                    }
+                }
+
+                /* Right column: appstore badge */
+                div.appstore {
+                    cursor: pointer;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: auto;
+                    img.appstore_img {
+                        width: 203px;
+                        display: inline-block;
+                    }
+                }
+            }
+        }
+        div.appdevice {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            img.appdevice_img {
+                max-width: 600px;
+            }
+        }
+
+
+@media (max-width: @smartphone-width) {
+    div.app_banner {
+        margin-bottom: 120px;
+        padding: 60px 20px;
+        div.app_banner_wrapper {
+            flex-direction: column;
+            align-items: center;
+            img.appicon {
+                max-width: 213px;
+                max-height: 213px;
+            }
+            div.app_info {
+                margin-top: 0;
+                h2.app_name {
+                    font-size: 33px;
+                }
+                p.app_subtitle {
+                }
+                a.app_install_button {
+                    margin-top: 14px;
+                    width: 80px;
+                    span.install_button_text {
+                    }
+                    &:hover {
+                    }
+                }
+            }
+            div.appstore {
+                img.appstore_img {
+                    width: 154px;
+                }
+            }
+        }
+    }
+    div.appdevice {
+        img.appdevice_img {
+            max-width: 380px;
+        }
+    }
+}

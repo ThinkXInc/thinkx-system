@@ -1,0 +1,98 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+
+    <article class="article" data-news-id="2021-08-13">
+      <div class="container">
+        <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}"><<</a></span>
+        <p class="date news-date">2021 Aug 13</p>
+        <h2 class="title">RTF0.1未満の速度でテキストを音声に変換するニューラル音声合成システム「NeuraVoice2 β」を開発</h2>
+        <div class="news-image-container">
+
+        </div>
+        <div class="main-text">
+
+
+          2017年よりディープラーニングによるEndToEnd音声合成の研究を開始、その後いくつかのバージョンアップを経て、
+          </br>
+          Real Time Factor(音声データ時間長[sec]/合成にかかる時間[sec])がGPU推論でのベンチマーク0.0227<br/>
+          、CPU推論でのベンチマーク1.1106に達する高速高品質な音声合成システム「NeuraVoice2 β」を開発しました。
+          <br/>
+          <br/>
+
+
+PRTimes</br>
+<a href="https://prtimes.jp/main/html/rd/p/000000004.000054712.html">https://prtimes.jp/main/html/rd/p/000000004.000054712.html</a><br/><br/>
+
+          産経ニュース</br>
+<a href="https://www.sankei.com/economy/news/210813/prl2108130102-n1.html">https://www.sankei.com/economy/news/210813/prl2108130102-n1.html</a><br/><br/>
+
+          ASCII スタートアップ</br>
+          <a href="https://ascii.jp/elem/000/004/065/4065833/">https://ascii.jp/elem/000/004/065/4065833/</a><br/><br/>
+
+          CNET JAPAN</br>
+          <a href="https://japan.cnet.com/release/30579140/">https://japan.cnet.com/release/30579140/</a><br/><br/>
+
+
+          </br>
+
+        </br>
+
+
+
+
+
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/Amw3z6DkfhM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+
+
+          </br>
+          </br>
+          <h3>＊NeuraVoice2 βの特徴</h3>
+          <ul>
+　         <li style="font-weight: 300;">・RTF(Real Time Factor) 0.01~1.1未満*1の、高速で高品質な音声合成。</li>
+　         <li style="font-weight: 300;">・1000兆桁までの数字の正確な読み、上付き文字等の特殊な表記の読みが可能。</li>
+　         <li style="font-weight: 300;">・発話速度や音高、強さを調節可能。</li>
+　         <li style="font-weight: 300;">・ステミング(語幹)への変換、記号を読むかどうか、ストップワードを排除しキーワードのみ読み上げる、など高度な設定が可能。</li>
+　         <li style="font-weight: 300;">・ほぼ同一のアルゴリズムで複数言語への拡張が可能。</li>
+　         <li style="font-weight: 300;">・独自の学習データを用意することで、任意の話者の声や特定の語群を強化した音声を合成可能。</li>
+          </ul>
+          </br>
+
+
+        </div>
+        <figure class="news-image news-id-2021-08-13">
+            <img class="news-id-2021-08-13" src="/img/NeuraVoiceDiagram.png" srcset="/img/NeuraVoiceDiagram@2x.png 2x"/>
+          </figure>
+        </br>
+
+        本製品はThinkXで開発を進めている音声ガイドシステムCITYWALKの時期バージョンに用いられる他、</br>
+          特に通信環境の限定されるエッジデバイス等での状況に応じた</br>高速な音声合成を必要とする顧客ニーズを中心に提供予定です。
+        </br>
+        </br>
+
+         製品の導入または詳細についてはinquiry@thinkxinc.comまでお問い合わせください
+        <div class="back-container cf">
+          <span class="back">
+            <a href="/{{ lang }}/blognews?page={{ page }}">一覧に戻る</a>
+          </span>
+        </div>
+      </div>
+    </article>
+  </div>
+  {% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

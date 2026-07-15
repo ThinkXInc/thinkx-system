@@ -1,0 +1,321 @@
+{
+  "metadata_blog_2025-02-28-talk": {
+    "ja": {
+      "title": "アドバイザーインタビュー: 『樹木の教科書』著者 舘野正樹先生と探る生物学×コンピューティングの可能性 ──生命と不死性の謎へ",
+      "description": "『樹木の教科書』著者と探る生命と不死性の謎へ",
+      "keywords": "アドバイザーインタビュー, 舘野正樹, 生物学, コンピューティング, 樹木の教科書, 生命, 不死性, DNA解析, ATP, 染色体, 植物, 多倍体, VN Machine, ThinkX"
+    },
+    "en": {
+      "title": "Advisor Interview: Exploring the Possibilities of Biology × Computing with Professor Masaki Tateno, Author of 'The Textbook of Trees' ── Toward the Mysteries of Life and Immortality",
+      "description": "A leading researcher in tree ecology and author of <a target=\"_\" href=\"https://www.chikumashobo.co.jp/product/9784480439383/\">'The Textbook of Trees (Chikuma Bunko)'</a>, Professor Tateno, who serves as an advisor to ThinkX, spoke with us about the challenges in the field of biological research, ThinkX’s VN Machine project that enables original research with advanced custom software without requiring expertise in computing, and Professor Tateno’s future research themes.",
+      "keywords": "Advisor Interview, Masaki Tateno, Biology, Computing, The Textbook of Trees, Life, Immortality, DNA analysis, ATP, Chromosomes, Plants, Polyploidy, VN Machine, ThinkX"
+    },
+    "zh": {
+      "title": "顾问访谈：与《树木教科书》作者舘野正树教授探索生物学×计算的可能性 ── 走向生命与不朽之谜",
+      "description": "树木生态研究的权威、<a target=\"_\" href=\"https://www.chikumashobo.co.jp/product/9784480439383/\">《树木教科书（筑摩文库）》</a>的作者，同时担任ThinkX顾问的舘野教授，向我们讲述了生物学研究現場的挑战、ThinkX的VN Machine项目如何让无需计算专长的研究者通过高级定制软件进行原创研究，以及舘野教授未来的研究主题。",
+      "keywords": "顾问访谈, 舘野正树, 生物学, 计算, 《树木的教科书》, 生命, 不朽, DNA分析, ATP, 染色体, 植物, 多倍体, VN Machine, ThinkX"
+    },
+    "es": {
+      "title": "Entrevista con el asesor: Explorando las posibilidades de la biología × computación con el profesor Masaki Tateno, autor de 'El libro de texto de los árboles' ── Hacia los misterios de la vida y la inmortalidad",
+      "description": "Un destacado investigador en ecología de árboles y autor de <a target=\"_\" href=\"https://www.chikumashobo.co.jp/product/9784480439383/\">'El libro de texto de los árboles (Chikuma Bunko)'</a>, el profesor Tateno, quien actúa como asesor de ThinkX, nos habló sobre los desafíos en el campo de la investigación biológica, el proyecto VN Machine de ThinkX que permite realizar investigaciones originales con software personalizado avanzado sin necesidad de conocimientos especializados en informática, y los temas de investigación futuros del profesor Tateno.",
+      "keywords": "Entrevista con asesor, Masaki Tateno, Biología, Computación, El libro de texto de los árboles, Vida, Inmortalidad, Análisis de ADN, ATP, Cromosomas, Plantas, Poliploidía, VN Machine, ThinkX"
+    },
+    "ru": {
+      "title": "Интервью с консультантом: Исследование возможностей биологии × вычислений с профессором Масаки Татено, автором 'Учебника по деревьям' ── К тайнам жизни и бессмертия",
+      "description": "Ведущий исследователь в области экологии деревьев и автор книги <a target=\"_\" href=\"https://www.chikumashobo.co.jp/product/9784480439383/\">«Учебник по деревьям (Чикума Бунко)»</a>, профессор Татено, который является консультантом ThinkX, рассказал нам о проблемах в области биологических исследований, проекте VN Machine от ThinkX, позволяющем проводить оригинальные исследования с помощью продвинутого пользовательского ПО без необходимости владения специальными знаниями в области вычислений, а также о будущих исследовательских темах профессора Татено.",
+      "keywords": "Интервью с консультантом, Масаки Татено, Биология, Вычислительные технологии, Учебник по деревьям, Жизнь, Бессмертие, Анализ ДНК, АТФ, Хромосомы, Растения, Полиплоидия, VN Machine, ThinkX"
+    },
+    "fr": {
+      "title": "Entretien avec un conseiller : Explorer les possibilités de la biologie × informatique avec le professeur Masaki Tateno, auteur de 'Le manuel des arbres' ── Vers les mystères de la vie et de l'immortalité",
+      "description": "Chercheur de premier plan en écologie des arbres et auteur de <a target=\"_\" href=\"https://www.chikumashobo.co.jp/product/9784480439383/\">'Le manuel des arbres (Chikuma Bunko)'</a>, le professeur Tateno, qui agit en tant que conseiller pour ThinkX, nous a parlé des défis dans le domaine de la recherche biologique, du projet VN Machine de ThinkX qui permet des recherches originales avec un logiciel personnalisé avancé sans nécessiter de connaissances spécialisées en informatique, ainsi que des thèmes de recherche futurs du professeur Tateno.",
+      "keywords": "Entretien avec un conseiller, Masaki Tateno, Biologie, Informatique, Le manuel des arbres, Vie, Immortalité, Analyse ADN, ATP, Chromosomes, Plantes, Polyploïdie, VN Machine, ThinkX"
+    },
+    "ar": {
+      "title": "مقابلة مع المستشار: استكشاف إمكانيات البيولوجيا × الحوسبة مع البروفيسور ماساكي تاتينو، مؤلف 'كتاب دراسة الأشجار' ── نحو أسرار الحياة والخلود",
+      "description": "باحث رائد في مجال بيئة الأشجار ومؤلف <a target=\"_\" href=\"https://www.chikumashobo.co.jp/product/9784480439383/\">«كتاب دراسة الأشجار (تشيكوما بونكو)»</a>، تحدث إلينا البروفيسور تاتينو، الذي يعمل كمستشار لـ ThinkX، عن التحديات في مجال البحث البيولوجي، ومشروع VN Machine الخاص بـ ThinkX الذي يتيح إجراء أبحاث أصلية باستخدام برمجيات مخصصة متقدمة دون الحاجة إلى خبرة في الحوسبة، بالإضافة إلى مواضيع البحث المستقبلية للبروفيسور تاتينو.",
+      "keywords": "مقابلة مع المستشار, ماساكي تاتينو, علم الأحياء, الحوسبة, كتاب دراسة الأشجار, الحياة, الخلود, تحليل الحمض النووي, ATP (أدينوسين ثلاثي الفوسفات), الكروموسومات, النباتات, تعدد الصيغ الصبغية, VN Machine, ThinkX"
+    }
+    },
+    "article_title": {
+        "ja": "アドバイザーインタビュー: 『樹木の教科書』著者 舘野正樹先生と探る生物学×コンピューティングの可能性 ──生命と不死性の謎へ",
+        "en": "Advisor Interview: Exploring the Possibilities of Biology × Computing with Professor Masaki Tateno, Author of 'The Textbook of Trees' ── Toward the Mysteries of Life and Immortality",
+        "zh": "顾问访谈：与《树木教科书》作者舘野正树教授探索生物学×计算的可能性 ── 走向生命与不朽之谜",
+        "es": "Entrevista con el asesor: Explorando las posibilidades de la biología × computación con el profesor Masaki Tateno, autor de 'El libro de texto de los árboles' ── Hacia los misterios de la vida y la inmortalidad",
+        "ru": "Интервью с консультантом: Исследование возможностей биологии × вычислений с профессором Масаки Татено, автором 'Учебника по деревьям' ── К тайнам жизни и бессмертия",
+        "fr": "Entretien avec un conseiller : Explorer les possibilités de la biologie × informatique avec le professeur Masaki Tateno, auteur de 'Le manuel des arbres' ── Vers les mystères de la vie et de l'immortalité",
+        "ar": "مقابلة مع المستشار: استكشاف إمكانيات البيولوجيا × الحوسبة مع البروفيسور ماساكي تاتينو، مؤلف 'كتاب دراسة الأشجار' ── نحو أسرار الحياة والخلود"
+    },
+    "article_date": {
+        "ja": "2025年2月21日",
+        "en": "February 21, 2025",
+        "zh": "2025年2月21日",
+        "es": "21 de febrero de 2025",
+        "ru": "21 февраля 2025 года",
+        "fr": "21 février 2025",
+        "ar": "21 فبراير 2025"
+    },
+    "article_guest": {
+        "ja": "舘野正樹 東京大学理学系研究科附属日光植物園前園長",
+        "en": "Masaki Tateno, Former Director of the Nikko Botanical Garden, Graduate School of Science, The University of Tokyo",
+        "zh": "舘野正樹，东京大学理学研究科附属日光植物园前园长",
+        "es": "Masaki Tateno, exdirector del Jardín Botánico de Nikko, Escuela de Graduados en Ciencias, Universidad de Tokio",
+        "ru": "Масаки Татено, бывший директор Никкоского ботанического сада, Высшая школа естественных наук, Токийский университет",
+        "fr": "Masaki Tateno, ancien directeur du Jardin botanique de Nikko, École des sciences, Université de Tokyo",
+        "ar": "ماساكي تاتينو، المدير السابق لحديقة نيكو النباتية، كلية الدراسات العليا في العلوم، جامعة طوكيو"
+      
+    },
+    "article_intro": {
+        "ja": "樹木の生態研究の第一人者で<a target=_ href=\"https://www.chikumashobo.co.jp/product/9784480439383/\">「樹木の教科書（ちくま文庫）」</a>の著者、ThinkXの顧問を務めて頂いている舘野先生に、\n生物学研究の現場の課題、計算機の専門知識がなくても高度なカスタムソフトで独自研究ができるThinkXのVN Machineプロジェクト、そして舘野先生の今後の研究テーマについて、お話しを伺いました。",
+        "en": "A leading researcher in tree ecology and author of <a target=_ href=\"https://www.chikumashobo.co.jp/product/9784480439383/\">'The Textbook of Trees (Chikuma Bunko)'</a>, Professor Tateno, who serves as an advisor to ThinkX, spoke with us about the challenges in the field of biological research, ThinkX’s VN Machine project that enables original research with advanced custom software without requiring expertise in computing, and Professor Tateno’s future research themes.",
+        "zh": "树木生态研究的权威、<a target=_ href=\"https://www.chikumashobo.co.jp/product/9784480439383/\">《树木教科书（筑摩文库）》</a>的作者，同时担任ThinkX顾问的舘野教授，向我们讲述了生物学研究現場的挑战、ThinkX的VN Machine项目如何让无需计算专长的研究者通过高级定制软件进行原创研究，以及舘野教授未来的研究主题。",
+        "es": "Un destacado investigador en ecología de árboles y autor de <a target=_ href=\"https://www.chikumashobo.co.jp/product/9784480439383/\">'El libro de texto de los árboles (Chikuma Bunko)'</a>, el profesor Tateno, quien actúa como asesor de ThinkX, nos habló sobre los desafíos en el campo de la investigación biológica, el proyecto VN Machine de ThinkX que permite realizar investigaciones originales con software personalizado avanzado sin necesidad de conocimientos especializados en informática, y los temas de investigación futuros del profesor Tateno.",
+        "ru": "Ведущий исследователь в области экологии деревьев и автор книги <a target=_ href=\"https://www.chikumashobo.co.jp/product/9784480439383/\">«Учебник по деревьям (Чикума Бунко)»</a>, профессор Татено, который является консультантом ThinkX, рассказал нам о проблемах в области биологических исследований, проекте VN Machine от ThinkX, позволяющем проводить оригинальные исследования с помощью продвинутого пользовательского ПО без необходимости владения специальными знаниями в области вычислений, а также о будущих исследовательских темах профессора Татено.",
+        "fr": "Chercheur de premier plan en écologie des arbres et auteur de <a target=_ href=\"https://www.chikumashobo.co.jp/product/9784480439383/\">'Le manuel des arbres (Chikuma Bunko)'</a>, le professeur Tateno, qui agit en tant que conseiller pour ThinkX, nous a parlé des défis dans le domaine de la recherche biologique, du projet VN Machine de ThinkX qui permet des recherches originales avec un logiciel personnalisé avancé sans nécessiter de connaissances spécialisées en informatique, ainsi que des thèmes de recherche futurs du professeur Tateno.",
+        "ar": "باحث رائد في مجال بيئة الأشجار ومؤلف <a target=_ href=\"https://www.chikumashobo.co.jp/product/9784480439383/\">«كتاب دراسة الأشجار (تشيكوما بونكو)»</a>، تحدث إلينا البروفيسور تاتينو، الذي يعمل كمستشار لـ ThinkX، عن التحديات في مجال البحث البيولوجي، ومشروع VN Machine الخاص بـ ThinkX الذي يتيح إجراء أبحاث أصلية باستخدام برمجيات مخصصة متقدمة دون الحاجة إلى خبرة في الحوسبة، بالإضافة إلى مواضيع البحث المستقبلية للبروفيسور تاتينو."
+    },
+    "article_conversation": {
+        "ja": [
+            {
+              "speaker": "大塚一輝（以下大塚）",
+              "text": "今日はよろしくお願いします。"
+            },
+            {
+              "speaker": "舘野正樹先生（以下舘野）",
+              "text": "こちらこそよろしくお願いします。"
+            },
+            {
+              "speaker": "大塚",
+              "text": "「自然史生物学概論」で舘野先生の講義を受けていました。研究への視点のユニークや姿勢でとても惹かれるものがあり、是非、舘野先生にご相談させていただきたいと思いました。"
+            },
+            {
+              "speaker": "舘野",
+              "text": "わかりました。"
+            },
+            {
+              "speaker": "大塚",
+              "text": "最近は多くの研究者が、AWSなどのクラウドを使って計算環境を用意しているようです。でも、専門知識がないと、サーバーを立てたり、データベースを作ったり、データをアップロードしたりするところでつまずいてしまいます。そこで、専用ドライブに入れるだけで、オーダーからカスタムソフトを自動的に作ってくれる仕組みがあれば、今までできなかったアイデアを沢山の人が実現できるようになるだろうと考えています。"
+            },
+            {
+              "speaker": "舘野",
+              "text": "プログラミング言語じゃなくて、自然言語で対話しながら作れるといいですね。"
+            },
+            {
+              "speaker": "大塚",
+              "text": "はい、まさにそういうものです。"
+            },
+            {
+              "speaker": "舘野",
+              "text": "それは多くの研究者が使うと思います。実は生物学の分野は数理モデルを作ることが苦手な人が多い。そのあたりから支援してくれると助かると思いますね。"
+            },
+            {
+              "speaker": "大塚",
+              "text": "例えば過去に書いた論文を読み込ませるとその先ソフトウェアでできることを教えてくれるのはどうでしょうか。"
+            },
+            {
+              "speaker": "舘野",
+              "text": "そういうのがあると皆助かると思います。コンピューターや数学、物理学を使って何かをする、という発想自体を持てる人とそうでない人がいる。"
+            },
+            {
+                "image": "wind.jpg",
+                "caption": "樹木が耐えられる風速の測定。幹に28個の歪みゲージを取り付け、風速と歪みとの関係を数年間測定。その結果、健全な樹木は風速100ｍまでは折れないことを見つけた。"
+            },
+            {
+              "speaker": "大塚",
+              "text": "コンピューターの人には当たり前でも一歩別の分野ではそうでなかったり、逆も然りだと思います。分野を横断することが一つの重大なテーマです。生物は全く無知なので、今回色々とお聞きしたいです。"
+            },
+            {
+              "speaker": "舘野",
+              "text": "学生の中には、決められた作業を、言い方悪いけど土方仕事のように毎日ルーチンでこなす人も多い。僕のところはそうではないのだけど。"
+            },
+            {
+              "speaker": "大塚",
+              "text": "大学院生に「何の研究をしている」のと聞くと、分野名だけ答えて詳しく語らない人が多くいます。"
+            },
+            {
+              "speaker": "舘野",
+              "text": "研究室って、例えば三千万円取ってきたとして、予算の中で成果を出さなくてはいけない。そうすると学生を働かせないといけない。専門学校で訓練された人をお金を払って雇うこともできなくないが、あまりそうはならない"
+            },
+            {
+              "speaker": "大塚",
+              "text": "あえて研究の面倒を見て手間をかけるより、労働力として遣う方が理に適ってしまうことも多くありそうですね。"
+            },
+            {
+                "image": "snow.jpg",
+                "caption": "冬の国土山で雪によって幹に生じるストレスの測定。ブナはかなりストレスに弱く、多雪地の急斜面では折れてしまう。スギはストレスがかかっても折れないので多雪地に適応した種。"
+            },
+            {
+              "speaker": "舘野",
+              "text": "本当はこんなことをしたいというアイデアがある人もいる。特に理学系は個人が一国一城の主人のように動いている傾向がある。教授より自分が賢いと思っているから、教授を~さんと呼んだりする。"
+            },
+            {
+              "speaker": "大塚",
+              "text": "(笑)"
+            },
+            {
+              "speaker": "舘野",
+              "text": "理一などは研究への意欲が高くそれぞれの問題をもっていることが多い。そういう人たちは大企業に就職するのが難しく、そのまま大学で研究を続ける人も多い。"
+            },
+            {
+              "speaker": "大塚",
+              "text": "教授や研究室単位というより、その構成員が個々にコンピューティングを使った研究を開拓する可能性もあるということですね。"
+            },
+            {
+              "speaker": "舘野",
+              "text": "生物学の場合、フォートランを使っていて、それからCになって、最近は使いやすいPythonになった。それでも五年程度の中で片手間に覚えた学生だとできることが限られる。"
+            },
+            {
+              "speaker": "大塚",
+              "text": "1000行程度のPythonプログラムとそれ以上のプロが作れるレベルのシステムではやれることも難易度も大きく変わると思っています。例えば例の概論ではDNAを解析するタスクが出てMEGA<sup>*1</sup>というソフトを使うことになっていました。が、そのソフトでできることしかできない。一歩踏み込んだアイデアをやるには別のソフトを作る必要があります。"
+            },
+            {
+              "speaker": "舘野",
+              "text": "そういうケースは多々あると思います。遺伝子解析の研究についてなど特に役に立つと思います。"
+            },
+            {
+              "speaker": "大塚",
+              "text": "舘野先生の今後の問題について教えていただけますか。"
+            },
+            {
+              "speaker": "舘野",
+              "text": "今これを解決しないと死ねないというテーマが二つあります。\n\n一つは統計力学や細胞の中での化学反応、ATPの自由エネルギーなどに関わる問題。生体内の分子が化学反応を行う際、同じ電荷同士、つまりマイナスとマイナスがくっつくことがある。例えばADPとリン酸が結合してATPになる瞬間に何が起きているのか、まだうまく説明されていません。鋭い学生はここを突っ込んでくる。私もわからないし、学生もわからない。教科書の場合、ここは分からないから曖昧にしている。今、企業の方と一緒に実験装置を作ろうとしているところです。\n\nもう一つは、人間の染色体は二組で、両方がだめになるとその細胞が死んでしまう。一方、植物は種によって三倍体、四倍体といった三組以上の染色体をもつものがある。それが部分的な“不死性”に関係しているのではないかというのが私の仮説です。実は、同じ染色体が多いから1つがだめでも大丈夫という単純な話ではなく、むしろ逆だと思っています。植物は古い細胞を内側に残して外側に向かって成長していきますが、その際に良い細胞だけで外側を構築すればよいわけです。悪い細胞を識別するためには、同じ染色体のうちの1本に乗っている遺伝子だけを発現させることで、その染色体上に有害な突然変異をもつ細胞は死んでしまったり、増えられなくなる可能性がある。そうして内側に置き去りにすることで良い細胞だけを選別できる。現在、それをテストする方法を考えているところです。"
+            },
+            {
+              "speaker": "大塚",
+              "text": "どちらも無茶苦茶興味深いです。特に後者の問題は生死のメカニズムそのものにかかわる普遍的な問題だと思います。今日は本当にありがとうございました。今後もよろしくお願いします。"
+            },
+            {
+                "footnote": "<sup>*1</sup> MEGA\nDNA・タンパク質配列アラインメント、系統解析の標準的ソフトウェア\n<a href=\"https://www.megasoftware.net/\">https://www.megasoftware.net/</a>"
+            }
+          ],
+          "en": [
+            {
+              "speaker": "Kazuki Otsuka (hereinafter Otsuka)",
+              "text": "Thank you for today."
+            },
+            {
+              "speaker": "Professor Masaki Tateno (hereinafter Tateno)",
+              "text": "Thank you as well."
+            },
+            {
+              "speaker": "Otsuka",
+              "text": "I took your lectures in 'Introduction to Natural History Biology.' I was deeply drawn to your unique perspective and approach to research, and I really wanted to consult with you, Professor Tateno."
+            },
+            {
+              "speaker": "Tateno",
+              "text": "I understand."
+            },
+            {
+              "speaker": "Otsuka",
+              "text": "Recently, many researchers seem to be using cloud services like AWS to set up computational environments. However, without specialized knowledge, they stumble when it comes to setting up servers, creating databases, or uploading data. So, I’ve been thinking that if there were a system where you could just put data into a dedicated drive and it would automatically create custom software based on your instructions, a lot of people could realize ideas that were previously impossible."
+            },
+            {
+              "speaker": "Tateno",
+              "text": "It would be great if it could be built through dialogue in natural language instead of a programming language."
+            },
+            {
+              "speaker": "Otsuka",
+              "text": "Yes, exactly that kind of thing."
+            },
+            {
+              "speaker": "Tateno",
+              "text": "I think many researchers would use it. In fact, in the field of biology, there are a lot of people who struggle with building mathematical models. Support in that area would be really helpful."
+            },
+            {
+              "speaker": "Otsuka",
+              "text": "For example, what if it could read your past papers and tell you what the software could do next?"
+            },
+            {
+              "speaker": "Tateno",
+              "text": "Something like that would help everyone. There are people who can naturally think of using computers, math, or physics to do something, and those who can’t."
+            },
+            {
+              "image": "wind.jpg",
+              "caption": "Measuring the wind speed that trees can withstand. By attaching 28 strain gauges to the trunk and measuring the relationship between wind speed and strain over several years, it was found that healthy trees don’t break up to a wind speed of 100 meters per second."
+            },
+            {
+              "speaker": "Otsuka",
+              "text": "What’s obvious to computer people might not be to those in another field, and vice versa. Crossing disciplines feels like a significant theme. I’m completely ignorant about biology, so I’d like to hear a lot from you this time."
+            },
+            {
+              "speaker": "Tateno",
+              "text": "Among students, there are many who handle assigned tasks like—excuse the expression—manual laborers, doing routine work every day. That’s not how it is in my lab, though."
+            },
+            {
+              "speaker": "Otsuka",
+              "text": "When I ask graduate students, 'What research are you doing?' many just give me the field name and don’t elaborate."
+            },
+            {
+              "speaker": "Tateno",
+              "text": "In a lab, if you secure, say, 30 million yen, you have to produce results within that budget. That means you need to put students to work. You could hire trained people from a technical school and pay them, but that doesn’t happen often."
+            },
+            {
+              "speaker": "Otsuka",
+              "text": "It seems like it often makes more sense to use them as labor rather than taking the time to guide their research."
+            },
+            {
+              "image": "snow.jpg",
+              "caption": "Measuring the stress on tree trunks caused by snow in the winter at Mount Kunikoku. Beech trees are quite weak to stress and break on steep slopes in heavy snow areas. Cedar trees, however, don’t break under stress, making them a species adapted to snowy regions."
+            },
+            {
+              "speaker": "Tateno",
+              "text": "Some people have ideas about what they really want to do. Especially in the sciences, there’s a tendency for individuals to act like lords of their own castles. Some think they’re smarter than their professors and call them by their first names."
+            },
+            {
+              "speaker": "Otsuka",
+              "text": "(Laughs)"
+            },
+            {
+              "speaker": "Tateno",
+              "text": "At places like the Faculty of Science I, students tend to have high motivation for research and their own specific problems. Those people often find it hard to get jobs at big companies and end up continuing research at university."
+            },
+            {
+              "speaker": "Otsuka",
+              "text": "So, rather than professors or labs as a unit, it’s possible that individual members could pioneer research using computing."
+            },
+            {
+              "speaker": "Tateno",
+              "text": "In biology, we used Fortran, then it shifted to C, and recently it’s become the more user-friendly Python. Still, for students who learn it on the side over five years or so, what they can do is limited."
+            },
+            {
+              "speaker": "Otsuka",
+              "text": "I think there’s a big difference in what you can do and the difficulty between a 1,000-line Python program and a system built by professionals at a higher level. For example, in that 'Introduction to Natural History Biology,' there was a task to analyze DNA using a software called MEGA<sup>*1</sup>. But you’re limited to what that software can do. To pursue a more advanced idea, you’d need to build different software."
+            },
+            {
+              "speaker": "Tateno",
+              "text": "I think there are many cases like that. It’d be especially useful for research in genetic analysis."
+            },
+            {
+              "speaker": "Otsuka",
+              "text": "Could you tell me about the problems you’re tackling next, Professor Tateno?"
+            },
+            {
+              "speaker": "Tateno",
+              "text": "There are two themes I feel I can’t die without solving.\n\nThe first relates to statistical mechanics, chemical reactions in cells, and the free energy of ATP. When molecules in a living body undergo chemical reactions, sometimes like charges—negative and negative—stick together. For example, what happens at the moment ADP and phosphate combine to form ATP isn’t well explained yet. Sharp students poke at this point. I don’t know, and neither do they. In textbooks, it’s left vague because it’s not understood. Right now, I’m working with a company to build an experimental device for this.\n\nThe second is that human chromosomes come in two sets, and if both fail, the cell dies. Plants, however, depending on the species, can have triploid or tetraploid sets—three or more sets of chromosomes. My hypothesis is that this relates to partial 'immortality.' It’s not simply that having more of the same chromosomes means it’s fine if one fails; I think it’s the opposite. Plants keep old cells inside while growing outward, so they could just build the outside with good cells. To identify bad cells, expressing genes from only one of the identical chromosomes could mean that cells with harmful mutations on that chromosome die or can’t proliferate. By leaving those inside, they might be able to select only good cells. I’m currently thinking about ways to test this."
+            },
+            {
+              "speaker": "Otsuka",
+              "text": "Both are incredibly fascinating. Especially the latter feels like a universal problem tied to the very mechanisms of life and death. Thank you so much for today. I look forward to future discussions."
+            },
+            {
+              "footnote": "<sup>*1</sup> MEGA\nStandard software for DNA and protein sequence alignment and phylogenetic analysis\n<a href=\"https://www.megasoftware.net/\">https://www.megasoftware.net/</a>"
+            }
+          ],
+        "zh": [],
+        "es": "",
+        "ru": "",
+        "fr": "",
+        "ar": ""
+    },
+    "article_bio": {
+        "ja": "舘野 正樹（たての・まさき）\n1958年生まれ。植物学者。東京大学理学系研究科附属日光植物園前園長。樹木の生態研究をリードしてきた第一人者。主な著書に、『植物学者の散歩道』（閑人堂）、『生物 知識の焦点』（Z会）がある。",
+        "en": "Masaki Tateno (Tateno Masaki)\nBorn in 1958. Botanist. Former Director of the Nikko Botanical Garden, Graduate School of Science, The University of Tokyo. A leading figure in ecological research on trees. His main books include \"A Botanist’s Walk\" (Kanjindō) and \"Biology: Focus of Knowledge\" (Z-kai).",
+          "zh": "舘野正樹（Tateno Masaki）\n1958年出生。植物学家。东京大学理学研究科附属日光植物园前园长。树木生态研究的领军人物。主要著作包括《植物学家的散步道》（閑人堂）和《生物学：知识焦点》（Z会）。",
+          "es": "Masaki Tateno (Tateno Masaki)\nNacido en 1958. Botánico. Exdirector del Jardín Botánico de Nikko, Escuela de Graduados en Ciencias, Universidad de Tokio. Una figura destacada en la investigación ecológica de árboles. Sus principales obras incluyen *El paseo de un botánico* (Kanjindō) y *Biología: Enfoque del conocimiento* (Z-kai).",
+          "ru": "Масаки Татено (Tateno Masaki)\nРодился в 1958 году. Ботаник. Бывший директор Никкоского ботанического сада, Высшая школа естественных наук, Токийский университет. Ведущий специалист в области экологических исследований деревьев. Основные работы: *Прогулки ботаника* (Kanjindō) и *Биология: Фокус знаний* (Z-kai).",
+          "fr": "Masaki Tateno (Tateno Masaki)\nNé en 1958. Botaniste. Ancien directeur du Jardin botanique de Nikko, École des sciences, Université de Tokyo. Une figure de proue dans la recherche écologique sur les arbres. Ses principales œuvres incluent *La promenade d’un botaniste* (Kanjindō) et *Biologie : Focus des connaissances* (Z-kai).",
+          "ar": "ماساكي تاتينو (Tateno Masaki)\nولد في عام 1958. عالم نبات. المدير السابق لحديقة نيكو النباتية، كلية الدراسات العليا في العلوم، جامعة طوكيو. شخصية رائدة في أبحاث بيئة الأشجار. تشمل أعماله الرئيسية *مشاهدات عالم نبات* (Kanjindō) و*البيولوجيا: محور المعرفة* (Z-kai)."
+        
+ 
+    }
+ 
+}

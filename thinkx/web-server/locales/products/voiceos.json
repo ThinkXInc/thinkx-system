@@ -1,0 +1,128 @@
+{
+    "voiceos_title": {
+        "ja": "Quantz ® Voice-AI OS",
+        "en": "Quantz ® Voice-AI OS",
+        "zh": "Quantz ® Voice-AI OS",
+        "es": "Quantz ® Voice-AI OS",
+        "ru": "Quantz ® Voice-AI OS",
+        "fr": "Quantz ® Voice-AI OS",
+        "ar": "Quantz ® Voice-AI OS"
+    },
+    "voiceos_subtitle": {
+        "ja": "\"実質応答\"業界最速のリアルタイムマルチモーダルAIシステムが「真の快適さ」と「完全なプライバシー」を実現する",
+        "en": "The industry's fastest realtime multimodal AI system with 'real response' delivers 'true comfort' and 'complete privacy'.",
+        "zh": "业界最快的实时多模态AI系统，具有'实质响应'，提供'真正的舒适'和'完全的隐私'。",
+        "es": "El sistema de IA multimodal en tiempo real más rápido de la industria con 'respuesta real' ofrece 'verdadera comodidad' y 'privacidad completa'.",
+        "ru": "Самая быстрая в отрасли система мультимодального ИИ в режиме реального времени с 'реальным ответом' обеспечивает 'истинный комфорт' и 'полную конфиденциальность'.",
+        "fr": "Le système IA multimodal en temps réel le plus rapide de l'industrie avec une 'réponse réelle' offre un 'véritable confort' et une 'confidentialité complète'.",
+        "ar": "أسرع نظام ذكاء اصطناعي متعدد الوسائط في الصناعة بوقت فعلي مع 'استجابة حقيقية' يقدم 'راحة حقيقية' و'خصوصية كاملة'."
+    },
+    "voiceos_section_1_title": {
+        "ja": "即座に本題(実質的な応答)を返し、「ありがとう」のような簡易的な応答テクニックを使用することなく800ms未満の応答速度を実現。",
+        "en": "Quantz ® Voice-AI OS immediately delivers the substantive response, achieving a response time of just 800ms, avoiding the common 'filler technique' that relies on simple responses like 'thank you'.",
+        "zh": "Quantz ® Voice-AI OS立即提供实质性回应，响应时间仅为800毫秒，避免了依赖于简单回应如“谢谢”的常见填充技术。",
+        "es": "Quantz ® Voice-AI OS entrega inmediatamente la respuesta sustantiva, logrando un tiempo de respuesta de solo 800 ms, evitando la técnica de relleno común que depende de respuestas simples como 'gracias'.",
+        "ru": "Quantz ® Voice-AI OS немедленно предоставляет содержательный ответ, достигая времени ответа всего 800 мс, избегая обычной техники заполнения, которая полагается на простые ответы вроде 'спасибо'.",
+        "fr": "Quantz ® Voice-AI OS délivre immédiatement une réponse substantielle, atteignant un temps de réponse de seulement 800 ms, évitant la technique de remplissage commune qui repose sur des réponses simples comme 'merci'.",
+        "ar": "يقدم Quantz ® Voice-AI OS الرد الجوهري فورًا، محققًا وقت استجابة يبلغ 800 مللي ثانية فقط، ويتجنب تقنية الملء الشائعة التي تعتمد على ردود بسيطة مثل 'شكرًا'."
+    },
+    "voiceos_section_1_article": {
+        "ja": "一般的なAPIベースの音声対話エンジンは\"1秒の壁\"を超えることが難しく、「ありがとうございます」「わかりました」といった予備的な応答をまず返し、その間にメインの応答を準備する「フィラー（相槌）テクニック」が用いられます。\nこのテクニックの問題点は、数字上は応答速度1秒未満を達成するものの、本題を話し始めるまでに都度1秒~2秒かかるため、特に会話を続けるほどストレスを感じます。\nQuantz ® Voice-AI OSはこのテクニックを用いず、即座に本題（実質応答）を800msで返す、外部APIを一切用いないLLMベースリアルタイムマルチモーダルシステムです。",
+        "en": "Many typical API-based voice AI engines struggle to exceed the 'one-second barrier' and resort to using the 'filler technique'. This involves issuing a preliminary response such as 'thank you' or 'I understand' while the main response is being prepared. Although this approach may achieve a numerical response time of less than one second, it takes 1 to 2 seconds before the main topic is addressed, which can be frustrating during longer interactions.\n\nQuantz ® Voice-AI OS is a groundbreaking real-time multimodal system based on LLM that eschews this technique, delivering the main topic—the real response—within 800ms, without using any external API.",
+        "zh": "许多典型的基于API的语音AI引擎很难突破“1秒的障碍”，并使用“填充技术”。这涉及在准备主要响应时发出“谢谢”或“我明白了”等初步响应。尽管这种方法可以实现不到一秒的数字响应时间，但在解决主要问题之前需要1到2秒，这在较长的互动过程中可能会令人沮丧。\n\nQuantz ® Voice-AI OS，世界上第一个基于LLM的语音AI引擎，避免了这种技术，在800毫秒内提供主要话题——真实响应。",
+        "es": "Muchos motores de IA de voz típicos basados en API luchan por superar la 'barrera de un segundo' y recurren a la 'técnica de relleno'. Esto implica emitir una respuesta preliminar como 'gracias' o 'entiendo' mientras se prepara la respuesta principal. Aunque este enfoque puede lograr un tiempo de respuesta numérico de menos de un segundo, se necesitan de 1 a 2 segundos antes de abordar el tema principal, lo que puede ser frustrante durante interacciones más largas.\n\nQuantz ® Voice-AI OS, el primer motor de IA de voz basado en LLM del mundo, evita esta técnica, entregando el tema principal: la respuesta real, dentro de los 800 ms.",
+        "ru": "Многие типичные голосовые ИИ движки на основе API не могут преодолеть 'барьер одной секунды' и прибегают к использованию 'техники заполнителя'. Это включает в себя выдачу предварительного ответа, такого как 'спасибо' или 'я понял', пока подготавливается основной ответ. Хотя этот подход может достигать числового времени отклика менее одной секунды, требуется от 1 до 2 секунд, прежде чем будет адресована основная тема, что может быть разочаровывающим при более длительных взаимодействиях.\n\nQuantz ® Voice-AI OS, первый в мире голосовой ИИ движок на основе LLM, избегает этой техники, предоставляя основную тему - реальный ответ в течение 800 мс.",
+        "fr": "De nombreux moteurs d'IA vocale typiques basés sur une API ont du mal à dépasser la 'barrière d'une seconde' et ont recours à la 'technique de remplissage'. Cela implique de donner une réponse préliminaire telle que 'merci' ou 'je comprends' pendant que la réponse principale est en cours de préparation. Bien que cette approche puisse atteindre un temps de réponse numérique de moins d'une seconde, il faut de 1 à 2 secondes avant que le sujet principal ne soit abordé, ce qui peut être frustrant lors d'interactions plus longues.\n\nQuantz ® Voice-AI OS, le premier moteur d'IA vocale basé sur LLM au monde, évite cette technique, en délivrant le sujet principal - la réponse réelle - en 800 ms.",
+        "ar": "تواجه العديد من محركات الذكاء الاصطناعي الصوتية النموذجية المستندة إلى API صعوبة في تجاوز 'حاجز الثانية الواحدة' وتلجأ إلى استخدام 'تقنية الحشو'. يتضمن ذلك إصدار استجابة أولية مثل 'شكرًا' أو 'أفهم' أثناء تحضير الاستجابة الرئيسية. على الرغم من أن هذا النهج قد يحقق وقت استجابة رقمي أقل من ثانية واحدة، إلا أنه يستغرق من 1 إلى 2 ثانية قبل معالجة الموضوع الرئيسي، مما قد يكون محبطًا أثناء التفاعلات الأطول.\n\nQuantz ® Voice-AI OS، أول محرك ذكاء اصطناعي صوتي يعتمد على LLM في العالم، يتجنب هذه التقنية، ويقدم الموضوع الرئيسي - الاستجابة الحقيقية - في غضون 800 مللي ثانية."
+    },
+    "voiceos_section_2_title": {
+        "ja": "\"実質応答速度\"で1秒の壁を超える",
+        "en": "Exceeds the One-Second Barrier in a \"Real Response\" Time",
+        "zh": "在实时响应速度中突破一秒障碍",
+        "es": "Supera la barrera de un segundo en tiempo de respuesta real",
+        "ru": "Превосходит односекундный барьер в реальном времени ответа",
+        "fr": "Dépasse la barrière d'une seconde dans le temps de réponse réel",
+        "ar": "يتجاوز حاجز الثانية في زمن استجابة حقيقي"
+    },
+    "voiceos_section_2_article": {
+        "ja": "Quantz® Voice-AI OSは67万行の独自のコードベースからなる、”真に快適な対話の実現”のために最適化されたリアルタイムマルチモーダルAIシステムです（4件の特許技術を含む。うち2件は出願中）。\nunix-socketベースの独自のバイト転送プロトコルにより、TCP/IP通信のオーバーヘッドを削減し、大量のデータ転送を1台のサーバーで完結する、NLP（自然言語処理）と音声処理パイプラインの超並列実装を特徴としています。\nQuantz ® Voice-AI OSはThinkXが管理し、高セキュリティ要件を満たすハウジングスペースに格納された専用のGPUスーパーコンピューター上で動作します。",
+        "en": "Quantz® Voice-AI OS is designed for 'true comfort', based on a proprietary codebase of 670,000 lines, including 4 patented technologies, 2 of which are pending.\nIt features a massive parallelism of the NLP (natural language processing) and speech processing pipelines, with a unix-socket based unique byte transfer protocol that reduces the overhead of TCP/IP communication and allows large amounts of data transfer to be completed on a single server.\nThe system is powered by dedicated GPU supercomputers managed by ThinkX, ensuring robust performance in a highly secure facility.",
+        "zh": "Quantz® Voice-AI OS 是为“真正的舒适”而设计的，基于67万行独有代码库，包括4项已申请的专利技术（其中2项仍在申请中）。系统采用unix-socket基于的独特字节传输协议，显著减少了TCP/IP通信的开销，并允许在单一服务器上完成大量数据传输。这一NLP（自然语言处理）和语音处理的超并行实现，确保了高性能。Quantz® Voice-AI OS 由ThinkX管理，运行在高安全性要求的专用GPU超级计算机上。",
+        "es": "Quantz® Voice-AI OS está diseñado para proporcionar 'verdadera comodidad', basado en una base de código propia de 670,000 líneas que incluye 4 tecnologías patentadas, con 2 patentes pendientes. Caracteriza una implementación masivamente paralela de los procesos de NLP (procesamiento de lenguaje natural) y de procesamiento de voz, utilizando un protocolo único de transferencia de bytes basado en unix-socket que reduce la sobrecarga de la comunicación TCP/IP y permite completar grandes transferencias de datos en un solo servidor. El sistema es operado en supercomputadoras GPU dedicadas administradas por ThinkX, asegurando un rendimiento robusto en un espacio altamente seguro.",
+        "ru": "Quantz® Voice-AI OS разработан для 'истинного комфорта', на основе собственной кодовой базы в 670 000 строк, включая 4 запатентованные технологии, 2 из которых ожидают патентования. Особенностью является массовая параллелизация NLP (обработки естественного языка) и речевых процессинговых конвейеров, с использованием уникального протокола передачи байтов на базе unix-socket, который уменьшает накладные расходы на TCP/IP связь и позволяет выполнять передачу больших объемов данных на одном сервере. Система функционирует на выделенных GPU-суперкомпьютерах, управляемых ThinkX, обеспечивая высокую безопасность и производительность.",
+        "fr": "Quantz® Voice-AI OS est conçu pour offrir un 'véritable confort', basé sur une base de code propriétaire de 670 000 lignes incluant 4 technologies brevetées, dont 2 sont en attente de brevet. Il présente une implémentation parallèle massive des pipelines de traitement NLP (traitement du langage naturel) et de traitement vocal, utilisant un protocole de transfert de bytes unique basé sur unix-socket qui réduit les frais généraux de la communication TCP/IP et permet de transférer de grandes quantités de données sur un seul serveur. Le système fonctionne sur des superordinateurs GPU dédiés gérés par ThinkX, garantissant des performances robustes dans un environnement hautement sécurisé.",
+        "ar": "تم تصميم Quantz® Voice-AI OS لتوفير 'الراحة الحقيقية'، استنادًا إلى قاعدة بيانات تضم 670,000 سطر من الكود الخاص، وتشمل 4 تقنيات مسجلة ببراءة اختراع، منها 2 قيد الانتظار. يتميز النظام بتنفيذ متوازٍ هائل لمعالجة اللغة الطبيعية (NLP) ومعالجة الصوت، باستخدام بروتوكول فريد لنقل البايتات يعتمد على unix-socket، ما يقلل من العبء الزائد لاتصالات TCP/IP ويسمح بنقل كميات كبيرة من البيانات على خادم واحد. يتم تشغيل النظام بواسطة أجهزة الكمبيوتر العملاقة GPU المخصصة التي تديرها ThinkX، مما يضمن أداءً قويًا في منشأة عالية الأمان."
+    },
+    "voiceos_section_3_title": {
+        "ja": "67万行の独自コードベース、自社管理ハイパフォーマンスGPUコンピュータークラスター上で実行される、対話の\"真の快適さ\"に最適化された音声AI OS",
+        "en": "Voice-AI OS optimized for 'True Comfort', running on an in-house managed high-performance GPU computer cluster with a proprietary codebase of 670,000 lines",
+        "zh": "在自家管理的高性能GPU计算机集群上运行的语音AI操作系统，优化为“真正的舒适”，具有670,000行专有代码库",
+        "es": "OS de IA de voz optimizado para 'verdadera comodidad', funcionando en un clúster de computadoras GPU de alto rendimiento gestionado internamente, con una base de código propietaria de 670,000 líneas",
+        "ru": "Голосовой ИИ ОС, оптимизированный для 'истинного комфорта', работающий на управляемом внутри компании кластере высокопроизводительных GPU-компьютеров с проприетарной кодовой базой из 670 000 строк",
+        "fr": "OS de l'IA vocale optimisé pour un 'véritable confort', fonctionnant sur un cluster de calculateurs GPU haute performance géré en interne, avec une base de code propriétaire de 670 000 lignes",
+        "ar": "نظام تشغيل AI الصوتي المُحسّن لتحقيق 'الراحة الحقيقية'، يعمل على مجموعة أجهزة كمبيوتر GPU عالية الأداء مُدارة داخليًا مع قاعدة شفرة خاصة تتكون من 670,000 سطر"
+    },
+    "voiceos_section_3_article": {
+        "ja": "Quantz ® Voice-AI OSは高い安全性要件を満たしたデータセンター内の物理サーバー上に構築され、ChatGPT APIやEleven Labs API等に代表される外部のAPIを一切使用しません。（オープンソースLLM Meta Llama3を微調整したモデルを、独自に実装したLLM Parallel Inference Adapterによる100~並列/GPU [2500トークン~/秒] 推論で実行）\nそのため、システムユーザーにとって重要な、会話情報を外部企業に露出することがなく、最高レベルのプライバシー保護とセキュリティを実現します。",
+        "en": "Quantz ® Voice-AI OS is built on physical servers in data centres with high security requirements and does not use any external APIs such as ChatGPT API, Eleven Labs API, etc. (Models fine-tuned from the open source LLM Meta Llama3 are executed with 100~ parallel/GPU [2500 tokens~/sec] inference by a proprietary implementation of the LLM Parallel Inference Adapter).\nThis ensures the highest level of privacy protection and security for system users by not exposing critical, conversational information to external companies.",
+        "zh": "Quantz ® Voice-AI OS 构建在具有高安全要求的数据中心的物理服务器上，不使用任何外部API，例如ChatGPT API、Eleven Labs API等。（从开源LLM Meta Llama3微调的模型通过LLM Parallel Inference Adapter的专有实现以100~并行/GPU [2500个令牌/秒]推断执行）。\n这确保了系统用户的最高级别隐私保护和安全性，因为不会将关键的会话信息暴露给外部公司。",
+        "es": "Quantz ® Voice-AI OS está construido en servidores físicos en centros de datos con altos requisitos de seguridad y no utiliza ninguna API externa como ChatGPT API, Eleven Labs API, etc. (Los modelos ajustados del LLM Meta Llama3 de código abierto se ejecutan con 100~ paralelo/GPU [2500 tokens~/seg] de inferencia mediante una implementación propietaria del LLM Parallel Inference Adapter).\nEsto garantiza el más alto nivel de protección de la privacidad y seguridad para los usuarios del sistema al no exponer información crítica de la conversación a empresas externas.",
+        "ru": "Quantz ® Voice-AI OS построен на физических серверах в дата-центрах с высокими требованиями безопасности и не использует никаких внешних API, таких как ChatGPT API, Eleven Labs API и т.д. (Модели, настроенные на основе открытого исходного кода LLM Meta Llama3, выполняются с 100~ параллельных/GPU [2500 токенов~/сек] на собственном LLM Parallel Inference Adapter).\nЭто обеспечивает высочайший уровень защиты конфиденциальности и безопасности для пользователей системы, не подвергая важную разговорную информацию воздействию внешних компаний.",
+        "fr": "Quantz ® Voice-AI OS est construit sur des serveurs physiques dans des centres de données avec des exigences de sécurité élevées et n'utilise aucune API externe telle que ChatGPT API, Eleven Labs API, etc. (Les modèles ajustés du LLM Meta Llama3 open source sont exécutés avec une inférence parallèle de 100~ /GPU [2500 tokens~/sec] par une implémentation propriétaire de l'LLM Parallel Inference Adapter).\nCela garantit le plus haut niveau de protection de la vie privée et de sécurité pour les utilisateurs du système en n'exposant pas les informations conversationnelles critiques aux entreprises extérieures.",
+        "ar": "تم بناء Quantz ® Voice-AI OS على خوادم مادية في مراكز بيانات ذات متطلبات أمان عالية ولا يستخدم أي واجهات برمجة تطبيقات خارجية مثل ChatGPT API، Eleven Labs API، إلخ. (يتم تنفيذ النماذج المضبوطة من LLM Meta Llama3 مفتوح المصدر باستخدام 100~ متوازي /GPU [2500 رمز~/ثانية] بواسطة تنفيذ خاص لمحول LLM Parallel Inference Adapter).\nيضمن ذلك أعلى مستوى من حماية الخصوصية والأمان لمستخدمي النظام بعدم كشف المعلومات المحادثاتية الحيوية للشركات الخارجية."
+    },
+    "voiceos_section_4_title": {
+        "ja": "外部APIを一切使わず会話データが外出しない、最高レベルのデータセキュリティとプライバシー",
+        "en": "Highest Level of Data Security and Privacy—No External APIs, No Outgoing Conversational Data",
+        "zh": "最高级别的数据安全性和隐私——无外部API，无外发会话数据",
+        "es": "El más alto nivel de seguridad de datos y privacidad—sin API externas, sin datos conversacionales salientes",
+        "ru": "Высочайший уровень безопасности данных и конфиденциальности - без внешних API, без исходящих данных разговоров",
+        "fr": "Le plus haut niveau de sécurité des données et de confidentialité - Pas d'API externes, pas de données conversationnelles sortantes",
+        "ar": "أعلى مستوى من أمان البيانات والخصوصية—لا توجد واجهات برمجة تطبيقات خارجية، ولا بيانات محادثات صادرة"
+    },
+    "voiceos_section_4_article": {
+        "ja": "外部APIを使用せず専用物理サーバー内で実行され、最高レベルのプライバシーとセキュリティ水準を実現するQuantz ® Voice-AI OSは「考えるスピードで答えが届く素早さ」と「一を聞いて十を知る賢さ」を兼ね備えます。\nわずかな問いから文脈を理解し、要領よく答える最先端LLMの賢さを備えながら、30語を超える複雑な長文も800msの応答速度で遅延なくシームレスに発話します。\nQuantz ® Voice-AI OSは潜在的なカスタマイズの柔軟性と高いプライバシー水準、そして実質応答の高速性による「真の快適さ」の最適なバランスを実現した音声対話エンジンです。",
+        "en": "Unlike integrated type multimodal AI systems that rely on a single LLM for voice and language processing, our architecture separates each model and process. This separation enables flexible customization of the pipeline, including mid-response monitoring  and switching between utterances, all while maintaining potential for scalability and achieving high performance.",
+        "zh": "与依赖单一大型语言模型实现声音和语言处理的一体化多模态AI系统不同，我们的架构将各个模型和过程分离。这种分离使得管道的灵活定制成为可能，包括响应中监控和语音切换，同时保持潜在的可扩展性和高性能。",
+        "es": "A diferencia de los sistemas multimodales integrados que dependen de un único LLM para el procesamiento de voz y lenguaje, nuestra arquitectura separa cada modelo y proceso. Esta separación permite una personalización flexible del pipeline, incluyendo monitoreo durante la respuesta y cambio entre expresiones, todo mientras se mantiene la potencial escalabilidad y se logra un alto rendimiento.",
+        "ru": "В отличие от интегрированных мультимодальных систем ИИ, использующих одну LLM для обработки голоса и языка, наша архитектура разделяет каждую модель и процесс. Такое разделение позволяет гибко настраивать конвейер, включая мониторинг ответов по ходу и переключение между высказываниями, сохраняя при этом потенциал масштабируемости и достигая высокой производительности.",
+        "fr": "Contrairement aux systèmes multimodaux intégrés qui s'appuient sur un seul LLM pour le traitement vocal et linguistique, notre architecture sépare chaque modèle et processus. Cette séparation permet une personnalisation flexible de la chaîne de traitement, incluant la surveillance en mi-réponse et le basculement entre les expressions, tout en maintenant une capacité d'extension potentielle et une haute performance.",
+        "ar": "على عكس الأنظمة المتكاملة متعددة الوسائط التي تعتمد على LLM واحد لمعالجة الصوت واللغة، فإن هيكلتنا تفصل كل نموذج وعملية. هذا الفصل يمكن من تخصيص مرن للخط الإنتاجي، بما في ذلك المراقبة أثناء الاستجابة والتحويل بين العبارات، مع الحفاظ على إمكانية التوسع وتحقيق أداء عالٍ."
+    },
+    "voiceos_section_5_title": {
+        "ja": "モジュール化された音声言語モデル。パイプラインを自由にカスタマイズ可能できる潜在的な拡張性",
+        "en": "Modularized Language and Speech Models: Scalable and Customizable Pipeline",
+        "zh": "模块化语言和语音模型：可扩展且可定制的管道",
+        "es": "Modelos de lenguaje y habla modularizados: pipeline escalable y personalizable",
+        "ru": "Модульные модели языка и речи: масштабируемый и настраиваемый конвейер",
+        "fr": "Modèles de langue et de parole modulaires : pipeline évolutif et personnalisable",
+        "ar": "نماذج اللغة والكلام المعيارية: أنابيب قابلة للتوسع والتخصيص"
+    },
+    "voiceos_section_5_article": {
+        "ja": "音声言語処理が単一の大規模言語モデルで実現されるモデル統合型のマルチモーダルAIと異なり、各モデルやプロセスが分離されているために、応答内容の途中監視や発話音声の切り替えといったパイプライン上のカスタマイズが柔軟に実現でき、潜在的な拡張性を維持しながら高い性能を実現しています。",
+        "en": "Quantz ® Voice-AI OS operates on dedicated physical servers, ensuring unparalleled data security by eliminating reliance on external APIs. This setup guarantees that no conversational data is transmitted externally, upholding the strictest privacy standards.\n\n\"Where Answers Arrive at the Speed of Thought\"—Quantz delivers this promise through the intelligence of state-of-the-art LLM. Speak less and solve more with Quantz; it understands even the most concise queries and provides precise, to-the-point answers. It effortlessly handles complex, long sentences of over 30 words and delivers responses within an impressive 800ms.\n\nQuantz ® Voice-AI OS strikes the optimum balance between customisation flexibility, stringent privacy standards and 'true comfort', providing fast and real responses to enhance user experience.",
+        "zh": "Quantz ® Voice-AI OS 在专用物理服务器上运行，通过消除对外部API的依赖，确保无与伦比的数据安全性。这种设置保证不会向外部传输会话数据，从而维护最严格的隐私标准。\n\n“答案到达思维的速度”——Quantz通过最先进的LLM的智能实现了这一承诺。使用Quantz少说多解决问题；它甚至可以理解最简洁的查询，并提供精确到位的答案。它可以毫不费力地处理超过30个单词的复杂长句，并在令人印象深刻的800毫秒内提供响应。\n\nQuantz ® Voice-AI OS 实现了定制灵活性、严格隐私标准和“真正舒适性”之间的最佳平衡，提供快速和真实的响应以增强用户体验。",
+        "es": "Quantz ® Voice-AI OS opera en servidores físicos dedicados, garantizando una seguridad de datos incomparable al eliminar la dependencia de las API externas. Esta configuración garantiza que no se transmitan datos conversacionales externamente, manteniendo los estándares de privacidad más estrictos.\n\n\"Donde las respuestas llegan a la velocidad del pensamiento\" - Quantz cumple esta promesa a través de la inteligencia del LLM de última generación. Habla menos y resuelve más con Quantz; entiende incluso las consultas más concisas y proporciona respuestas precisas y directas. Maneja sin esfuerzo oraciones largas y complejas de más de 30 palabras y proporciona respuestas en un impresionante 800ms.\n\nQuantz ® Voice-AI OS logra el equilibrio óptimo entre la flexibilidad de personalización, los estrictos estándares de privacidad y el 'verdadero confort', proporcionando respuestas rápidas y reales para mejorar la experiencia del usuario.",
+        "ru": "Quantz ® Voice-AI OS работает на выделенных физических серверах, обеспечивая непревзойденную безопасность данных за счет отказа от использования внешних API. Эта конфигурация гарантирует, что никакие данные разговоров не передаются внешним системам, поддерживая самые строгие стандарты конфиденциальности.\n\n\"Где ответы приходят со скоростью мысли\" — Quantz реализует это обещание благодаря интеллекту передовой LLM. Говорите меньше и решайте больше с Quantz; он понимает даже самые краткие запросы и предоставляет точные, точечные ответы. Он без труда обрабатывает сложные длинные предложения из более чем 30 слов и предоставляет ответы в впечатляющие 800 мс.\n\nQuantz ® Voice-AI OS достигает оптимального баланса между гибкостью настройки, строгими стандартами конфиденциальности и 'истинным комфортом', обеспечивая быстрые и реальные ответы для улучшения пользовательского опыта.",
+        "fr": "Quantz ® Voice-AI OS fonctionne sur des serveurs physiques dédiés, garantissant une sécurité des données inégalée en éliminant la dépendance aux API externes. Cette configuration garantit qu'aucune donnée conversationnelle n'est transmise à l'extérieur, respectant ainsi les normes de confidentialité les plus strictes.\n\n\"Là où les réponses arrivent à la vitesse de la pensée\" — Quantz tient cette promesse grâce à l'intelligence de l'LLM de pointe. Parlez moins et résolvez plus avec Quantz; il comprend même les requêtes les plus concises et fournit des réponses précises et claires. Il gère sans effort des phrases complexes et longues de plus de 30 mots et fournit des réponses en un temps impressionnant de 800 ms.\n\nQuantz ® Voice-AI OS atteint un équilibre optimal entre la flexibilité de personnalisation, les normes strictes de confidentialité et le 'véritable confort', fournissant des réponses rapides et réelles pour améliorer l'expérience utilisateur.",
+        "ar": "يعمل Quantz ® Voice-AI OS على خوادم مادية مخصصة، مما يضمن أمان بيانات لا مثيل له عن طريق القضاء على الاعتماد على واجهات برمجة التطبيقات الخارجية. تضمن هذه الإعدادات عدم نقل أي بيانات محادثات إلى الخارج، مما يحافظ على أعلى معايير الخصوصية.\n\n\"حيث تصل الإجابات بسرعة التفكير\" - يفي Quantz بهذا الوعد من خلال ذكاء LLM المتطور. تحدث أقل وحل المزيد مع Quantz؛ فهو يفهم حتى أكثر الاستفسارات اختصارًا ويوفر إجابات دقيقة ومباشرة. يتعامل بسلاسة مع الجمل الطويلة والمعقدة التي تتجاوز 30 كلمة ويقدم الردود في غضون 800 مللي ثانية مثيرة للإعجاب.\n\nيحقق Quantz ® Voice-AI OS التوازن الأمثل بين مرونة التخصيص والمعايير الصارمة للخصوصية و'الراحة الحقيقية'، مما يوفر استجابات سريعة وحقيقية لتعزيز تجربة المستخدم."
+    },
+    "voiceos_gpu_cluster": {
+            "ja": "GPUクラスター ThinkX Supercom3",
+            "en": "Our GPU Cluster ThinkX Supercom3",
+            "zh": "我们的GPU集群 ThinkX Supercom3",
+            "es": "Nuestro Clúster GPU ThinkX Supercom3",
+            "ru": "Наш GPU кластер ThinkX Supercom3",
+            "fr": "Notre Cluster GPU ThinkX Supercom3",
+            "ar": "مجموعة وحدات معالجة الرسومات لدينا ThinkX Supercom3"
+    },
+    "voiceos_inquiry_button": {
+        "ja": "この製品について問い合わせる",
+        "en": "Inquire About This Product",
+        "zh": "询问此产品",
+        "es": "Consultar sobre este producto",
+        "ru": "Запросить информацию о продукте",
+        "fr": "Demander des informations sur ce produit",
+        "ar": "استفسر عن هذا المنتج"
+    }
+}

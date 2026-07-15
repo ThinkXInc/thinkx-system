@@ -1,0 +1,80 @@
+{
+  "metadata_blog_2025-05-16-release": {
+    "ja": {
+      "title": "ThinkX、1対多の同時接続が可能なリアルタイムエージェント構築システム『LiveAgentSDK』を提供開始",
+      "description": "ThinkXが1対多の同時接続が可能なリアルタイムエージェント構築システム『LiveAgentSDK』をリリース",
+      "keywords": "ThinkX, LiveAgentSDK, リアルタイムエージェント, 同時接続",
+      "image": "https://thinkxinc.com/img/blog/2025-05-16-release/LiveAgentSDK_JA_v2.png",
+      "url": "https://thinkxinc.com/ja/blognews/2025-05-16-release"
+    },
+    "en": {
+      "title": "Launch of LiveAgentSDK, a Real-Time Agent Construction System Supporting Multiple Simultaneous Client Connections",
+      "description": "Announcement regarding ThinkX's launch of the real-time agent construction system LiveAgentSDK",
+      "keywords": "ThinkX, LiveAgentSDK, real-time agent, simultaneous connections",
+      "image": "https://thinkxinc.com/img/blog/2025-05-16-release/LiveAgentSDK_EN_v2.png",
+      "url": "https://thinkxinc.com/en/blognews/2025-05-16-release"
+    },
+    "zh": {
+      "title": "推出支持一对多同时连接的实时代理构建系统「LiveAgentSDK」",
+      "description": "关于ThinkX推出实时代理构建系统「LiveAgentSDK」的公告",
+      "keywords": "ThinkX, LiveAgentSDK, 实时代理, 同时连接",
+      "image": "https://thinkxinc.com/img/blog/2025-05-16-release/LiveAgentSDK_EN_v2.png",
+      "url": "https://thinkxinc.com/zh/blognews/2025-05-16-release"
+    },
+    "es": {
+      "title": "Lanzamiento de LiveAgentSDK, un sistema de construcción de agentes en tiempo real con soporte para múltiples conexiones simultáneas",
+      "description": "Anuncio de ThinkX sobre el lanzamiento de su sistema de construcción de agentes en tiempo real LiveAgentSDK",
+      "keywords": "ThinkX, LiveAgentSDK, agente en tiempo real, conexiones simultáneas",
+      "image": "https://thinkxinc.com/img/blog/2025-05-16-release/LiveAgentSDK_EN_v2.png",
+      "url": "https://thinkxinc.com/es/blognews/2025-05-16-release"
+    },
+    "ru": {
+      "title": "Запуск LiveAgentSDK — системы реального времени для создания агентов с поддержкой множественных одновременных подключений",
+      "description": "Анонс запуска системой ThinkX системы реального времени для создания агентов LiveAgentSDK",
+      "keywords": "ThinkX, LiveAgentSDK, агенты реального времени, одновременные подключения",
+      "image": "https://thinkxinc.com/img/blog/2025-05-16-release/LiveAgentSDK_EN_v2.png",
+      "url": "https://thinkxinc.com/ru/blognews/2025-05-16-release"
+    },
+    "fr": {
+      "title": "Lancement de LiveAgentSDK, un système de construction d’agents en temps réel prenant en charge plusieurs connexions simultanées",
+      "description": "Annonce de ThinkX concernant le lancement de LiveAgentSDK, un système de construction d’agents en temps réel permettant de multiples connexions simultanées",
+      "keywords": "ThinkX, LiveAgentSDK, agent en temps réel, connexions simultanées",
+      "image": "https://thinkxinc.com/img/blog/2025-05-16-release/LiveAgentSDK_EN_v2.png",
+      "url": "https://thinkxinc.com/fr/blognews/2025-05-16-release"
+    },
+    "ar": {
+      "title": "إطلاق LiveAgentSDK، نظام بناء الوكلاء في الزمن الفعلي يدعم اتصالات متعددة متزامنة",
+      "description": "إعلان عن إطلاق ThinkX لنظام بناء الوكلاء في الزمن الفعلي LiveAgentSDK، الذي يمكّن اتصالات متعددة متزامنة",
+      "keywords": "ThinkX, LiveAgentSDK, وكيل في الزمن الفعلي, اتصالات متزامنة",
+      "image": "https://thinkxinc.com/img/blog/2025-05-16-release/LiveAgentSDK_EN_v2.png",
+      "url": "https://thinkxinc.com/ar/blognews/2025-05-16-release"
+    }
+  },
+  "article_title": {
+    "ja": "1対多の同時接続が可能なリアルタイムエージェント構築システム『LiveAgentSDK』を提供開始",
+    "en": "Launch of LiveAgentSDK, a Real-Time Agent Construction System Supporting Multiple Simultaneous Client Connections",
+    "zh": "推出支持一对多同时连接的实时代理构建系统「LiveAgentSDK」",
+    "es": "Lanzamiento de LiveAgentSDK, un sistema de construcción de agentes en tiempo real con soporte para múltiples conexiones simultáneas",
+    "ru": "Запуск LiveAgentSDK — системы реального времени для создания агентов с поддержкой множественных одновременных подключений",
+    "fr": "Lancement de LiveAgentSDK, un système de construction d’agents en temps réel prenant en charge plusieurs connexions simultanées",
+    "ar": "إطلاق LiveAgentSDK، نظام بناء الوكلاء في الزمن الفعلي يدعم اتصالات عملاء متعددة متزامنة"
+  },
+  "article_date": {
+    "ja": "2025年5月16日",
+    "en": "May 16, 2025",
+    "zh": "2025年5月16日",
+    "es": "16 de mayo de 2025",
+    "ru": "16 мая 2025 года",
+    "fr": "16 mai 2025",
+    "ar": "16 مايو 2025"
+  },
+  "article_main": {
+    "ja": "ThinkX（東京都港区, 代表取締役 大塚一輝）は、独自の時空間多重化方式*を活用した、複数クライアントが同時接続可能なリアルタイムエージェント構築システム、「LiveAgentSDK」の提供を開始しました。<br><br><img src=\"/img/blog/2025-05-16-release/LiveAgentSDK_JA_v2.png\" alt=\"LiveAgentSDK\"><br><br>一般的なエージェント構築システム（OpenAI AgentSDKや Google Agent Development Kit等）の多くは、asyncioベースのインメモリ非同期アーキテクチャーに基づき、<strong>1エージェントに対し1クライアントが前提となっていました</strong>。<br>ThinkXが開発したLiveAgentSDKは、高速なインメモリDBを用いた非同期駆動型並列多重化アプローチにより、<strong>1エージェントが複数クライアントをリアルタイムに同時処理することが可能</strong>になります。<br>この特性により、例えば<strong>多数のユーザーが同時参加するオンラインゲームや多人数向けライブ配信</strong>など、複数ユーザー間で高い即時性と同時接続が求められるサービスに最適なソリューションとなります。<br><br><div class=\"footnote\">*本技術は、LLM行列の並列推論結果をシングルスレッドでノンブロッキング処理するThinkX独自のリアルタイム対話技術です。</div><br><br><a href=\"/ja/inquiry/product\" style=\"display:inline-block; padding:10px 20px; background-color:black; color:white; text-decoration:none; border-radius:6px;\">製品に関するお問い合わせ</a>",
+    "en": "ThinkX (Minato-ku, Tokyo; CEO: Kazuki Otsuka) has launched LiveAgentSDK, a real-time agent construction system that enables multiple clients to connect simultaneously by leveraging the company’s proprietary spatiotemporal multiplexing method.<br><br><img src=\"/img/blog/2025-05-16-release/LiveAgentSDK_EN_v2.png\" alt=\"LiveAgentSDK\"><br><br>Many existing agent construction systems—such as OpenAI AgentSDK or Google Agent Development Kit—are based on an asyncio-driven in-memory asynchronous architecture that essentially assumes a <strong>one-agent-per-client model</strong>. In contrast, LiveAgentSDK employs a parallel multiplexing approach, powered by a high-speed in-memory database, allowing <strong>a single agent to handle multiple clients in real time</strong>.<br>This functionality is particularly well-suited for services that demand high responsiveness and simultaneous connections among numerous users—for example, <strong>online games with many participants or large-scale live streaming platforms</strong>.<br><br><div class=\"footnote\">*This technology is ThinkX’s proprietary real-time interaction approach, which processes parallel inference results from LLM matrices even in a single-threaded, non-blocking method.</div><br><br><a href=\"/en/inquiry/product\" style=\"display:inline-block; padding:10px 20px; background-color:black; color:white; text-decoration:none; border-radius:6px;\">For product inquiries</a>",
+    "zh": "ThinkX（位于东京都港区，首席执行官：大塚一辉）利用其独创的时空多重化方式，发布了一款可支持多个客户端同时连接的实时代理构建系统「LiveAgentSDK」。<br><br><img src=\"/img/blog/2025-05-16-release/LiveAgentSDK_EN_v2.png\" alt=\"LiveAgentSDK\"><br><br>许多常见的代理构建系统（如OpenAI AgentSDK或Google Agent Development Kit等）通常基于asyncio驱动的内存异步架构，默认采用<strong>一个代理对应一个客户端</strong>的模式。<br>与之相比，ThinkX开发的LiveAgentSDK通过高速内存数据库实现的异步并行多重化方式，使<strong>单个代理能够实时同时处理多个客户端</strong>。<br>这对于需要高度实时性并有众多用户同时连接的服务尤其适用，例如<strong>大量用户同时参与的网络游戏或大规模直播平台</strong>。<br><br><div class=\"footnote\">*该技术是ThinkX独创的实时交互方式，可在单线程下以非阻塞方式处理来自LLM矩阵的并行推理结果。</div><br><br><a href=\"/zh/inquiry/product\" style=\"display:inline-block; padding:10px 20px; background-color:black; color:white; text-decoration:none; border-radius:6px;\">产品咨询</a>",
+    "es": "ThinkX (Minato-ku, Tokio; CEO: Kazuki Otsuka) ha lanzado LiveAgentSDK, un sistema de construcción de agentes en tiempo real que permite la conexión simultánea de múltiples clientes, aprovechando el método de multiplexación espaciotemporal patentado por la compañía.<br><br><img src=\"/img/blog/2025-05-16-release/LiveAgentSDK_EN_v2.png\" alt=\"LiveAgentSDK\"><br><br>Muchos de los sistemas de construcción de agentes existentes, como OpenAI AgentSDK o Google Agent Development Kit, se basan en una arquitectura asíncrona en memoria que asume esencialmente un <strong>modelo de un agente por cliente</strong>. En contraste, LiveAgentSDK emplea un enfoque de multiplexación en paralelo, respaldado por una base de datos en memoria de alta velocidad, lo que permite que <strong>un único agente maneje a varios clientes en tiempo real</strong>.<br>Esta funcionalidad es especialmente adecuada para servicios que exigen alta capacidad de respuesta y conexiones simultáneas entre numerosos usuarios; por ejemplo, <strong>juegos en línea con muchos participantes o plataformas de transmisión en vivo de gran escala</strong>.<br><br><div class=\"footnote\">*Esta tecnología es el enfoque de interacción en tiempo real patentado de ThinkX, que procesa los resultados de inferencia paralelos de las matrices LLM incluso de forma monohilo y sin bloqueo.</div><br><br><a href=\"/es/inquiry/product\" style=\"display:inline-block; padding:10px 20px; background-color:black; color:white; text-decoration:none; border-radius:6px;\">Consultas sobre el producto</a>",
+    "ru": "Компания ThinkX (Минато-ку, Токио; генеральный директор: Кадзуки Оцука) объявляет о запуске LiveAgentSDK — системы для создания агентов в реальном времени, позволяющей нескольким клиентам подключаться одновременно, благодаря использованию собственной технологии пространственно-временного мультиплексирования.*<br><br><img src=\"/img/blog/2025-05-16-release/LiveAgentSDK_EN_v2.png\" alt=\"LiveAgentSDK\"><br><br>Большинство существующих систем для создания агентов (таких как OpenAI AgentSDK или Google Agent Development Kit) основаны на асинхронной архитектуре на базе asyncio и in-memory, которая фактически предполагает модель <strong>«один агент на одного клиента»</strong>. В отличие от них, LiveAgentSDK использует параллельный мультиплексирующий подход с применением высокоскоростной базы данных в памяти (in-memory), что позволяет <strong>одному агенту обрабатывать несколько клиентов в реальном времени</strong>.<br>Эта возможность особенно полезна для сервисов, требующих высокой отзывчивости и одновременных подключений множества пользователей, например для <strong>онлайн-игр с большим числом участников</strong> или <strong>платформ масштабных прямых трансляций</strong>.<br><br><div class=\"footnote\">*Эта технология — уникальная разработка ThinkX в области интерактивного взаимодействия в реальном времени, позволяющая обрабатывать результаты параллельных инференсов LLM даже в однопоточном неблокирующем режиме.</div><br><br><a href=\"/ru/inquiry/product\" style=\"display:inline-block; padding:10px 20px; background-color:black; color:white; text-decoration:none; border-radius:6px;\">Запрос информации о продукте</a>",
+    "fr": "ThinkX (Minato-ku, Tokyo ; PDG : Kazuki Otsuka) annonce le lancement de LiveAgentSDK, un système de construction d’agents en temps réel qui permet à plusieurs clients de se connecter simultanément en exploitant une méthode de multiplexage spatiotemporel propriétaire.<br><br><img src=\"/img/blog/2025-05-16-release/LiveAgentSDK_EN_v2.png\" alt=\"LiveAgentSDK\"><br><br>De nombreux systèmes existants de création d’agents — tels que OpenAI AgentSDK ou Google Agent Development Kit — s’appuient sur une architecture asynchrone en mémoire (in-memory) basée sur asyncio, supposant essentiellement un <strong>modèle un-agent-pour-un-client</strong>. En revanche, LiveAgentSDK adopte une approche de multiplexage parallèle, reposant sur une base de données en mémoire haute performance, qui permet à <strong>un seul agent de gérer simultanément plusieurs clients en temps réel</strong>.<br>Cette fonctionnalité est particulièrement adaptée aux services nécessitant une forte réactivité et la prise en charge de connexions simultanées pour un grand nombre d’utilisateurs — par exemple, <strong>des jeux en ligne réunissant de nombreux participants ou des plateformes de diffusion en direct à grande échelle</strong>.<br><br><div class=\"footnote\">*Cette technologie repose sur la méthode d’interaction en temps réel propre à ThinkX, capable de traiter des résultats d’inférence parallèles de matrices LLM dans un environnement monothread avec une gestion non bloquante.</div><br><br><a href=\"/fr/inquiry/product\" style=\"display:inline-block; padding:10px 20px; background-color:black; color:white; text-decoration:none; border-radius:6px;\">Pour toute demande concernant le produit</a>",
+    "ar": "أعلنت ThinkX (مقرّها في ميناتو-كو، طوكيو؛ الرئيس التنفيذي: كازوكي أوتسوكا) عن إطلاق LiveAgentSDK، وهو نظام لبناء الوكلاء في الزمن الفعلي يمكّن عدة عملاء من الاتصال في آنٍ واحد، وذلك بفضل الاستفادة من أسلوب الدمج الزمكاني الحصري للشركة.<br><br><img src=\"/img/blog/2025-05-16-release/LiveAgentSDK_EN_v2.png\" alt=\"LiveAgentSDK\"><br><br>تعتمد العديد من أنظمة بناء الوكلاء الحالية—مثل OpenAI AgentSDK أو Google Agent Development Kit—على بنية غير متزامنة بالذاكرة (in-memory) تستند إلى asyncio، ما يفترض بالأساس <strong>منهج «وكيل واحد لكل عميل»</strong>. أما LiveAgentSDK فيعتمد مقاربة للتعددية المتوازية بدعمٍ من قاعدة بيانات عالية السرعة في الذاكرة، مما يسمح <strong>لوكيل واحد بمعالجة عدة عملاء في الزمن الفعلي</strong>.<br>ويعد هذا الخيار مثاليًا للخدمات التي تتطلب استجابة فورية واتصالات متزامنة بين عدد كبير من المستخدمين—مثل <strong>الألعاب عبر الإنترنت التي يشارك فيها عدد كبير من اللاعبين أو منصات البث المباشر ذات الجمهور الواسع</strong>.<br><br><div class=\"footnote\">*هذه التقنية هي نهج خاص بشركة ThinkX للتفاعل في الزمن الفعلي، حيث تتم معالجة نتائج الاستدلال المتوازي لمصفوفات النماذج اللغوية (LLM) بطريقة غير محجوبة ضمن خيط واحد.</div><br><br><a href=\"/ar/inquiry/product\" style=\"display:inline-block; padding:10px 20px; background-color:black; color:white; text-decoration:none; border-radius:6px;\">للاستفسار حول المنتج</a>"
+  }
+}

@@ -1,0 +1,458 @@
+{
+    "metadata_blog_2025-02-19-talk": {
+      "ja": {
+        "title": "アドバイザーインタビュー: ThinkXと東北大学が描く、AIとFPGAで切り拓くスーパーコンピューティング　張山昌論教授インタビュー",
+        "description": "誰もが使える超高速計算プラットフォームへ",
+        "keywords": "スーパーコンピューティング, HPC, AI, FPGA, 東北大学, 動的アクセラレータ, リアルタイムビッグデータ解析, 量子コンピューティング, 量子アニーリング, DNAシーケンス, 気候モデリング, 専用半導体, 大規模言語モデル, パイプライン, 並列化, 部分再構成, OneAPI, 張山昌論教授, ThinkX"
+      },
+      "en": {
+        "title": "Advisor Interview: Toward a High-Speed Computing Platform for Everyone—ThinkX and Tohoku University Envision Supercomputing with AI and FPGA: Interview with Professor Masanori Hariyama",
+        "description": "Toward a high-speed computing platform accessible to everyone",
+        "keywords": "supercomputing, HPC, AI, FPGA, Tohoku University, dynamic accelerator, real-time big data analysis, quantum computing, quantum annealing, DNA sequencing, climate modeling, specialized semiconductors, large-scale language models, pipeline, parallelism, partial reconfiguration, OneAPI, Professor Masanori Hariyama, ThinkX"
+      },
+      "zh": {
+        "title": "顾问专访：迈向人人都能使用的高速计算平台——ThinkX与东北大学描绘的AI与FPGA开启的超级计算 张山昌论教授专访",
+        "description": "人人都能使用的超高速计算平台",
+        "keywords": "超级计算, HPC, AI, FPGA, 东北大学, 动态加速器, 实时大数据分析, 量子计算, 量子退火, DNA测序, 气候建模, 专用半导体, 大规模语言模型, 流水线, 并行化, 部分重构, OneAPI, 张山昌论教授, ThinkX"
+      },
+      "es": {
+        "title": "Entrevista con el asesor: Hacia una plataforma de cómputo ultrarrápida para todos—ThinkX y la Universidad de Tohoku imaginan la supercomputación con IA y FPGA: Entrevista con el profesor Masanori Hariyama",
+        "description": "Hacia una plataforma de cómputo ultrarrápida para todos",
+        "keywords": "supercomputación, HPC, IA, FPGA, Universidad de Tohoku, acelerador dinámico, análisis de big data en tiempo real, computación cuántica, recocido cuántico, secuenciación de ADN, modelado climático, semiconductores especializados, modelos de lenguaje a gran escala, tubería (pipeline), paralelismo, reconfiguración parcial, OneAPI, Profesor Masanori Hariyama, ThinkX"
+      },
+      "ru": {
+        "title": "Интервью с советником: К сверхбыстрой вычислительной платформе для всех — ThinkX и Университет Тохоку представляют суперкомпьютинг с ИИ и FPGA: Интервью с профессором Масанори Хариямой",
+        "description": "К сверхбыстрой вычислительной платформе, доступной каждому",
+        "keywords": "суперкомпьютинг, HPC, ИИ, FPGA, Университет Тохоку, динамический ускоритель, анализ больших данных в реальном времени, квантовые вычисления, квантовый отжиг, секвенирование ДНК, климатическое моделирование, специализированные полупроводники, крупномасштабные языковые модели, конвейер (pipeline), параллелизм, частичная реконфигурация, OneAPI, профессор Масанори Харияма, ThinkX"
+      },
+      "fr": {
+        "title": "Entretien avec un conseiller : Vers une plateforme de calcul ultra-rapide accessible à tous — ThinkX et l’Université de Tohoku envisagent le calcul intensif avec l’IA et les FPGA : Entretien avec le professeur Masanori Hariyama",
+        "description": "Vers une plateforme de calcul ultra-rapide accessible à tous",
+        "keywords": "supercalcul, HPC, IA, FPGA, Université de Tohoku, accélérateur dynamique, analyse de big data en temps réel, informatique quantique, recuit quantique, séquençage ADN, modélisation climatique, semi-conducteurs spécialisés, modèles de langage à grande échelle, pipeline, parallélisme, reconfiguration partielle, OneAPI, Professeur Masanori Hariyama, ThinkX"
+      },
+      "ar": {
+        "title": "مقابلة مع المستشار: نحو منصة حوسبة فائقة السرعة للجميع—ThinkX وجامعة توهوكو تتخيلان الحوسبة الفائقة باستخدام الذكاء الاصطناعي وFPGA: مقابلة مع الأستاذ ماسانوري هارياما",
+        "description": "نحو منصة حوسبة فائقة السرعة يمكن للجميع استخدامها",
+        "keywords": "الحوسبة الفائقة, HPC, الذكاء الاصطناعي, FPGA, جامعة توهوكو, المسرّع الديناميكي, تحليل البيانات الضخمة في الوقت الحقيقي, الحوسبة الكمية, التلدين الكمي, تسلسل الحمض النووي, نمذجة المناخ, أشباه الموصلات المتخصصة, نماذج اللغة واسعة النطاق, خط الأنابيب (pipeline), المعالجة المتوازية, إعادة التهيئة الجزئية, OneAPI, البروفيسور ماسانوري هارياما, ThinkX"
+      }
+    },
+    "article_title": {
+        "ja": "アドバイザーインタビュー: 誰もが使える超高速計算プラットフォームへ──ThinkXと東北大学が描く、AIとFPGAで切り拓くスーパーコンピューティング　張山昌論教授インタビュー",
+        "en": "Advisor Interview: Toward a High-Speed Computing Platform for Everyone—ThinkX and Tohoku University Envision Supercomputing with AI and FPGA: Interview with Professor Masanori Hariyama",
+        "zh": "顾问专访：迈向人人都能使用的高速计算平台——ThinkX与东北大学描绘的AI与FPGA开启的超级计算 张山昌论教授专访",
+        "es": "Entrevista con el asesor: Hacia una plataforma de cómputo ultrarrápida para todos—ThinkX y la Universidad de Tohoku imaginan la supercomputación con IA y FPGA: Entrevista con el profesor Masanori Hariyama",
+        "ru": "Интервью с советником: К сверхбыстрой вычислительной платформе для всех — ThinkX и Университет Тохоку представляют суперкомпьютинг с ИИ и FPGA: Интервью с профессором Масанори Хариямой",
+        "fr": "Entretien avec un conseiller : Vers une plateforme de calcul ultra-rapide accessible à tous — ThinkX et l’Université de Tohoku envisagent le calcul intensif avec l’IA et les FPGA : Entretien avec le professeur Masanori Hariyama",
+        "ar": "مقابلة مع المستشار: نحو منصة حوسبة فائقة السرعة للجميع—ThinkX وجامعة توهوكو تتخيلان الحوسبة الفائقة باستخدام الذكاء الاصطناعي وFPGA: مقابلة مع الأستاذ ماسانوري هارياما"
+    },
+    "article_date": {
+        "ja": "2025年2月19日",
+        "en": "February 19, 2025",
+        "zh": "2025年2月19日",
+        "es": "19 de febrero de 2025",
+        "ru": "19 февраля 2025 года",
+        "fr": "19 février 2025",
+        "ar": "19 فبراير 2025"
+    },
+    "article_guest": {
+        "ja": "張山昌論 東北大学情報科学研究科知能集積学分野教授",
+        "en": "Masanori Hariyama, Professor of Intelligent Integrated Systems, Graduate School of Information Sciences, Tohoku University",
+        "zh": "张山昌论，东北大学信息科学研究科智能集成系统领域教授",
+        "es": "Masanori Hariyama, Profesor de Sistemas Integrados Inteligentes, Escuela de Posgrado de Ciencias de la Información, Universidad de Tohoku",
+        "ru": "Масанори Харияма, профессор кафедры интеллектуальных интегрированных систем, Высшая школа информационных наук, Университет Тохоку",
+        "fr": "Masanori Hariyama, Professeur de systèmes intégrés intelligents, École supérieure des sciences de l’information, Université de Tohoku",
+        "ar": "ماسانوري هارياما، أستاذ أنظمة التكامل الذكي، كلية الدراسات العليا لعلوم المعلومات، جامعة توهوكو"
+    },
+    "article_intro": {
+        "ja": "今回、スーパーコンピューティングのための集積回路の一種であるFPGA(Field Programmable Gate Array)半導体の応用研究の第一人者であり、ThinkXの顧問を務めていただいている、東北大学知能集積学分野 張山教授にお話しを伺いました。",
+        "en": "This time, we spoke with Professor Masanori Hariyama from the Intelligent Integrated Systems field at Tohoku University, a leading expert in the applied research of FPGA (Field Programmable Gate Array) semiconductors—a type of integrated circuit for supercomputing—and an advisor to ThinkX.",
+        "zh": "这次，我们采访了东北大学智能集成系统领域的张山昌论教授，他是超级计算用集成电路FPGA（现场可编程门阵列）半导体应用研究的顶尖专家，也是ThinkX的顾问。",
+        "es": "En esta ocasión, hablamos con el profesor Masanori Hariyama, del campo de Sistemas Integrados Inteligentes de la Universidad de Tohoku, un experto líder en la investigación aplicada de semiconductores FPGA (Field Programmable Gate Array), un tipo de circuito integrado para supercomputación, y asesor de ThinkX.",
+        "ru": "На этот раз мы побеседовали с профессором Масанори Хариямой из области интеллектуальных интегрированных систем Университета Тохоку, ведущим экспертом в области прикладных исследований полупроводников FPGA (Field Programmable Gate Array) — типа интегральных схем для суперкомпьютинга, а также советником ThinkX.",
+        "fr": "Cette fois, nous avons discuté avec le professeur Masanori Hariyama, du domaine des systèmes intégrés intelligents de l’Université de Tohoku, un expert de premier plan dans la recherche appliquée sur les semi-conducteurs FPGA (Field Programmable Gate Array), un type de circuit intégré pour le calcul intensif, et conseiller de ThinkX.",
+        "ar": "في هذه المرة، تحدثنا مع الأستاذ ماسانوري هارياما من مجال الأنظمة المتكاملة الذكية في جامعة توهوكو، وهو خبير رائد في أبحاث التطبيقات لأشباه الموصلات FPGA (مصفوفة البوابات القابلة للبرمجة الميدانية)، وهي نوع من الدوائر المتكاملة للحوسبة الفائقة، ومستشار لـThinkX."
+    },
+    "article_conversation": {
+        "ja": [
+            {
+              "speaker": "大塚一輝（以下大塚）",
+              "text": "本日は、ThinkXのプロジェクト<strong>「先端研究におけるリアルタイム・ビッグデータ解析のための動的アクセラレータ<sup>*1</sup>・システム」</strong>、わかりやすく言えば、<strong>\"AI+専用半導体によるスーパーコンピュータ \"</strong>のコラボレーターで、アドバイザーの東北大学の張山教授にお話しを伺います。\n\nこのプロジェクトは、高等研究のためのコンピューティング・プラットフォームであるVNマシン・クラウドの重要な機能として開発を進めています。\nその目的は、複雑なデータ処理を民主化すること。<strong>果てしなく続く巨大望遠鏡の画像ストリーム（テラバイト級の星のデータを想像してみてください）の処理、量子化学、DNA配列決定のためのリアルタイム分析</strong>といったタスクを対象として、\n現在は、専門家がカスタムメイドでこれらのソリューションを構築していますが、私たちの目標は、その扉を大きく開くことです。<strong>コンピューティングのノウハウを持たない研究者でも、半年かかる計算を3日で終わらせたり、電気代を半分に減らしたりする</strong>ことを想像してみてください。\n特に、気候モデリングや持続可能なエネルギーのような、大規模で横断的な課題に、このソリューションが価値をもつと私たちは考えています。 \nまず始めに、張山教授のご専門分野と最近のプロジェクトについてお聞かせください。"
+            },
+            {
+              "speaker": "張山昌論教授（以下、張山）",
+              "text": "私の専門はFPGAを用いた応用特化型スーパーコンピュータです。FPGAとは，Field-Programmable Gate Arraysの略です。これは半導体の一種で、チップを作った後でも、プログラムで回線や演算機の機能などを切り替えることによって、再プログラムが可能です。このような柔軟性により、例えば、特定のプロセスのスピードアップや電力使用量の削減などが必要なときに利用されます。また，FPGAではプログラムを変えることにより，様々な応用に対応できるため，1種類のチップを大量に生産することができ，チップの製造コストを大幅に低減できます。\n我々の開発事例としては，量子アニーリングのためのソルバーですとか、ゲート型量子コンピューターのシミュレーション、自然言語処理，DNAシーケンサーなどがあります。\nこのようなメリットがあるFPGAですが，汎用のCPUやGPUとは異なり，応用処理に最適な回路を設計することは必ずしも容易ではありません。"
+            },
+            {
+                "image": "fpgademo.png",
+                "caption": "H.266符号化・復号化アルゴリズムを大きな動画にリアルタイム処理したもの。(画像提供: 張山研究室)"
+            },
+            {
+              "speaker": "大塚",
+              "text": "FPGAの技術はかなり進歩しましたよね。ザイリンクスは2012年に買収され、アルテラは2022年に買収されました。私たちのアプローチは、FPGAと大規模言語モデル、つまりAIを組み合わせて、計算の定型パターンを見つけることです。OpenCLやC++のような詳細な言語ですべてを記述する代わりに、私たちはより高レベルの言語を構築します。このアイデアは、システムが正しい計算の適用方法を自ら見つけ出すように、プロセスを自動化することです。それがFPGAでどのように機能するか、詳しく教えてください。"
+            },
+            {
+              "speaker": "張山",
+              "text": "FPGAでの計算の最適化といえば、空間的並列とパイプラインという2つの大きなパターンに集約されます。空間的並列とは、複数のワーカーが同じタスクを並行して行うようなもので、複数のユニットが異なるデータに対して同じタスクを同時に行う処理です。一方、パイプライン処理は，工場の組み立てラインのようなもので、あるワーカーが結果を次のワーカーに渡し、それぞれが異なるタスクを行うことで、異なるタスクが並列に実行されます。実際には、この2つを組み合わせ有益なアーキテクチャパターンを作ります。例えば、パイプラインの，あるステージで空間並列を使用する場合もあるし、空間的並列処理，パイプライン同士をネストさせるかもしれない。あるジョブに最適な並列処理のパターンを組み合わせを見つけ出すのがポイントになってきます。\n\n実際の設計では，全体の処理をタスクに分割し，各タスクがCPU、GPU、FPGAのどれに適しているかを判断する必要があります。そのために，私たちは、各タスクが、どのような並列性を持っていて，どれだけ並列化できるか，あるステップがどれだけ他のステップに依存しているかなどを分析します。これまでの経験から，タスクの処理のパターンは，いくつかに分類されることが分かっています。このパターンに基づくアーキテクチャのテンプレート（青写真のようなもの）から始めて、そこから微調整していきます。"
+            },
+            {
+                "image": "2FPGA.png",
+                "caption": "チップ同士を連結させることで大規模データにスケールアップできる。(画像提供: 張山研究室)"
+            },
+            {
+              "speaker": "大塚",
+              "text": "つまり、ある程度パターンが標準化されたとしても、特定のタスクのために微調整する必要があるということですね？そのチューニングをスムーズに行えるようになるまで、どのような点がネックになるでしょうか？"
+            },
+            {
+              "speaker": "張山",
+              "text": "一度にどれだけのデータが入ってくるのか、どれだけのスピードで処理する必要があるのかといった制約条件にもよります。入ってくるデータを見て、\"このようなワークロードなら、このように最適化する \"と判断するようにシステムをプログラミングする。データフローが重ければパイプラインの深さを深くし、広範囲であれば空間ユニットを増やす。このようなロジックを十分に組み込めば、システムは自動的に適応し、調整することができると考えています。C言語のプログラムからFPGA回路の合成には，10時間ぐらいかかる場合もあります。このコンパイル時間を減らすためにも、アルテラジャパンの方々とも連携し、部分再構成をOneAPI<sup>*2</sup>に盛り込むなど、技術提供も含めてコラボレートしていくことでFPGA設計を効率化できるはずです。"
+            },
+            {
+              "image": "performance.png",
+              "caption": "GPUとの比較ベンチマーク。複数のFPGAを接続することで線形にパフォーマンスが向上し、たった2枚でもGPUを大きく超える処理能力に達している。(画像提供: 張山研究室)"
+            },
+            {
+              "speaker": "大塚",
+              "text": "もうひとつ特筆すべきだと思うのは、FPGAを連結できるスケーラビリティです。複数のチップをつなげば、1つの巨大な回路のように機能しますよね。私たちのクラウド・セットアップでは、コンピューティング・インスタンスを提供し、ユーザーは複数のユニットでこの機能を利用することができることを意味します。どのような展開が予想されますか？"
+            },
+            {
+              "speaker": "張山",
+              "text": "FPGAの強みのひとつは、スケールアップが非常に簡単なことです。ケーブルでつないでセットアップを調整するだけです。これは実はあまり知られていません。例えば、巨大なグラフ構造や、気候モデル用の1万×1万グリッドの巨大な行列計算、量子化学のような1兆分の1から兆分の1までの数字を扱う4倍精度の計算が必要な場合。CPUやGPUは、問題が大きくなるにつれて速度が低下します。しかしFPGAでは、割と簡単に、<strong>複数個をケーブルで接続すれば、1つの巨大なチップのように動作します</strong>。ほとんどシームレスで、規模が大きくなっても速度が落ちることはない。科学計算や特殊なタスクにとっては、これは画期的なことです。"
+            },
+            {
+              "speaker": "大塚",
+              "text": "本当にそうです。張山先生、貴重なお話をありがとうございました。今後もよろしくお願いします。"
+            },
+            {
+               "footnote": "<sup>*1</sup> 動的アクセラレータ: 計算の内容に応じてプロセッサの構成を動的に切り替え、処理速度や電力効率を高める技術\n<sup>*2</sup> OneAPI: Intelが開発するハードウェアプログラム用のオープンな言語。"
+            } 
+          ],
+        "en": [
+          {
+            "speaker": "Kazuki Otsuka (hereinafter Otsuka)",
+            "text": "Today, we are speaking with Professor Masanori Hariyama from Tohoku University, a collaborator and advisor on ThinkX’s project <strong>'Dynamic Accelerator<sup>*1</sup> System for Real-Time Big Data Analysis in Advanced Research'</strong>—or, in simpler terms, <strong>'a supercomputer powered by AI and specialized semiconductors.'</strong>\n\nThis project is being developed as a key feature of the VN Machine Cloud, a computing platform for advanced research. The goal is to democratize complex data processing. Think of tasks like <strong>handling endless streams of images from giant telescopes (imagine terabytes of star data), real-time analysis for quantum chemistry, and DNA sequencing</strong>. Currently, experts custom-build these solutions, but our aim is to fling that door wide open. Imagine <strong>researchers without computing expertise finishing calculations that take six months in just three days or cutting electricity costs in half</strong>. We believe this solution holds particular value for large-scale, interdisciplinary challenges like climate modeling or sustainable energy.\nTo start, Professor Hariyama, could you tell us about your expertise and recent projects?"
+          },
+          {
+            "speaker": "Professor Masanori Hariyama (hereinafter Hariyama)",
+            "text": "My expertise lies in application-specific supercomputers using FPGAs. FPGA stands for Field-Programmable Gate Arrays. It’s a type of semiconductor that can be reprogrammed after manufacturing by altering its circuitry or computational functions through programming. This flexibility makes it useful when, for instance, you need to speed up specific processes or reduce power consumption. Moreover, by changing the program, FPGAs can adapt to various applications, allowing mass production of a single chip type, which significantly cuts manufacturing costs.\nExamples of our developments include solvers for quantum annealing, simulations of gate-based quantum computers, natural language processing, and DNA sequencers.\nWhile FPGAs offer these advantages, designing circuits optimized for specific applications isn’t always straightforward, unlike general-purpose CPUs or GPUs."
+          },
+          {
+            "image": "fpgademo.png",
+            "caption": "Real-time processing of the H.266 encoding/decoding algorithm on large video files. (Image provided by: Hariyama Laboratory)"
+          },
+          {
+            "speaker": "Otsuka",
+            "text": "FPGA technology has come a long way, hasn’t it? Xilinx was acquired in 2012, and Altera in 2022. Our approach combines FPGAs with large-scale language models—AI, essentially—to identify standardized computational patterns. Instead of writing everything in detailed languages like OpenCL or C++, we’re building a higher-level language. The idea is to automate the process so the system figures out the right way to apply computations on its own. Could you explain in detail how that works with FPGAs?"
+          },
+          {
+            "speaker": "Hariyama",
+            "text": "Optimization in FPGA computing boils down to two major patterns: spatial parallelism and pipelining. Spatial parallelism is like having multiple workers doing the same task concurrently—several units perform the same task on different data simultaneously. Pipelining, on the other hand, is like a factory assembly line: one worker passes results to the next, with each handling a different task, allowing multiple tasks to run in parallel. In practice, we combine these to create beneficial architectural patterns. For example, we might use spatial parallelism within a pipeline stage or nest pipelines within spatial parallelism. The key is finding the optimal combination of these patterns for a given job.\n\nIn actual design, we break the entire process into tasks and decide which are best suited for CPUs, GPUs, or FPGAs. To do this, we analyze each task’s parallelism, how much it can be parallelized, and how dependent one step is on another. From experience, we’ve found that task processing patterns fall into a few categories. We start with architecture templates based on these patterns—like blueprints—and fine-tune from there."
+          },
+          {
+            "image": "2FPGA.png",
+            "caption": "Scaling up to large datasets by linking chips together. (Image provided by: Hariyama Laboratory)"
+          },
+          {
+            "speaker": "Otsuka",
+            "text": "So, even if patterns are somewhat standardized, fine-tuning is still needed for specific tasks. What are the bottlenecks in making that tuning smoother?"
+          },
+          {
+            "speaker": "Hariyama",
+            "text": "It depends on constraints like how much data comes in at once and how fast it needs to be processed. We program the system to look at incoming data and decide, 'For this workload, optimize this way.' If the data flow is heavy, we deepen the pipeline; if it’s broad, we add more spatial units. With enough of this logic built in, the system can adapt and adjust automatically. Synthesizing FPGA circuits from C code can take around 10 hours in some cases. To reduce this compilation time, we’re collaborating with Altera Japan, integrating partial reconfiguration into OneAPI<sup>*2</sup> and providing technical contributions to streamline FPGA design."
+          },
+          {
+            "image": "performance.png",
+            "caption": "Benchmark comparison with GPUs. Connecting multiple FPGAs results in linear performance improvements, surpassing GPU capabilities with just two units. (Image provided by: Hariyama Laboratory)"
+          },
+          {
+            "speaker": "Otsuka",
+            "text": "Another thing I think is worth noting is the scalability of linking FPGAs. Connecting multiple chips makes them function like one giant circuit, right? In our cloud setup, this means we provide computing instances where users can leverage this across multiple units. What developments do you foresee?"
+          },
+          {
+            "speaker": "Hariyama",
+            "text": "One of FPGA’s strengths is how easy it is to scale up—just connect them with cables and tweak the setup. This isn’t widely known. For example, with massive graph structures, huge matrix calculations for climate models (think 10,000 x 10,000 grids), or quadruple-precision computations for quantum chemistry dealing with numbers from trillionths to trillions, CPUs and GPUs slow down as problems grow. But with FPGAs, <strong>connecting multiple units with cables makes them act like one giant chip</strong>. It’s nearly seamless, and speed doesn’t drop as scale increases. For scientific computing or specialized tasks, this is revolutionary."
+          },
+          {
+            "speaker": "Otsuka",
+            "text": "Absolutely. Professor Hariyama, thank you for this valuable discussion. We look forward to continued collaboration."
+          },
+          {
+            "footnote": "<sup>*1</sup> Dynamic Accelerator: Technology that dynamically reconfigures processor setups based on computation needs, improving speed and power efficiency.\n<sup>*2</sup> OneAPI: An open language for hardware programming developed by Intel."
+          }
+        ],
+        "zh": [
+          {
+            "speaker": "大塚一辉（以下简称大塚）",
+            "text": "今天，我们将与东北大学的张山昌论教授交谈，他是ThinkX项目<strong>“用于尖端研究的实时大数据解析的动态加速器<sup>*1</sup>系统”</strong>——简单来说，<strong>“人工智能+专用半导体驱动的超级计算机”</strong>的合作者和顾问。\n\n该项目是作为高级研究计算平台VN机器云的重要功能而开发的。其目标是使复杂的处理数据民主化。设想一下处理<strong>巨型望远镜的无限图像流（想象太字节级的星星数据）、量子化学和DNA测序的实时分析</strong>等任务。目前，专家们为这些解决方案定制开发，但我们的目标是大开方便之门。想象一下，即使是没有计算专长的研究人员，也能将需要六个月的计算在三天内完成，或者将电费减半。我们认为，这种解决方案在大规模、跨学科的挑战中，如气候建模或可持续能源，尤为有价值。\n首先，张山教授能否介绍一下您的专业领域和最近的项目？"
+          },
+          {
+            "speaker": "张山昌论教授（以下简称张山）",
+            "text": "我的专长是使用FPGA的应用专用超级计算机。FPGA是Field-Programmable Gate Arrays的缩写。这是一种半导体，即使在制造后，也可以通过编程更改其电路或计算功能来重新编程。这种灵活性使得它在需要加速特定过程或减少功耗时非常有用。此外，通过更改程序，FPGA可以适应各种应用，从而可以大量生产单一类型的芯片，大幅降低制造成本。\n我们的开发案例包括量子退火的求解器、门控量子计算机的模拟、自然语言处理和DNA测序仪等。\n尽管FPGA有这些优势，但与通用的CPU或GPU不同，设计针对特定应用优化的电路并不总是容易的。"
+          },
+          {
+            "image": "fpgademo.png",
+            "caption": "对大型视频文件实时处理H.266编码/解码算法。（图片提供：张山研究室）"
+          },
+          {
+            "speaker": "大塚",
+            "text": "FPGA技术已经取得了很大进步，对吧？Xilinx在2012年被收购，Altera在2022年被收购。我们的方法是将FPGA与大规模语言模型（也就是AI）相结合，找到计算的标准化模式。我们不是用OpenCL或C++这样的详细语言编写一切，而是构建更高级的语言。这个想法是自动化流程，让系统自己找出正确的计算应用方法。这在FPGA上是如何运作的，能否详细说明？"
+          },
+          {
+            "speaker": "张山",
+            "text": "FPGA的计算优化可以归结为两种主要模式：空间并行和流水线。空间并行就像多个工人同时执行相同任务——多个单元同时对不同数据执行相同任务。而流水线处理就像工厂的装配线，一个工人将结果传递给下一个工人，每人执行不同任务，从而并行运行多个任务。实际上，我们将这两者结合起来，创建有益的架构模式。例如，我们可能在流水线的某个阶段使用空间并行，或者将流水线嵌套在空间并行中。关键是找到适合特定工作的并行处理模式的组合。\n\n在实际设计中，我们将整个过程分解为任务，并判断哪些任务适合CPU、GPU或FPGA。为此，我们分析每个任务的并行性、并行程度以及一个步骤对另一个步骤的依赖程度。从经验来看，任务处理模式可以分为几类。我们从基于这些模式的架构模板（类似于蓝图）开始，然后进行微调。"
+          },
+          {
+            "image": "2FPGA.png",
+            "caption": "通过连接芯片实现对大规模数据的扩展。（图片提供：张山研究室）"
+          },
+          {
+            "speaker": "大塚",
+            "text": "所以，即使模式在某种程度上标准化了，仍然需要为特定任务进行微调，对吗？在使这种调整更顺畅之前，瓶颈在哪里？"
+          },
+          {
+            "speaker": "张山",
+            "text": "这取决于一次输入多少数据以及需要多快处理等约束条件。我们编程系统以查看输入数据，并判断“如果是这种工作负载，就这样优化”。如果数据流很重，我们加深流水线；如果范围很广，我们增加空间单元。如果充分融入这种逻辑，系统应该能够自动适应和调整。从C语言程序合成FPGA电路有时可能需要10小时。为了减少这种编译时间，我们与Altera日本团队合作，将部分重构融入OneAPI<sup>*2</sup>，通过技术协作来提高FPGA设计的效率。"
+          },
+          {
+            "image": "performance.png",
+            "caption": "与GPU的基准测试比较。连接多个FPGA可线性提升性能，仅用两块即可大幅超越GPU的处理能力。（图片提供：张山研究室）"
+          },
+          {
+            "speaker": "大塚",
+            "text": "我觉得另一个值得一提的是FPGA的可扩展性——连接多个芯片后，它们就像一个巨大的电路一样运行，对吗？在我们的云设置中，这意味着我们可以提供计算实例，用户可以通过多个单元使用此功能。您预测会有什么发展？"
+          },
+          {
+            "speaker": "张山",
+            "text": "FPGA的一个优势是扩展非常简单——只需用电缆连接并调整设置。这一点其实并不广为人知。例如，对于巨大的图结构、气候模型的10,000×10,000网格的大型矩阵计算，或量子化学中需要处理从万亿分之一到万亿的四倍精度计算，CPU和GPU随着问题规模的增加速度会下降。但对于FPGA，<strong>只需用电缆连接多个单元，它们就像一个巨大的芯片一样运行</strong>，几乎是无缝的，规模增大时速度也不会下降。对于科学计算或特殊任务来说，这是革命性的。"
+          },
+          {
+            "speaker": "大塚",
+            "text": "确实如此。张山教授，非常感谢您的宝贵见解。今后也请多多关照。"
+          },
+          {
+            "footnote": "<sup>*1</sup> 动态加速器：根据计算内容动态切换处理器配置，提高处理速度和能效的技术。\n<sup>*2</sup> OneAPI：英特尔开发的用于硬件编程的开放语言。"
+          }
+        ],
+        "es": [
+          {
+            "speaker": "Kazuki Otsuka (en adelante Otsuka)",
+            "text": "Hoy hablamos con el profesor Masanori Hariyama de la Universidad de Tohoku, colaborador y asesor del proyecto de ThinkX <strong>'Sistema de Acelerador Dinámico<sup>*1</sup> para el Análisis en Tiempo Real de Big Data en Investigación Avanzada'</strong>—o, en términos más simples, <strong>'una supercomputadora impulsada por IA y semiconductores especializados'</strong>.\n\nEste proyecto se está desarrollando como una función clave de VN Machine Cloud, una plataforma de cómputo para investigación avanzada. El objetivo es democratizar el procesamiento de datos complejos. Piense en tareas como <strong>manejar flujos interminables de imágenes de telescopios gigantes (imagine terabytes de datos estelares), análisis en tiempo real para química cuántica y secuenciación de ADN</strong>. Actualmente, los expertos construyen estas soluciones a medida, pero nuestro objetivo es abrir esa puerta de par en par. Imagine <strong>investigadores sin experiencia en cómputo terminando cálculos que toman seis meses en solo tres días o reduciendo los costos de electricidad a la mitad</strong>. Creemos que esta solución tiene un valor especial para desafíos interdisciplinarios y a gran escala como el modelado climático o la energía sostenible.\nPara empezar, profesor Hariyama, ¿podría contarnos sobre su especialidad y proyectos recientes?"
+          },
+          {
+            "speaker": "Profesor Masanori Hariyama (en adelante Hariyama)",
+            "text": "Mi especialidad son las supercomputadoras específicas para aplicaciones utilizando FPGAs. FPGA significa Field-Programmable Gate Arrays. Es un tipo de semiconductor que se puede reprogramar después de fabricado al alterar sus circuitos o funciones computacionales mediante programación. Esta flexibilidad lo hace útil cuando, por ejemplo, necesitas acelerar procesos específicos o reducir el consumo de energía. Además, al cambiar el programa, los FPGAs pueden adaptarse a diversas aplicaciones, permitiendo la producción en masa de un solo tipo de chip, reduciendo significativamente los costos de fabricación.\nEjemplos de nuestros desarrollos incluyen solucionadores para recocido cuántico, simulaciones de computadoras cuánticas de puertas, procesamiento de lenguaje natural y secuenciadores de ADN.\nAunque los FPGAs ofrecen estas ventajas, diseñar circuitos optimizados para aplicaciones específicas no siempre es fácil, a diferencia de las CPUs o GPUs de propósito general."
+          },
+          {
+            "image": "fpgademo.png",
+            "caption": "Procesamiento en tiempo real del algoritmo de codificación/decodificación H.266 en archivos de video grandes. (Imagen proporcionada por: Laboratorio Hariyama)"
+          },
+          {
+            "speaker": "Otsuka",
+            "text": "La tecnología FPGA ha avanzado mucho, ¿verdad? Xilinx fue adquirida en 2012 y Altera en 2022. Nuestro enfoque combina FPGAs con modelos de lenguaje a gran escala—es decir, IA—para identificar patrones computacionales estandarizados. En lugar de escribir todo en lenguajes detallados como OpenCL o C++, estamos construyendo un lenguaje de nivel superior. La idea es automatizar el proceso para que el sistema descubra por sí mismo la manera correcta de aplicar los cálculos. ¿Podría explicar en detalle cómo funciona eso con los FPGAs?"
+          },
+          {
+            "speaker": "Hariyama",
+            "text": "La optimización en la computación con FPGA se reduce a dos patrones principales: paralelismo espacial y tuberías (pipelining). El paralelismo espacial es como tener varios trabajadores haciendo la misma tarea al mismo tiempo—varias unidades realizan la misma tarea en diferentes datos simultáneamente. El pipelining, por otro lado, es como una línea de ensamblaje en una fábrica: un trabajador pasa los resultados al siguiente, cada uno manejando una tarea diferente, permitiendo que varias tareas se ejecuten en paralelo. En la práctica, combinamos estos para crear patrones arquitectónicos beneficiosos. Por ejemplo, podríamos usar paralelismo espacial dentro de una etapa de la tubería o anidar tuberías dentro del paralelismo espacial. La clave está en encontrar la combinación óptima de estos patrones para un trabajo dado.\n\nEn el diseño real, dividimos todo el proceso en tareas y decidimos cuáles son más adecuadas para CPUs, GPUs o FPGAs. Para esto, analizamos el paralelismo de cada tarea, cuánto se puede paralelizar y cuánto depende un paso de otro. Por experiencia, hemos descubierto que los patrones de procesamiento de tareas se dividen en unas pocas categorías. Comenzamos con plantillas de arquitectura basadas en estos patrones—como planos—y ajustamos desde ahí."
+          },
+          {
+            "image": "2FPGA.png",
+            "caption": "Escalado a grandes conjuntos de datos mediante la conexión de chips. (Imagen proporcionada por: Laboratorio Hariyama)"
+          },
+          {
+            "speaker": "Otsuka",
+            "text": "Entonces, aunque los patrones estén algo estandarizados, aún se necesita ajustar para tareas específicas, ¿correcto? ¿Cuáles son los cuellos de botella para hacer ese ajuste más fluido?"
+          },
+          {
+            "speaker": "Hariyama",
+            "text": "Depende de restricciones como cuántos datos entran a la vez y qué tan rápido necesitan procesarse. Programamos el sistema para que mire los datos entrantes y decida, 'Para esta carga de trabajo, optimiza de esta manera'. Si el flujo de datos es pesado, profundizamos la tubería; si es amplio, añadimos más unidades espaciales. Con suficiente lógica incorporada, el sistema puede adaptarse y ajustarse automáticamente. Sintetizar circuitos FPGA desde código C puede tomar unas 10 horas en algunos casos. Para reducir este tiempo de compilación, colaboramos con Altera Japón, integrando reconfiguración parcial en OneAPI<sup>*2</sup> y aportando tecnología para agilizar el diseño de FPGAs."
+          },
+          {
+            "image": "performance.png",
+            "caption": "Comparación de rendimiento con GPUs. Conectar múltiples FPGAs mejora el rendimiento linealmente, superando ampliamente a las GPUs con solo dos unidades. (Imagen proporcionada por: Laboratorio Hariyama)"
+          },
+          {
+            "speaker": "Otsuka",
+            "text": "Otra cosa que creo que vale la pena destacar es la escalabilidad de conectar FPGAs. Unir varios chips los hace funcionar como un circuito gigante, ¿verdad? En nuestra configuración en la nube, esto significa que ofrecemos instancias de cómputo donde los usuarios pueden aprovechar esto en múltiples unidades. ¿Qué desarrollos prevé?"
+          },
+          {
+            "speaker": "Hariyama",
+            "text": "Una de las fortalezas de los FPGAs es lo fácil que es escalarlos—solo hay que conectarlos con cables y ajustar la configuración. Esto no es muy conocido. Por ejemplo, con estructuras de gráficos masivos, cálculos de matrices enormes para modelos climáticos (piense en cuadrículas de 10,000 x 10,000), o cómputos de precisión cuádruple para química cuántica manejando números desde billonésimas hasta billones, las CPUs y GPUs se ralentizan a medida que crece el problema. Pero con FPGAs, <strong>conectar varias unidades con cables las hace actuar como un chip gigante</strong>. Es casi sin fisuras, y la velocidad no disminuye con la escala. Para la computación científica o tareas especializadas, esto es revolucionario."
+          },
+          {
+            "speaker": "Otsuka",
+            "text": "Totalmente de acuerdo. Profesor Hariyama, gracias por esta valiosa conversación. Esperamos seguir colaborando."
+          },
+          {
+            "footnote": "<sup>*1</sup> Acelerador Dinámico: Tecnología que reconfigura dinámicamente las configuraciones del procesador según las necesidades de cómputo, mejorando la velocidad y la eficiencia energética.\n<sup>*2</sup> OneAPI: Un lenguaje abierto para programación de hardware desarrollado por Intel."
+          }
+        ],
+        "ru": [
+          {
+            "speaker": "Казуки Оцука (далее Оцука)",
+            "text": "Сегодня мы беседуем с профессором Масанори Хариямой из Университета Тохоку, соавтором и советником проекта ThinkX <strong>'Динамическая система ускорителей<sup>*1</sup> для анализа больших данных в реальном времени в передовых исследованиях'</strong> — или, проще говоря, <strong>'суперкомпьютер на базе ИИ и специализированных полупроводников'</strong>.\n\nЭтот проект разрабатывается как ключевая функция облака VN Machine Cloud, платформы вычислений для передовых исследований. Цель — сделать сложную обработку данных доступной для всех. Представьте задачи вроде <strong>обработки бесконечных потоков изображений с гигантских телескопов (представьте терабайты данных о звездах), анализа в реальном времени для квантовой химии и секвенирования ДНК</strong>. Сейчас эксперты создают эти решения на заказ, но наша цель — широко распахнуть эту дверь. Представьте себе <strong>исследователей без знаний в области вычислений, завершающих расчёты, которые занимают полгода, всего за три дня или сокращающих расходы на электроэнергию вдвое</strong>. Мы считаем, что это решение особенно ценно для крупномасштабных междисциплинарных задач, таких как моделирование климата или устойчивая энергетика.\nДля начала, профессор Харияма, расскажите о вашей специальности и последних проектах."
+          },
+          {
+            "speaker": "Профессор Масанори Харияма (далее Харияма)",
+            "text": "Моя специальность — суперкомпьютеры для конкретных приложений с использованием FPGA. FPGA — это сокращение от Field-Programmable Gate Arrays. Это тип полупроводника, который можно перепрограммировать после производства, изменяя его схемы или вычислительные функции через программирование. Такая гибкость делает его полезным, например, когда нужно ускорить определённые процессы или снизить энергопотребление. Кроме того, изменяя программу, FPGA можно адаптировать к различным приложениям, что позволяет массово производить один тип чипа, значительно снижая затраты на производство.\nПримеры наших разработок включают солверы для квантового отжига, симуляции квантовых компьютеров на основе вентилей, обработку естественного языка и секвенсоры ДНК.\nХотя у FPGA есть эти преимущества, проектирование схем, оптимизированных для конкретных приложений, не всегда просто, в отличие от универсальных процессоров или графических процессоров."
+          },
+          {
+            "image": "fpgademo.png",
+            "caption": "Обработка в реальном времени алгоритма кодирования/декодирования H.266 на больших видеофайлах. (Изображение предоставлено: лаборатория Хариямы)"
+          },
+          {
+            "speaker": "Оцука",
+            "text": "Технология FPGA сильно продвинулась, верно? Xilinx был приобретён в 2012 году, а Altera — в 2022. Наш подход сочетает FPGA с крупномасштабными языковыми моделями — по сути, ИИ — для поиска стандартных вычислительных паттернов. Вместо того чтобы описывать всё в детальных языках вроде OpenCL или C++, мы создаём язык более высокого уровня. Идея в том, чтобы автоматизировать процесс, чтобы система сама определяла правильный способ применения вычислений. Как это работает с FPGA, можете объяснить подробнее?"
+          },
+          {
+            "speaker": "Харияма",
+            "text": "Оптимизация вычислений в FPGA сводится к двум основным паттернам: пространственный параллелизм и конвейерная обработка. Пространственный параллелизм — это как несколько рабочих, выполняющих одну задачу одновременно: несколько блоков выполняют одну и ту же задачу над разными данными параллельно. Конвейерная обработка, напротив, похожа на сборочную линию на заводе: один рабочий передаёт результат следующему, каждый выполняет разные задачи, что позволяет параллельно выполнять несколько задач. На практике мы комбинируем эти подходы, чтобы создать полезные архитектурные паттерны. Например, мы можем использовать пространственный параллелизм на определённом этапе конвейера или вкладывать конвейеры в пространственный параллелизм. Ключ в том, чтобы найти оптимальную комбинацию этих паттернов для конкретной задачи.\n\nВ реальном проектировании мы разбиваем весь процесс на задачи и определяем, какие из них лучше подходят для процессоров, графических процессоров или FPGA. Для этого мы анализируем параллелизм каждой задачи, степень её параллелизации и зависимость одного шага от другого. По опыту, паттерны обработки задач делятся на несколько категорий. Мы начинаем с шаблонов архитектуры, основанных на этих паттернах — своего рода чертежей — и дорабатываем их."
+          },
+          {
+            "image": "2FPGA.png",
+            "caption": "Масштабирование для больших наборов данных путём соединения чипов. (Изображение предоставлено: лаборатория Хариямы)"
+          },
+          {
+            "speaker": "Оцука",
+            "text": "То есть, даже если паттерны в какой-то степени стандартизированы, всё равно нужно их подстраивать под конкретные задачи, верно? Какие узкие места мешают сделать эту настройку более плавной?"
+          },
+          {
+            "speaker": "Харияма",
+            "text": "Это зависит от ограничений, таких как объём поступающих данных и скорость, с которой их нужно обработать. Мы программируем систему так, чтобы она смотрела на входные данные и решала: «Для такой нагрузки оптимизируй вот так». Если поток данных тяжёлый, мы углубляем конвейер; если он широкий, добавляем больше пространственных блоков. Если встроить достаточно такой логики, система сможет автоматически адаптироваться и корректироваться. Синтез схем FPGA из кода на C иногда занимает около 10 часов. Чтобы сократить это время компиляции, мы сотрудничаем с Altera Japan, внедряя частичную реконфигурацию в OneAPI<sup>*2</sup> и внося технический вклад для упрощения проектирования FPGA."
+          },
+          {
+            "image": "performance.png",
+            "caption": "Сравнение производительности с GPU. Соединение нескольких FPGA обеспечивает линейное улучшение, превосходя возможности GPU всего с двумя блоками. (Изображение предоставлено: лаборатория Хариямы)"
+          },
+          {
+            "speaker": "Оцука",
+            "text": "Ещё одна вещь, которую я считаю достойной внимания, — это масштабируемость соединения FPGA. Соединение нескольких чипов заставляет их работать как одну огромную схему, верно? В нашей облачной системе это означает, что мы предоставляем вычислительные экземпляры, где пользователи могут использовать эту функцию на нескольких блоках. Какие перспективы вы видите?"
+          },
+          {
+            "speaker": "Харияма",
+            "text": "Одно из преимуществ FPGA — это невероятная простота масштабирования: достаточно соединить их кабелями и настроить систему. Это не очень известно. Например, для массивных графовых структур, огромных матричных вычислений для климатических моделей (представьте сетку 10,000 × 10,000) или вычислений с четырёхкратной точностью для квантовой химии, где нужны числа от триллионных до триллионов, скорость процессоров и графических процессоров падает с ростом задачи. Но с FPGA <strong>соединение нескольких блоков кабелями позволяет им работать как одному гигантскому чипу</strong>. Это почти бесшовно, и скорость не снижается при увеличении масштаба. Для научных вычислений и специализированных задач это революционно."
+          },
+          {
+            "speaker": "Оцука",
+            "text": "Совершенно верно. Профессор Харияма, спасибо за ценную беседу. Надеемся на дальнейшее сотрудничество."
+          },
+          {
+            "footnote": "<sup>*1</sup> Динамический ускоритель: технология, которая динамически изменяет конфигурацию процессора в зависимости от вычислительных задач, повышая скорость и энергоэффективность.\n<sup>*2</sup> OneAPI: открытый язык для программирования оборудования, разработанный Intel."
+          }
+        ],
+        "fr": [
+          {
+            "speaker": "Kazuki Otsuka (ci-après Otsuka)",
+            "text": "Aujourd’hui, nous discutons avec le professeur Masanori Hariyama de l’Université de Tohoku, collaborateur et conseiller du projet de ThinkX <strong>'Système d’Accélérateur Dynamique<sup>*1</sup> pour l’Analyse en Temps Réel des Big Data dans la Recherche Avancée'</strong>—ou, plus simplement, <strong>'un superordinateur alimenté par l’IA et des semi-conducteurs spécialisés'</strong>.\n\nCe projet est développé comme une fonctionnalité clé du VN Machine Cloud, une plateforme de calcul pour la recherche avancée. L’objectif est de démocratiser le traitement des données complexes. Pensez à des tâches comme <strong>la gestion de flux incessants d’images provenant de télescopes géants (imaginez des téraoctets de données stellaires), l’analyse en temps réel pour la chimie quantique et le séquençage ADN</strong>. Actuellement, les experts construisent ces solutions sur mesure, mais notre ambition est d’ouvrir grand cette porte. Imaginez <strong>des chercheurs sans expertise en calcul terminant en trois jours des calculs qui prennent six mois ou réduisant de moitié les coûts d’électricité</strong>. Nous pensons que cette solution a une valeur particulière pour des défis interdisciplinaires à grande échelle comme la modélisation climatique ou l’énergie durable.\nPour commencer, professeur Hariyama, pourriez-vous nous parler de votre domaine d’expertise et de vos projets récents ?"
+          },
+          {
+            "speaker": "Professeur Masanori Hariyama (ci-après Hariyama)",
+            "text": "Mon expertise porte sur les superordinateurs spécifiques aux applications utilisant des FPGA. FPGA signifie Field-Programmable Gate Arrays. C’est un type de semi-conducteur qui peut être reprogrammé après fabrication en modifiant ses circuits ou ses fonctions de calcul par programmation. Cette flexibilité le rend utile lorsque, par exemple, vous devez accélérer des processus spécifiques ou réduire la consommation d’énergie. De plus, en changeant le programme, les FPGA peuvent s’adapter à diverses applications, permettant la production en masse d’un seul type de puce, ce qui réduit considérablement les coûts de fabrication.\nParmi nos développements, on trouve des solveurs pour le recuit quantique, des simulations d’ordinateurs quantiques à base de portes, le traitement du langage naturel et des séquenceurs ADN.\nBien que les FPGA offrent ces avantages, concevoir des circuits optimisés pour des applications spécifiques n’est pas toujours simple, contrairement aux CPU ou GPU à usage général."
+          },
+          {
+            "image": "fpgademo.png",
+            "caption": "Traitement en temps réel de l’algorithme de codage/décodage H.266 sur de gros fichiers vidéo. (Image fournie par : Laboratoire Hariyama)"
+          },
+          {
+            "speaker": "Otsuka",
+            "text": "La technologie FPGA a beaucoup progressé, n’est-ce pas ? Xilinx a été racheté en 2012, et Altera en 2022. Notre approche combine les FPGA avec des modèles de langage à grande échelle—l’IA, en somme—pour identifier des motifs de calcul standardisés. Plutôt que de tout écrire dans des langages détaillés comme OpenCL ou C++, nous construisons un langage de plus haut niveau. L’idée est d’automatiser le processus pour que le système trouve lui-même la bonne manière d’appliquer les calculs. Pouvez-vous expliquer en détail comment cela fonctionne avec les FPGA ?"
+          },
+          {
+            "speaker": "Hariyama",
+            "text": "L’optimisation des calculs avec les FPGA se résume à deux grands motifs : le parallélisme spatial et le pipelining. Le parallélisme spatial, c’est comme avoir plusieurs travailleurs effectuant la même tâche en même temps—plusieurs unités exécutent la même tâche sur différentes données simultanément. Le pipelining, en revanche, ressemble à une chaîne de montage en usine : un travailleur passe les résultats au suivant, chacun gérant une tâche différente, permettant ainsi d’exécuter plusieurs tâches en parallèle. En pratique, nous combinons ces deux approches pour créer des motifs architecturaux bénéfiques. Par exemple, nous pourrions utiliser le parallélisme spatial à une étape du pipeline ou imbriquer des pipelines dans le parallélisme spatial. La clé est de trouver la combinaison optimale de ces motifs pour une tâche donnée.\n\nDans la conception réelle, nous décomposons l’ensemble du processus en tâches et décidons lesquelles conviennent le mieux aux CPU, GPU ou FPGA. Pour cela, nous analysons le parallélisme de chaque tâche, son degré de parallélisation et la dépendance d’une étape par rapport à une autre. D’après notre expérience, les motifs de traitement des tâches se répartissent en quelques catégories. Nous partons de modèles architecturaux basés sur ces motifs—comme des plans—et les affinons à partir de là."
+          },
+          {
+            "image": "2FPGA.png",
+            "caption": "Mise à l’échelle pour de grands ensembles de données en reliant des puces. (Image fournie par : Laboratoire Hariyama)"
+          },
+          {
+            "speaker": "Otsuka",
+            "text": "Donc, même si les motifs sont quelque peu standardisés, il faut encore les ajuster pour des tâches spécifiques, c’est bien ça ? Quels sont les goulots d’étranglement pour rendre cet ajustement plus fluide ?"
+          },
+          {
+            "speaker": "Hariyama",
+            "text": "Cela dépend des contraintes, comme la quantité de données entrantes à la fois et la vitesse à laquelle elles doivent être traitées. Nous programmons le système pour qu’il examine les données entrantes et décide : « Pour cette charge de travail, optimise comme ceci ». Si le flux de données est lourd, nous approfondissons le pipeline ; s’il est large, nous ajoutons plus d’unités spatiales. Avec suffisamment de logique intégrée, le système peut s’adapter et s’ajuster automatiquement. La synthèse de circuits FPGA à partir de code C peut prendre environ 10 heures dans certains cas. Pour réduire ce temps de compilation, nous collaborons avec Altera Japan, en intégrant une reconfiguration partielle dans OneAPI<sup>*2</sup> et en apportant des contributions techniques pour rationaliser la conception des FPGA."
+          },
+          {
+            "image": "performance.png",
+            "caption": "Comparaison des performances avec les GPU. La connexion de plusieurs FPGA améliore les performances de manière linéaire, dépassant largement les GPU avec seulement deux unités. (Image fournie par : Laboratoire Hariyama)"
+          },
+          {
+            "speaker": "Otsuka",
+            "text": "Une autre chose que je trouve remarquable, c’est la scalabilité des FPGA connectés. Relier plusieurs puces les fait fonctionner comme un circuit géant, non ? Dans notre configuration cloud, cela signifie que nous fournissons des instances de calcul où les utilisateurs peuvent exploiter cette fonctionnalité sur plusieurs unités. Quels développements prévoyez-vous ?"
+          },
+          {
+            "speaker": "Hariyama",
+            "text": "L’un des atouts des FPGA est la facilité avec laquelle ils peuvent être mis à l’échelle—juste les connecter avec des câbles et ajuster la configuration. Ce n’est pas très connu. Par exemple, pour des structures de graphes massives, des calculs matriciels énormes pour des modèles climatiques (pensez à des grilles de 10 000 x 10 000), ou des calculs en quadruple précision pour la chimie quantique gérant des nombres allant de billionièmes à billions, les CPU et GPU ralentissent à mesure que le problème grandit. Mais avec les FPGA, <strong>connecter plusieurs unités avec des câbles les fait fonctionner comme une seule puce géante</strong>. C’est presque transparent, et la vitesse ne diminue pas avec l’échelle. Pour le calcul scientifique ou les tâches spécialisées, c’est révolutionnaire."
+          },
+          {
+            "speaker": "Otsuka",
+            "text": "Tout à fait. Professeur Hariyama, merci pour cette discussion précieuse. Nous avons hâte de poursuivre cette collaboration."
+          },
+          {
+            "footnote": "<sup>*1</sup> Accélérateur Dynamique : Technologie qui reconfigure dynamiquement les configurations des processeurs selon les besoins de calcul, améliorant la vitesse et l’efficacité énergétique.\n<sup>*2</sup> OneAPI : Un langage ouvert pour la programmation matérielle développé par Intel."
+          }
+        ],
+        "ar": [
+         {
+           "speaker": "كازوكي أوتسوكا (المشار إليه فيما بعد بـ أوتسوكا)",
+           "text": "اليوم، نتحدث مع البروفيسور ماسانوري هارياما من جامعة توهوكو، وهو متعاون ومستشار في مشروع ThinkX <strong>'نظام المسرّع الديناميكي<sup>*1</sup> لتحليل البيانات الضخمة في الوقت الحقيقي في الأبحاث المتقدمة'</strong>—أو، بمعنى أبسط، <strong>'حاسوب فائق مدعوم بالذكاء الاصطناعي وأشباه موصلات متخصصة'</strong>.\n\nيتم تطوير هذا المشروع كوظيفة رئيسية لسحابة VN Machine Cloud، وهي منصة حوسبة للأبحاث المتقدمة. الهدف هو جعل معالجة البيانات المعقدة متاحة للجميع. فكر في مهام مثل <strong>التعامل مع تدفقات الصور اللامتناهية من التلسكوبات العملاقة (تخيل تيرابايت من بيانات النجوم)، التحليل في الوقت الحقيقي للكيمياء الكمية وتسلسل الحمض النووي</strong>. حاليًا، يقوم الخبراء ببناء هذه الحلول حسب الطلب، لكن هدفنا هو فتح هذا الباب على مصراعيه. تخيل <strong>باحثين بدون خبرة في الحوسبة ينهون حسابات تستغرق ستة أشهر في ثلاثة أيام فقط أو يقللون تكاليف الكهرباء إلى النصف</strong>. نعتقد أن هذا الحل يحمل قيمة خاصة للتحديات واسعة النطاق وعابرة للتخصصات مثل نمذجة المناخ أو الطاقة المستدامة.\nللبدء، أستاذ هارياما، هل يمكنك أن تخبرنا عن مجال خبرتك ومشاريعك الأخيرة؟"
+         },
+         {
+           "speaker": "البروفيسور ماسانوري هارياما (المشار إليه فيما بعد بـ هارياما)",
+           "text": "تخصصي هو الحواسيب الفائقة المخصصة للتطبيقات باستخدام FPGA. FPGA تعني Field-Programmable Gate Arrays. إنه نوع من أشباه الموصلات التي يمكن إعادة برمجتها بعد التصنيع عن طريق تغيير دوائرها أو وظائفها الحسابية من خلال البرمجة. هذه المرونة تجعلها مفيدة عندما تحتاج، على سبيل المثال، إلى تسريع عمليات معينة أو تقليل استهلاك الطاقة. علاوة على ذلك، من خلال تغيير البرنامج، يمكن لـFPGA التكيف مع تطبيقات متنوعة، مما يسمح بإنتاج كميات كبيرة من نوع واحد من الرقائق، مما يقلل تكاليف التصنيع بشكل كبير.\nمن أمثلة تطويراتنا حلول للتلدين الكمي، محاكاة الحواسيب الكمية القائمة على البوابات، معالجة اللغة الطبيعية، وأجهزة تسلسل الحمض النووي.\nعلى الرغم من أن FPGA تقدم هذه المزايا، إلا أن تصميم الدوائر المُحسّنة لتطبيقات معينة ليس دائمًا سهلاً، على عكس وحدات المعالجة المركزية أو وحدات معالجة الرسوميات العامة."
+         },
+         {
+           "image": "fpgademo.png",
+           "caption": "معالجة في الوقت الحقيقي لخوارزمية الترميز/فك الترميز H.266 على ملفات فيديو كبيرة. (الصورة مقدمة من: مختبر هارياما)"
+         },
+         {
+           "speaker": "أوتسوكا",
+           "text": "تكنولوجيا FPGA قد تقدمت كثيرًا، أليس كذلك؟ تم الاستحواذ على Xilinx في عام 2012، وAltera في عام 2022. نهجنا يجمع بين FPGA ونماذج اللغة واسعة النطاق—أي الذكاء الاصطناعي—لاكتشاف أنماط حوسبة موحدة. بدلاً من كتابة كل شيء بلغات مفصلة مثل OpenCL أو C++، نحن نصمم لغة ذات مستوى أعلى. الفكرة هي أتمتة العملية بحيث يكتشف النظام بنفسه الطريقة الصحيحة لتطبيق الحسابات. هل يمكنك شرح كيف يعمل ذلك مع FPGA بالتفصيل؟"
+         },
+         {
+           "speaker": "هارياما",
+           "text": "تحسين الحوسبة في FPGA يتلخص في نمطين رئيسيين: التفرع المكاني والتدفق (pipelining). التفرع المكاني يشبه وجود عدة عمال يقومون بنفس المهمة في وقت واحد—عدة وحدات تنفذ نفس المهمة على بيانات مختلفة في نفس الوقت. أما التدفق فهو مثل خط التجميع في المصنع: يمرر عامل واحد النتائج إلى التالي، كل منهما يتعامل مع مهمة مختلفة، مما يسمح بتنفيذ عدة مهام بالتوازي. في الممارسة، نجمع بين هذين لخلق أنماط معمارية مفيدة. على سبيل المثال، قد نستخدم التفرع المكاني في مرحلة معينة من التدفق أو نداخل التدفقات ضمن التفرع المكاني. المفتاح هو إيجاد التركيبة المثلى لهذه الأنماط لمهمة معينة.\n\nفي التصميم الفعلي، نقسم العملية بأكملها إلى مهام ونقرر أيها مناسب أكثر للمعالجات المركزية أو وحدات معالجة الرسوميات أو FPGA. لذلك، نحلل توازي كل مهمة، ومدى قابليتها للتوازي، ومدى اعتماد خطوة على أخرى. من خلال الخبرة، اكتشفنا أن أنماط معالجة المهام تنقسم إلى فئات قليلة. نبدأ بقوالب معمارية تعتمد على هذه الأنماط—مثل المخططات—ونعدلها من هناك."
+         },
+         {
+           "image": "2FPGA.png",
+           "caption": "التوسع لمجموعات بيانات كبيرة عن طريق ربط الرقائق معًا. (الصورة مقدمة من: مختبر هارياما)"
+         },
+         {
+           "speaker": "أوتسوكا",
+           "text": "إذن، حتى لو كانت الأنماط موحدة إلى حد ما، لا تزال هناك حاجة لتعديلها لمهام معينة، صحيح؟ ما هي العوائق التي تجعل هذا التعديل أكثر سلاسة؟"
+         },
+         {
+           "speaker": "هارياما",
+           "text": "يعتمد ذلك على القيود مثل كمية البيانات الواردة في وقت واحد وسرعة المعالجة المطلوبة. نحن نبرمج النظام لينظر إلى البيانات الواردة ويقرر: 'بالنسبة لهذا العبء، حسّن بهذه الطريقة'. إذا كان تدفق البيانات ثقيلًا، نعمق التدفق؛ إذا كان واسع النطاق، نزيد الوحدات المكانية. مع وجود منطق كافٍ مدمج، يمكن للنظام أن يتكيف ويعدل تلقائيًا. قد تستغرق تركيب دوائر FPGA من برنامج بلغة C حوالي 10 ساعات في بعض الحالات. لتقليل وقت الترجمة هذا، نتعاون مع Altera Japan، مدمجين إعادة التهيئة الجزئية في OneAPI<sup>*2</sup> ونقدم مساهمات تقنية لتبسيط تصميم FPGA."
+         },
+         {
+           "image": "performance.png",
+           "caption": "مقارنة الأداء مع وحدات GPU. ربط عدة FPGA يؤدي إلى تحسينات خطية في الأداء، متجاوزًا قدرات GPU باستخدام وحدتين فقط. (الصورة مقدمة من: مختبر هارياما)"
+         },
+         {
+           "speaker": "أوتسوكا",
+           "text": "شيء آخر أعتقد أنه يستحق الذكر هو قابلية التوسع في ربط FPGA. ربط عدة رقائق يجعلها تعمل كدائرة عملاقة واحدة، أليس كذلك؟ في إعدادنا السحابي، هذا يعني أننا نوفر مثيلات حوسبة حيث يمكن للمستخدمين الاستفادة من هذه الوظيفة عبر وحدات متعددة. ما التطورات التي تتوقعها؟"
+         },
+         {
+           "speaker": "هارياما",
+           "text": "إحدى نقاط قوة FPGA هي سهولة التوسع—ما عليك سوى ربطها بكابلات وضبط الإعداد. هذا ليس معروفًا على نطاق واسع. على سبيل المثال، بالنسبة لهياكل الرسوم البيانية الضخمة، أو الحسابات المصفوفية الهائلة لنماذج المناخ (فكر في شبكات 10,000 × 10,000)، أو الحسابات ذات الدقة الرباعية للكيمياء الكمية التي تتعامل مع أرقام من تريليونات إلى تريليون، تبطئ المعالجات المركزية ووحدات معالجة الرسوميات مع زيادة حجم المشكلة. لكن مع FPGA، <strong>ربط عدة وحدات بكابلات يجعلها تعمل كرقاقة عملاقة واحدة</strong>. إنه شبه سلس، والسرعة لا تنخفض مع زيادة الحجم. بالنسبة للحوسبة العلمية أو المهام المتخصصة، هذا ثوري."
+         },
+         {
+           "speaker": "أوتسوكا",
+           "text": "بالفعل. أستاذ هارياما، شكرًا على هذا الحديث القيم. نتطلع إلى التعاون المستمر."
+         },
+         {
+           "footnote": "<sup>*1</sup> المسرّع الديناميكي: تقنية تعيد تهيئة تكوينات المعالج ديناميكيًا بناءً على احتياجات الحوسبة، مما يحسن السرعة وكفاءة الطاقة.\n<sup>*2</sup> OneAPI: لغة مفتوحة لبرمجة الأجهزة طورتها إنتل."
+         }
+        ]
+    },
+    "article_bio": {
+        "ja": "張山 昌論（はりやま・まさのり）\n博士（情報科学）。東北大学情報科学研究科知能集積学分野教授。FPGA(Field-Programmable Gate Arrays)を用いた応用特化型スーパーコンピューティングの国内第一人者。",
+        "en": "Masanori Hariyama\nPh.D. (Information Science). Professor at the Graduate School of Information Sciences, Intelligent Integrated Systems, Tohoku University. A leading expert in Japan on application-specific supercomputing using FPGA (Field-Programmable Gate Arrays).",
+        "zh": "张山昌论\n信息科学博士。东北大学信息科学研究科智能集成系统领域教授。日本使用FPGA（现场可编程门阵列）进行应用专用超级计算的顶尖专家。",
+        "es": "Masanori Hariyama\nDoctor en Ciencias de la Información. Profesor en la Escuela de Posgrado de Ciencias de la Información, Sistemas Integrados Inteligentes, Universidad de Tohoku. Experto líder en Japón en supercomputación específica para aplicaciones utilizando FPGA (Field-Programmable Gate Arrays).",
+        "ru": "Масанори Харияма\nДоктор наук (информатика). Профессор Высшей школы информационных наук, кафедра интеллектуальных интегрированных систем, Университет Тохоку. Ведущий эксперт в Японии по суперкомпьютингу для специфических приложений с использованием FPGA (Field-Programmable Gate Arrays).",
+        "fr": "Masanori Hariyama\nDocteur en sciences de l’information. Professeur à l’École supérieure des sciences de l’information, Systèmes intégrés intelligents, Université de Tohoku. Expert de premier plan au Japon en superinformatique spécifique aux applications utilisant des FPGA (Field-Programmable Gate Arrays).",
+        "ar": "ماسانوري هارياما\nدكتوراه في علوم المعلومات. أستاذ في كلية الدراسات العليا لعلوم المعلومات، أنظمة التكامل الذكي، جامعة توهوكو. خبير رائد في اليابان في الحوسبة الفائقة المخصصة للتطبيقات باستخدام FPGA (مصفوفة البوابات القابلة للبرمجة الميدانية)."
+    }
+ 
+}

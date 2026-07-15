@@ -1,0 +1,100 @@
+{% extends "NNTM/base.html" %}
+
+{% block head %}
+<script>
+    window.langOptions = {
+        'en': 'English',
+        'ja': '日本語',
+        'zh': '中文（简体）',
+        'fr': 'Français',
+        'de': 'Deutsch',
+        'es': 'Español',
+        'ar': 'العربية',
+        'ru': 'Русский',
+        'ko': '한국어'
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+<div id="NNTM_blog" class="blog">
+
+    <!-- Header (similar style to top.html) -->
+    <div class="header">
+        <div class="header_overlay"></div>
+        <div class="header_head">
+            {% include 'common/lang_selector.html' %}
+            <img class="header_olivewreath" src="/img/NNTM/top/olivewreath_{{ lang }}.png" alt="Olive Wreath">
+            <a href="/{{ lang }}/">
+                <img class="header_logo" src="/img/NNTM/top/logo.png" alt="Logo">
+            </a>
+        </div>
+        <div class="header_main">
+            <div class="main_left">
+                <div class="container">
+                    <!-- Page Title -->
+                    <h1 class="header_copy_sub">
+                        {{ locale_dict["page_title"][lang] | safe }}
+                    </h1>
+                </div>
+            </div>
+            <div class="header_bottom"></div>
+        </div>
+    </div>
+    <!-- End Header -->
+
+    <!-- Blog Content: use .article-page (from article_page.less) to center text and set layout -->
+    <div class="blog_content">
+        <!-- Optional secondary title or introduction -->
+        {#
+            <h2 class="title">
+                {{ locale_dict["some_optional_title"][lang] }}
+            </h2>
+            #}
+
+        <article class="article">
+        
+        {% for line in locale_dict.article[lang] %}
+            {% if 'head' in line %}
+                <!-- Render as a sub-heading -->
+                <h5 class="head">{{ line.head | safe }}</h5>
+            
+            {% elif 'image' in line and 'caption' in line %}
+                <!-- If there's a style property, apply it inline -->
+                <div class="image-container" {% if 'style' in line %} style="{{ line.style }}"{% endif %}>
+                    <img src="/img/NNTM/blog/{{ blog_id }}/{{ line.image }}" alt="{{ line.caption }}">
+                    <p class="caption">{{ line.caption  | replace('\n', '<br>') | safe }}</p>
+                </div>
+ 
+            {% elif 'footnote' in line %}
+                <!-- If the line has a 'footnote' key, render it -->
+                <div class="footnote-block">
+                    {{ line.footnote | replace('\n', '<br>') | safe }}
+                </div>
+            
+            {% else %}
+                <!-- Otherwise, render as normal text -->
+                <p class="article_text">
+                    {{ line.text | replace('\n', '<br>') | safe }}
+                </p>
+            {% endif %}
+        {% endfor %}
+        
+        </article>
+    </div>
+    <!-- End Blog Content -->
+
+    <div class="ad_section">
+    {% include 'NNTM/appbanner.html' %}
+    </div>
+
+
+    {% include 'NNTM/footer.html' %}
+</div>
+{% endblock %}
+
+{% block foot %}
+<script>
+    // Any additional scripts for this page
+</script>
+{% endblock %}

@@ -1,0 +1,72 @@
+{
+  "metadata_blog_2025-02-19-hr": {
+    "ja": {
+      "title": "張山昌論 東北大学情報科学研究科知能集積学分野教授がアドバイザーに就任",
+      "description": "張山昌論 東北大学情報科学研究科知能集積学分野教授がアドバイザーに就任",
+      "keywords": "ThinkX, アドバイザー, 顧問, 張山昌論, 東北大学"
+    },
+    "en": {
+      "title": "Professor Masanori Hariyama from Tohoku University's Graduate School of Information Sciences Joins as an Advisor",
+      "description": "Professor Masanori Hariyama from Tohoku University's Graduate School of Information Sciences is appointed as an advisor",
+      "keywords": "ThinkX, Advisor, Consultant, Masanori Hariyama, Tohoku University"
+    },
+    "zh": {
+      "title": "东北大学信息科学研究科智能集成学领域的张山昌论教授就任顾问",
+      "description": "东北大学信息科学研究科智能集成学领域的张山昌论教授正式担任本公司的顾问",
+      "keywords": "ThinkX, 顾问, 张山昌论, 东北大学"
+    },
+    "es": {
+      "title": "El profesor Masanori Hariyama de la Escuela de Ciencias de la Información de la Universidad de Tohoku se une como asesor",
+      "description": "El profesor Masanori Hariyama de la Escuela de Ciencias de la Información de la Universidad de Tohoku ha sido nombrado asesor",
+      "keywords": "ThinkX, Asesor, Consultor, Masanori Hariyama, Universidad de Tohoku"
+    },
+    "ru": {
+      "title": "Профессор Масанори Харияма из Высшей школы информационных наук Тохокского университета стал советником",
+      "description": "Профессор Масанори Харияма из Высшей школы информационных наук Тохокского университета назначен советником",
+      "keywords": "ThinkX, советник, консультант, Масанори Харияма, Тохокский университет"
+    },
+    "fr": {
+      "title": "Le professeur Masanori Hariyama de la Graduate School of Information Sciences de l’Université de Tohoku devient conseiller",
+      "description": "Le professeur Masanori Hariyama de la Graduate School of Information Sciences de l’Université de Tohoku est nommé conseiller",
+      "keywords": "ThinkX, Conseiller, Consultant, Masanori Hariyama, Université de Tohoku"
+    },
+    "ar": {
+      "title": "انضمام البروفيسور ماسانوري هارِياما من كلية علوم المعلومات بجامعة توهوكو كمستشار",
+      "description": "تم تعيين البروفيسور ماسانوري هارِياما من كلية علوم المعلومات بجامعة توهوكو مستشارًا لدينا",
+      "keywords": "ThinkX، مستشار، خبير، ماسانوري هارِياما، جامعة توهوكو"
+    }
+  },
+  "article_title": {
+    "ja": "【顧問】張山昌論 東北大学情報科学研究科知能集積学分野教授がアドバイザーに就任",
+    "en": "Advisor Announcement: Professor Masanori Hariyama of Tohoku University Joins as an Advisor",
+    "zh": "【顾问】东北大学信息科学研究科智能集成学领域的张山昌论教授担任顾问",
+    "es": "Asesor: El profesor Masanori Hariyama de la Universidad de Tohoku se une como asesor",
+    "ru": "Советник: Профессор Масанори Харияма из Тохокского университета назначен советником",
+    "fr": "Conseiller : Le professeur Masanori Hariyama de l’Université de Tohoku devient conseiller",
+    "ar": "مستشار: انضمام البروفيسور ماسانوري هارِياما من جامعة توهوكو كمستشار"
+  },
+  "article_date": {
+    "ja": "2025年2月19日",
+    "en": "February 19, 2025",
+    "zh": "2025年2月19日",
+    "es": "19 de febrero de 2025",
+    "ru": "19 февраля 2025 г.",
+    "fr": "19 février 2025",
+    "ar": "19 فبراير 2025"
+  },
+  "article_main": {
+    "ja": "この度、張山昌論 東北大学情報科学研究科知能集積学分野教授が当社のアドバイザーに就任しました。\n\n張山 昌論（はりやま・まさのり）\n博士（情報科学）。東北大学情報科学研究科知能集積学分野教授。FPGA(Field-Programmable Gate Arrays)を用いた応用特化型スーパーコンピューティングの国内第一人者。\n\nインタビュー\n<a href=\"/{{lang}}/blognews/2025-02-19-talk\">誰もが使える超高速計算プラットフォームへ──ThinkXと東北大学が描く、AIとFPGAで切り拓くスーパーコンピューティング　張山昌論教授インタビュー</a>"
+    ,
+    "en": "We are pleased to announce that Professor Masanori Hariyama from Tohoku University's Graduate School of Information Sciences (Integrated Intelligence Division) has joined our company as an advisor.\n\nMasanori Hariyama, Ph.D.\nProfessor at Tohoku University’s Graduate School of Information Sciences. A leading expert in Japan on application-specific supercomputing using FPGA (Field-Programmable Gate Arrays).\n\nInterview\n<a href=\"/{{lang}}/blognews/2025-02-19-talk\">Towards a super-fast computing platform for everyone: An interview with Professor Masanori Hariyama on how ThinkX and Tohoku University are pioneering supercomputing with AI and FPGA</a>"
+    ,
+    "zh": "近日，我们很高兴地宣布，东北大学信息科学研究科智能集成学领域的张山昌论教授正式担任本公司的顾问。\n\n张山 昌论（はりやま・まさのり）\n信息科学博士。现任东北大学信息科学研究科智能集成学领域教授。是利用FPGA（现场可编程门阵列）进行面向应用的超级计算在日本国内的权威专家。\n\n访谈\n<a href=\"/{{lang}}/blognews/2025-02-19-talk\">迈向人人可用的超高速计算平台——ThinkX与东北大学如何利用AI和FPGA开拓超级计算的未来：张山昌论教授专访</a>"
+    ,
+    "es": "Nos complace anunciar que el profesor Masanori Hariyama, de la División de Inteligencia Integrada de la Escuela de Ciencias de la Información de la Universidad de Tohoku, se ha incorporado a nuestra empresa como asesor.\n\nMasanori Hariyama, Doctor en Ciencias de la Información.\nProfesor en la Escuela de Ciencias de la Información de la Universidad de Tohoku y uno de los principales expertos en Japón en supercomputación especializada basada en FPGA (Field-Programmable Gate Arrays).\n\nEntrevista\n<a href=\"/{{lang}}/blognews/2025-02-19-talk\">Hacia una plataforma de cálculo ultrarrápida para todos: entrevista con el profesor Masanori Hariyama sobre cómo ThinkX y la Universidad de Tohoku están liderando la supercomputación con IA y FPGA</a>"
+    ,
+    "ru": "Рады сообщить, что профессор Масанори Харияма из Высшей школы информационных наук Тохокского университета (направление «интегрированные интеллектуальные системы») стал советником нашей компании.\n\nМасанори Харияма, доктор (информационные науки).\nПрофессор Высшей школы информационных наук Тохокского университета. Один из ведущих специалистов в Японии в области специализированной суперкомпьютерной вычислительной техники на базе FPGA (Field-Programmable Gate Arrays).\n\nИнтервью\n<a href=\"/{{lang}}/blognews/2025-02-19-talk\">К созданию сверхбыстрой вычислительной платформы для всех: интервью с профессором Масанори Хариямой о том, как ThinkX и Тохокский университет продвигают суперкомпьютерные технологии с помощью ИИ и FPGA</a>"
+    ,
+    "fr": "Nous sommes ravis d’annoncer que le professeur Masanori Hariyama, de la Graduate School of Information Sciences (domaine de l’intégration intelligente) de l’Université de Tohoku, a rejoint notre entreprise en tant que conseiller.\n\nMasanori Hariyama, docteur (sciences de l’information).\nProfesseur à la Graduate School of Information Sciences de l’Université de Tohoku. Il est l’un des principaux spécialistes au Japon de la superinformatique orientée application utilisant des FPGA (Field-Programmable Gate Arrays).\n\nInterview\n<a href=\"/{{lang}}/blognews/2025-02-19-talk\">Vers une plateforme de calcul ultra-rapide accessible à tous : entretien avec le professeur Masanori Hariyama sur la manière dont ThinkX et l’Université de Tohoku ouvrent la voie à la superinformatique grâce à l’IA et aux FPGA</a>"
+    ,
+    "ar": "يسعدنا أن نعلن انضمام البروفيسور ماسانوري هارِياما من كلية علوم المعلومات بجامعة توهوكو (قسم التكامل الذكي) إلى شركتنا كمستشار.\n\nماسانوري هارِياما، دكتور في علوم المعلومات.\nأستاذ في كلية علوم المعلومات بجامعة توهوكو، ويُعد من أبرز الخبراء في اليابان في مجال الحوسبة الفائقة المتخصصة بالاعتماد على تقنية FPGA (المصفوفات المنطقية القابلة للبرمجة).\n\nمقابلة\n<a href=\"/{{lang}}/blognews/2025-02-19-talk\">نحو منصة حوسبة فائقة السرعة للجميع: مقابلة مع البروفيسور ماسانوري هارِياما حول كيفية تعاون ThinkX وجامعة توهوكو في الريادة في مجال الحوسبة الفائقة باستخدام الذكاء الاصطناعي وFPGA</a>"
+  }
+}

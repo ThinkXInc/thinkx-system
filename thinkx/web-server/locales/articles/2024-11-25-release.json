@@ -1,0 +1,66 @@
+{
+  "metadata_blog_2024-11-25-hr": {
+    "ja": {
+      "title": "「Quantz ® Interview」の提供を開始",
+      "description": "「Quantz ® Interview」の提供を開始",
+      "keywords": "ThinkX, Quantz Interview, 自律型カスタムリアルタイムエージェント"
+    },
+    "en": {
+      "title": "Launch of 'Quantz ® Interview'",
+      "description": "Launch of 'Quantz ® Interview'",
+      "keywords": "ThinkX, Quantz Interview, autonomous custom real-time agent"
+    },
+    "zh": {
+      "title": "开始提供“Quantz ® Interview”",
+      "description": "开始提供“Quantz ® Interview”",
+      "keywords": "ThinkX, Quantz Interview, 自主定制实时代理"
+    },
+    "es": {
+      "title": "Lanzamiento de 'Quantz ® Interview'",
+      "description": "Lanzamiento de 'Quantz ® Interview'",
+      "keywords": "ThinkX, Quantz Interview, agente de tiempo real personalizado y autónomo"
+    },
+    "ru": {
+      "title": "Запуск «Quantz ® Interview»",
+      "description": "Запуск «Quantz ® Interview»",
+      "keywords": "ThinkX, Quantz Interview, автономный настраиваемый агент реального времени"
+    },
+    "fr": {
+      "title": "Lancement de « Quantz ® Interview »",
+      "description": "Lancement de « Quantz ® Interview »",
+      "keywords": "ThinkX, Quantz Interview, agent autonome en temps réel personnalisé"
+    },
+    "ar": {
+      "title": "إطلاق \"Quantz ® Interview\"",
+      "description": "إطلاق \"Quantz ® Interview\"",
+      "keywords": "ThinkX، Quantz Interview، وكيل مخصص ذاتي التشغيل في الوقت الفعلي"
+    }
+  },
+  "article_title": {
+    "ja": "「Quantz ® Interview」の提供を開始",
+    "en": "Launch of 'Quantz ® Interview'",
+    "zh": "开始提供“Quantz ® Interview”",
+    "es": "Lanzamiento de 'Quantz ® Interview'",
+    "ru": "Запуск «Quantz ® Interview»",
+    "fr": "Lancement de « Quantz ® Interview »",
+    "ar": "إطلاق \"Quantz ® Interview\""
+  },
+  "article_date": {
+    "ja": "2024年11月25日",
+    "en": "November 25, 2024",
+    "zh": "2024年11月25日",
+    "es": "25 de noviembre de 2024",
+    "ru": "25 ноября 2024 г.",
+    "fr": "25 novembre 2024",
+    "ar": "25 نوفمبر 2024"
+  },
+  "article_main": {
+    "ja": "ThinkX（東京都港区、代表取締役 大塚一輝）は、ミーティングを実行する自律型カスタムリアルタイムエージェント「Quantz ® Interview」の提供を開始。\n\nQuantz® Interview <a target=\"_blank\" href=\"https://quantz.thinkxinc.com/{{ lang }}/interview\">https://quantz.thinkxinc.com/{{ lang }}/interview</a>\nリリース<a target=\"_blank\" href=\"https://x.com/ThinkX_AI/status/1860956092966342751\">https://x.com/ThinkX_AI/status/1860956092966342751</a>\n\n・80万行を超える独自の独自の基盤システム\n・外部APIを用いないことで最大25倍のコスト性能を実現し、大量のミーティングを実用的な予算で処理\n・外部APIを用いず、LLM、音声認識、音声合成を含むすべてのモジュールが自社サーバー（ThinkX Supercom 3）内で完結し、完全なプライバシーを維持",
+    "en": "ThinkX (Minato-ku, Tokyo, CEO: Kazuki Otsuka) has begun offering \"Quantz ® Interview,\" an autonomous custom real-time agent that can conduct meetings.\n\nQuantz® Interview <a target=\"_blank\" href=\"https://quantz.thinkxinc.com/{{ lang }}/interview\">https://quantz.thinkxinc.com/{{ lang }}/interview</a>\nRelease <a target=\"_blank\" href=\"https://x.com/ThinkX_AI/status/1860956092966342751\">https://x.com/ThinkX_AI/status/1860956092966342751</a>\n\n- A proprietary system exceeding 800,000 lines of code\n- Achieves up to 25 times higher cost performance by not using external APIs, enabling a large number of meetings to be handled within a practical budget\n- All modules, including LLM, speech recognition, and speech synthesis, run entirely on our in-house ThinkX Supercom 3 server without external APIs, ensuring complete privacy.",
+    "zh": "ThinkX（位于东京都港区，首席执行官：大塚一辉）开始提供可执行会议的自律型定制实时代理“Quantz ® Interview”。\n\nQuantz® Interview <a target=\"_blank\" href=\"https://quantz.thinkxinc.com/{{ lang }}/interview\">https://quantz.thinkxinc.com/{{ lang }}/interview</a>\n发布<a target=\"_blank\" href=\"https://x.com/ThinkX_AI/status/1860956092966342751\">https://x.com/ThinkX_AI/status/1860956092966342751</a>\n\n- 超过80万行代码的独家基础系统\n- 通过不使用外部API实现高达25倍的成本效益，可在合理预算内处理大量会议\n- 在无需外部API的情况下，包括LLM、语音识别和语音合成在内的所有模块都在公司内部服务器（ThinkX Supercom 3）上完成，确保完全的隐私保护。",
+    "es": "ThinkX (Minato-ku, Tokio, Director Ejecutivo: Kazuki Otsuka) ha comenzado a ofrecer \"Quantz ® Interview\", un agente autónomo personalizado en tiempo real que puede realizar reuniones.\n\nQuantz® Interview <a target=\"_blank\" href=\"https://quantz.thinkxinc.com/{{ lang }}/interview\">https://quantz.thinkxinc.com/{{ lang }}/interview</a>\nLanzamiento <a target=\"_blank\" href=\"https://x.com/ThinkX_AI/status/1860956092966342751\">https://x.com/ThinkX_AI/status/1860956092966342751</a>\n\n- Un sistema propio que supera las 800.000 líneas de código\n- Al no utilizar APIs externas, logra hasta 25 veces más rendimiento en relación costo/beneficio, lo que permite manejar gran cantidad de reuniones con un presupuesto práctico\n- Todos los módulos, incluidos el LLM, el reconocimiento de voz y la síntesis de voz, se ejecutan completamente en nuestro servidor interno ThinkX Supercom 3 sin usar APIs externas, garantizando así la confidencialidad total.",
+    "ru": "Компания ThinkX (район Минато, Токио, генеральный директор: Кадзуки Оцука) начала предоставлять «Quantz ® Interview» — автономного настраиваемого агента реального времени для проведения встреч.\n\nQuantz® Interview <a target=\"_blank\" href=\"https://quantz.thinkxinc.com/{{ lang }}/interview\">https://quantz.thinkxinc.com/{{ lang }}/interview</a>\nРелиз <a target=\"_blank\" href=\"https://x.com/ThinkX_AI/status/1860956092966342751\">https://x.com/ThinkX_AI/status/1860956092966342751</a>\n\n- Cобственная система, превышающая 800 000 строк кода\n- Отказ от использования сторонних API даёт до 25-кратного повышения рентабельности и позволяет проводить большое число встреч в рамках разумного бюджета\n- Все модули, включая LLM, распознавание речи и синтез речи, работают исключительно на нашем внутреннем сервере ThinkX Supercom 3 без использования сторонних API, обеспечивая полную конфиденциальность.",
+    "fr": "ThinkX (Minato-ku, Tokyo, PDG : Kazuki Otsuka) a commencé à proposer « Quantz ® Interview », un agent autonome en temps réel personnalisé pour la tenue de réunions.\n\nQuantz® Interview <a target=\"_blank\" href=\"https://quantz.thinkxinc.com/{{ lang }}/interview\">https://quantz.thinkxinc.com/{{ lang }}/interview</a>\nPublication <a target=\"_blank\" href=\"https://x.com/ThinkX_AI/status/1860956092966342751\">https://x.com/ThinkX_AI/status/1860956092966342751</a>\n\n- Un système propriétaire dépassant 800 000 lignes de code\n- Permet jusqu’à 25 fois plus d’efficacité en termes de coûts en n’utilisant pas d’API externes, rendant possible la gestion d’un grand nombre de réunions avec un budget raisonnable\n- Tous les modules, y compris le LLM, la reconnaissance et la synthèse vocale, fonctionnent entièrement sur le serveur interne ThinkX Supercom 3, sans recourir à des API externes, garantissant une confidentialité totale.",
+    "ar": "بدأت شركة ThinkX (منطقة ميناتو في طوكيو، المدير التنفيذي: كازوكي أوتسوكا) بتقديم \"Quantz ® Interview\"، وهو وكيل مستقل مخصص في الوقت الفعلي لعقد الاجتماعات.\n\nQuantz® Interview <a target=\"_blank\" href=\"https://quantz.thinkxinc.com/{{ lang }}/interview\">https://quantz.thinkxinc.com/{{ lang }}/interview</a>\nالإصدار <a target=\"_blank\" href=\"https://x.com/ThinkX_AI/status/1860956092966342751\">https://x.com/ThinkX_AI/status/1860956092966342751</a>\n\n- نظام أساسي خاص يحتوي على أكثر من 800 ألف سطر من التعليمات البرمجية\n- يحقق ما يصل إلى 25 ضعفًا في الكفاءة من حيث التكلفة عن طريق عدم استخدام واجهات برمجة تطبيقات خارجية، مما يمكِّن من إدارة عدد كبير من الاجتماعات بميزانية عملية\n- تعمل جميع الوحدات، بما في ذلك نموذج اللغة الكبير والتعرف على الكلام والتركيب الصوتي، بالكامل على خادم ThinkX Supercom 3 الداخلي دون استخدام واجهات خارجية، مما يضمن الخصوصية التامة."
+  }
+}

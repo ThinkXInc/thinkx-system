@@ -1,0 +1,196 @@
+/* privacy_policy.less */
+
+/* Example transition */
+@cubic-bezier1: cubic-bezier(0.4, 0, 0.2, 1);
+
+/* Container for the entire Privacy Policy page */
+div#NNTM_privacy {
+    font-family: 'Roboto', sans-serif;
+
+    /* =======================
+       HEADER
+    ======================= */
+    .header {
+        height: 50vh;
+        position: relative;
+        background: url('/img/NNTM/top/main_noedit2600.jpg') center center / cover no-repeat;
+        color: #fff;
+        overflow: hidden;
+
+        .header_overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Ensure content sits above the overlay */
+        & > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        .header_head {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 20px;
+            z-index: 100;
+
+            /* Language selector, if needed */
+            div.lang-selector {
+                margin-right: 27px;
+                font-family: Arial, sans-serif;
+            }
+
+            /* Right-aligned images */
+            .header_olivewreath,
+            .header_logo {
+                height: 60px;
+                margin-left: 20px;
+            }
+        }
+
+        .header_main {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 40px 60px;
+            min-height: 25vh;
+
+            .main_left {
+                width: 50%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+
+                .container {
+                    .header_copy_sub {
+                        font-size: 24px;
+                        font-weight: 800;
+                        margin: 0 0 28px;
+                        color: #fff;
+                    }
+                }
+            }
+
+            .main_right {
+                width: 40%;
+                display: flex;
+                align-items: center;
+
+                .header_copy_main {
+                    font-size: 28px;
+                    font-weight: 600;
+                    margin: 0;
+                    color: #f1f1f1;
+                }
+            }
+
+            .header_bottom {
+                margin-top: 10px;
+            }
+        }
+    }
+
+    /* =======================
+       PRIVACY CONTENT
+    ======================= */
+    .privacy_content.section {
+        background: #fff;
+        color: #000;
+        padding: 60px;
+
+        .description_text {
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
+
+            .privacy_last_updated {
+                font-style: italic;
+                margin-bottom: 20px;
+                color: #666;
+            }
+
+            .privacy_intro {
+                margin-bottom: 40px;
+            }
+
+            .privacy_section_title {
+                font-size: 22px;
+                font-weight: bold;
+                margin-top: 40px;
+                margin-bottom: 10px;
+                color: #30302d;
+            }
+
+            .privacy_section_body {
+                margin-bottom: 20px;
+            }
+        }
+    }
+}
+
+/* =======================
+   FOOTER
+======================= */
+footer#NNTM_footer {
+    font-size: 12px;
+
+    .footer-contents-bottom {
+        padding: 40px 0 15px 0;
+        text-align: right;
+    }
+}
+
+/* =======================
+   RESPONSIVE (Smartphone)
+======================= */
+@media (max-width: @smartphone-width) {
+    div#NNTM_privacy {
+        .header {
+            height: 60vh;
+            .header_main {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 20px;
+
+                .main_left {
+                    width: 100%;
+                    .container {
+                        .header_copy_sub {
+                            font-size: 18px;
+                        }
+                    }
+                }
+
+                .main_right {
+                    width: 100%;
+                    margin-top: 20px;
+                    .header_copy_main {
+                        font-size: 22px;
+                        text-align: left;
+                    }
+                }
+            }
+        }
+
+        .privacy_content.section {
+            padding: 40px 20px;
+
+            .description_text {
+                font-size: 15px;
+
+                .privacy_section_title {
+                    font-size: 18px;
+                }
+            }
+        }
+    }
+}

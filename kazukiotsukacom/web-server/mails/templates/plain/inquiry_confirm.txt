@@ -1,0 +1,10 @@
+{{ body1 }}
+      
+{{ name_label }} {{ name }}
+{{ email_label }} {{ email }}
+{{ phone_label }} {{ phone }}
+{{ job_title_label }} {{ job_title }}
+{{ company_name_label }} {{ company_name }}
+{{ message_label }} {{ message }}
+{{ body2 }}
+{{ support_email }}

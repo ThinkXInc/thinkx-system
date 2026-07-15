@@ -1,0 +1,35 @@
+/* ///// Contents ///// */
+
+
+/* **** topView **** */
+#topView {min-width: 1024px; min-height: 100%;}
+#topView #topBG {position: absolute; min-height: 100%; min-width: 1024px; width: 100%; top: 0; left: 0; border:1px solid #FF00FF;}
+#topView #container {min-width:1024px; width: 100%;}	
+#topView #imageCV {position:absolute; min-width: 1024px; opacity:0.1; z-index:3;}
+#topView #demoCV {position:absolute; min-width: 1024px; z-index:4;}
+#topView #toptop{position:relative; top:0px; left:0px; width:100%;}
+#topView #toptop #title{position:absolute; top:0px; left:40px; width:228px; height:60px; z-index:5;}
+#topView #topbottom {position:relative; text-align:center; top:600px; width:100%;}
+#topView #topbottom #fbLoginButton{position:absolute; margin:0 -180px; background:url("/img/parts/fbLoginBt.png"); width:351px; height:60px; z-index:5;}
+
+/* **** stanby **** */
+#title {opacity: 0; top: -30px;}
+#fbLoginButton {opacity: 0; top: -30px;}
+#bottomex{opacity: 0; top: -30px;}
+
+/* **** no-js **** */
+.no-js  header .subline {opacity: 1; position: relative; top: 0px;}
+
+/* **** ms **** */
+#ms {-moz-user-select: none; -khtml-user-select: none; -webkit-user-select: none;"}
+
+/* **** products **** */
+#products {}
+#products .product {margin:0px 0 30px 0;}
+#products .product_name {font-size:20px;}
+#products .product_subtitle {font-size:14px;font-weight:bold;}
+#products .product_image {border:solid #F0F0F0 1px;}
+#product_image1 {height:250px;}
+#product_image2 {height:250px; padding:10px 0 0 40px;}
+#products .product_url {font-size:14px; cursor:pointer;}
+#products .product_description {font-size:14px; text-shadow:-2px -2px #FFF,2px -2px #FFF,-2px 2px #FFF,2px 2px #FFF;}

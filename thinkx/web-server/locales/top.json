@@ -1,0 +1,236 @@
+{
+    "top_message": {
+        "ja": "科学と芸術の融合",
+        "en": "The fusion of science and art",
+        "zh": "科学与艺术的融合",
+        "es": "La fusión de la ciencia y el arte",
+        "ru": "Слияние науки и искусства",
+        "fr": "La fusion de la science et de l'art",
+        "ar": "اندماج العلم والفن"
+    },
+    "top_sub_message": {
+        "ja": "利便欲得を超えて人々の精神に宿るものを'文化'と呼びます。\nThinkXは、すべての生命の存在、知能の意味を解き明かすために、いくつかの汎用コンピューターとネットワークがあれば駆動するプライベートな自律的インテリジェントシステムとその応用製品を開発しています。",
+        "en": "Beyond mere convenience or gain, what resides in our minds, we call 'culture'.\nTo unravel the purpose of life and intelligence across all existence,\nwe're developing a private autonomous intelligent system that operate on multiple general-purpose computers and the applied services.",
+        "zh": "科学与艺术的融合：ThinkX 利用世界级的专有软件技术，培育出超越单纯便利的新时代价值。让我们创造一个超越物理世界限制的文化。",
+        "es": "La fusión de la ciencia y el arte: ThinkX utiliza tecnología de software propia de clase mundial para fomentar un nuevo valor de la era, uno que trasciende la mera conveniencia. Creemos una cultura que supere los límites del mundo físico.",
+        "ru": "Слияние науки и искусства: ThinkX использует программную технологию собственной разработки мирового класса для создания новых ценностей эпохи, превосходящих простое удобство. Давайте создадим культуру, которая превзойдет ограничения физического мира.",
+        "fr": "La fusion de la science et de l'art : ThinkX exploite une technologie logicielle propriétaire de classe mondiale pour favoriser une nouvelle valeur de l'ère, qui transcende la simple commodité. Créons une culture qui dépasse les limites du monde physique.",
+        "ar": "التكامل بين العلم والفن: تستخدم ThinkX تكنولوجيا البرمجيات الخاصة عالمية المستوى لتعزيز قيمة جديدة للعصر، تتجاوز مجرد الراحة. دعونا نخلق ثقافة تتخطى حدود العالم الفيزيائي."
+    },
+    "top_latest_news": {
+        "ja": "最新ニュース",
+        "en": "Latest News",
+        "zh": "最新消息",
+        "es": "Últimas noticias",
+        "ru": "Последние новости",
+        "fr": "Dernières nouvelles",
+        "ar": "أحدث الأخبار"
+    },
+    "top_vision_title": {
+        "en": "TO CROSS HIGHLY SEGMENTED, ISOLATED RESEARCH FIELDS",
+        "ja": "高度に細分化され、孤立した研究分野を横断する",
+        "zh": "跨越高度细分、孤立的研究领域",
+        "es": "Cruzar campos de investigación altamente segmentados y aislados",
+        "ru": "Пересекать высоко сегментированные, изолированные области исследования",
+        "fr": "Traverser des domaines de recherche hautement segmentés et isolés",
+        "ar": "عبور مجالات البحث شديدة التجزئة والمنعزلة"
+    },
+    "top_vision_description": {
+        "en": "VN Machine is an integrated AI cloud computing platform specialized for advanced research that aggregates ThinkX's 10 years of software technology assets, promotes the explosive growth of cross-disciplinary collaboration in highly segmented academic fields, and solves urgent issues that have become more complex on a global scale.",
+        "ja": "VN Machineは、ThinkXの10年のソフトウェア技術資産を集約し、高等研究に特化した統合AIクラウドコンピューティングプラットフォームです。高度に細分化された専門分野における学際的なコラボレーションの爆発的な成長を促進し、グローバル規模でより複雑化している喫緊の課題を解決します。",
+        "zh": "VN Machine 是一个专门针对高等研究的综合AI云计算平台，汇集了 ThinkX 十年的软件技术成果，促进在高度细分的学术领域中跨学科合作的爆发式增长，并解决在全球范围内日益复杂的紧迫问题。",
+        "es": "VN Machine es una plataforma de computación en la nube con IA integrada, especializada en investigación avanzada, que reúne los activos de tecnología de software de ThinkX acumulados durante 10 años, promueve el crecimiento explosivo de la colaboración interdisciplinaria en campos académicos altamente segmentados y resuelve los problemas urgentes que se han vuelto más complejos a nivel mundial.",
+        "ru": "VN Machine — это интегрированная облачная платформа искусственного интеллекта, специализирующаяся на передовых исследованиях, которая объединяет десять лет технологического опыта ThinkX, способствует взрывному росту междисциплинарного сотрудничества в высоко сегментированных академических областях и решает насущные проблемы, становящиеся всё более сложными в глобальном масштабе.",
+        "fr": "VN Machine est une plateforme de cloud computing IA intégrée, spécialisée dans la recherche avancée, qui agrège dix ans d'actifs technologiques de ThinkX, favorise la croissance explosive de la collaboration interdisciplinaire dans des domaines universitaires fortement segmentés, et résout les problèmes urgents devenus plus complexes à l'échelle mondiale.",
+        "ar": "VN Machine هي منصة حوسبة سحابية متكاملة للذكاء الاصطناعي متخصصة في الأبحاث المتقدمة، تجمع بين الأصول التقنية لشركة ThinkX لأكثر من عشر سنوات، وتعزز النمو الهائل للتعاون متعدد التخصصات في المجالات الأكاديمية شديدة التجزئة، وتعمل على حل القضايا العاجلة التي أصبحت أكثر تعقيدًا على النطاق العالمي."
+    },
+    "top_vision_learn_more": {
+        "en": "Lean More",
+        "ja": "さらに詳しく",
+        "zh": "了解更多",
+        "es": "Más información",
+        "ru": "Узнать больше",
+        "fr": "En savoir plus",
+        "ar": "اطّلع على المزيد"
+    },
+    "top_products_voiceos_copy": {
+        "ja": "完全プライベート、柔軟にプログラム可能、そして超高速の会話型リアルタイムエージェント基盤システム",
+        "en": "Completely private, flexibly programmable, and ultra-fast realtime conversational agent foundation system",
+        "zh": "完全私密、灵活可编程且超高速的实时对话式代理基础系统",
+        "es": "Sistema base de agente conversacional en tiempo real, completamente privado, programable de forma flexible y ultrarrápido",
+        "ru": "Полностью закрытая, гибко программируемая и сверхбыстрая платформа для разговорных агентов в реальном времени",
+        "fr": "Système fondamental pour agent conversationnel en temps réel, entièrement privé, programmable de manière flexible et ultra-rapide",
+        "ar": "نظام أساسي لوكيل المحادثة في الوقت الفعلي يتميز بخصوصية كاملة وإمكانية برمجة مرنة وسرعة فائقة"
+    },
+    "top_products_voiceos_desc": {
+        "ja": "いくつかの汎用コンピューターがあれば外部APIなしで動作し、世界最速クラスの\"実質\"応答速度800ms{}{}、67万行の独自コードベースからなる、超並列高速音声対話OS（4件の特許技術含む。うち2件取得済み）が自律駆動型エコシステムを作る",
+        "en": "Our massively parallel, private voice conversational AI foundation system delivers the world fastest class's and truly comfortable 'real' response{} times of 800ms{} while ensuring complete privacy. Powered by a proprietary codebase of 670,000 lines and featuring 4 patented technologies (2 pending), it creates an autonomously driven ecosystem.",
+        "zh": "体验\"真实\"响应800毫秒——全球最快{}——由670,000行专有代码支持。这款具有4项专利技术（2项正在申请中）的高并行语音AI操作系统，为网络通信协议树立了新标准。",
+        "es": "Experimenta la \"verdadera comodidad\" de los tiempos de respuesta \"reales\" de 800ms—los más rápidos del mundo{}—impulsados por una base de código propia de 670,000 líneas. Este sistema operativo de voz-AI altamente paralelo, que cuenta con 4 tecnologías patentadas (2 en proceso), establece un nuevo estándar para los protocolos de comunicación web.",
+        "ru": "Ощутите \"истинный комфорт\" с \"реальным\" временем ответа в 800 мс — самым быстрым в мире{} — на базе собственного кода из 670,000 строк. Эта высокопараллельная операционная система голосового AI с 4 патентованными технологиями (2 в процессе), задает новый стандарт для протоколов веб-коммуникаций.",
+        "fr": "Expérimentez le \"vrai confort\" avec des temps de réponse \"réels\" de 800 ms — les plus rapides du monde{} — alimenté par une base de code propriétaire de 670,000 lignes. Ce système d'exploitation de voix IA hautement parallèle, comportant 4 technologies brevetées (dont 2 en attente), établit une nouvelle norme pour les protocoles de communication web.",
+        "ar": "تجربة 'الراحة الحقيقية' مع أسرع أوقات الاستجابة 'الفعلية' في العالم، 800 مللي ثانية، بدعم من قاعدة بيانات ملكية تحتوي على 670,000 سطر. هذا نظام التشغيل الصوتي للذكاء الاصطناعي الشديد التوازي، الذي يتضمن 4 تقنيات مسجلة كبراءات اختراع (2 قيد الانتظار)، يضع معيارًا جديدًا لبروتوكولات الاتصالات الويب."
+    },
+    "top_products_more": {
+        "ja": "さらに詳しく",
+        "en": "Learn more",
+        "zh": "了解更多",
+        "es": "Aprende más",
+        "ru": "Узнать больше",
+        "fr": "En savoir plus",
+        "ar": "اعرف المزيد"
+    },
+    "top_products_paper": {
+        "ja": "研究論文",
+        "en": "Research paper",
+        "zh": "研究论文",
+        "es": "Artículo de investigación",
+        "ru": "Научная статья",
+        "fr": "Article de recherche",
+        "ar": "ورقة بحثية"
+    },
+    "top_products_voiceos_annotation_1": {
+        "ja": "実質応答: 「メイン応答=実質的な応答」を即座に返し、「ありがとう」や「わかりました」といった簡易的な応答をまず行い主応答を準備するフィラー(相槌)テクニックを使用せずに高速性能を達成。",
+        "en": "Real Response: Our system immediately delivers the main, substantial content, whereas others employ \"filler techniques,\" preparing the main response while issuing preliminary responses such as \"Thank you\" or \"Okay.\" ",
+        "zh": "实质回应：我们的系统能立即提供主要内容，而不像其他系统那样使用“填充技术”，在准备主要回应的同时发出“谢谢”或“好的”等初步回应。",
+        "es": "Respuesta real: Nuestro sistema entrega inmediatamente el contenido principal y sustancial, mientras que otros utilizan \"técnicas de relleno\", preparando la respuesta principal mientras emiten respuestas preliminares como \"Gracias\" o \"De acuerdo\".",
+        "ru": "Реальный ответ: Наша система мгновенно предоставляет основное, значительное содержание, в отличие от других, которые используют \"техники заполнения\", подготавливая основной ответ, одновременно выдавая предварительные ответы, такие как \"Спасибо\" или \"Хорошо\".",
+        "fr": "Réponse réelle : Notre système fournit immédiatement le contenu principal et substantiel, alors que d'autres utilisent des \"techniques de remplissage\", préparant la réponse principale tout en émettant des réponses préliminaires telles que \"Merci\" ou \"D'accord\".",
+        "ar": "الاستجابة الحقيقية: يقوم نظامنا بتقديم المحتوى الرئيسي والجوهري فورًا، في حين يستخدم الآخرون 'تقنيات الحشو'، ويعدون الاستجابة الرئيسية أثناء إصدار الاستجابات التمهيدية مثل 'شكرًا' أو 'حسنًا'."
+    },
+    "top_products_voiceos_annotation_2": {
+        "ja": "言語モデルと音声モデルが分離されカスタマイズ可能な、Web上で動作するクラウド型の音声対話エンジンでの比較",
+        "en": "Comparison of cloud-based voice-AI engines on the web, where language and voice models are separated and customizable.",
+        "zh": "比较基于云的语音AI引擎，其中语言和声音模型是分开的并且可定制的。",
+        "es": "Comparación de motores de voz-AI basados en la nube en la web, donde los modelos de lenguaje y voz están separados y son personalizables.",
+        "ru": "Сравнение облачных голосовых AI-двигателей в Интернете, где языковые и голосовые модели разделены и настраиваемы.",
+        "fr": "Comparaison des moteurs de voix IA basés sur le cloud sur le web, où les modèles de langue et de voix sont séparés et personnalisables.",
+        "ar": "مقارنة بين محركات الذكاء الاصطناعي الصوتية القائمة على السحابة على الويب، حيث يتم فصل نماذج اللغة والصوت وتخصيصها."
+    },
+    "top_products_quantz_copy": {
+        "ja": "能動的に仕事を進める、ビジネス用途のカスタム音声リアルタイムエージェント",
+        "en": "Custom proactive voice conversational agent for your business.",
+        "zh": "为您的企业定制的主动式语音对话代理。",
+        "es": "Agente de conversación de voz proactivo y personalizado para su negocio.",
+        "ru": "Пользовательский проактивный голосовой разговорный агент для вашего бизнеса.",
+        "fr": "Agent conversationnel vocal proactif et personnalisé pour votre entreprise.",
+        "ar": "وكيل محادثة صوتي مخصص واستباقي لأعمالك."
+    },
+    "top_products_quantz_desc": {
+      "ja": "ただ会話をするのでなく、自律的に目標を追求するエージェントシステム。APIやクラウドインフラを利用したシステムと比べ、当社のサーバーのみで動作するため、25倍のコスト効率を実現。",
+      "en": "An agent system that autonomously pursues its goals, rather than simply chatting. 25x more cost-effective than systems based on APIs + cloud infrastructure, thanks to the fact that it runs completely on our own servers.",
+      "zh": "不仅仅进行对话，而是自主追求目标的代理系统。由于该系统完全在我们的服务器上运行，因此相较于基于 API 和云基础设施的系统具有 25 倍的成本效益。",
+      "es": "Un sistema de agente que persigue sus objetivos de forma autónoma en lugar de simplemente conversar. Es 25 veces más rentable que los sistemas basados en APIs e infraestructura en la nube, gracias a que funciona completamente en nuestros propios servidores.",
+      "ru": "Система агентов, которая автономно преследует свои цели, а не просто ведёт беседу. В 25 раз более экономична, чем системы, основанные на API и облачной инфраструктуре, благодаря тому, что работает полностью на наших собственных серверах.",
+      "fr": "Un système d’agent qui poursuit de manière autonome ses objectifs, plutôt que de simplement discuter. Il est 25 fois plus rentable que les systèmes basés sur des API et une infrastructure cloud, car il fonctionne entièrement sur nos propres serveurs.",
+      "ar": "نظام وكيل يسعى لتحقيق أهدافه بشكل مستقل بدلاً من مجرد إجراء محادثة. يتمتع بكفاءة أعلى بـ 25 مرة مقارنة بالأنظمة المعتمدة على واجهات برمجة التطبيقات والبنية التحتية السحابية، لأنه يعمل بشكل كامل على خوادمنا الخاصة."
+    },
+    "top_products_version2": {
+        "ja": "バージョン2を開発中",
+        "en": "Developing version 2",
+        "zh": "正在开发版本2",
+        "es": "Desarrollando la versión 2",
+        "ru": "Разработка версии 2",
+        "fr": "Développement de la version 2",
+        "ar": "تطوير الإصدار 2"
+    },
+    "top_products_citywalk_desc": {
+        "ja": "長崎市で大規模実証実験を行い月間2000回のダウンロードを記録したパーソナライズド地理空間音声ガイドプラットフォーム",
+        "en": "A personalized geospatial voice guide platform that conducted large-scale pilot testing in Nagasaki City, achieving 2,000 downloads per month.",
+        "zh": "在长崎市进行了大规模的试点测试，每月下载量达到2000次的个性化地理空间语音向导平台。",
+        "es": "Una plataforma de guía por voz geoespacial personalizada que realizó pruebas piloto a gran escala en la ciudad de Nagasaki, logrando 2,000 descargas mensuales.",
+        "ru": "Персонализированная платформа геопространственных голосовых гидов, проведшая масштабные пилотные испытания в городе Нагасаки и достигшая 2000 загрузок в месяц.",
+        "fr": "Une plateforme de guide vocal géospatial personnalisé qui a réalisé des tests pilotes à grande échelle dans la ville de Nagasaki, atteignant 2 000 téléchargements par mois.",
+        "ar": "منصة دليل صوتي جغرافي مخصص أجرت اختبارات تجريبية واسعة النطاق في مدينة ناغازاكي، وحققت 2000 تحميل شهريًا."
+    },
+    "top_products_ILRSA_copy": {
+        "ja": "あなたを最も理解するソーシャルネットワーク",
+        "en": "The social network understands you best",
+        "zh": "最懂你的社交网络",
+        "es": "La red social que mejor te entiende",
+        "ru": "Социальная сеть, которая лучше всех вас понимает",
+        "fr": "Le réseau social qui vous comprend le mieux",
+        "ar": "الشبكة الاجتماعية التي تفهمك أفضل"
+    },
+    "top_products_ILRSA_desc": {
+        "ja": "個の唯一性理解、ロングテールマッチングアルゴリズムに基づく、「創造社会」を実現するソーシャルディスカバリーネットワーク",
+        "en": "A Social Discovery Network for a 'Creative Society,' based on algorithms that understand individual uniqueness and facilitate niche serendipities.",
+        "zh": "一个为‘创造性社会’设计的社交发现网络，基于算法理解个体独特性并促进小众连接。",
+        "es": "Una red de descubrimiento social para una 'Sociedad Creativa', diseñada con un algoritmo que comprende la unicidad individual y facilita conexiones de nicho.",
+        "ru": "Социальная сеть для 'Творческого общества', созданная на основе алгоритма, понимающего уникальность каждого индивидуума и способствующего нишевым связям.",
+        "fr": "Un réseau de découverte sociale pour une 'Société Créative', conçu avec un algorithme qui comprend l'unicité individuelle et facilite les connexions de niche.",
+        "ar": "شبكة اكتشاف اجتماعي لـ 'مجتمع إبداعي'، تعتمد على خوارزميات تفهم الفردية الفريدة وتسهل الصدف النوعية."
+    },
+    "top_products_LSH_copy": {
+        "ja": "文書から潜在嗜好を計算する基本アルゴリズム(特許取得済)",
+        "en": "Analyze your potential interests (patented)",
+        "zh": "分析你的潜在兴趣（已获专利）",
+        "es": "Analiza tus intereses potenciales (patentado)",
+        "ru": "Анализируйте свои потенциальные интересы (запатентовано)",
+        "fr": "Analysez vos intérêts potentiels (breveté)",
+        "ar": "تحليل اهتماماتك المحتملة (مسجلة ببراءة)"
+    },
+    "top_products_LSH_desc": {
+        "ja": "コールドスタートなし、僅かな計算時間で潜在的な嗜好や性格特性を言葉から分析する機械学習基本アルゴリズム(特許取得済)",
+        "en": "A basic machine learning algorithm (patented) to analyze a user's latent tastes or personality characteristics from words with minimal computation time and no cold start.",
+        "zh": "一种基本的机器学习算法（已获专利），能够在最少计算时间内并且无需冷启动的情况下，通过语言分析用户的潜在兴趣或性格特征。",
+        "es": "Un algoritmo básico de aprendizaje automático (patentado) para analizar los gustos latentes o las características de personalidad de un usuario a partir de palabras con un tiempo de cálculo mínimo y sin inicio en frío.",
+        "ru": "Базовый алгоритм машинного обучения (запатентованный) для анализа скрытых вкусов или характеристик личности пользователя по словам с минимальным временем вычислений и без холодного старта.",
+        "fr": "Un algorithme de base d'apprentissage automatique (breveté) pour analyser les goûts latents ou les caractéristiques de personnalité d'un utilisateur à partir des mots avec un temps de calcul minimal et sans démarrage à froid.",
+        "ar": "خوارزمية أساسية لتعلم الآلة (مسجلة ببراءة) لتحليل أذواق أو خصائص شخصية المستخدم المحتملة من الكلمات بأقل وقت حساب ودون بداية باردة."
+    },
+    "top_products_JPTextParser_copy": {
+        "ja": "高性能日本語形態素解析器",
+        "en": "The high performance Japanese text parser",
+        "zh": "高性能日语文本解析器",
+        "es": "El analizador de texto japonés de alto rendimiento",
+        "ru": "Высокопроизводительный анализатор японских текстов",
+        "fr": "L'analyseur de texte japonais haute performance",
+        "ar": "محلل النصوص اليابانية عالي الأداء"
+    },
+    "top_products_JPTextParser_desc": {
+        "ja": "最高性能のオープンソースMecab Ipadicをさらに拡張し、より高精度な日本語形態素解析器",
+        "en": "A Japanese morphological analyzer that extends and is more accurate than the best-performing open-source Mecab Ipadic.",
+        "zh": "一个比最佳表现的开源Mecab Ipadic更精确、进行了扩展的日语形态分析器。",
+        "es": "Un analizador morfológico japonés que se extiende y es más preciso que el mejor Mecab Ipadic de código abierto.",
+        "ru": "Японский морфологический анализатор, который расширяет и более точен, чем лучший из существующих открытых источников Mecab Ipadic.",
+        "fr": "Un analyseur morphologique japonais qui étend et est plus précis que le meilleur Mecab Ipadic open-source.",
+        "ar": "محلل مورفولوجي ياباني يوسع ويتجاوز دقة أفضل Mecab Ipadic مفتوح المصدر."
+    },
+    "top_message_title": {
+        "ja": "Become Yourself.",
+        "en": "Become Yourself.",
+        "zh": "成为你自己。",
+        "es": "Sé tú mismo.",
+        "ru": "Стань собой.",
+        "fr": "Devenez vous-même.",
+        "ar": "كن نفسك."
+    },
+    "top_message_subtitle": {
+        "ja": "全ての個が自己実現を果たす「創造社会」の\"ニュールネサンス\"へ",
+        "en": "Towards the 'New Renaissance' of the 'creative society,' where every individual achieves self-fulfillment.",
+        "zh": "向着‘创造社会’的‘新文艺复兴’迈进，让每个人实现自我成就。",
+        "es": "Hacia el 'Nuevo Renacimiento' de la 'sociedad creativa', donde cada individuo logra la autorrealización.",
+        "ru": "К 'Новому Возрождению' 'творческого общества', где каждый человек достигает самореализации.",
+        "fr": "Vers la 'Nouvelle Renaissance' de la 'société créative', où chaque individu atteint l'épanouissement personnel.",
+        "ar": "نحو 'عصر النهضة الجديد' لـ 'المجتمع الإبداعي'، حيث يحقق كل فرد الإنجاز الذاتي."
+    },
+    "top_philosophy_title": {
+        "ja": "第六感の定量化",
+        "en": "Quantification of the Sixths Sense",
+        "zh": "第六感的量化",
+        "es": "Cuantificación del Sexto Sentido",
+        "ru": "Количественное Определение Шестого Чувства",
+        "fr": "Quantification du Sixième Sens",
+        "ar": "تقدير الحس السادس"
+    },
+    "top_philosophy_subtitle": {
+        "ja": "科学と芸術の融合",
+        "en": "The Fusion of Science and Art",
+        "zh": "科学与艺术的融合",
+        "es": "La Fusión de la Ciencia y el Arte",
+        "ru": "Слияние Науки и Искусства",
+        "fr": "La Fusion de la Science et de l'Art",
+        "ar": "التكامل بين العلم والفن"
+    }
+}

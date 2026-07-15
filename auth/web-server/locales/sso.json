@@ -1,0 +1,18 @@
+{
+    "ok": {
+        "en": "ok",
+        "ja": "ok"
+    },
+    "unknown_service": {
+        "en": "Unknown service.",
+        "ja": "未登録のサービスです。"
+    },
+    "invalid_redirect_uri": {
+        "en": "The redirect URI is not registered for this service.",
+        "ja": "このサービスに登録されていない戻り先です。"
+    },
+    "state_required": {
+        "en": "The state parameter is required.",
+        "ja": "state パラメータが必要です。"
+    }
+}

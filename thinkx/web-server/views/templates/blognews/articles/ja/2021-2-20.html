@@ -1,0 +1,53 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+    <article class="article" data-news-id="2021-2-20">
+      <div class="container">
+        <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}"page={{ page }}"><<</a></span>
+        <p class="date news-date">2021 Feb 14</p>
+        <h2 class="title">CITYWALKと代表大塚がKTNの夜のニュースで取り上げられました。</h2>
+        <div class="news-image-container">
+          <figure class="news-image news-id-2021-2-20">
+            <img class="news-id-2021-2-20" src="/img/ktn_news.png" srcset="/img/ktn_news@2x.png 2x"/>
+          </figure>
+        </div>
+        <div class="main-text">
+          KTN夜のニュースにて、長崎市で実施中の「音声案内システムCITYWALK」が紹介されました。</br>
+          利用者のコメントや、出島で行われた市内団体様向けの説明会の様子が紹介されました。</br>
+          </br>
+          今回の報道を通じてCITYWALKや、代表大塚の思いを知っていただき感謝しております。</br>
+          </br>
+          </br>
+          弊社では今後も、テクノロジーとデザインにより、</br>
+          地域の深い魅力を伝える総合シティプロモーションの取り組みをして参ります。</br>
+          </br>
+          </br>
+          製品の導入または詳細についてはinquiry@thinkxinc.comまでお問い合わせください。</br>
+
+        
+        </br>
+        </div>
+        <div class="back-container cf">
+          <span class="back">
+            <a href="/{{ lang }}/blognews?page={{ page }}"page={{ page }}">一覧に戻る</a>
+          </span>
+        </div>
+      </div>
+    </article>
+  </div>
+  {% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

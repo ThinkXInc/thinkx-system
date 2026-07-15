@@ -1,0 +1,56 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+  <article class="article" data-news-id="2021-2-20">
+    <div class="container">
+      <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}">
+          << </a></span>
+      <p class="date news-date">2021 Feb 14</p>
+      <h2 class="title">CITYWALK and Its Founder, Representative Otsuka, Featured on KTN Evening News</h2>
+      <div class="news-image-container">
+        <figure class="news-image news-id-2021-2-20">
+          <img class="news-id-2021-2-20" src="/img/ktn_news.png" srcset="/img/ktn_news@2x.png 2x" />
+        </figure>
+      </div>
+      <div class="main-text">
+        Our groundbreaking voice guidance system, CITYWALK, currently active in Nagasaki City, was recently featured on KTN's evening news. The broadcast showcased responses from users, along with highlights from a briefing session held for local groups at Dejima.
+        <br>
+        Comments from users and the briefing session held at Dejima for groups in the city were introduced.
+        <br>
+        <br>
+        We are deeply grateful for this opportunity, which brought CITYWALK and President Otsuka's innovative vision into the spotlight.
+        <br>
+        <br>
+        <br>
+        Moving forward, we remain committed to delivering comprehensive city promotion that leverages technology and design to convey the profound charm of our region.
+        <br>
+        <br>
+        <br>
+        For more information about our products or any other inquiries, please reach out to us at inquiry@thinkxinc.com.
+        <br>
+        <br>
+      </div>
+      <div class="back-container cf">
+        <span class="back">
+          <a href="/{{ lang }}/blognews?page={{ page }}">Back to list</a>
+        </span>
+      </div>
+    </div>
+  </article>
+</div>
+{% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

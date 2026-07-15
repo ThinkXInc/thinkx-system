@@ -1,0 +1,69 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+  <article class="article" data-news-id="2020-01-20">
+    <div class="container">
+      <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}">
+          << </a></span>
+      <p class="date news-date">2020 Jan 20</p>
+      <h2 class="title">Launched CITYWALK, a next-generation voice guidance system</h2>
+      <div class="news-image-container">
+        <figure class="news-image news-id-2020-01-20">
+          <img class="news-id-2020-01-20" src="/img/citywalkbrochure.png" srcset="/img/citywalkbrochure@2x.png 2x" />
+        </figure>
+      </div>
+      <div class="main-text">
+
+        CITYWALK, a next-generation voice guidance system that supports the marketing of cities, </br>
+        commercial facilities, museums, exhibitions, events, parks, and cultural facilities, is now available for
+        sale.</br>
+        </br>
+        CITYWALK is a next-generation voice guidance system that allows users to move around as usual </br>
+        without installing any special devices such as Bluetooth devices, </br></br>
+        and allows them to use applications downloaded to their smartphones to guide them </br>
+        through commercial facilities and cities according to their location and situation, indoors or outdoors.</br>
+        </br>
+        <ul>
+          <li>・ The system is designed to be used in a variety of ways, including as a tool for attracting customers,
+            but it does not convey the value of key content, and fans do not take root.</li>
+          <li>・The system is not efficient in advertising because it only draws attention to the most prominent content.
+            We want to increase the circulation rate.</li>
+          <li>・Not enough word of mouth on SNS. We want to increase the repeat rate.</li>
+          <li>・Inbound support is not available, and you want to provide explanations in multiple languages at a low
+            cost.</li>
+        </ul>
+        </br>
+
+        We can solve these problems.</br>
+        </br></br>
+
+        Please contact</br>
+        </br>
+        <span class="contact-mail">sales@thinkxinc.com</span></br>
+        </br>
+        for more information about our products or to request a brochure.
+      </div>
+      <div class="back-container cf">
+        <span class="back">
+          <a href="/{{ lang }}/blognews?page={{ page }}">Back to list</a>
+        </span>
+      </div>
+    </div>
+  </article>
+</div>
+{% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

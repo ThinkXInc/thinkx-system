@@ -1,0 +1,16 @@
+[Unit]
+Description=Nginx HTTP Server
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=/usr/sbin/nginx -c /src/loadbalancer/nginx.conf
+ExecReload=/usr/sbin/nginx -s reload
+ExecStop=/usr/sbin/nginx -s quit
+User=root
+Restart=always
+RestartSec=5
+TimeoutStartSec=300
+
+[Install]
+WantedBy=multi-user.target

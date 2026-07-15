@@ -1,0 +1,302 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+  <script src="/js/main.js"></script>
+{% endblock %}
+
+
+{% block content %}
+  <script>
+    window.onload = function() {
+    	initCanvas();
+    }
+  </script>
+
+  <header class="underlay"></header>
+  <header class="overlay">
+    <ul>
+      <li class="company-logo">
+        <a href="javascript:;" data-menu="concept" data-action="scroll" data-distination="concept">
+          <figure class="logo"></figure>
+          <!--<figure class="symbol"></figure>-->
+        </a>
+      </li>
+      <li class="menuBtn">
+        <a href="javascript:;" data-action="toggle-menu">
+          <img class="toggle-menu-open" src="/img/sp_menu.png" srcset="/img/sp_menu@2x.png 2x"/>
+          <img class="toggle-menu-close" src="/img/sp_menu_close.png" srcset="/img/sp_menu_close@2x.png 2x"/>
+        </a>
+      </li>
+      <li class="menu">
+        <ul>
+          <li>
+            <a href="javascript:;" data-menu="gallery" data-action="scroll" data-distination="gallery" class="active">
+              Gallery
+            </a>
+          </li>
+          <li>
+            <a href="javascript:;" data-menu="profile" data-action="scroll" data-distination="profile">
+              Profile
+            </a>
+          </li>
+          <li>
+            <a href="javascript:;" data-menu="concep" data-action="scroll" data-distination="concept">
+              What is Transformism?
+            </a>
+          </li>
+          <li>
+            <a href="javascript:;" data-menu="contact" data-action="scroll" data-distination="contact">
+              Contact
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </header>
+
+
+  <section id="top" class="top" data-page="top" data-fit-window="true">
+    <div class="container">
+	   <canvas id="canvas" style="background-color: #FFF;" resize></canvas>
+    </div>
+   	<div class="playmenus" id="ms" style="display:none;opacity:0;">
+   		<div class="playmenu" onclick="clickm1()" id="m1" style="color:#000; position:absolute; top:10px; left:20px; cursor:pointer; visibility: hidden;"></div>
+   		<div class="playmenu" onclick="clickm2()" id="m2" style="color:#000; position:absolute; top:10px; left:20px; cursor:pointer; visibility: hidden;"></div>
+   		<div class="playmenu" onclick="clickm3()" id="m3" style="color:#000; position:absolute; top:180px; left:20px; cursor:pointer;"></div>
+   		<div class="playmenu" onclick="clickm4()" id="m4" style="color:#000; position:absolute; top:220px; left:20px; cursor:pointer;"></div>
+   		<div class="playmenu" onclick="clickm5()" id="m5" style="color:#000; position:absolute; top:310px; left:20px; cursor:pointer;"></div>
+   	</div>
+	  {#<div class="copyright" id="copyright" style="position:absolute; display:none; opacity:0; font:10px #000;">
+      © 2012-<script>document.write(new Date().getFullYear());</script> Kazuki Otsuka
+    </div>
+    #}
+
+    <div id="mtx" style="display:none;">
+      <div id="mt1">PHILOSOPHY</div>
+      <div id="mt2">PROJECTS</div>
+      <div id="mt3">CONTACT</div>
+      <div id="mt4">JUST PLAY</div>
+    </div>
+    <div id="mtx2" style="display:none;">
+      <div id="mt_1">PHILOSOPHY</div>
+      <div id="mt_2">PROJECTS</div>
+      <div id="mt_3">CONTACT</div>
+      <div id="mt_4">JUST PLAY</div>
+    </div>
+
+    <div class="toptexts" id="toptexts">
+      <h1 class="title">"Transformism"</h1>
+      <h2 class="subtitle">A New Mainstream of Modern Art</h2>
+    </div>
+
+    <figure class="scroll">
+      <a href="javascript:;" class="arrow" data-action="scroll" data-distination="gallery"></a>
+    </figure>
+  </section>
+
+
+  <section class="main-content">
+    <article id="top-message" class="top-message">
+      <div class="container">
+        <h3 class="">
+          Transformism mobilizes the entirety of knowledge up to the present, particularly in sciences, and extends the aesthetics founded by Baumgarten in the 18th century through formal logic, to forge new criteria for beauty.
+        </h3>
+      </div>
+    </article>
+
+    <article id="gallery" class="page" data-page="gallery">
+      <div class="container">
+        <div class="page-headline">
+          <h2 class="page-title">
+          </h2>
+          <div class="page-phrase">
+            Works
+          </div>
+        </div>
+        <div class="page-content cf">
+          <div class="products-wrap">
+            <ul class="products">
+              <li class="product thesis">
+                <a href="javascript:;">
+                  <img class="product-img" src="/img/works/thesis.png"
+                  srcset="/img/works/_-0P4A1919_bright.jpg"
+                  alt="Kazuki Otsuka 'Thesis' (2023)"/>
+                </a>
+                <div class="product-summary">
+                  <p class="title">Kazuki Otsuka "Thesis" (2023)</p>
+                  <p class="method">Silkscreen on drawing paper</p>
+                  <p class="size">15.4" × 21.4" (391 mm × 543 mm)</p>
+                  <p class="price">$1,001</p>
+                </div>
+              </li>
+              <li class="product BWV1013">
+                <a href="javascript:;">
+                  <video class="product-video" autoplay muted loop>
+                    <source src="/video/BWVFHDPromo1.14_compress.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                  </video>
+                  <!--
+                  <img class="product-img" src="/img/works/iPhoneIMG_4944crop.jpg"
+                  srcset="/img/works/全体***0P4A1897_edit.jpg" 
+                  alt="Kazuki Otsuka 'Theoretical Analysis on BWV 1013' (2022) " />
+-->
+                </a>
+                <div class="product-summary">
+                  <p class="title">Kazuki Otsuka "Computational Complexity (計算複雑性)" (2024) </p>
+                  <p class="method">Silkscreen, Acrylic, Kent Paper</p>
+                  <p class="size">35.8" × 25.9" (910 mm × 660 mm) Framed</p>
+                  <p class="price">$1,199</p>
+                  <a href="https://store.transformism.art/products/%E8%A8%88%E7%AE%97%E8%A4%87%E9%9B%91%E6%80%A7-computational-complexity" style="text-decoration: none; color: inherit;">
+                    <button id='buynow-ComputationalComplexity' class="buynow">Lean More</button>
+                  </a>
+                </div>
+              </li>
+              <li class="product gravity">
+                <a href="javascript:;">
+                  <img class="product-img" src="/img/works/gravity.jpg" 
+                  srcset="/img/works/gravity@2x.jpg 2x"
+                  alt="Kazuki Otsuka 'Gravity is given to the floating set and it breaks in a collision 1' (2022)" />
+                </a>
+                <div class="product-summary">
+                  <p class="title">Kazuki Otsuka "Gravity is given to the floating set and it breaks in a collision 1" (2022)</p>
+                  <p class="method">Oil on canvas</p>
+                  <p class="size">38.2" × 64.2" (970 mm ×  1620 mm) (M100)</p>
+                  <p class="price">$ 11,100</p>
+                </div>
+              </li>
+            </ul>
+            <div class="more-products">
+              <h3 class="message">
+                If you would like to know other works, please contact to i@transformism.art.
+              </h3>
+            </div>
+          </div>
+        </div>
+        <figure class="scroll">
+          <a href="javascript:;" class="arrow" data-action="scroll" data-distination="profile"></a>
+        </figure>
+      </div>
+    </article>
+ 
+    <article id="profile" class="page" data-page="profile" data-fit-window="true">
+      <div class="container">
+        <div class="page-content">
+          <div class="left">
+            <figure class="selfportrait"></figure> <!-- TODO: use <img> -->
+          </div>
+          <div class="right">
+            <div class="container">
+              <h1 class="name">Kazuki Otsuka</h1>
+              <h3 class="profession">Modern Artist</h3>
+              <p class="profile">
+                He consistently explores the formal logical extension of aesthetics and founded Transformism. This movement integrates logic into aesthetics, a domain initially defined by Baumgarten in the 18th century as the study of 'subcognitive perceptions'—traditionally a subject excluded from logical analysis.
+                <br>
+                <br>
+                He holds a master’s degree in Applied Computer Science from the University of Tokyo, where he completed a thesis entitled 'Computational Language β based on Orthomodular Lattices and the Non-distributivity of Quantum Logic.' 
+                <br>
+                <br>
+                He holds multiple software patents in natural language processing and acoustics. He is a member of Mensa, the international high-IQ society for those in the top 2% of the population.
+             </p>
+            </div>
+          </div>
+        </div>
+        <figure class="scroll">
+          <a href="javascript:;" class="arrow" data-action="scroll" data-distination="concept"></a>
+        </figure>
+      </div>
+    </article>
+  
+  
+    <article id="concept" class="page" data-page="concept">
+      <div class="container">
+        <div class="page-headline">
+          <h2 class="page-title">
+            What is Transformism? 
+          </h2>
+          <div class="page-phrase geosans">
+             "Transformism"
+          </div>
+        </div>
+        <div class="page-middle">
+          <h3 class="catchcopy">Falsifiability of Art</h3>
+          <h3 class="catchcopy">The New Mainstream</h3>
+          <h3 class="catchcopy">Art by Scientists</h3>
+        </div>
+        <div class="page-content cf">
+          <div class="concept-statement">
+            <p>
+              The constructs and institutions of intellectual activity related to the cultural 
+              realm called &#x27e8;<em>art</em></em>&#x27e9; and &#x27e8;<em>literature</em>&#x27e9; were born around the time of Hegel.
+              The series of conditions that define the essence of art and literature are still 
+              functioning as <em>&#x27e8;art</em>&#x27e9; today, 
+              although these conditions have been transformed by the financial and capital economy.</br>
+              I will call this <em>&#x27e8;mainstream</em>&#x27e9;.
+            </p>
+            <p>
+              On the other hand, developmental <em>&#x27e8;knowledge</em>&#x27e9; is a methodology that 
+              enables discussion through criticism and verification, 
+              which has been discussed in the past by Aristotle and 
+              in modern times as the philosophy of science by Karl Popper.</br>
+              Art, which expresses the edge of human knowledge, has objectivity, 
+              and because it is objective, it has universality, 
+              and it has a time axis toward the point of convergence of knowledge, 
+              because it is universal.</br>
+              I would like to define art which is a facet of our evolving “knowledge" as <em>&#x27e8;mainstream</em>&#x27e9; or <em>&#x27e8;true art</em>&#x27e9;. 
+              Since it is knowledge, true art, like science, requires "refutability". 
+              And the <em>&#x27e8;mainstream</em>&#x27e9; would be created by scientists (not by conventional artists).</br>
+            </p>
+            <p>
+              I now present "Transformism" as an art movement that constructs a new definition of essence by means of falsifiable criteria in the scientific sense - intelligence, in other words, the depth of evolution - through criticism and improvement without falling into tautology or infinite regress.
+            </p>
+          </div>
+        </div>
+        <figure class="scroll">
+          <a href="javascript:;" class="arrow" data-action="scroll" data-distination="contact"></a>
+        </figure>
+      </div>
+    </article> 
+
+    <article id="contact" class="page" data-page="contact">
+      <div class="container">
+        <div class="page-headline">
+          <div class="page-title">
+            CONTACT
+          </div>
+          <div class="page-phrase">
+            We are based in Tokyo. To purchase artworks, ask questions, or inquire anything, 
+            please feel free to contact us to the addresses below.
+          </div>
+        </div>
+        <div class="page-content">
+          <table class="addresses">
+            <tr>
+              <th>email</th>
+              <td>i@transformism.art</td>
+            </tr>
+            <tr>
+              <th>office</th>
+              <td>106-0032 Roppongi7-7-7, Tri-Seven Roppongi 8F, Minato, Tokyo</td>
+            </tr>
+          </table>
+        </div>
+        <figure class="scroll">
+          <a href="javascript:;" class="arrow" data-action="scroll" data-distination="top"></a>
+        </figure>
+      </div>
+    </article>
+  </section>
+
+  <footer>
+    <div class="copyright">© <script>document.write(new Date().getFullYear());</script> KAZUKI OTSUKA, TRANSFORMISM</div>
+  </footer>
+
+{% endblock %}
+
+{% block foot %}
+	<!--<script src="/js/compiled/_setting.js"></script>-->
+	<!--<script src="/js/compiled/_shuffle.js"></script>-->
+	<script src="/js/lib/jquery.easing.1.3.js"></script>
+	<script src="/js/setting.js"></script>
+	<script src="/js/shuffle.js"></script>
+ 
+{% endblock %}

@@ -1,0 +1,6 @@
+# Dev/test dependencies — exact-pinned (D-3). ランタイム依存も含めて再現する。
+-r requirements.txt
+
+pytest==8.3.4
+mongomock==4.3.0
+fakeredis==2.26.2

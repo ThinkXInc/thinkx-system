@@ -1,0 +1,44 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+  <article class="article" data-news-id="2023-03-20">
+    <div class="container">
+      <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}">
+          << </a></span>
+      <h2 class="title">
+        音声合成ガイドシステムに関する特許を取得
+      </h2>
+      <p class="date news-date">2023 March 20</p>
+      <div class="news-image-container">
+
+      </div>
+      <div class="main-text">
+        ニューラル音声合成ガイドシステムに関する特許を取得しました。
+        <br/>
+本発明は、ユーザー位置を補足しながら、深層学習Text-to-Speech技術を用いての地理空間上での音声ガイドシステムを構築する際に広く適用され、先行文献のNTTによる特許をさらに深層学習時代に敷衍するものです。
+        <br/>
+        <br/>
+	
+文献番号: 特許7242010<br/>
+出願番号: 特願2022-110078<br/>
+発明者: 大塚一輝<br/>
+公知日: 2023年3月20日<br/>
+      </div>
+    </article>
+  </div>
+  {% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+
+  <article class="article" data-news-id="2023-03-20">
+    <div class="container">
+      <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}">
+          << </a></span>
+      <h2 class="title">
+        Pre-Series A Third-Party Allocation of New Shares
+      </h2>
+      <p class="date news-date">2021 Oct 30</p>
+      <div class="news-image-container">
+
+      </div>
+      <div class="main-text">
+
+        ThinkX Corporation has completed a Pre-Series A third-party allocation of new shares with MV2 Investment Business Limited Partnership, managed by Monex Ventures Inc., and Adways Inc. as the underwriters.
+        <br>
+        <br>
+        With this funding, we will strive to develop world-class software products, contributing to the improvement of our country's status, cultural standards, and economic advancement.
+      </div>
+    </article>
+  </div>
+  {% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

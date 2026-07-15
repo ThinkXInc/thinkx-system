@@ -1,0 +1,34 @@
+        <div class="app_banner">
+            <div class="app_banner_wrapper">
+                <!-- Flex: left (icon), center (info), right (store) -->
+                <img class="appicon" src="/img/NNTM/top/appicon.png" alt="App Icon">
+
+                <div class="app_info">
+                    <h2 class="app_name">
+                        {{ locale_dict["app_name"][lang] | safe }}
+                    </h2>
+                    <p class="app_subtitle">
+                        {{ locale_dict["app_subtitle"][lang] }}
+                    </p>
+                    {#<a href="https://www.apple.com/app-store/" target="_blank" class="app_install_button">#}
+                    <a href="/conversion_redirect/" target="_blank" class="app_install_button">
+                        <span class="install_button_text">
+                            {{ locale_dict["app_install_button"][lang] }}
+                        </span>
+                    </a>
+                </div>
+
+                <div class="appstore">
+                    <!-- Use appstore_ja.svg if lang == 'ja', else appstore_en.svg -->
+                    {#<a href="https://www.apple.com/app-store/" target="_blank" class="app_install_button">#}
+                    <a href="/conversion_redirect/" target="_blank" class="app_install_button">
+                    <img class="appstore_img"
+                         src="/img/NNTM/top/{% if lang == 'ja' %}appstore_ja.svg{% else %}appstore_en.svg{% endif %}"
+                         alt="App Store">
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="appdevice">
+            <img class="appdevice_img" src="/img/NNTM/top/app_{{ lang }}.png"/>
+        </div>

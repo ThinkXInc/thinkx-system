@@ -1,0 +1,288 @@
+{% extends "NNTM/base.html" %}
+
+{% block head %}
+<script>
+    window.langOptions = {
+        'en': 'English',
+        'ja': '日本語',
+        'zh': '中文（简体）',
+        'fr': 'Français',
+        'de': 'Deutsch',
+        'es': 'Español',
+        'ar': 'العربية',
+        'ru': 'Русский',
+        'ko': '한국어'
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+<div id="NNTM_top">
+
+    <!-- {# Header #} -->
+    <div class="header">
+        <!-- Background and black translucent overlay in Less -->
+        <div class="header_overlay"></div>
+
+        <div class="header_head">
+
+            {% include 'common/lang_selector.html' %}
+            <!-- Right-aligned images with fixed height (in Less) -->
+            <img class="header_olivewreath" src="/img/NNTM/top/olivewreath_{{ lang }}.png" alt="Olive Wreath">
+            <img class="header_logo" src="/img/NNTM/top/logo.png" alt="Logo">
+        </div>
+
+        <div class="header_main">
+            <!-- Two-column layout: .main_left and .main_right -->
+            <div class="main_left">
+                <div class="container">
+                    <h1 class="header_copy_sub">
+                        {{ locale_dict["header_copy_sub"][lang] | replace('\n', '<br>') | safe  }}
+                    </h1>
+                    <img class="main_logo" src="/img/NNTM/top/main_logo.png" alt="Main Logo">
+
+                    <!-- Learn More button: translucent blur background & hover animation -->
+                    <button class="learn-more">
+                        <span class="button_text">
+                            {{ locale_dict["learn_more"][lang] }}
+                        </span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="main_right">
+                <h2 class="header_copy_main"
+                style="{% if lang == 'ru' %} font-size:19px;{% endif %}">
+                {{ locale_dict["header_copy_main"][lang] | replace('\n', '<br>') | safe }}
+            </h2>
+            </div>
+
+            <div class="header_bottom">
+                <!-- Comment out or hide this text for now:
+                NNTM®はThinkX株式会社の登録商標です。
+                -->
+            </div>
+        </div>
+    </div>
+    <!-- End Header -->
+
+    <!-- {# Effects #} -->
+    <div class="effects" id="effects-section">
+        <!-- Gray background (in Less) -->
+        <div class="effects_content">
+            <!-- Three horizontal blocks with main text, sub text, and overlayed image -->
+
+            <!-- 1: Sleep block -->
+            <div class="effect_block">
+                <div class="effect_main_text">
+                    {{ locale_dict["sleep_main"][lang] }}
+                </div>
+                <div class="effect_image_wrapper">
+                    <img class="effect_image" src="/img/NNTM/top/sleep-min.png" alt="Sleep">
+                    <div class="effect_overlay">
+                        <p class="effect_sub_text">
+                            {{ locale_dict["sleep_sub"][lang] }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2: Focus block -->
+            <div class="effect_block">
+                <div class="effect_main_text">
+                    {{ locale_dict["focus_main"][lang] }}
+                </div>
+                <div class="effect_image_wrapper">
+                    <img class="effect_image" src="/img/NNTM/top/focus-min.png" alt="Focus">
+                    <div class="effect_overlay">
+                        <p class="effect_sub_text">
+                            {{ locale_dict["focus_sub"][lang] }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3: Meditation block -->
+            <div class="effect_block">
+                <div class="effect_main_text">
+                    {{ locale_dict["meditation_main"][lang] }}
+                </div>
+                <div class="effect_image_wrapper">
+                    <img class="effect_image" src="/img/NNTM/top/meditation-min.png" alt="Meditation">
+                    <div class="effect_overlay">
+                        <p class="effect_sub_text">
+                            {{ locale_dict["meditation_sub"][lang] }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- End Effects -->
+
+    <!-- {# Intro #} -->
+    <div class="intro section">
+        <!-- ocean.png background & black translucent overlay in Less -->
+        <div class="intro_overlay"></div>
+
+        <h3 class="intro_copy section_copy">
+            {{ locale_dict["intro_copy"][lang] }}
+        </h3>
+
+        <p class="intro_story description_text">
+            {{ locale_dict["intro_story"][lang] | replace('\n', '<br>') | safe }}
+        </p>
+    </div>
+    <!-- End Intro -->
+
+    <!-- {# Design #} -->
+    <div class="design section">
+        <!-- Black background, white text in Less -->
+        <h3 class="design_copy section_copy">
+            {{ locale_dict["design_copy"][lang] }}
+        </h3>
+
+        <p class="design_description description_text">
+            {{ locale_dict["design_description"][lang] | safe  }}
+        </p>
+
+        <!-- compare_{lang}.png displayed at ~70% width with max-width in Less -->
+        <div class="compare_stack">
+            <img class="design_compare A" src="/img/NNTM/top/compare_{{ lang }}_A.png" alt="Compare Image">
+            <img class="design_compare B" src="/img/NNTM/top/compare_{{ lang }}_B.png" alt="Compare Image">
+        </div>
+    </div>
+    <!-- End Design -->
+
+    <!-- {# High Fidelity #} -->
+    <div class="high_fidelity section">
+        {#
+        <div class="high_fidelity_overlay"></div>
+        #}
+
+        <!-- Background: #8e8f85, text: black (in Less) -->
+        <h3 class="high_fidelity_title section_copy">
+            {{ locale_dict["high_fidelity_title"][lang] }}
+        </h3>
+
+        <div class="high_fidelity_content description_text">
+            <!-- Two-column layout -->
+            <div class="high_fidelity_description">
+                {{ locale_dict["high_fidelity_description"][lang] | replace('\n', '<br>') | safe }}
+            </div>
+            <img class="high_fidelity_image" src="/img/NNTM/top/dsd.png" alt="DSD Recording">
+        </div>
+
+        <!-- p element for caption below content block -->
+        <p class="high_fidelity_caption high_fidelity_caption_1">
+            {{ locale_dict["caption_1"][lang] }}
+        </p>
+        <p class="high_fidelity_caption high_fidelity_caption_2">
+            {{ locale_dict["caption_2"][lang] }}
+        </p>
+
+    </div>
+    <!-- End High Fidelity -->
+
+    <!-- {# Download #} -->
+    <div class="download section">
+        <!-- White background in Less -->
+        <h3 class="download_title section_copy">
+            {{ locale_dict["download_title"][lang] | safe}}
+        </h3>
+
+        {% include 'NNTM/appbanner.html' %}
+    </div>
+    <!-- End Download -->
+
+    <!-- FAQ Section -->
+    <div class="faq section">
+        <!-- White background, black text (defined in Less) -->
+        <h3 class="faq_title section_copy">
+            {{ locale_dict["faq_title"][lang] }}
+        </h3>
+    
+        <div class="faq_content description_text">
+            <!-- FAQ Item 1 -->
+            <div class="faq_item">
+                <h4 class="faq_question">
+                    {{ locale_dict["faq_q1"][lang] | safe }}
+                </h4>
+                <p class="faq_answer">
+                    {{ locale_dict["faq_a1"][lang] | replace('\n', '<br>') | safe }}
+                </p>
+                <a class="faq_related_article" href='/{{lang}}{{ locale_dict["faq1_related1"]["url"] }}'>{{ locale_dict["faq1_related1"]["title"][lang] }}</a>
+            </div>
+            <!-- FAQ Item 2 -->
+            <div class="faq_item">
+                <h4 class="faq_question">
+                    {{ locale_dict["faq_q2"][lang] | safe }}
+                </h4>
+                <p class="faq_answer">
+                    {{ locale_dict["faq_a2"][lang] | replace('\n', '<br>') | safe }}
+                </p>
+                <a class="faq_related_article" href='/{{lang}}{{ locale_dict["faq2_related1"]["url"] }}'>{{ locale_dict["faq2_related1"]["title"][lang] }}</a>
+            </div>
+            <!-- FAQ Item 3 -->
+            <div class="faq_item">
+                <h4 class="faq_question">
+                    {{ locale_dict["faq_q3"][lang] | safe }}
+                </h4>
+                <p class="faq_answer">
+                    {{ locale_dict["faq_a3"][lang] | replace('\n', '<br>') | safe }}
+                </p>
+                <a class="faq_related_article" href='/{{lang}}{{ locale_dict["faq3_related1"]["url"] }}'>{{ locale_dict["faq3_related1"]["title"][lang] }}</a>
+                <a class="faq_related_article" href='/{{lang}}{{ locale_dict["faq3_related2"]["url"] }}'>{{ locale_dict["faq3_related2"]["title"][lang] }}</a>
+            </div>
+            <!-- FAQ Item 4 -->
+            <div class="faq_item">
+                <h4 class="faq_question">
+                    {{ locale_dict["faq_q4"][lang] | safe }}
+                </h4>
+                <p class="faq_answer">
+                    {{ locale_dict["faq_a4"][lang] | replace('\n', '<br>') | safe }}
+                </p>
+            </div>
+
+        </div>
+    </div>
+    <!-- End FAQ -->
+
+
+</div>
+<!-- End #NNTM_top -->
+
+{#
+<footer id="NNTM_footer">
+  <div class="footer-contents-bottom">
+    <p class="copyright">© 2015-2025 ThinkX Inc.</div>
+  </div>
+</footer>
+#}
+
+<div>
+  {#<base href="https://thinkxinc.com" target="_"> aboid to go to nntmapp.com #}
+  {% include 'NNTM/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const learnMoreButton = document.querySelector('.learn-more');
+        const effectsSection = document.querySelector('#effects-section');
+
+        if (learnMoreButton && effectsSection) {
+            learnMoreButton.addEventListener('click', function(e) {
+                e.preventDefault(); // Prevent any default button behavior
+                effectsSection.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        }
+    });
+</script>
+{% endblock %}

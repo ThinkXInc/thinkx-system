@@ -1,0 +1,74 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+  <article class="article" data-news-id="2020-02-07">
+    <div class="container">
+      <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}">
+          << </a></span>
+      <p class="date news-date">2020 Feb 7</p>
+      <h2 class="title">We are pleased to announce our participation in the "Regional Development EXPO" to be held at
+        Makuhari Messe in February 2021.</h2>
+      <div class="news-image-container">
+        <figure class="news-image news-id-2020-02-07">
+          <img class="news-id-2020-02-07" src="/img/expo.jpg" srcset="/img/expo@2x.jpg 2x" />
+        </figure>
+      </div>
+      <div class="main-text">
+        CITYWALK Project will exhibit at the "Regional Development Expo" </br>
+        to be held at Makuhari Messe next February 2020 to strengthen the destination marketing support system</br>
+        </br>
+        as one solution to the declining population and to contribute to regional development nationwide.</br>
+        </br>
+        Based on discussions with local governments and tourism bureaus in Nagasaki, Himeji, Okinawa City, </br>
+        and other cities, as well as the results of our research on DMOs,</br>
+        we have prepared a "Local Government Special Plan" for local governments with complex budgeting needs.</br>
+        </br>
+
+        <!-- TODO:-->
+        <button class="download-button">
+          <a class="download-link" href="/downloads/destination_support_plan" target="_blank" download>Download
+            Document</a>
+        </button></br>
+        </br>
+        <!---->
+
+        The average per capita consumption of Japanese people is said to be 1 million yen,</br>
+        If the population decreases by 100 people, the economy shrinks by 100 million yen.</br>
+        </br>
+
+        CITYWALK is a tool that supports digital marketing, which lags far behind other developed countries, </br>
+        and connects the flow of visitors from outside the region, their circulation within the region, </br>
+        </br>
+        and their introductions and return visits through word of mouth.
+        </br>
+        </br>
+
+        For more information about our products or to request a brochure, please contact</br>
+        </br>
+        <span class="contact-mail">sales@thinkxinc.com</span></br>
+        </br>
+      </div>
+      <div class="back-container cf">
+        <span class="back">
+          <a href="/{{ lang }}/blognews?page={{ page }}">Back to list</a>
+        </span>
+      </div>
+    </div>
+  </article>
+</div>
+{% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

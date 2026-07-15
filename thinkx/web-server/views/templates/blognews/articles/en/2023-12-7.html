@@ -1,0 +1,50 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+    <article class="article" data-news-id="2023-12-7">
+      <div class="container">
+        <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}">
+            << </a></span>
+        <h2 class="title">
+          A patent was granted for a base algorithm for text-based recommendation.
+        </h2>
+        <p class="date news-date">2023 December 7</p>
+        <div class="news-image-container">
+
+        </div>
+        <div class="main-text">
+
+          We have patented a document analysis algorithm for understanding qualitative information such as user's tastes from text.
+          <br>
+          <br>
+          This invention does not require the accumulation of user behavior data, but analyzes from text the tastes and personality characteristics of the user who described it.  We've created a new way of machine learning algorithm which learns multi-semantics in a high-dimensional word embedding space according to any user defined concepts and it efficiently computes the qualitative information implied in a text in a fraction of the computation time.
+          <br>
+          <br>
+          It not only solves the cold-start problem of conventional recommendation (i.e., it does not work unless data is accumulated), but also enables a more precise understanding of diverse user needs.
+          <br>
+          <br>
+          <br>
+          Document No.: Patent 7393772<br/>
+          Application No.: Patent Application 2022-180651<br/>
+          Inventor: Kazuki Otsuka<br/>
+          Publication Date: December 7, 2023<br/>
+
+        </div>
+    </article>
+  </div>
+  {% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

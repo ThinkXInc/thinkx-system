@@ -1,0 +1,96 @@
+/* ------------------------------------------------------------------
+   organization.less – Truetech Japan
+------------------------------------------------------------------- */
+
+@tablet-width:      768px;
+@smartphone-width:  480px;
+
+div#truetech-organization {
+    /* Full‑height visual with site‑wide background image */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    div.main-content {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        justify-content: flex-start;
+        min-width: 800px;
+        max-width: 1000px;
+        padding: 65px 10px;
+
+        h3.members_title {
+            font-weight: 600;
+            font-size: 22px;
+        }
+
+        ul.members {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 19px;
+
+            li.member {
+                width: 100%;
+
+                span.role {
+                    display: block;
+                    width: 100%;
+                    //background-color: #f6f6f6;
+                    padding-left: 8px;
+                    font-size: 14px;
+                    font-weight: 600;
+                    //margin-bottom: 16px;
+                    margin-bottom: 7px;
+                }
+
+                div.container {
+                    padding-left: 7px;
+
+                    span.name {
+                        display: flex;
+                        gap: 28px;
+                        flex-direction: row;
+                        p.name_kanji {
+                            font-weight: 700;
+                        }
+                    }
+
+                    span.profile {
+
+                    }
+
+                }
+
+            }
+        }
+        div.organization {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-top: 34px;
+
+            span {
+                display: block;
+            }
+        }
+    }
+}
+
+@media (max-width: @tablet-width) {
+    div#truetech-organization {
+        div.main-content {
+            min-width: auto;
+        }
+    }
+}
+
+@media (max-width: @smartphone-width) {
+    div#truetech-organization {
+        div.main-content {
+            min-width: auto;
+        }
+    }
+}

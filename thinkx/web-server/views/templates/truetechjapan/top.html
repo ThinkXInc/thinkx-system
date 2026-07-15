@@ -1,0 +1,194 @@
+{% extends "truetechjapan/base.html" %}
+
+{% block head %}
+<script>
+    window.langOptions = {
+        'ja': '日本語',
+        'en': 'English',
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+<div id="truetech-top">
+    {% include 'truetechjapan/common/header.html' %}
+
+    <!-- ↓↓↓↓ Top ↓↓↓↓ -->
+    <section class="top-main">
+        <!-- background handled in top.less -->
+        <img class="top-logo" src="/img/truetechjapan/top/top-logo-v2.png" alt="Logo">
+        <h1 class="top-main-copy">
+            {{ locale_dict["top_main_copy"][lang] | replace('\n','<br>') | safe }}
+        </h1>
+    </section>
+    <!-- ↑↑↑↑ End Top ↑↑↑↑ -->
+
+
+    <div class="content-wrapper">
+        <!-- ↓↓↓↓ Mission ↓↓↓↓ -->
+        <section class="mission">
+            <div class="mission-left">
+                <h2 class="mission-title">
+                    {{ locale_dict["top_mission_title"][lang] }}
+                </h2>
+                <p class="mission-description">
+                    {{ locale_dict["top_mission_description"][lang] | replace('\n','<br>') | safe }}
+                </p>
+            </div>
+            <div class="mission-right">
+                <img class="mission-map" src="/img/truetechjapan/top/map.jpg" alt="Map">
+            </div>
+        </section>
+        <!-- ↑↑↑↑ END Mission ↑↑↑↑ -->
+
+
+        <!-- ↓↓↓↓ Concept ↓↓↓↓ -->
+        <section class="concept">
+            <div class="concept-left">
+                <h2 class="concept-title">
+                    {{ locale_dict["top_concept_title"][lang] }}
+                </h2>
+                <p class="concept-description">
+                    {{ locale_dict["top_concept_description"][lang] | replace('\n','<br>') | safe }}
+                </p>
+            </div>
+            <div class="concept-right">
+                <div class="image-wrapper">
+                    <img class="concept-image" src="/img/truetechjapan/top/puzzle.png" alt="Puzzle">
+                </div>
+            </div>
+        </section>
+
+        <!-- ↑↑↑↑ END Concept ↑↑↑↑ -->
+
+
+        <!-- ↓↓↓↓ Criteria ↓↓↓↓ -->
+        <section class="criteria">
+            <h2 class="criteria-title">
+                {{ locale_dict["top_criteria_title"][lang] }}
+            </h2>
+
+            <ul class="criteria-list">
+                <li class="criteria-item one">
+                    {{ locale_dict["top_criteria_1"][lang] }}
+                </li>
+                <li class="criteria-item two">
+                    {{ locale_dict["top_criteria_2"][lang] }}
+                </li>
+            </ul>
+        </section>
+        <!-- ↑↑↑↑ END Criteria ↑↑↑↑ -->
+
+
+        <!-- ↓↓↓↓ Entry ↓↓↓↓ -->
+        <section class="entry">
+            <h2 class="entry-title">
+                {{ locale_dict["top_entry_title"][lang] }}
+            </h2>
+
+            <div class="entry-main">
+                <ul class="entry-list">
+                    <li class="entry-item">
+                        <img src="/img/truetechjapan/top/checkmark.svg" alt="apply">
+                        <div class="entry-text">
+                            <h3 class="entry-item-title">
+                                {{ locale_dict["top_entry_apply_title"][lang] }}
+                            </h3>
+                            <p class="entry-item-desc">
+                                {{ locale_dict["top_entry_apply_description"][lang] }}
+                            </p>
+                        </div>
+                    </li>
+                    <li class="entry-item">
+                        <img src="/img/truetechjapan/top/checkmark.svg" alt="refer">
+                        <div class="entry-text">
+                            <h3 class="entry-item-title">
+                                {{ locale_dict["top_entry_referer_title"][lang] }}
+                            </h3>
+                            <p class="entry-item-desc">
+                                {{ locale_dict["top_entry_referer_description"][lang] }}
+                            </p>
+                        </div>
+                    </li>
+                    <li class="entry-item">
+                        <img src="/img/truetechjapan/top/checkmark.svg" alt="point">
+                        <div class="entry-text">
+                            <h3 class="entry-item-title">
+                                {{ locale_dict["top_entry_appoint_title"][lang] }}
+                            </h3>
+                            <p class="entry-item-desc">
+                                {{ locale_dict["top_entry_appoint_description"][lang] }}
+                            </p>
+                        </div>
+                    </li>
+                </ul>
+
+                <a class="entry-button" href="/{{ lang }}/entry">
+                    {{ locale_dict["top_entry_button"][lang] }}
+                </a>
+            </div>
+        </section>
+        <!-- ↑↑↑↑ END Entry ↑↑↑↑ -->
+
+
+        <!-- ↓↓↓↓ Philosophy ↓↓↓↓ -->
+        <section class="philosophy">
+            <h2 class="philosophy-title">
+                {{ locale_dict["top_philosophy_title"][lang] }}
+            </h2>
+
+            <ul class="panels-wrapper">
+                <li class="panel">
+                    <img src="/img/truetechjapan/top/doctor.svg" alt="verify">
+                    <h4>{{ locale_dict["top_philosophy_1"][lang] }}</h4>
+                </li>
+                <li class="panel">
+                    <img src="/img/truetechjapan/top/verify.svg" alt="criteria">
+                    <h4>{{ locale_dict["top_philosophy_2"][lang] }}</h4>
+                </li>
+                <li class="panel">
+                    <img src="/img/truetechjapan/top/japan.svg" alt="japan">
+                    <h4>{{ locale_dict["top_philosophy_3"][lang] }}</h4>
+                </li>
+            </ul>
+        </section>
+        <!-- ↑↑↑↑ END Philosophy ↑↑↑↑ -->
+    </div>
+
+</div>
+<!-- End #top -->
+
+<div>
+  {% include 'truetechjapan/common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+<script>
+    /* Yellow‑marker underline animation for criteria */
+    (function () {
+        const els = document.querySelectorAll('.criteria-item');
+        const io  = new IntersectionObserver((e) => {
+            e.forEach(i => i.isIntersecting && i.target.classList.add('show'));
+        }, {threshold: 0.3});
+        els.forEach(el => io.observe(el));
+    })();
+    /*
+    document.addEventListener('DOMContentLoaded', function() {
+        const learnMoreButton = document.querySelector('.learn-more');
+        const effectsSection = document.querySelector('#effects-section');
+
+        if (learnMoreButton && effectsSection) {
+            learnMoreButton.addEventListener('click', function(e) {
+                e.preventDefault(); // Prevent any default button behavior
+                effectsSection.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        }
+    });
+    */
+</script>
+{% endblock %}

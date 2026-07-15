@@ -1,0 +1,4 @@
+<div class="pagination">
+    <a href="{{ url_for('blognews_handler', lang=lang, page=page-1) }}" {% if page <= 1 %}class="disabled"{% endif %}><</a>
+    <a href="{{ url_for('blognews_handler', lang=lang, page=page+1) }}" {% if is_last_page %}class="disabled"{% endif %}>></a>
+</div>

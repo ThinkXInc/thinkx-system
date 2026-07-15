@@ -1,0 +1,632 @@
+{
+    "metadata_blog_audiosetup": {
+      "ja": {
+        "title": "iPhone/iPadからハイレゾ音源を再生するには",
+        "description": "iPhone/iPadでハイレゾ音源を再生する方法を解説します。",
+        "keywords": "ハイレゾ, Hi-Res, iPhone, iPad, DAC, 高音質, 方法, NNTM, ヘッドフォン, イヤフォン, 純正"
+      },
+      "en": {
+        "title": "How to Play High-Resolution Audio from iPhone/iPad",
+        "description": "This article explains how to play high-resolution audio on an iPhone or iPad.",
+        "keywords": "High-Res, Hi-Res, iPhone, iPad, DAC, high-quality sound, method, NNTM, headphones, earphones, official"
+      },
+      "zh": {
+        "title": "如何在 iPhone/iPad 上播放高解析度音频",
+        "description": "本文将介绍如何在 iPhone 或 iPad 上播放高解析度音频的方法。",
+        "keywords": "高解析度, Hi-Res, iPhone, iPad, DAC, 高音质, 方法, NNTM, 耳机, 耳塞, 原装"
+      },
+      "es": {
+        "title": "Cómo reproducir audio en alta resolución desde iPhone/iPad",
+        "description": "Este artículo explica cómo reproducir audio de alta resolución en un iPhone o iPad.",
+        "keywords": "alta resolución, Hi-Res, iPhone, iPad, DAC, alta calidad de sonido, método, NNTM, auriculares, audífonos, oficial"
+      },
+      "fr": {
+        "title": "Comment lire de l’audio haute résolution depuis un iPhone/iPad",
+        "description": "Cet article explique comment lire de l'audio haute résolution sur un iPhone ou un iPad.",
+        "keywords": "haute résolution, Hi-Res, iPhone, iPad, DAC, haute qualité audio, méthode, NNTM, casque, écouteurs, officiel"
+      },
+      "ru": {
+        "title": "Как воспроизводить аудио высокой четкости на iPhone/iPad",
+        "description": "В этой статье объясняется, как воспроизводить аудио высокого разрешения на iPhone или iPad.",
+        "keywords": "высокое разрешение, Hi-Res, iPhone, iPad, DAC, высокое качество звука, метод, NNTM, наушники, гарнитура, оригинал"
+      },
+      "de": {
+        "title": "Wie man hochauflösendes Audio von iPhone/iPad abspielt",
+        "description": "Dieser Artikel erklärt, wie man auf einem iPhone oder iPad hochauflösendes Audio abspielt.",
+        "keywords": "Hi-Res, iPhone, iPad, DAC, hohe Klangqualität, Anleitung, NNTM, Kopfhörer, Ohrhörer, Original"
+      },
+      "ko": {
+        "title": "iPhone/iPad에서 하이레졸루션 오디오를 재생하는 방법",
+        "description": "이 글에서는 iPhone 또는 iPad에서 하이레졸루션 오디오를 재생하는 방법을 설명합니다.",
+        "keywords": "하이레조, Hi-Res, iPhone, iPad, DAC, 고음질, 방법, NNTM, 헤드폰, 이어폰, 정품"
+      },
+      "ar": {
+        "title": "كيفية تشغيل الصوت عالي الدقة على iPhone/iPad",
+        "description": "توضح هذه المقالة كيفية تشغيل الصوت عالي الدقة على جهاز iPhone أو iPad.",
+        "keywords": "صوت عالي الدقة, Hi-Res, iPhone, iPad, DAC, جودة صوت عالية, طريقة, NNTM, سماعات رأس, سماعات أذن, أصلي"
+      }
+    },
+    "page_title": {
+      "ja": "iPhone/iPadからハイレゾ音源を再生するには",
+      "en": "How to Play High-Resolution Audio from iPhone/iPad",
+      "zh": "如何在 iPhone/iPad 上播放高解析度音频",
+      "es": "Cómo reproducir audio en alta resolución desde iPhone/iPad",
+      "fr": "Comment lire de l’audio haute résolution depuis un iPhone/iPad",
+      "ru": "Как воспроизводить аудио высокой четкости на iPhone/iPad",
+      "de": "Wie man hochauflösendes Audio von iPhone/iPad abspielt",
+      "ko": "iPhone/iPad에서 하이레졸루션 오디오를 재생하는 방법",
+      "ar": "كيفية تشغيل الصوت عالي الدقة على iPhone/iPad"
+    },
+    "page_subtitle": {
+      "ja": "",
+      "en": "",
+      "zh": "",
+      "es": "",
+      "fr": "",
+      "ru": "",
+      "de": "",
+      "ko": "",
+      "ar": ""
+    },
+    "article": {
+      "ja": [
+        {
+          "text": "ハイレゾ音源は96kHzや192kHzといった、通常の再生データよりも情報密度が高い音源で、よりリアルな生に近い音を聴くことができます。\n\nこの記事ではiPhoneやiPadでハイレゾ音源をその元の品質を維持しながら再生する方法を説明します。\n\niPhone内には内蔵のDAC（デジタル・アナログ・コンバーター）があり、最大再生可能周波数は48kHzです。iPadも同様です。音源を再生するもっとも簡単なセットアップはおそらく以下のようになるでしょう。"
+        },
+        {
+          "image": "use1-1_sp_ear2.jpg",
+          "caption": ""
+        },
+        {
+          "image": "use2-1_sp_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "単純にスピーカーシステムやイヤホン、ヘッドフォンを接続しています。\nこれでも元の音源の品質が良ければ、普通のCD並みの音質を得ることができます。"
+        },
+        {
+          "text": "先ほどの記載の通り、iPhone/iPadの内蔵DACは48kHzが上限のため、デジタルアナログ変換を外部デバイスで行うことで、これを強化できます。\n以下はiFi社のUno <a href=\"https://amzn.asia/d/3nqTjQz\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/3nqTjQz</a> という製品。\nこの製品はわずか0.15キログラムで持ち運びにも軽く、手のひらに乗る程度の大きさです。\niPhone用の外部DACはAmazonで9千円~ほどから買うことができます。"
+        },
+        {
+          "image": "ifi.jpg",
+          "caption": "iFi audio Uno PCM384/DSD256 1万4千円程 動作確認済み"
+        },
+        {
+          "image": "2-3_sp_hi_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "iPhone/iPadがLightningかUSB-C端子かどちらかを確認してください。\nUSB-CであればUSB-Cに対応したDACを購入してください。iPhoneとDACを接続し、イヤホンジャックとスピーカーやヘッドフォンを接続します。\nあとは再生するだけです！ 接続した時点で、iPhoneは自動的に外付けのDACをオーディオデバイスとして選択します。"
+        },
+        {
+          "image": "2-4_sp_hi_headphone.jpg",
+          "caption": "iPhone->DAC->ヘッドフォンのセットアップで最高の音質を得る"
+        },
+        {
+          "text": "上記のiFi Unoは最大で32bit/384kHzに対応しており、NNTMの音源を最大のパフォーマンスで再生できます。\n実際に再生してみると、リアルな粒感のある音質が感じられると思います。"
+        },
+        {
+          "image": "use3_ipad_hi_speaker.jpg",
+          "caption": "起こされない最高の睡眠を手にいれる、iPad版NNTM App+DAC+スピーカーのセットアップ"
+        },
+        {
+          "text": "上記のiPad版NNTM+DAC+SONY SRS-XG300は筆者も使用している、睡眠時のセットアップです。\nこれで夜中や朝方に物音で起こされにくくなり、睡眠の質を向上させられます。\n\n以下は、必要な３点セットのまとめです。"
+        },
+        {
+          "head": "【1. NNTM 】"
+        },
+        {
+          "text": "Appダウンロード"
+        },
+        {
+          "head": "【2. DAC】"
+        },
+        {
+          "text": "iFi audio Uno PCM384/DSD256 <a href=\"https://amzn.asia/d/izWuBSi\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/izWuBSi</a> 14,300円 (USB-C対応、動作確認済み)\nFiiO KA2 Lightning <a href=\"https://amzn.asia/d/0WxGNvf\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/0WxGNvf</a> 10,431円 (Lightning対応、動作未確認）\nRadius RK-DA70C <a href=\"https://amzn.asia/d/iAGHnHQ\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/iAGHnHQ</a> 15,950円 (USB-C対応、動作未確認）\nEarFun UA100 <a href=\"https://amzn.asia/d/bygtI26\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/bygtI26</a> 8,990円 (USB-C対応、動作未確認）\n他にも多くの製品があります。Amazonで「DAC USB-C」または「DAC Lightning」で検索してください。\nあまりに安価で小型のものはDACが搭載されていてもiPhone内蔵のDAC以下の場合もあるので気をつけてください。"
+        },
+        {
+          "head": "【3. イヤホン、ヘッドフォン、スピーカー】"
+        },
+        {
+          "text": "ヘッドフォンやスピーカーは古くないものであれば基本的には対応していると考えられます。お好きなものを選択してください。\nSONY SRS-XG300 <a href=\"https://amzn.asia/d/6g076zO\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/6g076zO</a> 26,500円\nイヤホンはハイレゾ対応と謳っているか、製品仕様をチェックし再生可能周波数帯が96kHz以上のものを選らんでください。\n\nその他、\n・iPhoneに付属しているApple純正イヤホンは物理的な特性上ハイレゾの性能を発揮できないと言われています。イヤホンにこだわるなら上位の機種を購入してください。\n・AirPlayやBluetooth AirPodsなどの無線では44.1kHz/16bitに制限されており、原則的にはハイレゾの性能を最大限発揮するなら有線の方が有利です。"
+        }
+      ],
+      "en": [
+        {
+          "text": "High-resolution audio refers to sources like 96kHz or 192kHz, which contain more information than standard playback files, letting you hear sound closer to a live performance.\n\nIn this article, we’ll explain how to play high-resolution audio on your iPhone or iPad without degrading its original quality.\n\nBoth the iPhone and iPad have built-in DACs (digital-to-analog converters) that support playback up to 48kHz. This is sufficient for standard sources, but not for higher sample rates. The simplest setup might look like this:"
+        },
+        {
+          "image": "use1-1_sp_ear2.jpg",
+          "caption": ""
+        },
+        {
+          "image": "use2-1_sp_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "Here, you’re simply connecting a speaker system or earphones/headphones directly. If the original source is high quality, you can still enjoy sound comparable to a standard CD."
+        },
+        {
+          "text": "As noted above, the iPhone/iPad’s built-in DAC tops out at 48kHz. By using an external device for digital-to-analog conversion, you can enhance your playback.\n\nHere’s an example: the Uno by iFi (<a href=\"https://amzn.asia/d/3nqTjQz\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/3nqTjQz</a>), which weighs only about 0.15 kg and can fit in the palm of your hand. External DACs for iPhone can be found on Amazon starting at around 9,000 yen."
+        },
+        {
+          "image": "ifi.jpg",
+          "caption": "iFi audio Uno PCM384/DSD256, around 14,000 yen, tested and confirmed to work"
+        },
+        {
+          "image": "2-3_sp_hi_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "Check whether your iPhone/iPad uses Lightning or USB-C. If it’s USB-C, buy a DAC that supports USB-C. Connect your iPhone to the DAC, and then connect your headphones or speakers to the DAC’s output. After that, just press play! Once connected, the iPhone automatically selects the external DAC as the audio device."
+        },
+        {
+          "image": "2-4_sp_hi_headphone.jpg",
+          "caption": "Get the best audio quality with an iPhone->DAC->Headphones setup"
+        },
+        {
+          "text": "The iFi Uno supports up to 32bit/384kHz playback, letting you experience NNTM’s source files at their highest performance. You’ll likely notice more realistic, textured sound when you listen."
+        },
+        {
+          "image": "use3_ipad_hi_speaker.jpg",
+          "caption": "For uninterrupted sleep, this iPad NNTM App + DAC + Speaker setup is a personal favorite"
+        },
+        {
+          "text": "The combination of the iPad version of NNTM, a DAC, and the SONY SRS-XG300 speaker is my personal setup for bedtime. It helps prevent being woken by noises late at night or early morning, improving sleep quality.\n\nBelow is a summary of the three essential components you’ll need."
+        },
+        {
+          "head": "[1] NNTM"
+        },
+        {
+          "text": "Download the app."
+        },
+        {
+          "head": "[2] DAC"
+        },
+        {
+          "text": "iFi audio Uno PCM384/DSD256 <a href=\"https://amzn.asia/d/izWuBSi\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/izWuBSi</a> ¥14,300 (USB-C compatible, tested)\nFiiO KA2 Lightning <a href=\"https://amzn.asia/d/0WxGNvf\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/0WxGNvf</a> ¥10,431 (Lightning compatible, untested)\nRadius RK-DA70C <a href=\"https://amzn.asia/d/iAGHnHQ\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/iAGHnHQ</a> ¥15,950 (USB-C compatible, untested)\nEarFun UA100 <a href=\"https://amzn.asia/d/bygtI26\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/bygtI26</a> ¥8,990 (USB-C compatible, untested)\nThere are many other products available. Search “DAC USB-C” or “DAC Lightning” on Amazon.\nNote that extremely cheap or compact devices might contain a DAC that performs no better than the one built into the iPhone, so be cautious."
+        },
+        {
+          "head": "[3] Earphones, Headphones, or Speakers"
+        },
+        {
+          "text": "Most modern headphones or speakers will generally support high-resolution audio. Feel free to use your favorite.\nSONY SRS-XG300 <a href=\"https://amzn.asia/d/6g076zO\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/6g076zO</a> ¥26,500\nFor earphones, choose a model labeled “high-resolution compatible,” or check the specifications to ensure it supports playback at 96kHz or higher.\n\nOther notes:\n- The Apple EarPods included with iPhone are said to be incapable of achieving high-res performance due to their physical characteristics. If you’re particular about sound, choose a higher-end option.\n- AirPlay or Bluetooth (including AirPods) is generally limited to 44.1kHz/16bit, so wired connections are recommended for maximum high-resolution performance."
+        }
+      ],
+      "zh": [
+        {
+          "text": "高解析度音频通常指 96kHz 或 192kHz 等比普通音频文件包含更多信息的音源，可以让您听到更接近现场表演的音质。\n\n本文将介绍如何在 iPhone 或 iPad 上保持原始品质来播放高解析度音频。\n\niPhone 和 iPad 内置的 DAC（数字-模拟转换器）最大支持 48kHz 播放。这足以应付标准音源，但无法播放更高的采样率。以下是最简单的连接示例："
+        },
+        {
+          "image": "use1-1_sp_ear2.jpg",
+          "caption": ""
+        },
+        {
+          "image": "use2-1_sp_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "在此示例中，只是将音箱或耳机/耳麦直接连接到设备。如果原始音源质量够高，依然可以获得相当于 CD 水平的音质。"
+        },
+        {
+          "text": "如上所述，iPhone/iPad 内置的 DAC 最多只能支持到 48kHz。如果想提升播放能力，可以使用外接设备进行数字-模拟转换。\n\n例如，iFi 的 Uno (<a href=\"https://amzn.asia/d/3nqTjQz\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/3nqTjQz</a>)，它重量只有约 0.15 kg，体积小巧，能放在手掌中。在亚马逊上，外接 iPhone 的 DAC 价格大概从 9,000 日元起。"
+        },
+        {
+          "image": "ifi.jpg",
+          "caption": "iFi audio Uno PCM384/DSD256，约 14,000 日元，已确认可用"
+        },
+        {
+          "image": "2-3_sp_hi_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "请先确认您的 iPhone/iPad 是 Lightning 接口还是 USB-C 接口。如果是 USB-C，就需购买支持 USB-C 的 DAC。把 iPhone 和 DAC 连接起来，然后将耳机或音箱插入 DAC 的输出端口即可。之后只需开始播放！连接完成后，iPhone 会自动将外接 DAC 识别为音频设备。"
+        },
+        {
+          "image": "2-4_sp_hi_headphone.jpg",
+          "caption": "iPhone->DAC->耳机的组合可以获得最佳音质"
+        },
+        {
+          "text": "iFi Uno 最高支持 32bit/384kHz，可完全发挥 NNTM 音源的性能。实际上听起来会更具临场感和细节。"
+        },
+        {
+          "image": "use3_ipad_hi_speaker.jpg",
+          "caption": "在夜晚不被打扰地睡个好觉，iPad版 NNTM App + DAC + 音箱的组合"
+        },
+        {
+          "text": "上图中的 iPad 版 NNTM + DAC + SONY SRS-XG300 是笔者常用的睡眠组合。这样就不容易被夜间或清晨的声音吵醒，能有效提升睡眠质量。\n\n以下汇总了您所需的三大组件："
+        },
+        {
+          "head": "【1. NNTM】"
+        },
+        {
+          "text": "下载应用"
+        },
+        {
+          "head": "【2. DAC】"
+        },
+        {
+          "text": "iFi audio Uno PCM384/DSD256 <a href=\"https://amzn.asia/d/izWuBSi\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/izWuBSi</a> 14,300 日元 (支持 USB-C，已确认可用)\nFiiO KA2 Lightning <a href=\"https://amzn.asia/d/0WxGNvf\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/0WxGNvf</a> 10,431 日元 (支持 Lightning，未确认可用)\nRadius RK-DA70C <a href=\"https://amzn.asia/d/iAGHnHQ\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/iAGHnHQ</a> 15,950 日元 (支持 USB-C，未确认可用)\nEarFun UA100 <a href=\"https://amzn.asia/d/bygtI26\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/bygtI26</a> 8,990 日元 (支持 USB-C，未确认可用)\n其他品牌也有许多产品。您可以在亚马逊上搜索 “DAC USB-C” 或 “DAC Lightning”。\n需要注意的是，一些特别便宜或非常小巧的产品可能内置的 DAC 性能不及 iPhone 本身的 DAC。"
+        },
+        {
+          "head": "【3. 耳机、耳麦或音箱】"
+        },
+        {
+          "text": "只要不是太老旧的耳机或音箱，通常都可以播放高解析度音频。您可以选择自己喜欢的产品。\nSONY SRS-XG300 <a href=\"https://amzn.asia/d/6g076zO\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/6g076zO</a> 26,500 日元\n若选择耳机，尽量选标注“支持高解析度”或在规格中注明能播放 96kHz 以上的产品。\n\n另外：\n- 有人说 iPhone 自带的 Apple 耳机由于其物理特性，无法发挥高解析度音源的全部潜力。如果追求音质，建议选择更高端的耳机。\n- 使用 AirPlay 或蓝牙（包括 AirPods）的无线模式时，通常只能达到 44.1kHz/16bit。若想充分发挥高解析度音源的品质，建议使用有线连接。"
+        }
+      ],
+      "es": [
+        {
+          "text": "El audio de alta resolución (Hi-Res) hace referencia a fuentes como 96kHz o 192kHz, que contienen más información que un archivo de audio estándar y permiten escuchar un sonido más parecido a una actuación en vivo.\n\nEn este artículo, explicaremos cómo reproducir audio de alta resolución en un iPhone o iPad sin comprometer su calidad original.\n\nLos iPhone y iPad incorporan un DAC (convertidor digital a analógico) que admite la reproducción de hasta 48kHz, suficiente para fuentes normales, pero no para frecuencias de muestreo más altas. El método más sencillo de conexión sería el siguiente:"
+        },
+        {
+          "image": "use1-1_sp_ear2.jpg",
+          "caption": ""
+        },
+        {
+          "image": "use2-1_sp_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "En este caso, simplemente se conectan unos altavoces o auriculares/cascos directamente. Si la fuente original es de alta calidad, aún se consigue una calidad de sonido cercana al estándar de un CD."
+        },
+        {
+          "text": "Como mencionamos, el DAC interno del iPhone/iPad solo admite hasta 48kHz. Al usar un dispositivo externo para la conversión digital-analógica, puedes mejorar la reproducción.\n\nPor ejemplo, el Uno de iFi (<a href=\"https://amzn.asia/d/3nqTjQz\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/3nqTjQz</a>), que pesa solo unos 0,15 kg y cabe en la palma de la mano. En Amazon, puedes encontrar DACs externos para iPhone a partir de unos 9.000 yenes."
+        },
+        {
+          "image": "ifi.jpg",
+          "caption": "iFi audio Uno PCM384/DSD256, alrededor de 14.000 yenes, se ha comprobado su funcionamiento"
+        },
+        {
+          "image": "2-3_sp_hi_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "Verifica si tu iPhone/iPad tiene conector Lightning o USB-C. Si es USB-C, adquiere un DAC compatible con USB-C. Conecta tu iPhone al DAC y después los auriculares o altavoces a la salida del DAC. ¡Y listo para reproducir! Una vez conectado, el iPhone seleccionará automáticamente el DAC externo como dispositivo de audio."
+        },
+        {
+          "image": "2-4_sp_hi_headphone.jpg",
+          "caption": "iPhone->DAC->Auriculares: una configuración para obtener la mejor calidad de audio"
+        },
+        {
+          "text": "El iFi Uno admite hasta 32bit/384kHz, lo que te permite reproducir los archivos de NNTM con el mayor rendimiento posible. Notarás un sonido más detallado y realista."
+        },
+        {
+          "image": "use3_ipad_hi_speaker.jpg",
+          "caption": "Una gran opción para dormir sin interrupciones: la app NNTM para iPad + DAC + Altavoces"
+        },
+        {
+          "text": "La combinación del iPad con NNTM, un DAC y el altavoz SONY SRS-XG300 es mi preferida para antes de dormir. De este modo, los ruidos nocturnos o matutinos tienen menos posibilidad de despertarte, mejorando la calidad del sueño.\n\nA continuación, un resumen de los tres componentes esenciales:"
+        },
+        {
+          "head": "[1] NNTM"
+        },
+        {
+          "text": "Descarga la aplicación."
+        },
+        {
+          "head": "[2] DAC"
+        },
+        {
+          "text": "iFi audio Uno PCM384/DSD256 <a href=\"https://amzn.asia/d/izWuBSi\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/izWuBSi</a> ¥14.300 (compatible con USB-C, verificado)\nFiiO KA2 Lightning <a href=\"https://amzn.asia/d/0WxGNvf\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/0WxGNvf</a> ¥10.431 (Lightning, no verificado)\nRadius RK-DA70C <a href=\"https://amzn.asia/d/iAGHnHQ\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/iAGHnHQ</a> ¥15.950 (USB-C, no verificado)\nEarFun UA100 <a href=\"https://amzn.asia/d/bygtI26\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/bygtI26</a> ¥8.990 (USB-C, no verificado)\nExisten muchos otros productos. Busca “DAC USB-C” o “DAC Lightning” en Amazon.\nTen en cuenta que algunos dispositivos extremadamente baratos o compactos pueden incorporar un DAC con un rendimiento menor o similar al del iPhone."
+        },
+        {
+          "head": "[3] Auriculares, Cascos o Altavoces"
+        },
+        {
+          "text": "La mayoría de cascos o altavoces modernos suelen admitir audio de alta resolución, así que elige los que más te gusten.\nSONY SRS-XG300 <a href=\"https://amzn.asia/d/6g076zO\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/6g076zO</a> ¥26.500\nSi optas por auriculares, busca modelos que anuncien compatibilidad con alta resolución o verifica en las especificaciones que admitan frecuencias de 96kHz o más.\n\nOtros detalles:\n- Se dice que los auriculares oficiales de Apple incluidos con el iPhone no pueden aprovechar el rendimiento de alta resolución debido a sus limitaciones físicas. Si deseas un sonido de alta calidad, elige un modelo superior.\n- AirPlay o Bluetooth (incluidos los AirPods) suelen estar limitados a 44.1kHz/16bit, por lo que para aprovechar al máximo el audio Hi-Res, se recomienda una conexión por cable."
+        }
+      ],
+      "fr": [
+        {
+          "text": "L’audio haute résolution (Hi-Res) fait référence à des sources comme 96 kHz ou 192 kHz, qui contiennent plus d’informations qu’un fichier audio standard, permettant une expérience sonore plus proche d’une performance live.\n\nDans cet article, nous expliquons comment lire de l’audio haute résolution sur un iPhone ou un iPad tout en préservant la qualité d’origine.\n\nLes iPhone et iPad intègrent un DAC (convertisseur numérique-analogique) prenant en charge jusqu’à 48 kHz. Cela suffit pour des sources habituelles, mais pas pour des fréquences plus élevées. La configuration la plus simple pourrait être :"
+        },
+        {
+          "image": "use1-1_sp_ear2.jpg",
+          "caption": ""
+        },
+        {
+          "image": "use2-1_sp_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "Ici, vous connectez simplement un système de haut-parleurs ou des écouteurs/casques directement à l’appareil. Si la source d’origine est de bonne qualité, vous obtiendrez une qualité proche d’un CD standard."
+        },
+        {
+          "text": "Comme indiqué, le DAC intégré à l’iPhone/iPad est limité à 48 kHz. En utilisant un périphérique externe pour la conversion numérique-analogique, vous pouvez améliorer la restitution.\n\nPar exemple, l’Uno d’iFi (<a href=\"https://amzn.asia/d/3nqTjQz\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/3nqTjQz</a>) ne pèse qu’environ 0,15 kg et tient dans la main. Sur Amazon, on trouve des DAC externes pour iPhone à partir d’environ 9 000 yens."
+        },
+        {
+          "image": "ifi.jpg",
+          "caption": "iFi audio Uno PCM384/DSD256, environ 14 000 yens, testé et approuvé"
+        },
+        {
+          "image": "2-3_sp_hi_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "Vérifiez si votre iPhone/iPad dispose d’un port Lightning ou USB-C. S’il s’agit de l’USB-C, procurez-vous un DAC compatible USB-C. Connectez l’iPhone au DAC, puis vos écouteurs ou enceintes à la sortie du DAC. Ensuite, il suffit de lancer la lecture ! Une fois connecté, l’iPhone sélectionne automatiquement le DAC externe comme périphérique audio."
+        },
+        {
+          "image": "2-4_sp_hi_headphone.jpg",
+          "caption": "Obtenez la meilleure qualité sonore avec l’ensemble iPhone->DAC->Casque"
+        },
+        {
+          "text": "L’iFi Uno prend en charge jusqu’à 32 bits/384 kHz, vous permettant de profiter des fichiers NNTM à leurs performances optimales. Vous percevrez sans doute un son plus réaliste et détaillé."
+        },
+        {
+          "image": "use3_ipad_hi_speaker.jpg",
+          "caption": "Pour un sommeil ininterrompu : application NNTM sur iPad + DAC + Enceintes"
+        },
+        {
+          "text": "La combinaison de l’application NNTM pour iPad, d’un DAC et de l’enceinte SONY SRS-XG300 est ma configuration personnelle pour le coucher. Cela réduit le risque d’être réveillé par des bruits pendant la nuit ou au petit matin, améliorant ainsi la qualité du sommeil.\n\nVoici un récapitulatif des trois éléments indispensables :"
+        },
+        {
+          "head": "[1] NNTM"
+        },
+        {
+          "text": "Téléchargez l’application."
+        },
+        {
+          "head": "[2] DAC"
+        },
+        {
+          "text": "iFi audio Uno PCM384/DSD256 <a href=\"https://amzn.asia/d/izWuBSi\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/izWuBSi</a> 14 300 yens (compatible USB-C, testé)\nFiiO KA2 Lightning <a href=\"https://amzn.asia/d/0WxGNvf\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/0WxGNvf</a> 10 431 yens (compatible Lightning, non testé)\nRadius RK-DA70C <a href=\"https://amzn.asia/d/iAGHnHQ\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/iAGHnHQ</a> 15 950 yens (compatible USB-C, non testé)\nEarFun UA100 <a href=\"https://amzn.asia/d/bygtI26\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/bygtI26</a> 8 990 yens (compatible USB-C, non testé)\nDe nombreux autres produits existent. Recherchez « DAC USB-C » ou « DAC Lightning » sur Amazon.\nNotez que certains DAC très bon marché ou de très petite taille peuvent offrir des performances inférieures ou similaires à celles du DAC intégré de l’iPhone."
+        },
+        {
+          "head": "[3] Écouteurs, Casque ou Enceintes"
+        },
+        {
+          "text": "La plupart des casques ou enceintes récents sont en principe compatibles avec l’audio haute résolution. Choisissez votre modèle préféré.\nSONY SRS-XG300 <a href=\"https://amzn.asia/d/6g076zO\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/6g076zO</a> 26 500 yens\nSi vous optez pour des écouteurs, vérifiez qu’ils soient annoncés comme « haute résolution » ou que leurs spécifications indiquent une prise en charge d’au moins 96 kHz.\n\nAutres remarques :\n- Les écouteurs Apple fournis avec l’iPhone ne peuvent, à cause de leurs caractéristiques physiques, exploiter pleinement le potentiel du Hi-Res. Si la qualité vous importe, optez pour un modèle supérieur.\n- En sans fil via AirPlay ou Bluetooth (y compris AirPods), le débit est généralement limité à 44,1 kHz/16 bits. Pour profiter pleinement des performances Hi-Res, la connexion filaire est recommandée."
+        }
+      ],
+      "ru": [
+        {
+          "text": "Аудио высокого разрешения (Hi-Res) – это такие форматы, как 96 кГц или 192 кГц, которые содержат больше данных по сравнению со стандартными аудиофайлами, позволяя получать звук, более приближенный к живому исполнению.\n\nВ этой статье мы расскажем, как воспроизводить аудио высокого разрешения на iPhone или iPad без потери исходного качества.\n\nВ iPhone и iPad встроены ЦАПы (цифро-аналоговые преобразователи), поддерживающие воспроизведение максимум до 48 кГц, что достаточно для стандартных источников, но не для более высоких частот дискретизации. Самая простая схема подключения может выглядеть так:"
+        },
+        {
+          "image": "use1-1_sp_ear2.jpg",
+          "caption": ""
+        },
+        {
+          "image": "use2-1_sp_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "В данном случае вы просто подключаете колонки или наушники напрямую. Если исходный аудиофайл высокого качества, вы получите звук, сопоставимый со стандартным компакт-диском."
+        },
+        {
+          "text": "Как уже упоминалось, встроенный ЦАП в iPhone/iPad поддерживает максимум 48 кГц. Чтобы расширить возможности воспроизведения, можно использовать внешнее устройство для цифро-аналогового преобразования.\n\nНапример, Uno от iFi (<a href=\"https://amzn.asia/d/3nqTjQz\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/3nqTjQz</a>) весит всего около 0,15 кг и помещается на ладони. На Amazon можно найти внешние ЦАПы для iPhone по цене от примерно 9000 йен."
+        },
+        {
+          "image": "ifi.jpg",
+          "caption": "iFi audio Uno PCM384/DSD256, около 14 000 йен, проверено в работе"
+        },
+        {
+          "image": "2-3_sp_hi_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "Убедитесь, что ваш iPhone/iPad имеет разъём Lightning или USB-C. Если это USB-C, приобретите ЦАП, совместимый с USB-C. Подключите iPhone к ЦАПу, а затем наушники или колонки к выходу ЦАПа. Дальше просто включите воспроизведение! После подключения iPhone автоматически распознает внешний ЦАП как аудиоустройство."
+        },
+        {
+          "image": "2-4_sp_hi_headphone.jpg",
+          "caption": "Схема iPhone->ЦАП->Наушники позволяет получить максимально качественный звук"
+        },
+        {
+          "text": "iFi Uno поддерживает до 32 бит/384 кГц, что даёт возможность максимально полноценно воспроизводить треки NNTM. При прослушивании вы почувствуете более реалистичное и детализированное звучание."
+        },
+        {
+          "image": "use3_ipad_hi_speaker.jpg",
+          "caption": "Настройка iPad-версии приложения NNTM + ЦАП + колонки для спокойного сна"
+        },
+        {
+          "text": "Комбинация iPad-версии NNTM, ЦАПа и колонок SONY SRS-XG300 – мой личный выбор для сна. Это помогает не просыпаться ночью или рано утром из-за случайных шумов и улучшает качество сна.\n\nНиже приведён список необходимых компонентов:"
+        },
+        {
+          "head": "[1] NNTM"
+        },
+        {
+          "text": "Загрузите приложение."
+        },
+        {
+          "head": "[2] ЦАП (DAC)"
+        },
+        {
+          "text": "iFi audio Uno PCM384/DSD256 <a href=\"https://amzn.asia/d/izWuBSi\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/izWuBSi</a> 14 300 йен (совместим с USB-C, проверено)\nFiiO KA2 Lightning <a href=\"https://amzn.asia/d/0WxGNvf\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/0WxGNvf</a> 10 431 йен (Lightning, не проверено)\nRadius RK-DA70C <a href=\"https://amzn.asia/d/iAGHnHQ\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/iAGHnHQ</a> 15 950 йен (USB-C, не проверено)\nEarFun UA100 <a href=\"https://amzn.asia/d/bygtI26\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/bygtI26</a> 8 990 йен (USB-C, не проверено)\nСуществует много других моделей. Выполните поиск по ключевым словам «DAC USB-C» или «DAC Lightning» на Amazon.\nУчтите, что крайне дешёвые или очень компактные устройства могут иметь ЦАП, сопоставимый или уступающий встроенному в iPhone."
+        },
+        {
+          "head": "[3] Наушники или колонки"
+        },
+        {
+          "text": "Большинство современных наушников или колонок в принципе совместимы с Hi-Res-аудио, так что выбирайте по своему вкусу.\nSONY SRS-XG300 <a href=\"https://amzn.asia/d/6g076zO\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/6g076zO</a> 26 500 йен\nПри выборе наушников ищите модели с пометкой «совместимы с Hi-Res» или проверьте характеристики, чтобы убедиться в поддержке 96 кГц и выше.\n\nДополнительно:\n– Считается, что фирменные наушники Apple, поставляемые с iPhone, из-за своих конструктивных особенностей не могут раскрыть весь потенциал Hi-Res. Если вам важно качество звука, выбирайте более дорогие модели.\n– AirPlay или Bluetooth (включая AirPods) обычно ограничены 44,1 кГц/16 бит, поэтому для максимального раскрытия Hi-Res-аудио предпочтительно проводное подключение."
+        }
+      ],
+      "de": [
+        {
+          "text": "Hochauflösendes Audio (Hi-Res) bezieht sich auf Formate wie 96 kHz oder 192 kHz, die mehr Informationen enthalten als normale Audiodateien. Dies ermöglicht ein Klangbild, das näher an einer Live-Aufführung liegt.\n\nIn diesem Artikel erklären wir, wie man auf einem iPhone oder iPad Hi-Res-Audio abspielen kann, ohne die ursprüngliche Qualität zu beeinträchtigen.\n\niPhone und iPad verfügen über einen integrierten DAC (Digital-Analog-Wandler), der eine Wiedergabe von bis zu 48 kHz unterstützt. Das reicht für Standard-Audiodateien, jedoch nicht für höhere Abtastraten. Die einfachste Verbindung sieht so aus:"
+        },
+        {
+          "image": "use1-1_sp_ear2.jpg",
+          "caption": ""
+        },
+        {
+          "image": "use2-1_sp_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "Hier sind Lautsprecher oder Kopfhörer direkt angeschlossen. Wenn das Quellmaterial hochwertig ist, kann man dennoch eine CD-ähnliche Qualität erreichen."
+        },
+        {
+          "text": "Wie erwähnt, ist der integrierte DAC des iPhone/iPad auf 48 kHz beschränkt. Durch die Verwendung eines externen Geräts für die Digital-Analog-Umwandlung lässt sich diese Beschränkung umgehen.\n\nEin Beispiel ist das Uno von iFi (<a href=\"https://amzn.asia/d/3nqTjQz\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/3nqTjQz</a>), das nur etwa 0,15 kg wiegt und bequem in der Hand liegt. Externe DACs für das iPhone sind auf Amazon ab etwa 9.000 Yen erhältlich."
+        },
+        {
+          "image": "ifi.jpg",
+          "caption": "iFi audio Uno PCM384/DSD256, ca. 14.000 Yen, getestet und bestätigt"
+        },
+        {
+          "image": "2-3_sp_hi_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "Prüfen Sie, ob Ihr iPhone/iPad einen Lightning- oder USB-C-Anschluss besitzt. Bei USB-C sollten Sie einen DAC kaufen, der mit USB-C kompatibel ist. Schließen Sie das iPhone an den DAC an und verbinden Sie dann Kopfhörer oder Lautsprecher mit dem DAC-Ausgang. Anschließend müssen Sie nur noch die Wiedergabe starten! Sobald alles verbunden ist, erkennt das iPhone den externen DAC automatisch als Audio-Gerät."
+        },
+        {
+          "image": "2-4_sp_hi_headphone.jpg",
+          "caption": "Mit der Kombination iPhone->DAC->Kopfhörer erhalten Sie die bestmögliche Klangqualität"
+        },
+        {
+          "text": "Der iFi Uno unterstützt bis zu 32 bit/384 kHz und kann so NNTM-Dateien in bester Qualität wiedergeben. Sie werden einen realistischeren und detaillierteren Klang wahrnehmen."
+        },
+        {
+          "image": "use3_ipad_hi_speaker.jpg",
+          "caption": "Eine Setup-Empfehlung für ungestörten Schlaf: iPad mit NNTM-App + DAC + Lautsprecher"
+        },
+        {
+          "text": "Die Kombination aus der iPad-Version von NNTM, einem DAC und dem SONY SRS-XG300-Lautsprecher nutze ich persönlich zum Einschlafen. Dadurch wird man nachts oder frühmorgens weniger von Geräuschen geweckt und kann die Schlafqualität verbessern.\n\nNachfolgend eine Übersicht über die drei erforderlichen Komponenten:"
+        },
+        {
+          "head": "[1] NNTM"
+        },
+        {
+          "text": "Laden Sie die App herunter."
+        },
+        {
+          "head": "[2] DAC"
+        },
+        {
+          "text": "iFi audio Uno PCM384/DSD256 <a href=\"https://amzn.asia/d/izWuBSi\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/izWuBSi</a> 14.300 Yen (USB-C-kompatibel, getestet)\nFiiO KA2 Lightning <a href=\"https://amzn.asia/d/0WxGNvf\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/0WxGNvf</a> 10.431 Yen (Lightning-kompatibel, ungetestet)\nRadius RK-DA70C <a href=\"https://amzn.asia/d/iAGHnHQ\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/iAGHnHQ</a> 15.950 Yen (USB-C-kompatibel, ungetestet)\nEarFun UA100 <a href=\"https://amzn.asia/d/bygtI26\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/bygtI26</a> 8.990 Yen (USB-C-kompatibel, ungetestet)\nEs gibt viele weitere Produkte. Suchen Sie auf Amazon nach „DAC USB-C“ oder „DAC Lightning“.\nBeachten Sie, dass extrem günstige oder sehr kleine Geräte möglicherweise einen DAC enthalten, der nicht besser als der im iPhone integrierte ist."
+        },
+        {
+          "head": "[3] Kopfhörer, Headset oder Lautsprecher"
+        },
+        {
+          "text": "Die meisten neueren Kopfhörer oder Lautsprecher unterstützen in der Regel Hi-Res-Audio. Wählen Sie nach persönlichem Geschmack.\nSONY SRS-XG300 <a href=\"https://amzn.asia/d/6g076zO\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/6g076zO</a> 26.500 Yen\nBei Kopfhörern sollten Sie darauf achten, dass sie als „Hi-Res-kompatibel“ ausgewiesen sind oder in den Spezifikationen mindestens 96 kHz unterstützen.\n\nWeitere Hinweise:\n– Es heißt, dass die originalen Apple-Kopfhörer, die dem iPhone beiliegen, aufgrund ihrer Bauart keine Hi-Res-Leistung erzielen können. Wenn Ihnen die Klangqualität wichtig ist, wählen Sie ein höherwertiges Modell.\n– AirPlay oder Bluetooth (einschließlich AirPods) sind meistens auf 44,1 kHz/16 Bit beschränkt. Um die volle Hi-Res-Klangqualität zu genießen, empfiehlt sich daher eine kabelgebundene Verbindung."
+        }
+      ],
+      "ko": [
+        {
+          "text": "하이레졸루션 오디오(Hi-Res)는 96kHz나 192kHz 등 일반적인 음원보다 정보량이 많은 소스를 말하며, 라이브 공연에 가까운 더욱 생생한 사운드를 들을 수 있습니다.\n\n이 글에서는 iPhone이나 iPad에서 원본 품질을 유지하면서 하이레졸루션 오디오를 재생하는 방법을 설명합니다.\n\niPhone과 iPad는 내장 DAC(디지털-아날로그 컨버터)를 탑재하여 최대 48kHz까지 재생 가능합니다. 이는 표준 음원을 재생하기에는 충분하지만, 더 높은 샘플링 레이트에는 한계가 있습니다. 가장 간단한 연결 방법은 다음과 같습니다:"
+        },
+        {
+          "image": "use1-1_sp_ear2.jpg",
+          "caption": ""
+        },
+        {
+          "image": "use2-1_sp_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "이 경우, 스피커나 이어폰/헤드폰을 단순히 기기에 직접 연결하는 방식입니다. 원본 음원이 고품질이라면, 일반 CD 수준의 음질을 충분히 기대할 수 있습니다."
+        },
+        {
+          "text": "앞서 언급했듯이, iPhone/iPad의 내장 DAC는 48kHz가 한계입니다. 외부 기기를 통해 디지털-아날로그 변환을 하면 이를 보완할 수 있습니다.\n\n예를 들어, iFi사의 Uno(<a href=\"https://amzn.asia/d/3nqTjQz\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/3nqTjQz</a>)는 약 0.15kg 정도로 매우 가볍고 손바닥 위에 놓일 정도의 크기입니다. iPhone용 외장 DAC는 아마존에서 대략 9,000엔 정도부터 구매할 수 있습니다."
+        },
+        {
+          "image": "ifi.jpg",
+          "caption": "iFi audio Uno PCM384/DSD256, 약 14,000엔, 동작 확인 완료"
+        },
+        {
+          "image": "2-3_sp_hi_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "iPhone/iPad가 Lightning 단자인지 USB-C 단자인지 먼저 확인하세요. USB-C라면 USB-C를 지원하는 DAC를 구매하면 됩니다. iPhone과 DAC를 연결한 뒤, 헤드폰이나 스피커를 DAC 출력에 연결하세요. 이제 재생만 하면 됩니다! 연결 시 iPhone은 자동으로 외장 DAC를 오디오 장치로 인식합니다."
+        },
+        {
+          "image": "2-4_sp_hi_headphone.jpg",
+          "caption": "iPhone->DAC->헤드폰 구성이 최고의 음질을 제공"
+        },
+        {
+          "text": "iFi Uno는 최대 32bit/384kHz까지 지원하여, NNTM 음원을 최고 성능으로 재생할 수 있습니다. 실제로 들어보면 더욱 사실적이고 섬세한 음질을 느낄 수 있을 것입니다."
+        },
+        {
+          "image": "use3_ipad_hi_speaker.jpg",
+          "caption": "깨어나지 않고 숙면을 취하기 위한 iPad용 NNTM App + DAC + 스피커 세트업"
+        },
+        {
+          "text": "위 사진의 iPad용 NNTM + DAC + SONY SRS-XG300 조합은 필자가 직접 사용 중인 수면용 세트업입니다. 이로 인해 밤이나 이른 아침의 소음 때문에 깨는 일이 줄어들어 수면의 질이 높아집니다.\n\n필요한 세 가지 준비물을 정리하면 다음과 같습니다."
+        },
+        {
+          "head": "【1. NNTM】"
+        },
+        {
+          "text": "앱 다운로드"
+        },
+        {
+          "head": "【2. DAC】"
+        },
+        {
+          "text": "iFi audio Uno PCM384/DSD256 <a href=\"https://amzn.asia/d/izWuBSi\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/izWuBSi</a> 14,300엔 (USB-C 호환, 동작 확인)\nFiiO KA2 Lightning <a href=\"https://amzn.asia/d/0WxGNvf\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/0WxGNvf</a> 10,431엔 (Lightning 호환, 미확인)\nRadius RK-DA70C <a href=\"https://amzn.asia/d/iAGHnHQ\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/iAGHnHQ</a> 15,950엔 (USB-C 호환, 미확인)\nEarFun UA100 <a href=\"https://amzn.asia/d/bygtI26\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/bygtI26</a> 8,990엔 (USB-C 호환, 미확인)\n그 외에도 다양한 제품이 있으니 Amazon에서 “DAC USB-C” 또는 “DAC Lightning”으로 검색해 보세요.\n너무 저렴하거나 소형인 기기는 DAC가 내장되어 있더라도 iPhone 내장 DAC와 비교했을 때 성능이 크게 다르지 않을 수 있으니 주의하세요."
+        },
+        {
+          "head": "【3. 이어폰, 헤드폰, 스피커】"
+        },
+        {
+          "text": "최근에 나온 헤드폰이나 스피커라면 대부분 하이레졸루션 오디오 재생에 대응한다고 보시면 됩니다. 선호하는 제품을 선택하세요.\nSONY SRS-XG300 <a href=\"https://amzn.asia/d/6g076zO\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/6g076zO</a> 26,500엔\n이어폰을 선택할 경우, “하이레졸루션 지원” 문구가 있거나 제품 사양에서 96kHz 이상의 재생이 가능한지 확인하는 것이 좋습니다.\n\n추가 참고사항:\n- iPhone 기본 번들 이어폰(Apple 정품 이어팟)은 물리적 특성상 하이레졸루션 성능을 모두 발휘하기 어렵다고 알려져 있습니다. 음질에 신경 쓰신다면 상위 모델을 고려하세요.\n- AirPlay나 블루투스(AirPods 포함)를 사용할 경우, 보통 44.1kHz/16bit로 제한됩니다. 따라서 하이레졸루션 음원을 최대한 활용하려면 유선 연결이 유리합니다."
+        }
+      ],
+      "ar": [
+        {
+          "text": "يشير مصطلح الصوت عالي الدقة (Hi-Res) إلى مصادر مثل 96kHz أو 192kHz، والتي تحتوي على معلومات أكثر من ملفات الصوت العادية، مما يتيح لك الاستماع إلى صوت أكثر قربًا من العرض الحي.\n\nفي هذه المقالة، سنشرح كيفية تشغيل الصوت عالي الدقة على جهاز iPhone أو iPad دون فقدان جودته الأصلية.\n\nتحتوي أجهزة iPhone و iPad على DAC (محول رقمي إلى تناظري) مدمج يدعم حتى 48kHz، وهذا يكفي للمصادر القياسية لكنه قد لا يكفي للمعدلات الأعلى. إن أبسط طريقة للتوصيل قد تكون على النحو التالي:"
+        },
+        {
+          "image": "use1-1_sp_ear2.jpg",
+          "caption": ""
+        },
+        {
+          "image": "use2-1_sp_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "هنا، يتم توصيل مكبر الصوت أو سماعات الأذن/الرأس مباشرة بالجهاز. إذا كانت جودة المصدر الأصلي عالية، فستحصل على جودة صوت تقارب مستوى أقراص CD."
+        },
+        {
+          "text": "كما ذكرنا سابقًا، إن DAC المدمج في iPhone/iPad يدعم ما يصل إلى 48kHz. من خلال استخدام جهاز خارجي للقيام بعملية التحويل من الرقمي إلى التناظري، يمكن تحسين الأداء.\n\nعلى سبيل المثال، جهاز Uno من شركة iFi (<a href=\"https://amzn.asia/d/3nqTjQz\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/3nqTjQz</a>) يزن حوالي 0.15 كجم فقط ويمكن حمله بسهولة في كف اليد. يمكنك العثور على أجهزة DAC خارجية لجهاز iPhone على موقع أمازون بدءًا من حوالي 9000 ين."
+        },
+        {
+          "image": "ifi.jpg",
+          "caption": "iFi audio Uno PCM384/DSD256 بسعر حوالي 14000 ين، تم التحقق من عمله"
+        },
+        {
+          "image": "2-3_sp_hi_speaker.jpg",
+          "caption": ""
+        },
+        {
+          "text": "تحقق مما إذا كان جهاز iPhone/iPad الخاص بك يستخدم منفذ Lightning أو USB-C. إذا كان USB-C، فاحصل على DAC متوافق مع USB-C. قم بتوصيل iPhone بجهاز DAC، ثم قم بتوصيل سماعات الرأس أو السماعات بمخرج DAC. ما عليك سوى البدء في التشغيل! بمجرد الاتصال، سيختار iPhone تلقائيًا جهاز DAC الخارجي كمخرج صوتي."
+        },
+        {
+          "image": "2-4_sp_hi_headphone.jpg",
+          "caption": "أفضل جودة صوت مع توصيل iPhone->DAC->سماعات رأس"
+        },
+        {
+          "text": "يدعم جهاز iFi Uno تشغيل ما يصل إلى 32bit/384kHz، مما يتيح لك الاستفادة القصوى من ملفات NNTM الصوتية. ستلاحظ على الأرجح صوتًا أكثر واقعية وتفصيلاً."
+        },
+        {
+          "image": "use3_ipad_hi_speaker.jpg",
+          "caption": "إعداد يساعدك على النوم دون إزعاج: تطبيق NNTM على iPad + DAC + سماعات خارجية"
+        },
+        {
+          "text": "إن تركيبة NNTM على iPad + DAC + سماعات SONY SRS-XG300 هي ما أستخدمه شخصيًا في وقت النوم. يسهم ذلك في تقليل احتمال الاستيقاظ بسبب الضوضاء أثناء الليل أو في الصباح الباكر، مما يحسن جودة النوم.\n\nفيما يلي موجز للأجزاء الثلاثة الأساسية:"
+        },
+        {
+          "head": "【1. NNTM】"
+        },
+        {
+          "text": "قم بتنزيل التطبيق."
+        },
+        {
+          "head": "【2. DAC】"
+        },
+        {
+          "text": "iFi audio Uno PCM384/DSD256 <a href=\"https://amzn.asia/d/izWuBSi\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/izWuBSi</a> بسعر 14,300 ين (متوافق مع USB-C، تم التحقق منه)\nFiiO KA2 Lightning <a href=\"https://amzn.asia/d/0WxGNvf\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/0WxGNvf</a> بسعر 10,431 ين (متوافق مع Lightning، غير مؤكد)\nRadius RK-DA70C <a href=\"https://amzn.asia/d/iAGHnHQ\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/iAGHnHQ</a> بسعر 15,950 ين (متوافق مع USB-C، غير مؤكد)\nEarFun UA100 <a href=\"https://amzn.asia/d/bygtI26\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/bygtI26</a> بسعر 8,990 ين (متوافق مع USB-C، غير مؤكد)\nهناك العديد من المنتجات الأخرى. ابحث على أمازون باستخدام كلمات “DAC USB-C” أو “DAC Lightning”.\nيرجى ملاحظة أن بعض الأجهزة الرخيصة جدًا أو الصغيرة قد تحتوي على DAC أداؤه لا يتفوق على DAC المدمج في iPhone."
+        },
+        {
+          "head": "【3. سماعات الأذن، سماعات الرأس، أو السماعات الخارجية】"
+        },
+        {
+          "text": "معظم سماعات الرأس أو السماعات الحديثة تدعم عادة الصوت عالي الدقة، لذا اختر النوع الذي تفضله.\nSONY SRS-XG300 <a href=\"https://amzn.asia/d/6g076zO\" target=\"_blank\" rel=\"noopener noreferrer\">https://amzn.asia/d/6g076zO</a> بسعر 26,500 ين\nإذا اخترت سماعات أذن، فتأكد من أنها تدعم تقنية Hi-Res أو تحقق من المواصفات لمعرفة ما إذا كانت تدعم تردد تشغيل 96kHz أو أعلى.\n\nأمور أخرى:\n- يُقال إن سماعات Apple الرسمية المرفقة مع iPhone لا يمكنها تحقيق كامل إمكانات الصوت عالي الدقة نظرًا لخصائصها الفيزيائية. إذا كنت تهتم بجودة الصوت، ففكر في شراء طراز أعلى.\n- يقتصر استخدام AirPlay أو البلوتوث (بما في ذلك AirPods) عادةً على 44.1kHz/16bit، لذا فإن الاتصال السلكي يُعد الخيار الأفضل للحصول على أفضل أداء للصوت عالي الدقة."
+        }
+      ]
+    }
+  }
+  

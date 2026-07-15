@@ -1,0 +1,102 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+	<link rel="stylesheet" href="/jslibs/HTML5-Reset/assets/css/reset.css" />
+  <link rel="stylesheet" href="/css/main.css">
+
+  <!-- canvas -->
+  <script type="text/javascript" src="/jslibs/jquery/dist/jquery.min.js"></script>
+	<script type="text/javascript" src="/jslibs/CreateJS/createjs.js"></script>
+  <script type="text/javascript" src="/jslibs/Box2d/Box2dWeb-2.1.a.3.min.js"></script>
+	<script type="text/javascript" src="/js/PlayQueue.js"></script>
+{% endblock %}
+
+
+{% block content %}
+  <script>
+    window.onload = function() {
+    	initCanvas();
+      //showBio();
+    }
+    
+    const CHAR_IMG_ROOT = '/img/char/';//"{{ url_for('static', filename='img/char/') }}";
+  </script>
+
+  <section id="top" class="top" data-fit-window="true">
+    {# canvas内部の挙動はworld.jsに、menuやcopyrightなどの設定はsetting.jsに書かれている #}
+    <div class="container">
+	   <canvas id="canvas" style="background-color: #FFF;" resize></canvas>
+    </div>
+   	<div class="playmenus" id="ms" style="display:none;opacity:0;position:fixed;min-width:200px;z-index:999;">
+   		<div class="playmenu" onclick="showHome();clickm1();" id="m1" style="color:#000; position:absolute; top:0px; left:20px; cursor:pointer;"></div>
+   		<div class="playmenu" onclick="clickm4();showBio();" id="m2" style="color:#000; position:absolute; top:40px; left:20px; cursor:pointer;"></div>
+   		<div class="playmenu" onclick="clickm4();showBlog();" id="m3" style="color:#000; position:absolute; top:80px; left:20px; cursor:pointer;"></div>
+   		<div class="playmenu" onclick="clickm3();showContact();" id="m4" style="color:#000; position:absolute; top:120px; left:20px; cursor:pointer;"></div>
+   		<div class="playmenu" onclick="clickm4();justPlay();" id="m5" style="color:#000; position:absolute; top:160px; left:20px; cursor:pointer;"></div>
+      <div id="mtx" style="display:none;">
+        <div id="mt1">HOME</div>
+        <div id="mt2">BIO</div>
+        <div id="mt3">BLOG</div>
+        <div id="mt4">CONTACT</div>
+        <div id="mt5">JUST PLAY</div>
+      </div>
+      <div id="mtx2" style="display:none;">
+        <div id="mt_1">HOME</div>
+        <div id="mt_2">BIO</div>
+        <div id="mt_3">BLOG</div>
+        <div id="mt_4">CONTACT</div>
+        <div id="mt_5">JUST PLAY</div>
+      </div>
+   	</div>
+    <!-- Bio section -->
+    <div id="bio" class="view" style="display:none;">
+      <div class="scroll-container">
+
+        <div class="bio-head">
+          <a class="tohome">
+          <!-- Language Toggle in the top-right corner -->
+          <div class="lang-select">
+            {% if lang == 'en' %}
+              <span class="selected">EN</span>
+              <span class="hyphen">/</span> 
+              <a href="/ja?page=bio">JA</a>
+            {% else %}
+              <a href="/en?page=bio">EN</a>
+              <span class="hyphen">/</span> 
+              <span class="selected">JA</span>
+            {% endif %}
+          </div>
+        </div>
+
+        {% if lang == 'ja' %}
+          <img id="photo"
+               src="/img/bio/self.jpg"
+               alt="プロフィール写真 - 大塚一輝" />
+        {% else %}
+          <img id="photo"
+               src="/img/bio/self.jpg"
+               alt="Portrait of Kazuki Otsuka" />
+        {% endif %}
+        <!-- Include the correct Bio partial based on lang -->
+        <div class="profile">
+          {% if lang == 'ja' %}
+            {% include "bio_ja.html" %}
+          {% else %}
+            {% include "bio_en.html" %}
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+    <div id="copyright" class="copyright" style="position: fixed;">© <script>document.write(new Date().getFullYear());</script> KAZUKI OTSUKA</div>
+  </section>
+{% endblock %}
+
+{% block foot %}
+	<script type="text/javascript" src="/js/conf.js"></script>
+	<script type="text/javascript" src="/js/world.js"></script>
+	<script type="text/javascript" src="/js/setting.js"></script>
+	<script type="text/javascript" src="/js/shuffle.js"></script>
+ 
+  <script src="/js/main.js"></script>
+{% endblock %}

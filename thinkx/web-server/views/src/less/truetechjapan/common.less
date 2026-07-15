@@ -1,0 +1,239 @@
+@tablet:     1024px;
+@smartphone: 710px;
+
+// HEADER
+header#truetech-header {
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,.06);
+
+    div.main-header-container {
+        padding: 0 24px;
+        height: 66px;                 /* logo height */
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        /* ——— Left (logo) ——— */
+        div.company-logo {
+            a {
+                display: flex;
+                align-items: center;
+
+                picture {
+                    display: inline-flex; //reset height
+                    img.header-logo {
+                        height: 51px;
+                        width: auto;
+                    }
+                }
+            }
+        }
+
+        /* ——— Right side ——— */
+        div.header-menu {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+
+            /* menu list */
+            div.header-menu-content {
+                top: 65px;
+                right: 75px;
+                &.open {
+                    display: block;
+                }
+
+                ul.header-menu-list {
+                    display: flex;
+                    gap: 26px;
+
+                    li.menu-content a {
+                        font-size: 10px;
+                        text-decoration: none;
+                        color: #444;
+                        transition: color .3s;
+                        &:hover { color: #000; }
+                    }
+                }
+            }
+        }
+
+        /* ——— Right side ——— */
+        div.header-right {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            min-width: 187px;
+            gap: 27px;
+            /* entry button */
+            a.entry-button,
+            button.entry-button {
+                background: #E41E00;
+                color: #fff;
+                padding: 10px 30px;
+                font-size: 10px;
+                font-weight: 600;
+                border: none;
+                border-radius: 2px;
+                text-decoration: none;
+                cursor: pointer;
+                transition: opacity .3s;
+                &:hover { opacity: .85; }
+            }
+            div.header-locale {
+                font-size: 10px;
+
+                ul.lang-options {
+                    left: -21px;
+                    padding: 10px 12px;
+                }
+            }
+        }
+
+        /* ——— Mobile hamburger (initially hidden) ——— */
+        div.header-menu-mobile {
+            display: none;
+        }
+    }
+}
+
+// FOOTER
+div#truetech-footer {
+    background: #F6F6F6;
+    padding: 24px 2%;
+    font-size: 12px;
+
+    div.footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        /* menu links */
+        ul.footer-menu-list {
+            display: flex;
+            gap: 18px;
+            list-style: none;
+            margin: 0; 
+            padding: 0;
+
+            li.menu-content a {
+                text-decoration: none;
+                color: #5b5b5b;
+                transition: color .3s;
+                &:hover { color: #000; }
+            }
+        }
+
+        /* copyright */
+        div.footer-rights {
+            color: #717171;
+            white-space: nowrap;
+        }
+    }
+}
+
+/* ───── Tablet & below ───── */
+@media (max-width: @tablet) {
+    header#truetech-header div.main-header-container {
+
+        div.header-menu-content {
+            padding: 0 19px;
+            ul.header-menu-list {
+                li.menu-content {
+                    line-height: 1;
+                }
+            }
+        }
+
+        /* shrink gap a bit */
+        div.header-right {
+            gap: 18px;
+        }
+        div.header-right {
+            gap: 15px;
+            min-width: 157px;
+            a.entry-button {
+                padding: 10px 20px;
+            }
+        }
+    }
+}
+
+/* ───── Smartphone ───── */
+@media (max-width: @smartphone) {
+
+    /* hide full menu, show hamburger */
+    header#truetech-header div.main-header-container {
+        ul.header-menu-list {
+            display: none;
+        }
+
+        div.header-menu-mobile {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+
+            img.men-icon   {
+                width: 18px; height: auto;
+            }
+            img.arrow-icon {
+                width: 10px; margin-left: 4px; transition: transform .3s;
+            }
+
+            &.open img.arrow-icon { transform: rotate(180deg); }
+        }
+
+        /* dropdown */
+        div.header-menu-content {
+            position: absolute;
+            top: 59px;
+            right: 0;
+            width: 220px;
+            background: #fff;
+            box-shadow: 0 4px 10px rgba(0,0,0,.1);
+            padding: 20px;
+            display: none;
+            ul.header-menu-list {
+                flex-direction: column;
+                gap: 14px;
+            }
+        }
+    }
+
+    header#truetech-header div.main-header-container {
+        padding: 0 16px;
+
+        img.header-logo {
+            height: 72px;
+        }
+
+        div.header-left {
+            div.company-logo {
+                a {
+                    img.header-logo {
+                        height: 46px;
+                    }
+                }
+            }
+        }
+        div.header-right {
+            gap: 14px;
+            min-width: 146px;
+            a.entry-button {
+                padding: 10px 14px;
+            }
+        }
+    }
+    div#truetech-footer div.footer-content {
+        flex-direction: column;
+        gap: 18px;
+
+        ul.footer-menu-list { 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            gap: 18px; 
+        }
+    }
+}

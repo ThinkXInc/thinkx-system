@@ -1,0 +1,34 @@
+{
+    "menu_content_about": {
+        "ja": "ベストテクノロジースタートアップ100とは",
+        "en": "About the Best Technology Startup 100 Japan"
+    },
+    "menu_content_philosophy": {
+        "ja": "なぜ技術企業の評価が必要か",
+        "en": "Why We Need to Evaluate Tech Firms"
+    },
+    "menu_content_pdf": {
+        "ja": "資料をダウンロード",
+        "en": "Download PDF"
+    },
+    "menu_content_inquiry": {
+        "ja": "お問い合わせ",
+        "en": "Contact Us"
+    },
+    "menu_content_organization": {
+        "ja": "True Tech Association Japanについて",
+        "en": "About True Tech Association Japan"
+    },
+    "menu_content_privacy": {
+        "ja": "プライバシーポリシー",
+        "en": "Privacy Policy"
+    },
+    "entry_button": {
+        "ja": "エントリーする",
+        "en": "Apply"
+    },
+    "copyright": {
+        "ja": "© True Tech Association Japan. all rights reserved, 2025",
+        "en": "© True Tech Association Japan. all rights reserved, 2025"
+    }
+}

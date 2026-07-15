@@ -1,0 +1,1557 @@
+{
+  "metadata_blog_2025-03-05-talk": {
+    "ja": {
+      "title": "アドバイザーインタビュー: パラメトロンからバイオインフォマティクスへ 清水謙多郎教授インタビュー",
+      "description": "AI×HPCで深化する生物学計算のパラダイム",
+      "keywords": "AI, HPC, 計算生物学, バイオインフォマティクス, パラメトロン, 分子動力学, タンパク質構造予測, 清水謙多郎, VN Machine"
+    },
+    "en": {
+      "title": "Advisor Interview: From Parametron to Bioinformatics, Interview with Professor Kentaro Shimizu",
+      "description": "The Paradigm of Computational Biology Deepened by AI and HPC",
+      "keywords": "AI, HPC, computational biology, bioinformatics, parametron, molecular dynamics, protein structure prediction, Kentaro Shimizu, VN Machine"
+    },
+    "zh": {
+      "title": "顾问访谈：从参数管到生物信息学，清水谦多郎教授访谈",
+      "description": "人工智能与高性能计算深化计算生物学的范式",
+      "keywords": "人工智能, 高性能计算, 计算生物学, 生物信息学, 参数管, 分子动力学, 蛋白质结构预测, 清水谦多郎, VN Machine"
+    },
+    "es": {
+      "title": "Entrevista con un asesor: De Parametron a la bioinformática, entrevista con el profesor Kentaro Shimizu",
+      "description": "El paradigma de la biología computacional profundizado por IA y HPC",
+      "keywords": "IA, HPC, biología computacional, bioinformática, parametron, dinámica molecular, predicción de estructuras de proteínas, Kentaro Shimizu, VN Machine"
+    },
+    "fr": {
+      "title": "Entretien avec un conseiller : Du Parametron à la bioinformatique, interview du professeur Kentaro Shimizu",
+      "description": "Le paradigme de la biologie computationnelle approfondi par l’IA et le HPC",
+      "keywords": "IA, HPC, biologie computationnelle, bioinformatique, parametron, dynamique moléculaire, prédiction de la structure des protéines, Kentaro Shimizu, VN Machine"
+    },
+    "ru": {
+      "title": "Интервью с советником: От параметрона к биоинформатике, интервью с профессором Кентаро Симидзу",
+      "description": "Парадигма вычислительной биологии, углубленная ИИ и HPC",
+      "keywords": "ИИ, HPC, вычислительная биология, биоинформатика, параметрон, молекулярная динамика, предсказание структуры белков, Кентаро Симидзу, VN Machine"
+    },
+    "ar": {
+      "title": "مقابلة مع مستشار: من الباراميترون إلى المعلوماتية الحيوية، مقابلة مع الأستاذ كينتارو شيميزو",
+      "description": "نموذج البيولوجيا الحسابية المتعمق بواسطة الذكاء الاصطناعي والحوسبة عالية الأداء",
+      "keywords": "ذكاء اصطناعي, حوسبة عالية الأداء, بيولوجيا حسابية, معلوماتية حيوية, باراميترون, ديناميكيات جزيئية, التنبؤ بهيكلية البروتينات, كينتارو شيميزو, VN Machine"
+    }
+  },
+  "article_title": {
+    "ja": "アドバイザーインタビュー: AI×HPCで深化する生物学計算のパラダイム─パラメトロンからバイオインフォマティクスへ 清水謙多郎教授インタビュー",
+    "en": "Advisor Interview: The Paradigm of Computational Biology Deepened by AI and HPC — From Parametron to Bioinformatics, Interview with Professor Kentaro Shimizu",
+    "zh": "顾问访谈：人工智能与高性能计算深化计算生物学的范式——从参数管到生物信息学，清水谦多郎教授访谈",
+    "es": "Entrevista con un asesor: El paradigma de la biología computacional profundizado por IA y HPC — De Parametron a la bioinformática, entrevista con el profesor Kentaro Shimizu",
+    "fr": "Entretien avec un conseiller : Le paradigme de la biologie computationnelle approfondi par l’IA et le HPC — Du Parametron à la bioinformatique, interview du professeur Kentaro Shimizu",
+    "ru": "Интервью с советником: Парадигма вычислительной биологии, углубленная ИИ и HPC — от параметрона к биоинформатике, интервью с профессором Кентаро Симидзу",
+    "ar": "مقابلة مع مستشار: نموذج البيولوجيا الحسابية المتعمق بواسطة الذكاء الاصطناعي والحوسبة عالية الأداء — من الباراميترون إلى المعلوماتية الحيوية، مقابلة مع الأستاذ كينتارو شيميزو"
+  },
+  "article_date": {
+    "ja": "2025年3月15日",
+    "en": "March 15, 2025",
+    "zh": "2025年3月15日",
+    "es": "15 de marzo de 2025",
+    "fr": "15 mars 2025",
+    "ru": "15 марта 2025 года",
+    "ar": "15 مارس 2025"
+  },
+  "article_guest": {
+    "ja": "清水謙多郎 東京大学名誉教授",
+    "en": "Kentaro Shimizu, Professor Emeritus, University of Tokyo",
+    "zh": "清水谦多郎，东京大学名誉教授",
+    "es": "Kentaro Shimizu, Profesor Emérito de la Universidad de Tokio",
+    "fr": "Kentaro Shimizu, Professeur émérite de l’Université de Tokyo",
+    "ru": "Кентаро Симидзу, почетный профессор Токийского университета",
+    "ar": "كينتارو شيميزو، أستاذ فخري في جامعة طوكيو"
+  },
+  "article_intro": {
+    "ja": "生物学研究は、巨大なデータと複雑な計算という高い壁に直面しています。<strong>遺伝子配列やタンパク質の予測や原理の解明には、膨大な時間を要するシミュレーションや専門的なソフト開発が不可欠ですが、それらを扱える研究者は限られています。\nこうした障壁を打破し、人類の進歩を加速する未来</strong>を目指して、VN Machineプロジェクトが始動しました。本日お話しを伺うのは、アドバイザーの清水謙多郎教授です。\n\n<strong>東京大学名誉教授の清水謙多郎教授は、計算生物学とバイオインフォマティクスの分野で長年にわたり活躍されてきたリーダーで、コンピューターサイエンスから生物学への移行というユニークな道筋を描かれてきました。</strong>\n1960年代、後藤英一の研究室で博士号を取得され、パラメトロン<sup>*1</sup>コンピューター（ \n初期の革新的なデジタルコンピューターの一つ）の開発に携わりました。\n清水教授は機械学習がまだ主流でなかった時代に、アミノ酸配列のみから3Dタンパク質構造を予測する計算手法や、ゲノム、プロテオミクスへの高度なAI駆動型手法を開発するなど、後の多くの研究に影響を与える革新的な手法を開発されてきました。分子動力学（MD）シミュレーション<sup>*2</sup>の分野でも第一人者であり、タンパク質の折り畳みやリガンド結合を研究され、薬物発見や設計に重要な応用を持ち、科学界で広く認識されています。\n\nVNMプロジェクトは、清水教授のような先駆者の知見を基に、<strong>大規模AIとHPC（ハイパフォーマンスコンピューティング）を融合させ、コンピューティングの専門知識がなくても大規模データ解析やシミュレーションを可能にする世界を追求</strong>しています。本日は、その可能性と生物学研究の未来について、伺いました。",
+    "en": "Biological research faces the formidable challenges of massive data and complex computations. <strong>Predicting gene sequences, protein structures, or unraveling their principles requires time-intensive simulations and specialized software development, yet researchers capable of handling these are scarce. To break through these barriers and accelerate human progress</strong>, the VN Machine project has been launched. Today, we speak with Professor Kentaro Shimizu, an advisor to the project.\n\n<strong>Professor Kentaro Shimizu, Professor Emeritus at the University of Tokyo, has been a leader in computational biology and bioinformatics for decades, carving a unique path from computer science to biology.</strong> In the 1960s, he earned his doctorate in Eiichi Goto’s lab, contributing to the development of the parametron<sup>*1</sup> computer, one of the earliest innovative digital computers. In an era before machine learning became mainstream, Professor Shimizu pioneered computational methods to predict 3D protein structures from amino acid sequences alone, as well as advanced AI-driven approaches for genomics and proteomics, influencing countless subsequent studies. A leading figure in molecular dynamics (MD) simulation<sup>*2</sup>, he has studied protein folding and ligand binding, with significant applications in drug discovery and design, earning widespread recognition in the scientific community.\n\nThe VNM project builds on the insights of pioneers like Professor Shimizu, <strong>merging large-scale AI and high-performance computing (HPC) to pursue a world where large-scale data analysis and simulations are accessible even without specialized computing expertise</strong>. Today, we explore the possibilities and the future of biological research with him.",
+    "zh": "生物学研究面临着海量数据和复杂计算的巨大挑战。<strong>预测基因序列、蛋白质结构或揭示其原理需要耗时的模拟和专业软件开发，但能够处理这些的研究人员却寥寥无几。为了突破这些障碍并加速人类的进步</strong>，VN Machine项目启动了。今天我们采访的是该项目的顾问清水谦多郎教授。\n\n<strong>东京大学名誉教授清水谦多郎教授数十年来一直是计算生物学和生物信息学领域的领导者，从计算机科学转向生物学，走出了一条独特的道路。</strong>1960年代，他在后藤英一的实验室获得博士学位，参与了参数管<sup>*1</sup>计算机（一种早期的创新数字计算机）的开发。在机器学习尚未成为主流的时代，清水教授开创了仅从氨基酸序列预测3D蛋白质结构的计算方法，以及基因组学和蛋白质组学的高级AI驱动方法，影响了无数后续研究。他是分子动力学（MD）模拟<sup>*2</sup>领域的领先人物，研究了蛋白质折叠和配体结合，在药物发现和设计中具有重要应用，在科学界广受认可。\n\nVNM项目基于清水教授这样的先驱者的洞见，<strong>融合大规模人工智能和高性能计算（HPC），追求一个即使没有专业计算知识也能进行大规模数据分析和模拟的世界</strong>。今天，我们与他探讨了这种可能性和生物学研究的未来。",
+    "es": "La investigación biológica enfrenta los formidables desafíos de datos masivos y cálculos complejos. <strong>Predecir secuencias genéticas, estructuras de proteínas o desentrañar sus principios requiere simulaciones intensivas en tiempo y el desarrollo de software especializado, pero los investigadores capaces de manejarlos son escasos. Para superar estas barreras y acelerar el progreso humano</strong>, se ha iniciado el proyecto VN Machine. Hoy hablamos con el profesor Kentaro Shimizu, asesor del proyecto.\n\n<strong>El profesor Kentaro Shimizu, Profesor Emérito de la Universidad de Tokio, ha sido un líder en biología computacional y bioinformática durante décadas, trazando un camino único desde la informática hasta la biología.</strong> En la década de 1960, obtuvo su doctorado en el laboratorio de Eiichi Goto, contribuyendo al desarrollo de la computadora parametron<sup>*1</sup>, una de las primeras computadoras digitales innovadoras. En una era previa a la popularidad del aprendizaje automático, el profesor Shimizu fue pionero en métodos computacionales para predecir estructuras 3D de proteínas solo a partir de secuencias de aminoácidos, así como enfoques avanzados impulsados por IA para genómica y proteómica, influyendo en numerosos estudios posteriores. Líder en simulaciones de dinámica molecular (MD)<sup>*2</sup>, ha estudiado el plegamiento de proteínas y la unión de ligandos, con aplicaciones significativas en el descubrimiento y diseño de fármacos, ganándose un amplio reconocimiento en la comunidad científica.\n\nEl proyecto VNM se basa en las ideas de pioneros como el profesor Shimizu, <strong>fusionando IA a gran escala y computación de alto rendimiento (HPC) para buscar un mundo donde el análisis de datos a gran escala y las simulaciones sean accesibles incluso sin experiencia especializada en computación</strong>. Hoy exploramos las posibilidades y el futuro de la investigación biológica con él.",
+    "fr": "La recherche biologique est confrontée aux défis redoutables des données massives et des calculs complexes. <strong>Prédire les séquences génétiques, les structures des protéines ou élucider leurs principes nécessite des simulations chronophages et le développement de logiciels spécialisés, mais les chercheurs capables de les gérer sont rares. Pour surmonter ces obstacles et accélérer le progrès humain</strong>, le projet VN Machine a été lancé. Aujourd’hui, nous nous entretenons avec le professeur Kentaro Shimizu, conseiller du projet.\n\n<strong>Le professeur Kentaro Shimizu, professeur émérite de l’Université de Tokyo, est un leader dans les domaines de la biologie computationnelle et de la bioinformatique depuis des décennies, traçant un parcours unique de l’informatique à la biologie.</strong> Dans les années 1960, il a obtenu son doctorat dans le laboratoire d’Eiichi Goto, contribuant au développement de l’ordinateur parametron<sup>*1</sup>, l’un des premiers ordinateurs numériques innovants. À une époque où l’apprentissage automatique n’était pas encore répandu, le professeur Shimizu a été pionnier dans les méthodes computationnelles pour prédire les structures 3D des protéines à partir des seules séquences d’acides aminés, ainsi que dans des approches avancées pilotées par l’IA pour la génomique et la protéomique, influençant de nombreuses études ultérieures. Figure de proue des simulations de dynamique moléculaire (MD)<sup>*2</sup>, il a étudié le repliement des protéines et la liaison des ligands, avec des applications significatives dans la découverte et la conception de médicaments, ce qui lui a valu une reconnaissance étendue dans la communauté scientifique.\n\nLe projet VNM s’appuie sur les connaissances de pionniers comme le professeur Shimizu, <strong>en fusionnant l’IA à grande échelle et le calcul haute performance (HPC) pour viser un monde où l’analyse de données à grande échelle et les simulations sont accessibles même sans expertise informatique spécialisée</strong>. Aujourd’hui, nous explorons avec lui les possibilités et l’avenir de la recherche biologique.",
+    "ru": "Биологические исследования сталкиваются с огромными проблемами массивных данных и сложных вычислений. <strong>Предсказание генетических последовательностей, структур белков или раскрытие их принципов требует длительных симуляций и разработки специализированного программного обеспечения, но исследователей, способных справиться с этим, мало. Чтобы преодолеть эти барьеры и ускорить прогресс человечества</strong>, был запущен проект VN Machine. Сегодня мы беседуем с профессором Кентаро Симидзу, советником проекта.\n\n<strong>Профессор Кентаро Симидзу, почетный профессор Токийского университета, на протяжении десятилетий является лидером в области вычислительной биологии и биоинформатики, проложив уникальный путь от компьютерных наук к биологии.</strong> В 1960-х годах он получил докторскую степень в лаборатории Эйити Гото, участвуя в разработке компьютера на параметронах<sup>*1</sup>, одного из первых инновационных цифровых компьютеров. В эпоху, когда машинное обучение еще не было мейнстримом, профессор Симидзу разработал новаторские вычислительные методы для предсказания 3D-структур белков только на основе аминокислотных последовательностей, а также передовые методы, управляемые ИИ, для геномики и протеомики, оказав влияние на множество последующих исследований. Ведущий специалист в области молекулярной динамики (MD) симуляций<sup>*2</sup>, он изучал сворачивание белков и связывание лигандов, что имеет значительные применения в открытии и разработке лекарств, получив широкое признание в научном сообществе.\n\nПроект VNM опирается на знания таких первопроходцев, как профессор Симидзу, <strong>объединяя крупномасштабный ИИ с высокопроизводительными вычислениями (HPC), чтобы создать мир, где анализ больших данных и симуляции доступны даже без специализированных знаний в области вычислений</strong>. Сегодня мы обсуждаем с ним возможности и будущее биологических исследований.",
+    "ar": "تواجه الأبحاث البيولوجية تحديات هائلة تتمثل في البيانات الضخمة والحسابات المعقدة. <strong>يتطلب التنبؤ بالتسلسلات الجينية، وهياكل البروتينات، أو كشف مبادئها محاكاة تستغرق وقتًا طويلاً وتطوير برمجيات متخصصة، لكن الباحثين القادرين على التعامل معها قليلون. لكسر هذه الحواجز وتسريع تقدم البشرية</strong>، تم إطلاق مشروع VN Machine. اليوم، نتحدث مع الأستاذ كينتارو شيميزو، مستشار المشروع.\n\n<strong>الأستاذ كينتارو شيميزو، أستاذ فخري في جامعة طوكيو، كان قائدًا في مجالات البيولوجيا الحسابية والمعلوماتية الحيوية لعقود، حيث رسم مسارًا فريدًا من علوم الحاسوب إلى البيولوجيا.</strong> في الستينيات، حصل على درجة الدكتوراه في مختبر إييتشي غوتو، وساهم في تطوير حاسوب الباراميترون<sup>*1</sup>، أحد أوائل الحواسيب الرقمية المبتكرة. في عصر لم يكن فيه التعلم الآلي سائدًا بعد، كان الأستاذ شيميزو رائدًا في تطوير طرق حسابية للتنبؤ بهياكل البروتينات ثلاثية الأبعاد من تسلسلات الأحماض الأمينية فقط، بالإضافة إلى نهج متقدمة مدفوعة بالذكاء الاصطناعي للجينوميات والبروتيوميات، مما أثر على العديد من الدراسات اللاحقة. شخصية بارزة في مجال محاكاة الديناميكيات الجزيئية (MD)<sup>*2</sup>، بحث في طي البروتينات وربط الليغاند، مع تطبيقات هامة في اكتشاف وتصميم الأدوية، وحظي بتأثير واسع في المجتمع العلمي.\n\nيستند مشروع VNM إلى رؤى رواد مثل الأستاذ شيميزو، <strong>مدمجًا الذكاء الاصطناعي واسع النطاق مع الحوسبة عالية الأداء (HPC) لخلق عالم يمكن فيه الوصول إلى تحليل البيانات واسعة النطاق والمحاكاة حتى بدون خبرة متخصصة في الحوسبة</strong>. اليوم، نستكشف معه الإمكانات ومستقبل الأبحاث البيولوجية."
+    },
+    "article_conversation": {
+      "ja": [
+        {
+          "head": "パラメトロンからバイオインフォマティクスへ"
+        },
+        {
+          "speaker": "大塚一輝（以下、大塚）",
+          "text": "バイオインフォマティクスをやられる前はコンピューターを純粋に追求されていたと思いますが、その時はどういう関心だったんでしょうか？"
+        },
+        {
+          "speaker": "清水謙多郎教授（以下、清水）",
+          "text": "楽しかったですね、とにかく。おそらく大塚さんもそういうとこあると思うんですけど、プログラムを書いているときってすごくハッピーだし、それが低レベルというか、コンピューターの深部に関わってくるソフトであればあるほど、嬉しいですね。<br>当時はコンピューターリソースが一般の人にアベイラブルな状況で、<strong>何か単独や少数ではできないもの、協調して動くもの、つまり分散処理や協調するソフトウェアみたいなものを作ること</strong>にはものすごく興味があって、それは生物の分野に入っても少しやっていました。<br>生物、例えば<strong>MD（分子動力学）シミュレーション<sup>*2</sup>を速く分散環境で動かす</strong>ということで、論文も出したこともあります。"
+        },
+        {
+          "speaker": "大塚",
+          "text": "ある意味、分散処理を自動化するようなことですね。それが90年代だったことを思うとかなり先駆的だったと想像します。<br>清水先生にとって一番代表的な仕事だと思われている仕事は何でしょうか？"
+        },
+        {
+          "speaker": "清水",
+          "text": "そうですね、AIが今みたいにブームになる前から、機械学習とかそういったものを使って予測するということですね。さらに予測ツールの自動生成とか。<br>例えば、タンパク質の配列から構造を予測したり、機能を予測したりするソフトの開発とかですね。"
+        },
+        {
+          "head": "巨大なデータを処理する - 生物学的計算における実際的な課題"
+        },
+        {
+          "speaker": "大塚",
+          "text": "生物学データはデータサイズが大きいのではと思います。"
+        },
+        {
+          "speaker": "清水",
+          "text": "はい、今もちょうどやっていたのは、<strong>配列から構造になっているんですけれども、データがものすごいんですね</strong>。メジャーなデータベースでも、プログラムからダウンロードできないものがある。だからといってウェブインターフェースを介して大量にやるとアウトになる。アクセスをそんな風にして大量にやってはいけないので。<br>じゃあどうするかというと、ローカルに持ってくるんですけど、データ量がすごい大きくて、だからそういう大きなデータをどうやって扱うかということで苦労しています。"
+        },
+        {
+          "speaker": "大塚",
+          "text": "データが大きいと時間も食いますしね。"
+        },
+        {
+          "speaker": "清水",
+          "text": "食いますよね。データベースのサイトにあって、それが外から早くアクセスできればいいんだけど、<strong>ああいうデータを大量に早く回したいとか、処理を回したいとかっていうのはできにくいなっていうのをさっきも痛感していた</strong>んです。"
+        },
+        {
+          "speaker": "大塚",
+          "text": "どのくらいのサイズですかね？ 何テラとかですかね？"
+        },
+        {
+          "speaker": "清水",
+          "text": "配列部分だけで数百ギガ、3D構造や動的構造データを加えるとテラに膨れあがります。"
+        },
+        {
+          "speaker": "大塚",
+          "text": "いつも常時使えるスパコンみたいものがあって、そのストレージがほとんど無尽蔵に保管できて、そこに置いておいて、必要な時にアクセスして計算するようなやり方が一番やりやすいんじゃないかって個人的には思ってるんですけど。"
+        },
+        {
+          "speaker": "清水",
+          "text": "思います。本当にそう思いますね。そういう環境がもっと簡単に手に入るといいですよね、おそらく。本当にそうですね。あとそれがネットとつながっているということが結構大事だったりする。<br>つまり、私たちが配置しているデータは、どこかからハードディスクを持ってくるというよりは、公開されていますよね。<strong>公開されているデータを何らかの手段で容易にローカルな感じで使えたらすごくいい</strong>なと。"
+        },
+        {
+          "speaker": "大塚",
+          "text": "VNMのデータハブは、同じローカルネットワークにあるサーバーから<strong>共通でアクセスできる、ダウンロードとハードコピーをなるべく減らせる仕組み</strong>が作れないかと考えています。<br>さらに公開したデータを収益化する仕組みを検討しており、販売することは現実的にできると思われますか？"
+        },
+        {
+          "speaker": "清水",
+          "text": "以前はそれが難しかったんですけれども、目的を特化して、例えば何とかの研究開発に特化したような形でっていうのはできると思います。TLOとかああいう仕組みを介す必要はあると思います。"
+        },
+        {
+          "head": "手軽さは、後回しにされるメカニズムの解明に手を伸ばすきっかけになる"
+        },
+        {
+          "speaker": "大塚",
+          "text": "みんなもっと本当はこんなことをしたいというアイディアがあるのに、できていないということがどれだけあると思われますか。"
+        },
+        {
+          "speaker": "清水",
+          "text": "MD（分子動力学）シミュレーションは、いくら計算パワーが上がってきているとしても、全ての状態を網羅的に計算することは現実的ではなく、サンプリングに依存しています。<strong>そこで結構AIが使われているんですけれど、かなりブラックボックスになっている。<br>ですから現象を説明できるようなことができれば、自然科学の発展につながると思います。</strong>"
+        },
+        {
+          "speaker": "大塚",
+          "text": "答えがポンと出て、単に結果が使える、というのでなく、メカニズムがわかる形で計算できると。"
+        },
+        {
+          "speaker": "清水",
+          "text": "MDは物理法則に基づいて１ステップ１ステップやるんですけれども、<strong>時間がかかる現象を説明するには、そのままでは計算が追いつかない</strong>。もう少し大きな粒度で現象に近づいていく。あるいはMDが生成する構造をいかにサンプリングするかが重要でいろいろな手法が提案されています。"
+        },
+        {
+          "speaker": "大塚",
+          "text": "先ほど生物学者の方と話していて、既存の方法を使ってまだ調べきれていないことを調べるという仕事がまだたくさん残っているから、それをやる人が結構一定数いて、業績も作れる。そういう人たちとは別に、そもそものメカニズムを調べたりする人たちがいて、多分後者の方で新しいシステムを書いたりとか、そういう必然性がある気がしてきているんです。<br>つまり結局人間の発想に依存するというか、人間が解きたい問題の種類に依存するというか、そういう感じがしてきているんですよね。"
+        },
+        {
+          "speaker": "清水",
+          "text": "それすごく大事な視点だと思いますね。そうですよね。"
+        },
+        {
+          "speaker": "大塚",
+          "text": "だとしたらその人たちがどれくらい存在するのか、なのですが、大体100人いたら10人ぐらいじゃないかと言われました。一つの分野で一つの機関に10人いたら日本全体で100人いて、日本に100人いたら世界に1万人いることになります。<sup>*3</sup>"
+        },
+        {
+          "speaker": "清水",
+          "text": "研究者なので、メカニズムを調べたいという欲求はみんなあると思います。ただ、<strong>限られた期間で結果が求められる研究予算が多く、時間をかけて追究するところまでなかなかいかない</strong>こともある。"
+        },
+        {
+          "speaker": "大塚",
+          "text": "経済的な力とかいろいろな要因はありそうですよね。"
+        },
+        {
+          "speaker": "清水",
+          "text": "だからまさに大塚さんが言われているような、<strong>何かソフトがあって、もうちょっと頑張ればわかってくれるとか、説明できる、とかっていうことがあれば、ぜひやってみようということになるかもしれない</strong>。"
+        },
+        {
+          "speaker": "大塚",
+          "text": "時間とそこまで手間がかからないような道具があれば、空いた時間でやるとか、そういうケースはありそうでしょうか。"
+        },
+        {
+          "speaker": "清水",
+          "text": "ありそうですね。本当にあると思います。サイエンスの進歩にとっても重要だと思います。"
+        },
+        {
+          "speaker": "大塚",
+          "text": "ずっと温めていたアイディアがあって、でもできていないものとかが、結構ある人はあるんじゃないかなと思っています。"
+        },
+        {
+          "speaker": "清水",
+          "text": "そうですね、そこは本当に大きな問題だと思います。"
+        },
+        {
+          "speaker": "大塚",
+          "text": "そういうものが実現できるようになる仕組みができたら、良いと思っています。<br><strong>本質的だけど、本質的だからこそ後回しになってしまうようなものを実行できる仕組み</strong>です。"
+        },
+        {
+          "head": "計算時間の短縮が発見の鍵"
+        },
+        {
+          "speaker": "大塚",
+          "text": "HPC（ハイパフォーマンスコンピューティング）についてはどうでしょうか。"
+        },
+        {
+          "speaker": "清水",
+          "text": "やはりタンパク質や核酸のシミュレーションは速くできるとよい例だと思います。<strong>タンパク質が他の分子とどのように相互作用するか、どのように構造変化するかをシミュレーションで確かめたいというときに、かなり長時間のシミュレーション、あるいはサンプリングをしなきゃいけないので、それを速くできたらどんなにいいかと思います</strong>。"
+        },
+        {
+          "speaker": "大塚",
+          "text": "実際にそれは行列が大きすぎて遅いとか、時間がかかる理由は大体決まっているんですか。"
+        },
+        {
+          "speaker": "清水",
+          "text": "<strong>やはり分子の、取りうるパターンが非常に膨大で、そこを網羅的にかなり広範囲にサンプリングすることが難しい</strong>。"
+        },
+        {
+          "speaker": "大塚",
+          "text": "探索すべき組み合わせが非常に多いということですね。"
+        },
+        {
+          "speaker": "清水",
+          "text": "そうですね。「ドッキング」というものがあるんですけど、Aという分子とBという分子でどういうふうにくっつくかというのを探るんですね。<br>実験で結晶構造を解析すると、確かにそこに結合しているのがわかっているのに、物理法則ベースのシミュレーションでなかなか出てこない構造があります。<br>一般的には<strong>MDをもっと長時間実行すれば今よりも良い結果が得られるというのは広く認識されている。だから先ほどアクセラレーターとかで加速・高速化できたら、計算の粒度を細かくしていくと精度が上がる</strong>。<br>モデルの粗さもあるかもしれません。でも、探索が十分できるかどうか、実行時間も大事です。時間をかけていろんなところに到達できるように回していって、あるところで何か現象が起きたというタイミングがどこかで来るというわけです。"
+        },
+        {
+          "head": "「分化する専門」対「一般化モデル」"
+        },
+        {
+          "speaker": "大塚",
+          "text": "様々な科学分野の専門家の方と話していて、みんながみんな必ずしも数式や計算することが好きではないということが、わかってきました。<br>コンピューターの外の人、コンピューターの中にいる人、その間にいる人、<br>その違いの中に、未開の、様々な可能性がある気がしています。"
+        },
+        {
+          "speaker": "清水",
+          "text": "今はだいぶ様子が変わっていて、人によっても違ってきていますが。当初は、私が生物の方、例えば農学部とかで話を伺っていると、実験を積み重ねて、<strong>「このタンパク質とかこの遺伝子とか」というふうに、かなり専門が分化している。そこを深く探求しようとしている</strong>ので、モデル化や一般化というところにどこまで興味があるかというと、みんながみんなじゃないというのは仰る通りじゃないかと。<br>そういう方々からすると「実験で一つ一つ実際のデータが出ているのに、適当にパラメータを決めて論じるのは、良くない」というような見方をされていました。"
+        },
+        {
+          "speaker": "大塚",
+          "text": "今の「適当にパラメータを決めて」という指摘に対してどのようにお答えになりますか？"
+        },
+        {
+          "speaker": "清水",
+          "text": "インフォマティクスの方も精度を上げてきていて、仮にでも実体の現象が説明できるようなモデルがあったときに、それを仮説として考えることができるという、それ自体に意味があると思います。<br>それから今後も、<strong>実験を積み重ねてより精密なデータが出てきたときに、そのモデルに当てはめて、それを説明できるということにつながっていけば大事なことじゃないかと</strong>。"
+        },
+        {
+          "speaker": "大塚",
+          "text": "実験をするからといって、必ずしもその先にモデルを作るわけではないということですね。<br>モデルを作れるということは予測ができるということにもなりますよね。"
+        },
+        {
+          "speaker": "清水",
+          "text": "そうそう、予測ができる。それがシミュレーションする、つまり説明できて、実際にその先の現象が予測できるということになると思いますので。<br>やはりそれぞれ、今対象としているタンパク質の現象に対して解明しようという動機がある。"
+        },
+        {
+          "speaker": "大塚",
+          "text": "個別の問題は解くけど、一般化するモデルを作るという方向には、一部の人しかそこまでやらないということですね。"
+        },
+        {
+          "speaker": "清水",
+          "text": "まさにそうですね。それから、一般化するときにパラメーターの信頼性とか、そういったことに対して非常に厳しいということがある。例えば、私も実際にびっくりしたのは、例えばAUC-ROCカーブで下の面積で精度を表したりしますよね。普通、あれが例えば0.9くらいだったらかなり頑張ったというのは分野にもよりますけれども、「なぜ1じゃないんだ」と。それじゃサイエンスとして進めていけないんじゃないかというようなことを言われたことがあります。"
+        },
+        {
+          "head": "VN Machineのアプローチ、カスタムソフトを対話的に作る"
+        },
+        {
+          "speaker": "大塚",
+          "text": "米国で主に企業向けのリサーチHPCクラウドで最近巨額の資金調達をしたRescaleという会社があって、トップソフトをものすごい種類取り揃えて、それをクラウドの上で動かすというサービスをしています。<br>MDソフトのような既に完成されたものはそれを使えばいいと思っていて、そういうものとは基本的には対抗しないというか、既存のソフトで満たしきれないニーズに新たな可能性があると思っています。"
+        },
+        {
+          "speaker": "清水",
+          "text": "今まとめてくださったことは確かにそうだと思います。<br><strong>タンパク質の動きでもドメインという大きな塊があるんですけど、その間の位置関係はアルファフォールドでもなかなかうまく予測できない</strong>んですよね、とくにフレキシブルなリンカでつながっているとき。ですから、そういうドメインがどういうふうに動くかが、実際研究対象にもなっている。もし何かそのブレイクスルー的なソフトができたら、本当に役に立つと思います。<strong>ドメインレベル、チェインレベルで、タンパク質の構造がどのように動くのか、相互作用するのか。実際にそういう需要はあるとおもいます。</strong>"
+        },
+        {
+          "speaker": "大塚",
+          "text": "本日は大変貴重なお話をありがとうございました。コンピューティングと生物学双方への深い知見をお聞きすることができ、本当に参考になりました。今後ともぜひよろしくお願いいたします。"
+        },
+        {
+          "speaker": "清水",
+          "text": "こちらこそ、引き続きよろしくお願いします。"
+        },
+        {
+          "footnote": "<sup>*1</sup> パラメトロン(parametron)は1954年に当時東京大学大学院理学部の大学院生であった後藤英一が発明した論理素子。真空管やトランジスタの使用量を大幅に削減してコンピューターを構成できるとして、当時多数のパラメトロン式コンピューターが建造された。1960年代にはトランジスタにほぼ置き換えられたが、その後、同じ原理のパラメトロンが様々な物理系で実現されるようになり、2010年代以降、パラメトロンを用いた量子コンピューターの開発と言う観点からも再び注目されるようになった。（出典：Wikipedia）<br><br><sup>*2</sup> MD（分子動力学）シミュレーションは、分子の物理的相互作用をステップごとに追跡して、タンパク質や核酸などの動態を予測する方法。<br>関連するシステムとして、AlphaFoldは静的な3D構造予測を得意とするが、時間発展（ダイナミクス）までは直接考慮しない。そのため、創薬の初期仮説構築には有用だが、リガンド結合や分子運動を追うには、物理法則に基づくMDシミュレーションが必要となる。<br><br><sup>*3</sup> 世界全体の研究者数（全分野）は約8.8 百万人と推計されており、そのうち生物学や医療・生命科学分野が占める割合は論文数ベースで約36%とされる。1万人というラフな推定は、実際の研究者規模からするとかなり控えめな見積もりで、実際にはNIHが2万7千人以上の基礎研究PIを支援している例なども考慮すると、「基礎的メカニズムの解明」を主眼とする研究者のみでも数万～数十万人を大きく超える規模に上ると推測される。<br>（出典：UNESCOや各国統計、NSFなどの研究者人口・論文数に関する報告を参照）"
+        }
+      ],
+      "en": [
+        {
+          "head": "From Parametron to Bioinformatics"
+        },
+        {
+          "speaker": "Kazuki Otsuka (hereafter, Otsuka)",
+          "text": "Before you pursued bioinformatics, I understand that you were deeply involved in computer research. What were your main interests back then?"
+        },
+        {
+          "speaker": "Professor Kentaro Shimizu (hereafter, Shimizu)",
+          "text": "It was a lot of fun, simply put. I suspect you might feel the same way, Otsuka—when I’m coding, it makes me really happy. The deeper I go into the computer’s core or low-level software, the more it excites me.<br>Back then, computer resources were becoming available to a wider group of users, and I was extremely interested in <strong>creating something that couldn’t be done by one person or a small team alone, something cooperative—distributed processing or collaborative software</strong>. I continued working on aspects of that after moving into biology.<br>For example, I even published a paper on <strong>running MD (molecular dynamics) simulations<sup>*2</sup> faster in a distributed environment</strong>."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "So in a way, you were automating distributed processing. Considering this was in the 1990s, that sounds quite pioneering.<br>What do you consider your most representative work, Professor Shimizu?"
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Well, from before AI became the huge trend it is today, I was using machine learning and similar techniques for prediction—and even exploring automatic generation of prediction tools.<br>For instance, we developed software to predict protein structures and functions based on amino acid sequences."
+        },
+        {
+          "head": "Handling Massive Data – Practical Challenges in Computational Biology"
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "I imagine biological data is quite large."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Yes. Right now, for example, we’re doing work that goes from sequence to structure, and <strong>the datasets are enormous</strong>. Some major databases won’t allow programmatic bulk downloads, and if you try to pull large amounts of data via a web interface, you’ll often run into restrictions.<br>So what we do instead is bring it all in locally. But because the data is so large, we struggle with how to handle it."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Large data also takes a lot of time to process."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Exactly. If it’s on a database site with fast external access, that would be ideal. But <strong>I was just reminded that it’s quite difficult to rapidly process or query large datasets at scale</strong>."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "How big are we talking—terabytes?"
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Just the sequence data alone can amount to hundreds of gigabytes, and when you add 3D structures and dynamic structural data, it grows to terabytes."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "I personally think it would be easiest if we had something like a supercomputer with effectively unlimited storage, where the data could reside and be accessed whenever needed for computation."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Yes, I agree. It’d be great if that environment were easier to come by. It’s also quite important that it be connected to the internet.<br>In other words, the data we use is typically public, not from a private drive somewhere. Having <strong>a way to easily use publicly available data as if it were local</strong> would be fantastic."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "At VNM, we’re looking into a data hub that would <strong>provide common access from servers on the same local network, minimizing the need for downloads or hard copies</strong>.<br>We’re also considering how to commercialize publicly available data. Do you think data sales are realistic?"
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "It used to be difficult, but if it’s specialized—say, targeted toward a specific type of R&D—then yes, it’s possible. We might need a TLO (Technology Licensing Organization) or a similar framework in place."
+        },
+        {
+          "head": "Ease of Use Can Prompt Investigations into Underexplored Mechanisms"
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "People likely have a lot of ideas they’d love to pursue but can’t. How widespread do you think that issue is?"
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Looking at MD (molecular dynamics) simulations, for example, even though computing power keeps improving, fully enumerating all states is still impractical, so we rely on sampling. <strong>We do use AI in these areas, but it often becomes a black box.<br>If we could do something that genuinely explains phenomena, it would advance natural science</strong>."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "So not just getting an answer you can plug in somewhere, but really revealing the underlying mechanism."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Yes. MD is done step by step according to physical laws, but <strong>when phenomena take a long time to occur, straightforward simulation can’t always keep up</strong>. We need a more coarse-grained approach, or we have to sample the configurations generated by MD in effective ways, so various methods are proposed."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "I was talking to another biologist who said there’s still a lot to uncover simply by applying existing methods—plenty of data is still unexplored, and that work can yield results. Then there are researchers who aim to uncover the fundamental mechanisms themselves, and that likely requires writing new systems. <br>Ultimately, it depends on human curiosity or the specific type of problem each researcher wants to solve."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "That’s a very important perspective, indeed."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "If that’s the case, how many fall into the latter category? Someone suggested that maybe 10% of researchers in a given group focus on fundamental mechanisms. That would mean 10 in a group of 100, then 100 across Japan, then 10,000 globally.<sup>*3</sup>"
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Since they’re researchers, I think everyone wants to get at the mechanisms on some level. However, <strong>given that many grants demand results within a set timeframe, it can be hard to devote time to deeper questions</strong>."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "A variety of factors—funding constraints, etc.—likely play a role."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Exactly. So if there’s <strong>software that, with a bit more work, can clarify or explain the phenomena, it might encourage people to give it a try</strong>."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "If there were tools that didn’t require too much effort to master, people might use spare time to explore new ideas. Does that sound plausible?"
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Yes, it does. And I believe it’s important for scientific advancement."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "I suspect there are quite a few researchers who’ve had ideas shelved for a long time because they weren’t feasible with current tools."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Right, that’s a big challenge."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "I hope we can create a framework that makes those ideas feasible.<br><strong>Fundamental concepts are often put off precisely because they’re so foundational. Having a way to execute them would be wonderful</strong>."
+        },
+        {
+          "head": "Shortening Computation Time Is Key to Discovery"
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "What about HPC (High-Performance Computing)?"
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Simulations of proteins or nucleic acids are a good example of where faster is better. <strong>For instance, if you want to understand how a protein interacts with another molecule or how it changes conformation, you need prolonged simulations or extensive sampling. It would be great if we could speed that up</strong>."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Is it simply that the matrices are too big, or is there some other reason it takes so long?"
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "<strong>It’s that the range of possible molecular configurations is huge, making it very challenging to sample broadly</strong>."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "So there’s a massive combinatorial space to explore."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Exactly. There’s something called docking, where we examine how molecule A binds to molecule B.<br>Even when crystallography shows a particular binding pose, physics-based simulations sometimes fail to find that pose.<br>Broadly speaking, <strong>everyone knows that running MD for longer should yield better results, so if we can accelerate it with specialized hardware or refine the simulation granularity, accuracy improves</strong>.<br>We also need better models, but thorough sampling is key, which depends on runtime. You run it long enough to see a variety of configurations, and eventually the phenomenon you’re interested in might appear."
+        },
+        {
+          "head": "Specialized Expertise vs. Generalized Models"
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "From talking with experts in many fields, I’ve realized that not everyone loves formulas or computation.<br>Some are fully outside the realm of computing, others are deeply immersed, and some float in between.<br>I sense there’s a lot of untapped potential in those differences."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Indeed, things vary among individuals. In the early days, when I talked to people in, say, the Faculty of Agriculture, they were often very focused on <strong>“this particular protein” or “this particular gene,”</strong> drilling down into specifics. So not everyone was interested in modeling or generalization, just as you said.<br>From their perspective, “tweaking parameters” to interpret their hard-won experimental data could seem suspect."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "How do you address that concern about “tweaking parameters” arbitrarily?"
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Informatics approaches have steadily improved accuracy. Even a provisional model that explains the phenomena has value, since it can serve as a hypothesis.<br>Furthermore, <strong>when more detailed experimental data emerges, you can fit it to the model to see whether it explains the observations</strong>. That’s important."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "So even if someone does experiments, they might not necessarily build a model afterward.<br>But creating a model lets you make predictions, right?"
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Precisely—it allows prediction. That means if we can simulate and explain a phenomenon, we can then predict what happens next.<br>In the end, each researcher has a motivation to investigate whatever protein phenomenon they’re focusing on."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "They’ll solve specific problems, but only some will go as far as building generalized models."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Yes, exactly. And when you generalize, they tend to be quite strict about parameter reliability. For instance, I’ve seen people question why an AUC-ROC of 0.9 isn’t 1.0. Some say that if it’s not perfect, they can’t move forward with it in a scientific context."
+        },
+        {
+          "head": "VNM’s Approach: Creating Custom Software Through Interaction"
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "There’s a U.S. company called Rescale that recently raised a massive amount of funding to offer a research HPC cloud service mainly for enterprise clients. They host a huge variety of top-tier software that runs on the cloud.<br>For existing, well-established MD software, using those solutions is fine. We’re not aiming to compete directly; we’re more interested in the unmet needs that current solutions can’t address."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Yes, that resonates.<br><strong>In protein dynamics, you have large domains within a protein, but AlphaFold struggles to predict how these domains move relative to each other</strong>—especially if flexible linkers connect them. So investigating how those domains move is itself a research subject. If we had breakthrough software for that, it’d be really valuable.<br><strong>At the domain or chain level, how does the protein structure move or interact? There’s definitely a need there</strong>."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Thank you so much for sharing such valuable insights. It’s been tremendously helpful to learn from someone with deep knowledge of both computing and biology. I look forward to working with you in the future."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Likewise. Thank you, and let’s continue collaborating."
+        },
+        {
+          "footnote": "<sup>*1</sup> Parametron is a logic circuit element invented in 1954 by Eiichi Goto, then a graduate student at the University of Tokyo. It significantly reduced the need for vacuum tubes and transistors in computer construction, leading to the building of several parametron-based computers. By the 1960s, parametron technology was largely replaced by transistor-based systems, but the same principle was later realized in various physical systems. Since the 2010s, parametron technology has attracted renewed attention in relation to quantum computing. (Source: Wikipedia)<br><br><sup>*2</sup> MD (molecular dynamics) simulation is a method for tracking the stepwise physical interactions of molecules, predicting the motion of proteins, nucleic acids, etc. AlphaFold excels in predicting static 3D structures but does not directly account for time-dependent changes (dynamics). Although it is useful for initial hypotheses in drug discovery, phenomena like ligand binding and molecular motion require physics-based MD simulation.<br><br><sup>*3</sup> The global researcher population (all fields) is estimated to be around 8.8 million. Biology and medical/life sciences account for around 36% of published papers, suggesting at least several million researchers in these areas. Thus, the “10,000” figure is a conservative back-of-the-envelope estimate. Considering, for instance, that the NIH alone funds over 27,000 basic research principal investigators, the number of researchers focusing on “fundamental mechanism elucidation” is easily in the tens or even hundreds of thousands. (Sources: UNESCO, national statistics, NSF reports on researcher numbers and publication data, etc.)"
+        }
+      ],
+      "zh": [
+        {
+          "head": "从Parametron到生物信息学"
+        },
+        {
+          "speaker": "大冢一辉（以下简称“大冢”）",
+          "text": "在您开始研究生物信息学之前，我知道您曾专注于纯粹的计算机领域。当时，您主要关注哪些方面？"
+        },
+        {
+          "speaker": "清水谦多郎教授（以下简称“清水”）",
+          "text": "总之，当时我觉得编程特别有趣。我想大冢先生也有类似的体验：写程序时会让人感觉非常开心。如果那种程序是与计算机的底层紧密相关、或者涉及计算机核心深处的部分，就会更让我兴奋。<br>在那个时期，计算机资源已对大众相对开放，<strong>我对那些非单枪匹马就能完成、必须要协作才能运行的事物——例如分布式处理或协同运行的软件——非常感兴趣</strong>，后来进入生物领域也多少延续了这方面的工作。<br>举例来说，我曾做过一些<strong>在分布式环境中加速运行分子动力学（MD）<sup>*2</sup>模拟</strong>的研究，也发表过相关论文。"
+        },
+        {
+          "speaker": "大冢",
+          "text": "换句话说，您曾经从事自动化分布式处理方面的工作。考虑到那是上世纪90年代的事情，可以想见是相当超前的研究。<br>清水老师，您个人认为自己最具代表性的研究成果是哪一方面呢？"
+        },
+        {
+          "speaker": "清水",
+          "text": "可以这么说吧，在人工智能（AI）形成当下这样的热潮之前，我就一直在尝试利用机器学习等方法进行预测。进一步地，我也在思考如何让这些预测工具自动生成。<br>例如，我从事过从蛋白质序列来预测其结构或功能等相关软件的开发，这些就是典型的案例。"
+        },
+        {
+          "head": "处理海量数据 —— 生物计算中的实际挑战"
+        },
+        {
+          "speaker": "大冢",
+          "text": "我想生物学数据往往体量很大。"
+        },
+        {
+          "speaker": "清水",
+          "text": "是的。我最近正好也在做一个<strong>从序列到结构</strong>的项目，数据规模非常庞大。主流数据库里也有一些无法通过程序直接下载的数据，如果想用网页接口批量获取，就会被限制或禁止，显然不能那样做。<br>于是只能想办法把数据放到本地，但这些数据的体量又极其庞大；因此，如何管理和使用这些海量数据就成为我们面临的一大难题。"
+        },
+        {
+          "speaker": "大冢",
+          "text": "数据大，自然会消耗大量时间，对吧？"
+        },
+        {
+          "speaker": "清水",
+          "text": "对，十分耗时。数据库网站虽有数据，但外部大批量高速访问并不容易。<strong>像这样的大规模数据，如果想快速处理或批量作业，就会发现远程访问速度跟不上</strong>——这点我刚才也深有体会。"
+        },
+        {
+          "speaker": "大冢",
+          "text": "这些数据大概有多大？是TB级别的吗？"
+        },
+        {
+          "speaker": "清水",
+          "text": "仅序列部分就已有数百GB，加上三维结构或分子动力学相关数据后，就会膨胀到TB级别。"
+        },
+        {
+          "speaker": "大冢",
+          "text": "如果有一台可以随时使用的超级计算机（超算），并配备几乎无限的存储空间，把数据常驻其中，随时调用并进行计算，应该会很理想吧？"
+        },
+        {
+          "speaker": "清水",
+          "text": "确实是这样。若有这样一种方便易用的环境，能够直接联网就更好了。<br>因为我们用到的数据本身是公开的，并不是从某个地方搬硬盘拷来的，如果能有一种方式让我们轻松地在本地就能访问和使用这些公开数据，那就非常理想了。"
+        },
+        {
+          "speaker": "大冢",
+          "text": "VNM的数据中心（Data Hub）想要提供一种<strong>在同一个本地网络环境下由服务器统一管理数据、减少本地下载和拷贝</strong>的机制。<br>我们还在思考把公开数据商业化的可能性，您觉得出售数据这种模式在现实层面可行吗？"
+        },
+        {
+          "speaker": "清水",
+          "text": "在过去，这种模式比较困难。但如果目标足够明确，比如专门面向某个特定研究或开发方向，倒也不是不可能。可能会需要通过TLO（技术转移机构）等机构的转介来实现。"
+        },
+        {
+          "head": "便利性：为触及被搁置的“本质性问题”创造契机"
+        },
+        {
+          "speaker": "大冢",
+          "text": "我想很多人应该都有“真正想做的研究”，但因为各种原因，一直没有去实现。您觉得这样的情况有多普遍？"
+        },
+        {
+          "speaker": "清水",
+          "text": "拿MD（分子动力学）模拟来说，即便算力越来越强，要做到对所有状态进行全面模拟仍然不现实，因为这依赖抽样取样。<strong>如今AI也常被用来处理这部分问题，但有时会沦为“黑箱”，</strong>难以解释背后的机理。<br>如果能开发出既能进行预测，又能解释现象的模型，就能极大推进自然科学的发展。"
+        },
+        {
+          "speaker": "大冢",
+          "text": "如果只要最终结果就好，出答案当然很便利；但如果能看清其机制，对研究就更有帮助。"
+        },
+        {
+          "speaker": "清水",
+          "text": "MD基于物理定律，一步步地进行模拟，但若要解释耗时长的现象，直接用全原子模拟就无法及时得出结果。<strong>因此，需要更粗粒度的模拟手段，或在MD所生成的结构中找到更好的抽样方法，</strong>这在相关研究领域里是非常重要的课题，也有人在提出各式各样的新方法。"
+        },
+        {
+          "speaker": "大冢",
+          "text": "我之前和一些生物学家交流时，他们提到，用现有方法还能挖掘大量未被充分研究的领域，且发表论文也足以获得成果；此外，也有人致力于更深入的机理研究，这通常需要开发新的系统或工具。<br>换句话说，最终取决于个人想要解决的问题类型与研究者的思路。"
+        },
+        {
+          "speaker": "清水",
+          "text": "说得很对。"
+        },
+        {
+          "speaker": "大冢",
+          "text": "据说在一门学科里，如果有100名研究者，大概只有10人真正在意深层机理。假设一家机构有10人，那么全国可能有100人，全球可能就有1万人左右<sup>*3</sup>。"
+        },
+        {
+          "speaker": "清水",
+          "text": "其实，作为研究者，谁都希望能追求机理的真相，但现实中有时受限于科研经费等因素，不得不在有限周期内给出结果。<strong>所以往往没能投入足够时间深入到更深层次</strong>。"
+        },
+        {
+          "speaker": "大冢",
+          "text": "经费、经济实力等因素确实会产生影响。"
+        },
+        {
+          "speaker": "清水",
+          "text": "正如您所说，如果真的有这样一种软件或工具，稍微努力就能让我们看懂机理并进行解释，就很可能进一步激发研究的动力。<strong>在那种情况下，研究者会说：“这也许能说明点什么，让我们试试。”</strong>"
+        },
+        {
+          "speaker": "大冢",
+          "text": "如果花费的时间和精力能被进一步压缩，就可以在空余中尝试更多新的想法，您觉得这有可能吗？"
+        },
+        {
+          "speaker": "清水",
+          "text": "非常有可能，而且对科学进步很重要。"
+        },
+        {
+          "speaker": "大冢",
+          "text": "我想肯定有人心里一直有想做的点子，却因为各种原因而搁置。"
+        },
+        {
+          "speaker": "清水",
+          "text": "是的，这确实是个普遍难题。"
+        },
+        {
+          "speaker": "大冢",
+          "text": "如果能有一种机制，让这些长期被推后的本质性研究也能落地，那就太好了。<br><strong>也就是对那些极具本质性、却往往被优先级放低的研究，提供一个可以实现在先的平台</strong>。"
+        },
+        {
+          "head": "计算时间的缩短是发现的关键"
+        },
+        {
+          "speaker": "大冢",
+          "text": "关于HPC（高性能计算），您怎么看？"
+        },
+        {
+          "speaker": "清水",
+          "text": "我认为加快蛋白质或核酸的模拟速度就是一个最直接的例子。<strong>我们常想用模拟去探究蛋白质与其他分子如何相互作用、如何发生构象变化，但这需要较长时间的模拟与取样。如果能缩短模拟时间，就能大大提升我们的研究效率</strong>。"
+        },
+        {
+          "speaker": "大冢",
+          "text": "是什么原因导致这种模拟如此耗时？是因为矩阵规模过大，还是有什么固定瓶颈？"
+        },
+        {
+          "speaker": "清水",
+          "text": "<strong>主要是分子可能存在的状态组合太过庞大，我们需要对极大范围的状态进行相当广泛的取样</strong>。"
+        },
+        {
+          "speaker": "大冢",
+          "text": "也就是说需要在广阔的可能性空间里进行探索？"
+        },
+        {
+          "speaker": "清水",
+          "text": "是的。“分子对接（docking）”就是一个例子，我们想知道分子A和分子B会如何结合。<br>有时候，通过实验的晶体结构解析能确认两者确实结合在一起，但用纯粹的物理法则进行模拟，却未必能轻易搜索到那个结合构象。<br>一般来讲，<strong>如果能把MD运行得更久、更深入，结果的准确性就会提升；同时，如果能加快模拟速度，就可以使用更高精度的计算粒度</strong>。<br>当然，模型本身的粗糙度、抽象程度也是一方面。能否充分探索所有可能状态也很重要，而这又需要消耗大量时间才能“跑”到某个特定现象发生的时刻。"
+        },
+        {
+          "head": "“专业分化”与“通用化模型”"
+        },
+        {
+          "speaker": "大冢",
+          "text": "和不同行业、不同学科的专家交流后我发现，并不是所有人都喜欢或擅长用数学公式和计算机来研究问题。<br>我察觉到一个现象：有些人专注于“计算机内部”，有些人更偏向“计算机外部”，也有一些居于中间。而在这些差异当中，似乎蕴含着许多尚未被探索的可能性。"
+        },
+        {
+          "speaker": "清水",
+          "text": "确实如此。如今情况也在慢慢变化，人和人差异很大。不过在早期，我到农学部等地方时，经常见到这样的情况：科研人员会不断做实验，<strong>聚焦于“这条蛋白质、那个基因”之类非常细分的领域，并深入研究</strong>；对于去做模型化或普适化的研究，他们不一定有兴趣。<br>在他们看来，“既然有实际实验数据，为什么要用一个还不够精准（参数不完全确定）的模型？” 他们会觉得那样不够严谨。"
+        },
+        {
+          "speaker": "大冢",
+          "text": "对于“参数不够精准”的质疑，您一般怎么回应呢？"
+        },
+        {
+          "speaker": "清水",
+          "text": "生物信息学这些年也在不断提高预测精度。即便只是一个临时的模型，若能在一定程度上解释实际现象，它就能作为一种假设存在，这本身就很有意义。<br>况且，如果之后做了更多更精细的实验，一旦有了新的数据，也能把它带回模型进行验证，若能持续修正并解释新的结果，模型就具有了更大价值。<br><strong>因此，从实验数据到模型，再从模型反哺预测与验证，这种循环是非常重要的</strong>。"
+        },
+        {
+          "speaker": "大冢",
+          "text": "并不是说做了实验就一定要去建模。然而，一旦有了模型，就有了可预测性。"
+        },
+        {
+          "speaker": "清水",
+          "text": "对，能进行预测，就可以做模拟，并且可以进行解释和验证。<br>其实每个人研究的对象都不太一样，可能是某个特定蛋白质，但在研究深入时，就会希望理解它背后的机理。"
+        },
+        {
+          "speaker": "大冢",
+          "text": "换言之，更多人解决的是个别具体问题，但想要建立更通用的模型的人只是少数。"
+        },
+        {
+          "speaker": "清水",
+          "text": "正是如此。而且在做通用化时，大家对参数和模型精度的要求也会非常苛刻。比如AUC-ROC曲线下的面积（AUC）经常用来衡量精度。某些领域里，若能达到0.9我们就觉得不错了，但有些学者却会说：“为什么不是1.0？” 如果不是1.0就不够完美，似乎无法当作科学依据来推进研究。"
+        },
+        {
+          "head": "VN Machine的思路，交互式定制软件"
+        },
+        {
+          "speaker": "大冢",
+          "text": "美国有一家名为Rescale的公司，他们面向企业提供科研仿真和HPC云服务，号称集成了几乎所有主流仿真软件，用户在云端就能一键运行。<br>而对于像MD这类已非常成熟的工具，我认为直接用它们就好，无意去和它们竞争。相反，我觉得那些现有软件尚未满足的需求才是新的机会所在。"
+        },
+        {
+          "speaker": "清水",
+          "text": "总结一下，您说的这些我都非常认同。<br><strong>就蛋白质运动而言，存在不同结构域（domain），如果它们之间通过一个柔性的连接区（linker）连接，就很难被AlphaFold这类工具很好地预测</strong>；尤其是结构域之间的灵活性，仍是很多研究关注的重点。如果能有一款突破性的工具来解决这些问题，必将带来极大价值。<strong>从结构域到分子链水平，如何理解蛋白质结构的运动及其相互作用是非常有需求的</strong>。"
+        },
+        {
+          "speaker": "大冢",
+          "text": "今天非常感谢您分享了宝贵的见解。您对计算机科学和生物学的深刻理解对我们有极大的帮助。期待未来继续向您请教。"
+        },
+        {
+          "speaker": "清水",
+          "text": "我也非常期待今后能继续交流，谢谢。"
+        },
+        {
+          "footnote": "<sup>*1</sup> Parametron（参数元）是一种逻辑元件，由后藤英一于1954年在当时的东京大学理学院读研期间发明。该元件通过显著减少真空管或晶体管用量来构建计算机，在当时被用于建造了多台基于Parametron的计算机。到20世纪60年代，这些计算机逐渐被晶体管技术取代。但后来在各种物理系统中又相继实现了相同原理的参数元，尤其在2010年代后，从开发量子计算机的角度出发，基于Parametron的研究再次受到关注。（来源：维基百科）<br><br><sup>*2</sup> MD（分子动力学）模拟是一种逐步追踪分子物理相互作用，以预测蛋白质、核酸等分子动态的方法。<br>与静态3D结构预测（如AlphaFold）不同，MD方法能更直接地模拟分子在时间维度上的演化，因而常被用于药物设计中对小分子配体结合过程的研究。<br><br><sup>*3</sup> 据推算，全球研究者总数（各领域）约为880万人，其中生物学、医疗与生命科学方向的研究者在论文产出量上约占36%。在此基础上，如果再考虑NIH（美国国立卫生研究院）支持的基础研究PI就达2.7万余人，由此推断“以机理阐释为主”的研究者数量远不止数万人，实际规模或达数十万乃至更多。<br>（数据参考：联合国教科文组织及各国科研统计、美国NSF等报告）"
+        }
+      ],
+      "fr": [
+        {
+          "head": "Du paramétron à la bio-informatique"
+        },
+        {
+          "speaker": "Kazuki Otsuka (ci-après, « Otsuka »)",
+          "text": "Avant de vous lancer dans la bio-informatique, vous vous consacriez exclusivement à l’informatique pure. À l’époque, quels étaient vos centres d’intérêt ?"
+        },
+        {
+          "speaker": "Professeur Kentaro Shimizu (ci-après, « Shimizu »)",
+          "text": "C’était vraiment amusant. Je pense que c’est sans doute pareil pour vous, Otsuka : quand on écrit un programme, on est extrêmement heureux. Et plus on touche au niveau bas, plus on s’approche des couches profondes de l’ordinateur, plus c’est exaltant.<br>À l’époque, les ressources informatiques étaient à la disposition du grand public et j’étais passionné par <strong>la création de choses qui ne pouvaient pas se faire seul ou à quelques-uns, des choses qui fonctionnent de manière coordonnée, autrement dit le traitement distribué ou les logiciels collaboratifs</strong>. J’ai un peu poursuivi cette approche même après avoir intégré le domaine de la biologie.<br>Par exemple, j’ai publié un article à propos de <strong>l’exécution accélérée en environnement distribué de la simulation MD (dynamique moléculaire)<sup>*2</sup></strong>."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "D’une certaine façon, cela revient à automatiser le traitement distribué, n’est-ce pas ? Et si on se replace dans les années 1990, c’était assez novateur, j’imagine.<br>Parmi vos réalisations, quel est, selon vous, le travail le plus représentatif ?"
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Eh bien, avant que l’IA ne devienne aussi populaire qu’aujourd’hui, j’utilisais déjà l’apprentissage automatique ou des approches similaires pour faire de la prédiction. J’ai aussi travaillé sur la génération automatique d’outils de prédiction.<br>Par exemple, j’ai développé des logiciels pour prédire la structure ou la fonction d’une protéine à partir de sa séquence."
+        },
+        {
+          "head": "Traiter des données massives – Les défis pratiques du calcul en biologie"
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Je suppose que les données en biologie sont assez volumineuses."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Oui, justement, je travaille actuellement sur un projet où l’on passe de la séquence à la structure, et la quantité de données est immense. Même dans les bases de données les plus courantes, certaines ne peuvent pas être téléchargées par programme. Et si on essaie de procéder via l’interface Web en masse, on se fait bloquer. On n’a pas le droit d’y accéder ainsi de façon massive.<br>Que faire, alors ? On finit par tout rapatrier en local, mais la taille des données est énorme. C’est une vraie difficulté de savoir comment gérer ces volumes."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Quand la quantité de données est aussi grande, cela prend du temps, n’est-ce pas ?"
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Oui, effectivement. Si l’on pouvait accéder rapidement à ces données depuis le site qui les héberge, ce serait pratique, mais <strong>aujourd’hui, il est très difficile de lancer rapidement des traitements massifs sur ces données</strong>. C’est ce dont je me suis rendu compte tout à l’heure."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "De quel ordre de grandeur parle-t-on ? Des téraoctets ?"
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Juste pour les séquences, c’est déjà plusieurs centaines de gigas, et si on inclut les structures 3D ou les données de dynamique, on passe au téraoctet."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Selon moi, l’idéal serait de disposer en permanence d’un supercalculateur avec un stockage quasi illimité : on y dépose ces données et on lance les calculs dès qu’on en a besoin."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Je suis tout à fait d’accord. Ce serait vraiment idéal si ce genre d’environnement était plus aisément disponible. Et il est important que ce soit connecté à Internet.<br>En effet, les données dont nous avons besoin proviennent souvent de bases publiques. <strong>Si l’on pouvait aisément les consulter localement comme si elles s’y trouvaient déjà, ce serait formidable</strong>."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Avec le data hub de VNM, nous essayons de créer un <strong>accès commun sur le réseau local, afin de réduire autant que possible les téléchargements et les copies sur disque</strong>.<br>Par ailleurs, nous examinons la possibilité de monétiser les données publiées. Pensez-vous qu’il soit réalisable de les proposer à la vente ?"
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Autrefois, c’était difficile, mais si l’on cible un objectif précis, par exemple un type de recherche et développement spécifique, on peut effectivement envisager ce modèle. Il faudra sans doute s’appuyer sur des organisations de type TLO (Technology Licensing Organization)."
+        },
+        {
+          "head": "La simplicité d’utilisation peut inciter à explorer des mécanismes souvent reportés à plus tard"
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "À votre avis, combien d’idées les chercheurs laissent-ils de côté faute de moyens ou de temps, alors qu’ils aimeraient vraiment les réaliser ?"
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Pour la dynamique moléculaire (MD), même si la puissance de calcul s’est considérablement accrue, on ne peut pas tout couvrir de façon exhaustive et on dépend de l’échantillonnage. <strong>C’est là que l’IA intervient, mais celle-ci fait souvent figure de « boîte noire ».<br>C’est pourquoi, si nous parvenions à élucider les phénomènes de façon explicable, ce serait un vrai bond pour la science.</strong>"
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Il ne s’agit pas seulement d’avoir la réponse, mais aussi de comprendre le mécanisme."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Exactement. La MD se base sur les lois physiques en simulant le système pas à pas, mais <strong>quand on veut expliquer un phénomène se produisant sur une longue durée, cela devient inabordable en l’état</strong>. On cherche donc une granularité plus élevée pour approcher le phénomène, ou on tente de trouver de nouvelles façons d’échantillonner les conformations produites par la MD."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Je discutais récemment avec un biologiste, qui expliquait que beaucoup de travaux restent à mener avec les méthodes actuelles, permettant de publier encore de nombreuses études. Et à côté, il y a un autre groupe de chercheurs qui souhaite comprendre plus en profondeur le mécanisme, et qui, de ce fait, doit parfois développer de nouveaux programmes.<br>Finalement, tout dépend de la question que chaque scientifique se pose : c’est cela qui détermine quel problème il veut résoudre."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "C’est un point de vue très pertinent, je le reconnais."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "On m’a avancé une estimation selon laquelle, sur 100 chercheurs, peut-être 10 sont du genre à s’intéresser à ces problèmes mécanistes plus profonds, soit une centaine au Japon, et potentiellement 10 000 dans le monde.<sup>*3</sup>"
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "En tant que chercheurs, nous voudrions tous, dans l’idéal, approfondir la compréhension des mécanismes. Mais <strong>les financements exigent souvent des résultats rapides, et il est difficile de prendre le temps d’aller jusqu’au bout</strong>."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Il y a des contraintes économiques, et d’autres facteurs aussi."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Exactement. C’est pourquoi, comme vous le disiez, <strong>si un logiciel permettait de pousser un peu plus loin et de rendre les phénomènes explicables, beaucoup de chercheurs s’y essaieraient volontiers</strong>."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "S’il existait un outil qui ne soit pas trop chronophage, on pourrait l’utiliser pendant le temps libre entre deux expériences, par exemple. Vous pensez que c’est plausible ?"
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Oui, tout à fait. C’est même capital pour faire avancer la science."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Je pense que nombre de chercheurs ont une idée en tête depuis longtemps, mais qu’ils n’ont jamais pu concrétiser."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Oui, c’est un vrai problème."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Nous voulons justement bâtir un environnement où ces idées peuvent aboutir.<br><strong>Les idées essentielles, mais qui, précisément parce qu’elles sont fondamentales, se retrouvent souvent repoussées à plus tard</strong>."
+        },
+        {
+          "head": "Réduire le temps de calcul, la clé de la découverte"
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Que pensez-vous de l’HPC (calcul haute performance) ?"
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Les simulations pour les protéines ou les acides nucléiques constituent un bon exemple. <strong>Pour comprendre comment une protéine interagit avec d’autres molécules, ou comment sa structure se modifie, on doit effectuer une simulation sur une longue période ou recourir à un échantillonnage intense. L’accélérer serait fantastique</strong>."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Concrètement, d’où vient le goulot d’étranglement ? De la taille des matrices ou du nombre de combinaisons à explorer ?"
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "<strong>L’espace des configurations moléculaires à explorer est immense</strong>. C’est la principale raison."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Donc le nombre de combinaisons à évaluer est colossal."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Oui, par exemple, quand on parle de « docking », on cherche comment la molécule A s’attache à la molécule B. Même si, expérimentalement, on voit que la molécule se fixe à tel endroit, il arrive que la simulation en se basant sur les lois physiques ne retrouve pas cette configuration.<br>En général, on sait que <strong>si l’on fait tourner la MD suffisamment longtemps, on peut finir par voir émerger la configuration correcte</strong>. Donc si l’on disposait d’accélérateurs plus performants, on augmenterait la précision en raffinant le modèle.<br>Il est vrai aussi que le modèle peut être grossier. Mais en prolongeant la simulation et en échantillonnant largement, on finit par observer le moment où « quelque chose se produit »."
+        },
+        {
+          "head": "« Spécialités cloisonnées » vs « Modèle généralisé »"
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "En parlant avec des spécialistes de divers domaines, j’ai constaté que tout le monde n’aime pas forcément les équations ou le codage. Certains sont « en dehors » de l’ordinateur, d’autres « dans », et d’autres entre les deux.<br>Dans ces écarts se cachent potentiellement de nombreuses opportunités inexplorées."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Aujourd’hui, la situation varie selon les personnes, mais à l’époque, quand j’échangeais avec des chercheurs en biologie ou en agronomie, ils procédaient par accumulation d’expériences, en se focalisant fortement sur <strong>« cette protéine, ce gène »</strong> pour en comprendre tous les détails. Ils ne se préoccupaient pas forcément de la modélisation ou de la généralisation.<br>De plus, ils se demandaient si le fait de « fixer des paramètres arbitraires » n’était pas trop éloigné des données expérimentales réelles."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Comment répondez-vous à la critique de « paramètres choisis au hasard » ?"
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Les méthodes informatiques gagnent en précision et, même avec un modèle imparfait, on peut l’utiliser comme hypothèse de départ ; c’est déjà utile.<br>Ensuite, <strong>lorsque des données expérimentales plus détaillées apparaissent, on affine ce modèle et, s’il parvient à expliquer ces nouvelles observations, cela fait avancer la science</strong>."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Donc, ce n’est pas parce que l’on fait des expériences que l’on construit forcément un modèle.<br>Cependant, si l’on dispose d’un modèle, on peut faire des prédictions."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Voilà, on peut prédire. C’est d’ailleurs l’intérêt des simulations : expliquer un phénomène et anticiper ce qui pourrait se produire ensuite.<br>Chaque chercheur a, de toute façon, une motivation propre pour étudier tel phénomène d’une protéine."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Dans bien des cas, on résout un problème précis, sans nécessairement viser la construction d’un modèle plus général."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "C’est exactement cela. Et puis, lors de la généralisation, se pose le problème de la fiabilité des paramètres. Les biologistes sont très exigeants à ce sujet. J’ai déjà entendu, par exemple, quelqu’un dire : « Pourquoi l’AUC-ROC n’est-elle pas de 1 ? Si ce n’est pas 1, est-ce vraiment exploitable pour faire avancer la science ? » Alors que dans beaucoup de domaines, un score autour de 0,9 est déjà considéré comme très bon."
+        },
+        {
+          "head": "Approche VN Machine : construire des logiciels sur mesure par interaction"
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Aux États-Unis, la société Rescale, qui cible le marché HPC pour entreprises, vient de lever des sommes considérables. Elle propose d’exécuter un large éventail de grands logiciels sur le cloud. Pour une simulation MD déjà établie, c’est parfait, et nous n’essayons pas de concurrencer ce genre de solution. Nous visons plutôt des besoins qui ne sont pas couverts par les logiciels standard existants."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Ce résumé est très juste.<br>En ce qui concerne la dynamique des protéines, <strong>AlphaFold a parfois du mal à prédire avec précision la position relative de domaines connectés par un « linker » flexible</strong>. Or, la manière dont ces domaines se déplacent et s’agencent est au cœur de nombreuses recherches. <strong>Si un logiciel vraiment novateur voyait le jour, il serait d’une grande utilité : au niveau du mouvement des domaines, de l’interaction entre chaînes, etc.</strong>"
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Je vous remercie infiniment pour cet entretien. Votre connaissance pointue de l’informatique et de la biologie est extrêmement précieuse. Je compte sur vous pour la suite !"
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "C’est moi qui vous remercie. Restons en contact."
+        },
+        {
+          "footnote": "<sup>*1</sup> Le paramétron (parametron) est un composant logique inventé en 1954 par Eiichi Goto, alors étudiant en master à la Faculté des sciences de l’Université de Tokyo. Il permettait de construire des ordinateurs en réduisant considérablement la quantité de tubes à vide ou de transistors ; à l’époque, de nombreux ordinateurs à paramétron ont ainsi vu le jour. Dans les années 1960, il a été largement supplanté par les transistors. Cependant, par la suite, le même principe de base du paramétron a été reproduit dans divers systèmes physiques. À partir des années 2010, il a de nouveau retenu l’attention pour le développement d’ordinateurs quantiques utilisant ce principe. (Source : Wikipedia)<br><br><sup>*2</sup> La simulation de dynamique moléculaire (MD) suit étape par étape les interactions physiques entre molécules pour prédire, par exemple, l’évolution structurelle des protéines ou des acides nucléiques.<br>Par comparaison, AlphaFold, système proche, excelle dans la prédiction statique des structures 3D, mais ne prend pas directement en compte la dimension temporelle. Il est donc utile pour formuler des hypothèses préliminaires en conception de médicaments, mais pour étudier le mouvement des molécules ou le couplage avec un ligand, il reste indispensable de recourir à la MD, qui s’appuie sur les lois physiques.<br><br><sup>*3</sup> Le nombre total de chercheurs dans le monde (tous domaines confondus) est estimé à environ 8,8 millions. Environ 36 % des publications concernent la biologie ou les sciences de la vie au sens large. L’évaluation à « 10 000 » est donc très approximative ; en réalité, rien qu’aux États-Unis, le NIH finance déjà plus de 27 000 chercheurs en recherche fondamentale, etc. Il est donc probable que le nombre de chercheurs se consacrant à l’élucidation de mécanismes fondamentaux atteigne plusieurs dizaines ou centaines de milliers dans le monde. (D’après les rapports de l’UNESCO, des organismes nationaux, du NSF, etc.)"
+        }
+      ],
+      "es": [
+        {
+          "head": "Del Parametron a la Bioinformática"
+        },
+        {
+          "speaker": "Kazuki Otsuka (en adelante, Otsuka)",
+          "text": "Antes de adentrarse en la bioinformática, tengo entendido que usted se dedicaba de manera muy pura al estudio de la computación. ¿Qué era lo que le interesaba en ese momento?"
+        },
+        {
+          "speaker": "Profesor Kentaro Shimizu (en adelante, Shimizu)",
+          "text": "La verdad es que era muy divertido, sin más. Probablemente a usted también le pase, Otsuka, que cuando uno está programando se siente muy feliz, y cuanto más cerca uno está del nivel bajo —es decir, de la parte más interna de la computadora— más emocionante resulta.<br>En aquel entonces, los recursos de computación empezaban a estar a disposición de más personas. Me interesaba enormemente <strong>crear sistemas que funcionaran de manera colaborativa, algo que no se pudiera hacer solo o entre muy pocos, es decir, entornos de cómputo distribuido y software de cooperación</strong>. Y esa línea de trabajo la continué en el ámbito de la biología.<br>Por ejemplo, en el caso de la <strong>simulación MD (dinámica molecular)<sup>*2</sup>, publiqué algunos artículos sobre cómo acelerar su ejecución en entornos distribuidos</strong>."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "En cierto sentido, hablamos de automatizar el procesamiento distribuido. Pensando que esto sucedía en la década de 1990, imagino que fue bastante pionero.<br>Profesor Shimizu, ¿cuál considera que es su trabajo más representativo?"
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Diría que, desde antes de la actual ola de popularidad de la IA, ya usábamos técnicas de aprendizaje automático para realizar predicciones. Además, me he enfocado en la generación automática de herramientas de predicción.<br>Por ejemplo, he desarrollado software para predecir estructuras o funciones a partir de secuencias de proteínas."
+        },
+        {
+          "head": "Procesar grandes volúmenes de datos: desafíos en el cómputo biológico"
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "En el ámbito de la biología, imagino que el tamaño de los datos es enorme."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Sí, justo ahora estoy trabajando con datos de secuencias y estructuras, y el volumen es gigantesco. Hay bases de datos de renombre que ni siquiera se pueden descargar directamente con un simple programa. Pero, si pretendes acceder masivamente por interfaz web, también estás fuera de las normas, y no puedes hacerlo. Tampoco puedes hacer un acceso tan intensivo.<br>Entonces, ¿qué hacemos? Terminamos descargando todo localmente, pero se trata de datos enormes, así que gestionar esos volúmenes se convierte en un dolor de cabeza."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Además, manejar grandes volúmenes de datos consume mucho tiempo."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Exacto. Estaría muy bien acceder de forma rápida a los datos directamente en el sitio donde están alojados, pero <strong>cuando quieres procesar esos datos masivamente o ejecutar cálculos intensivos sobre ellos, la velocidad de acceso suele ser un cuello de botella</strong>. Lo estuve sufriendo justo hoy."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "¿De qué orden de magnitud estamos hablando? ¿Varios terabytes quizá?"
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "La parte de secuencias puede rondar cientos de gigabytes, pero si añadimos datos de estructuras 3D y datos dinámicos, llegamos fácilmente a la escala de terabytes."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Supongo que lo ideal sería contar con un supercomputador que pudiéramos usar de manera permanente, con un almacenamiento casi ilimitado, donde pudiéramos depositar todos esos datos y acceder a ellos para hacer los cálculos cuando quisiéramos."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Estoy totalmente de acuerdo. Sería genial poder tener un entorno así de forma sencilla. Y también es importante que esté conectado a la red.<br>Es decir, nuestros datos de interés a menudo no están en un disco duro propio, sino que son datos públicos. <strong>Si hubiera una forma sencilla de usar esos datos públicos de manera local, sería maravilloso</strong>."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "En nuestro proyecto VNM, intentamos crear un repositorio de datos compartido (data hub), accesible dentro de la misma red local, reduciendo la necesidad de descargar o copiar físicamente datos. <br>Además, estamos pensando en un sistema para monetizar los datos públicos. ¿Cree que sea posible, en la práctica, vender ese acceso?"
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Antes era más complicado, pero creo que sí es factible si se define un objetivo específico, por ejemplo, un cierto tipo de investigación aplicada. Probablemente sería necesario utilizar mecanismos como los TLO (Oficinas de Transferencia de Tecnología) o algo similar."
+        },
+        {
+          "head": "La sencillez puede ser la clave para adentrarnos en la elucidación de mecanismos que suelen posponerse"
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Hay muchas ideas que la gente quiere llevar a cabo, pero que no se materializan por falta de recursos o por la complejidad de las herramientas. ¿Cuántos casos cree que hay en los que a la gente le gustaría hacer algo pero no puede?"
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "En el caso de la MD (dinámica molecular), aunque la potencia de cálculo ha aumentado mucho, sigue siendo imposible abarcar todos los estados de un sistema de manera exhaustiva. Dependemos del muestreo. <strong>Hoy en día se usan bastante las técnicas de IA, pero corremos el riesgo de que la solución se convierta en una caja negra.<br>Si pudiéramos explicar los fenómenos de forma clara, avanzaríamos mucho en la ciencia básica</strong>."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "No se trata solo de obtener una respuesta directa, sino de comprender el mecanismo para poder usar esos resultados."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "La MD se basa en leyes físicas y avanza paso a paso. <strong>Pero cuando queremos describir fenómenos que transcurren en escalas de tiempo largas, la simulación pura es muy costosa</strong>. Necesitamos modelos con un nivel de granularidad mayor, o bien estrategias de muestreo más eficientes. Hay muchos métodos propuestos para ello."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Hablando con otros biólogos, muchos comentan que todavía hay muchísimo por investigar con los métodos existentes, y que con eso pueden publicar trabajos. Pero aparte de esas líneas, hay gente que quiere profundizar en los mecanismos fundamentales y, para ello, desarrollan nuevos sistemas o software.<br>Al final depende del tipo de problema y la motivación del investigador. Tengo la impresión de que la proporción de gente que realmente quiere innovar en la base de los métodos es menor."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Estoy de acuerdo. Sin embargo, <strong>los investigadores tenemos, en el fondo, el deseo de entender a fondo los mecanismos</strong>. Pero muchas veces hay limitaciones de tiempo y de financiación, lo que hace que no podamos embarcarnos en proyectos tan profundos."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Sí, los factores económicos y de otra índole también influyen."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Por eso, como usted señala, <strong>si hubiera software que, con un poco de esfuerzo adicional, ofreciera una mayor capacidad de explicación, no cabe duda de que muchos se animarían a usarlo</strong>."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Si existiera una herramienta que no exigiera demasiado tiempo ni esfuerzo, sería posible explorar esas ideas que llevamos guardadas en un cajón."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Exacto, creo que eso sería muy útil y tendría un impacto importante en el avance de la ciencia."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Hay quien lleva tiempo incubando ideas, pero nunca las realiza por falta de facilidades o herramientas."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Así es, es un problema muy común."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Sería estupendo poder crear un mecanismo que permita llevar a cabo esas ideas que son fundamentales, pero que se van postergando.<br><strong>En otras palabras, un sistema que facilite la realización de investigaciones esenciales que, precisamente por su naturaleza, se dejan para más adelante</strong>."
+        },
+        {
+          "head": "La reducción de los tiempos de cómputo como clave para los descubrimientos"
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "¿Qué opina sobre el HPC (cómputo de alto rendimiento)?"
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Las simulaciones de proteínas y ácidos nucleicos son un claro ejemplo de por qué sería tan valioso acelerar estos procesos. <strong>Para conocer cómo interacciona una proteína con otras moléculas o cómo cambia su estructura, se necesitan simulaciones largas y un muestreo exhaustivo. Cuanto más rápido podamos hacer esto, mejor</strong>."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "¿La razón principal de la lentitud se debe a que las matrices son muy grandes, o a que el espacio de configuración es demasiado amplio?"
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "<strong>En general, el número de configuraciones que pueden adoptar las moléculas es enorme, y resulta muy difícil abarcar todo el espacio de manera exhaustiva</strong>."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "O sea que hay muchas combinaciones posibles que deben explorarse."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Exacto. Por ejemplo, existe un método llamado “docking” para estudiar cómo se unen dos moléculas, A y B. <br>Aunque la estructura cristalina obtenida experimentalmente muestre que sí se unen en cierto sitio, a veces la simulación basada únicamente en leyes físicas no reproduce esa conformación. <br>En general, <strong>todo el mundo reconoce que, si pudiéramos prolongar más la MD, obtendríamos mejores resultados, porque tendríamos más probabilidades de encontrar el estado correcto</strong>.<br>También puede influir la precisión del modelo, pero el muestreo suficiente y el tiempo de simulación son cruciales. Si uno simula durante el tiempo suficiente, el fenómeno de interés podría aparecer, pero eso depende de disponer de potencia de cómputo y tiempo."
+        },
+        {
+          "head": "Especializaciones divergentes vs. modelos generalizados"
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "He conversado con expertos de diversos campos científicos y, ciertamente, no todos disfrutan el trabajo de modelado matemático y cómputo intensivo.<br>En cierto modo, podríamos hablar de personas que están “dentro” de la computadora, otras que trabajan “fuera” y otras en el punto intermedio. Dentro de esas diferencias, creo que hay muchísimas posibilidades inexploradas."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Actualmente la situación ha cambiado bastante y depende de cada persona, pero, al principio, cuando conversaba con gente de biología o de la facultad de agronomía, notaba que <strong>muchos se especializaban profundamente en un conjunto concreto de proteínas o genes</strong>. Su interés se centraba en experimentos concretos y datos reales.<br>Para ellos, era difícil ver el valor de un modelo “generalizado” si este se basaba en “parámetros arbitrarios”. Decían: “Con datos experimentales tan detallados, no tiene sentido meter parámetros inventados” o algo por el estilo."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Frente a la objeción de “usar parámetros arbitrarios”, ¿cómo lo explicaría usted?"
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "La bioinformática también ha mejorado mucho la precisión de sus modelos. Incluso con un modelo aproximado, si podemos explicar razonablemente el fenómeno real, la idea es valiosa como hipótesis.<br>Después, <strong>a medida que haya mejores datos experimentales, podremos refinar el modelo y ver si explica esos nuevos datos, lo que ayuda a validar o a ajustar la hipótesis</strong>."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "No siempre se crea un modelo cuando se hacen experimentos, ¿verdad?<br>Pero si uno logra construirlo, también puede hacer predicciones."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Exacto, sirve para predecir. Es decir, se puede simular el fenómeno y dar explicaciones. Si luego verificamos los resultados con nuevos experimentos, podemos expandir nuestro conocimiento.<br>Al final, cada investigador tiene sus propias proteínas de interés y busca entender su mecanismo."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Entonces, muchos investigadores se concentran en problemas muy específicos, mientras que no todos se dedican a generalizar y crear grandes modelos."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Exacto. Además, cuando se generaliza, surge el debate acerca de la fiabilidad de los parámetros. Por ejemplo, en mi experiencia, si presento una métrica AUC-ROC de 0,9, que suele considerarse decente, algunos científicos experimentales me dicen: “¿Por qué no es 1,0? Así no sirve para una conclusión definitiva.”"
+        },
+        {
+          "head": "El enfoque de VN Machine: crear software personalizado de manera interactiva"
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "En Estados Unidos, hay una startup llamada Rescale, que ha recaudado grandes sumas para ofrecer HPC en la nube para uso empresarial. Han reunido en su plataforma una enorme variedad de software de primera línea, incluyendo software de MD.<br>Personalmente, creo que está muy bien aprovechar herramientas ya consolidadas para las necesidades más habituales. Nosotros no buscamos competir directamente con esas soluciones, sino más bien atender <strong>las necesidades que no se satisfacen con el software existente</strong>."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Sí, lo que comenta es muy cierto.<br><strong>Por ejemplo, con las proteínas, es difícil predecir cómo se mueven los grandes dominios (grandes “bloques” de la proteína), especialmente cuando están unidos por partes muy flexibles. Incluso AlphaFold, que predice bien la estructura 3D estática, no maneja tan bien esas partes flexibles</strong>. Esta cuestión de la conformación dinámica es un área de investigación muy activa.<br>Si surgiera algún software disruptivo que modelara mejor los movimientos y las interacciones a escala de dominios o cadenas proteicas, sería de gran ayuda. <strong>Hay mucha demanda para comprender cómo se mueven y cómo interactúan esos dominios</strong>."
+        },
+        {
+          "speaker": "Otsuka",
+          "text": "Muchas gracias por compartir su visión. Ha sido extremadamente valioso escuchar a alguien con un profundo conocimiento tanto de la computación como de la biología. Espero seguir contando con su colaboración."
+        },
+        {
+          "speaker": "Shimizu",
+          "text": "Gracias a usted, Otsuka. Seguimos en contacto."
+        },
+        {
+          "footnote": "<sup>*1</sup> El parametron es un dispositivo lógico inventado en 1954 por Eiichi Goto, quien entonces era estudiante de posgrado de la Facultad de Ciencias de la Universidad de Tokio. Permitía construir computadoras usando muchas menos válvulas de vacío o transistores que las tecnologías de la época. A finales de la década de 1950 y principios de la de 1960, se construyeron varias computadoras basadas en parametrones, que fueron reemplazadas más tarde por computadoras basadas en transistores. Sin embargo, en la década de 2010, el principio de los parametrones volvió a atraer la atención gracias a desarrollos en diversos sistemas físicos y su aplicación en computadoras cuánticas basadas en este principio. (Fuente: Wikipedia)<br><br><sup>*2</sup> La simulación MD (dinámica molecular) rastrea, paso a paso, las interacciones físicas entre átomos o moléculas para predecir la evolución temporal de sistemas como proteínas o ácidos nucleicos.<br>En contraste, AlphaFold se centra en predecir la estructura estática 3D a partir de una secuencia de aminoácidos, sin modelar explícitamente la dinámica temporal. Aunque AlphaFold es muy útil para generar hipótesis iniciales en el ámbito de la investigación de fármacos, el estudio detallado de la unión de ligandos o de los movimientos moleculares aún requiere simulaciones basadas en leyes físicas.<br><br><sup>*3</sup> Según estimaciones, hay unos 8,8 millones de investigadores en todo el mundo (en todas las disciplinas), y el campo de la biología y ciencias de la vida representa en torno al 36% de las publicaciones científicas. La cifra aproximada de “10.000 investigadores” interesados en la elucidación de mecanismos básicos es probablemente muy conservadora; considerando que solo los Institutos Nacionales de la Salud (NIH) en EE. UU. financian a más de 27.000 investigadores principales (PIs) de investigación básica, es razonable suponer que, a escala global, hay decenas o incluso cientos de miles de científicos cuyo objetivo principal es la comprensión fundamental de estos procesos. (Fuentes: UNESCO, estadísticas nacionales, NSF, etc.)"
+        }
+      ],
+      "ru": [
+        {
+          "head": "От параметронов к биоинформатике"
+        },
+        {
+          "speaker": "Кадзуки Оцука (далее — Оцука)",
+          "text": "Прежде чем вы занялись биоинформатикой, вы, насколько я понимаю, глубоко исследовали вычислительную технику. Какой интерес у вас был в то время?"
+        },
+        {
+          "speaker": "Профессор Кэнтаро Симизу (далее — Симизу)",
+          "text": "Это было очень весело, в любом случае. Предполагаю, что и у вас, Оцука-сан, есть похожие ощущения: когда пишешь программу, чувствуешь себя невероятно счастливым, и чем глубже она затрагивает фундаментальные аспекты компьютера, тем радостнее.<br>В то время вычислительные ресурсы стали доступны более широкому кругу людей, и меня очень интересовало создание чего-то такого, что одному человеку или небольшой группе не под силу, то есть распределённой или совместной обработки — своего рода кооперативного программного обеспечения. В биологической области я тоже продолжил эту тему.<br>Например, я занимался <strong>ускорением MD (молекулярно-динамических) симуляций<sup>*2</sup> в распределённых средах</strong> и даже публиковал статьи на эту тему."
+        },
+        {
+          "speaker": "Оцука",
+          "text": "В некотором смысле, это автоматизация распределённой обработки. Если представить, что это было в 90-х, тогда вы заметно опережали время.<br>Какую свою работу вы считаете наиболее значимой?"
+        },
+        {
+          "speaker": "Симизу",
+          "text": "Думаю, речь идёт о том, что я задействовал машинное обучение и подобные методы ещё до того, как начался нынешний бум вокруг ИИ, чтобы заниматься предсказаниями. Причём я стремился к автоматической генерации таких предсказательных инструментов.<br>Например, писал программы, которые по аминокислотной последовательности белка могут предсказать его структуру и функцию."
+        },
+        {
+          "head": "Обработка колоссальных данных — практические задачи вычислительной биологии"
+        },
+        {
+          "speaker": "Оцука",
+          "text": "В биологии объёмы данных, вероятно, очень большие?"
+        },
+        {
+          "speaker": "Симизу",
+          "text": "Да, и совсем недавно у меня была задача, связанная <strong>с переходом от последовательностей к структурам — там колоссальные объёмы данных</strong>. В некоторых крупных базах невозможно загрузить всё напрямую программно. Но если массово запрашивать данные через веб-интерфейс, легко получить отказ: такой доступ запрещён.<br>Тогда что делать? Скачиваем всё локально, но объём огромный, и остаётся только искать способы эффективно с этим работать."
+        },
+        {
+          "speaker": "Оцука",
+          "text": "Большие данные требуют и больших временных затрат на обработку."
+        },
+        {
+          "speaker": "Симизу",
+          "text": "Именно. Было бы здорово, если бы те базы данных позволяли быстро и массово «прокручивать» запросы извне, но <strong>такая высокопроизводительная массовая работа с их сайтами часто невозможна</strong>, и я сейчас сам это на себе ощутил."
+        },
+        {
+          "speaker": "Оцука",
+          "text": "О каких примерно объёмах идёт речь? Несколько терабайт?"
+        },
+        {
+          "speaker": "Симизу",
+          "text": "Одна только часть, содержащая последовательности, может занимать сотни гигабайт. Если добавить 3D-структуры или динамические данные, выходим на терабайты."
+        },
+        {
+          "speaker": "Оцука",
+          "text": "Лично мне кажется самым удобным иметь постоянный доступ к какому-то суперкомпьютеру с практически неограниченным хранилищем — чтобы там хранить все эти данные и при необходимости запускать на них вычисления прямо на месте."
+        },
+        {
+          "speaker": "Симизу",
+          "text": "Полностью согласен, я тоже так считаю. И хорошо бы, чтобы всё это было легко доступно. Кроме того, важно, чтобы оно было подключено к сети.<br>Ведь наши данные обычно берутся не с физического носителя, а из общедоступных источников. <strong>Если бы существовал простой способ использовать общедоступные данные как будто они локальные, это было бы невероятно удобно</strong>."
+        },
+        {
+          "speaker": "Оцука",
+          "text": "Мы в VNM думаем о «центре данных», где <strong>одна и та же база в локальной сети доступна всем, что сокращает скачивания и передачу на внешних носителях</strong>.<br>Также мы рассматриваем возможность монетизации и продажи общедоступных данных. Как вы считаете, это реально?"
+        },
+        {
+          "speaker": "Симизу",
+          "text": "Раньше такое было непросто организовать, но если ограничить сферу конкретными задачами — например, для некоторых отраслевых исследований и разработок — то да, это может сработать. Вероятно, потребуется какой-то механизм вроде TLO (организация по передаче технологий)."
+        },
+        {
+          "head": "Лёгкость доступа как стимул к исследованиям механизмов, которые обычно откладывают «на потом»"
+        },
+        {
+          "speaker": "Оцука",
+          "text": "Как вы думаете, много ли людей на самом деле хотят заняться чем-то новым, но пока не могут из-за отсутствия подходящих инструментов или ресурсов?"
+        },
+        {
+          "speaker": "Симизу",
+          "text": "Если говорить о MD (молекулярно-динамических) симуляциях, то, хотя вычислительная мощь действительно растёт, <strong>невозможно перебрать все состояния, и важнейшую роль играет стратегия выборки</strong>. Сейчас очень много применяют ИИ, но он пока работает как «чёрный ящик».<br>Если бы мы могли объяснять наблюдаемые явления, это принесло бы огромную пользу всей естественнонаучной области."
+        },
+        {
+          "speaker": "Оцука",
+          "text": "Не просто получать готовые ответы, но понимать заложенные механизмы."
+        },
+        {
+          "speaker": "Симизу",
+          "text": "Да, в MD мы шаг за шагом следим за межмолекулярными взаимодействиями, исходя из физических законов. Но <strong>для объяснения медленных процессов такой пошаговый подход может быть слишком затратен</strong>. Нужно повышать уровень укрупнения модели или придумывать метод, как выбирать различные состояния, возникающие в MD. Есть немало предложенных методов."
+        },
+        {
+          "speaker": "Оцука",
+          "text": "Недавно я разговаривал с биологами, и они сказали: много всего ещё можно понять и старыми методами, то есть есть множество вопросов, которые можно решать, публиковать статьи и писать диссертации. А есть и такие люди, что углубляются в механизмы и пытаются строить новые системы или писать новое ПО. Кажется, всё зависит от того, какую задачу ставит исследователь.<br>Фактически, всё упирается в человеческие идеи и в то, что именно хочется изучить."
+        },
+        {
+          "speaker": "Симизу",
+          "text": "Согласен, это очень важный момент."
+        },
+        {
+          "speaker": "Оцука",
+          "text": "Сколько вообще таких исследователей, которые стремятся именно к фундаментальным объяснениям, — я слышал, что процентов 10 на сотню. Если так, то в масштабах одной страны это сотни, а в масштабе мира — уже тысячи, а может, и десятки тысяч.<sup>*3</sup>"
+        },
+        {
+          "speaker": "Симизу",
+          "text": "У каждого исследователя есть стремление объяснить механизмы, но <strong>заказчики или гранты часто требуют результатов в ограниченные сроки, и на углублённое изучение механики может не хватить времени</strong>."
+        },
+        {
+          "speaker": "Оцука",
+          "text": "На это влияют и экономические факторы, и многое другое."
+        },
+        {
+          "speaker": "Симизу",
+          "text": "Вот именно. Если бы <strong>существовали инструменты, позволяющие, чуть-чуть поработав, понять и объяснить явление</strong>, многие бы охотно занялись этим."
+        },
+        {
+          "speaker": "Оцука",
+          "text": "Если бы не требовалось уйма времени и сил, некоторые могли бы заняться этим хоть в свободное время."
+        },
+        {
+          "speaker": "Симизу",
+          "text": "Да, наверняка. Это очень важно для продвижения науки."
+        },
+        {
+          "speaker": "Оцука",
+          "text": "Думаю, у многих есть идеи, которые они давно вынашивают, но пока не берутся за них."
+        },
+        {
+          "speaker": "Симизу",
+          "text": "Согласен, это действительно большая проблема."
+        },
+        {
+          "speaker": "Оцука",
+          "text": "Хотелось бы создать систему, которая позволит такие идеи осуществлять.<br><strong>То, что в сущности важно, зачастую откладывают «на потом». Нужен механизм, чтобы это «потом» всё-таки наступило</strong>."
+        },
+        {
+          "head": "Сокращение времени расчётов как ключ к открытиям"
+        },
+        {
+          "speaker": "Оцука",
+          "text": "Что скажете о высокопроизводительных вычислениях (HPC)?"
+        },
+        {
+          "speaker": "Симизу",
+          "text": "Хорошим примером служат модели белков и нуклеиновых кислот. <strong>Когда мы хотим узнать, как белок взаимодействует с другими молекулами или как меняется его структура, нам нужно долгое моделирование или массивная выборка состояний, и если бы это можно было сделать быстрее, это было бы здорово</strong>."
+        },
+        {
+          "speaker": "Оцука",
+          "text": "То есть большая размерность уравнений или огромное число комбинаций — вот что замедляет расчёт?"
+        },
+        {
+          "speaker": "Симизу",
+          "text": "<strong>Да, дело в том, что у молекул просто колоссальное число возможных конфигураций, и покрыть все их варианты чрезвычайно сложно</strong>."
+        },
+        {
+          "speaker": "Оцука",
+          "text": "Значит, нужно перебрать огромное пространство вариантов?"
+        },
+        {
+          "speaker": "Симизу",
+          "text": "Именно. Есть метод «докинг», когда мы смотрим, как две молекулы A и B подходят друг к другу.<br>Порой экспериментальная рентгеноструктура ясно показывает конкретное место связывания, а физическое моделирование почему-то не выдаёт такого результата.<br>Считается, что <strong>если бы мы продлили MD ещё дольше, то, скорее всего, получили бы более точные результаты, а если бы была возможность ускорять этот процесс, то можно было бы ещё сильнее уточнять расчёты</strong>.<br>Возможно, дело и в неточности самого приближения, но роль времени симуляции очень велика. Часто нужно долго гонять MD, пока не «увидишь», как система приходит в нужное состояние."
+        },
+        {
+          "head": "«Раздробленная специализация» vs «обобщающие модели»"
+        },
+        {
+          "speaker": "Оцука",
+          "text": "В беседах с исследователями из разных дисциплин я замечаю, что не все любят математику или моделирование. Есть люди «вне компьютера», люди «внутри компьютера» и «посередине».<br>Возможно, в этой разнице и кроются невостребованные пока потенциальные идеи."
+        },
+        {
+          "speaker": "Симизу",
+          "text": "Сейчас многое меняется, и всё зависит от конкретных людей. Но, например, раньше, когда я работал с учёными из сферы агрономии, там подход был более узконаправленным: <strong>сосредоточиться на конкретном белке или гене, экспериментально отслеживать результаты и погружаться всё глубже</strong>. Для них моделирование или обобщение могли казаться второстепенными.<br>Иногда звучала такая критика: «Если у нас есть реальные экспериментальные данные, разве не неправильно полагаться на какую-то модель с выбранными «случайными» параметрами?»"
+        },
+        {
+          "speaker": "Оцука",
+          "text": "Что вы отвечали на упрёки о «случайных параметрах»?"
+        },
+        {
+          "speaker": "Симизу",
+          "text": "В области информатики мы стараемся повышать точность методов, и даже если модель сначала упрощённая, она сама по себе может служить гипотезой, имеющей ценность.<br>Позже, когда накопятся более детальные экспериментальные данные, их можно подставить в модель, улучшить её и выйти на более глубокое понимание."
+        },
+        {
+          "speaker": "Оцука",
+          "text": "Получается, хоть люди и делают эксперименты, не все хотят формировать по их результатам модели.<br>Но наличие модели даёт возможность предсказывать явления, верно?"
+        },
+        {
+          "speaker": "Симизу",
+          "text": "Да, модель позволяет сделать предсказание. То есть если мы что-то смоделировали и поняли, как это работает, мы можем предсказать дальнейшее развитие событий.<br>В итоге у каждого своя задача: кто-то хочет исследовать конкретный белок, кто-то стремится к выяснению общих закономерностей."
+        },
+        {
+          "speaker": "Оцука",
+          "text": "Похоже, что решением частных задач занимаются многие, а моделированием на более общем уровне — меньше людей."
+        },
+        {
+          "speaker": "Симизу",
+          "text": "Верно. Более того, когда речь идёт об обобщении, возникает сомнение в надёжности параметров. Например, меня однажды спросили: «Если AUC-ROC-кривая даёт 0.9, то почему не 1.0? Значит, это недостойно доверия с научной точки зрения». В нашей области 0.9 считается очень хорошим результатом, но у некоторых учёных подход строгий: «либо 1.0, либо это не наука»."
+        },
+        {
+          "head": "Подход VN Machine: интерактивное создание кастомного ПО"
+        },
+        {
+          "speaker": "Оцука",
+          "text": "В США есть компания Rescale, которая создаёт облачный сервис HPC для корпоративных клиентов, недавно привлекла огромные инвестиции. У них множество готовых пакетов для инженерных расчётов и т. д. Всё это запускается в облаке.<br>Имея дело с уже известными решениями — например, софт для MD — мы видим, что они покрывают классические задачи, и конкурировать лоб в лоб с ними смысла нет. Нас больше интересуют сценарии, которые пока не закрыты существующими программами."
+        },
+        {
+          "speaker": "Симизу",
+          "text": "Да, согласен, вы хорошо это резюмировали.<br><strong>Например, когда речь идёт о крупной структурной единице белка («домене»), соединённой гибким «линкером» — даже Alphafold не всегда точно предсказывает эту динамику</strong>. Но для многих это крайне важно. <strong>Если бы появилось новое прорывное решение, оно было бы действительно востребованным</strong>."
+        },
+        {
+          "speaker": "Оцука",
+          "text": "Спасибо вам огромное за столь содержательный разговор. Было очень интересно услышать ваше мнение, основанное на глубоком понимании и компьютеров, и биологии. Надеюсь на дальнейшее сотрудничество!"
+        },
+        {
+          "speaker": "Симизу",
+          "text": "И вам спасибо. Буду рад продолжить общение."
+        },
+        {
+          "footnote": "<sup>*1</sup> Параметрон (parametron) — это логический элемент, изобретённый в 1954 году аспирантом физического факультета Токийского университета Эйити Гото. Он позволял строить компьютер, используя гораздо меньше электронных ламп и транзисторов, поэтому в своё время было создано немало параметронных ЭВМ. В 1960-е годы их почти полностью вытеснили транзисторные схемы. Однако впоследствии похожие принципы воспроизводились и в других физических системах, а начиная с 2010-х снова возрос интерес к параметронам в контексте квантовых вычислений. (Источник: Wikipedia)<br><br><sup>*2</sup> MD (молекулярно-динамическое) моделирование — это пошаговый анализ взаимодействий между молекулами, позволяющий предсказывать динамическое поведение белков, нуклеиновых кислот и пр.<br>AlphaFold даёт статический предикт 3D-структуры и не рассматривает прямо её эволюцию во времени. Поэтому, хотя в разработке лекарств AlphaFold на начальном этапе даёт хороший базис, вопросы лиганд-связывания и реальной динамики всё ещё требуют MD-симуляций, основанных на физических законах.<br><br><sup>*3</sup> По данным UNESCO, NSF и других источников, общее количество исследователей во всех областях в мире превышает 8,8 млн человек, около 36% научных статей приходится на биологию, медицину и науки о жизни. Оценка в 10 тысяч специалистов, увлечённых фундаментальными механизмами, — это очень скромная цифра. К примеру, NIH (Национальный институт здоровья США) финансирует свыше 27 тысяч учёных, занимающихся фундаментальными исследованиями, так что реальное число исследователей, сосредоточенных на «механизмах в основе явлений», может быть значительно больше — десятки и сотни тысяч."
+        }
+      ],
+      "ar": [
+        {
+          "head": "من البارامترون إلى المعلوماتية الحيوية"
+        },
+        {
+          "speaker": "كازوكي أوتسوكا (فيما يلي، أوتسوكا)",
+          "text": "قبل أن تتجه لدراسة المعلوماتية الحيوية، كنتم تهتمون بالحواسيب بشكلٍ مكثّف وبحثٍ خالص. ما نوع الاهتمام الذي كان لديكم في ذلك الوقت؟"
+        },
+        {
+          "speaker": "البروفيسور كنتارو شيميزو (فيما يلي، شيميزو)",
+          "text": "كان الأمر ممتعًا للغاية، ببساطة. أظن أن لديك شعورًا مشابهًا يا أوتسوكا؛ عندما أكتب برنامجًا، أشعر بالسعادة الكبيرة، خصوصًا عندما يتعلق الأمر ببرامج ذات مستوى منخفض تغوص عميقًا في جوف الحاسوب، فهذا يسعدني أكثر.<br>في ذلك الوقت كانت موارد الحواسيب متاحة عامةً، وكنت مهتمًا جدًا بإنشاء <strong>أنظمة لا يمكن لفردٍ أو مجموعة صغيرة إنجازها بمفردهم، بل تحتاج إلى تعاون وعمل موزّع؛ أي برمجيات قادرة على المعالجة الموزعة والتعاونية</strong>. وواصلت هذا الاهتمام حتى بعد دخولي ميدان الأحياء.<br>على سبيل المثال، في مجال الأحياء، قمت ببعض الأعمال تتعلق بـ<strong>تشغيل محاكاة الديناميكا الجزيئية (MD)<sup>*2</sup> بصورة أسرع في بيئة موزعة</strong>، ونشرت أبحاثًا حول ذلك."
+        },
+        {
+          "speaker": "أوتسوكا",
+          "text": "يمكن القول إنه نوع من أتمتة أساليب المعالجة الموزعة. بالعودة إلى التسعينيات، يبدو لي أن ذلك كان عملًا رائدًا. ما هو العمل الذي تعتبره الأكثر تمثيلًا لجهودكم البحثية؟"
+        },
+        {
+          "speaker": "شيميزو",
+          "text": "ربما هي تطبيقات التعلّم الآلي وما شابهها لتوقع النتائج، وذلك قبل أن تصبح الذكاء الاصطناعي رائجًا كما هو اليوم. إضافةً إلى ذلك، بناء أدوات التنبؤ بشكلٍ آلي.<br>على سبيل المثال، تطوير برمجيات تتنبأ بالبنية أو الوظيفة انطلاقًا من تتابع الأحماض الأمينية في البروتينات."
+        },
+        {
+          "head": "معالجة البيانات الضخمة - التحديات العملية في الحسابات البيولوجية"
+        },
+        {
+          "speaker": "أوتسوكا",
+          "text": "أتوقع أن بيانات الأحياء ضخمة جدًا من حيث الحجم."
+        },
+        {
+          "speaker": "شيميزو",
+          "text": "نعم، ما أعمل عليه الآن يدور حول <strong>تتابعات الأحماض الأمينية وصولًا إلى البنية ثلاثية الأبعاد، وحجم البيانات ضخم جدًا</strong>. بعض قواعد البيانات المعروفة لا تسمح بتنزيلها مباشرة عبر البرامج. ومن ناحيةٍ أخرى، لا يمكننا الوصول إلى كمية كبيرة منها عبر الواجهة الويب؛ لأن ذلك قد يكون مخالفًا لسياسة الاستخدام.<br>إذًا ما الحل؟ الحل أن نحمّلها محليًا، لكن حجمها كبير جدًا. لذا فإن التعامل مع هذه البيانات الضخمة يسبب الكثير من العناء."
+        },
+        {
+          "speaker": "أوتسوكا",
+          "text": "كون البيانات ضخمة، فهي تستهلك وقتًا طويلاً للمعالجة أيضًا."
+        },
+        {
+          "speaker": "شيميزو",
+          "text": "بالضبط. لو كانت قاعدة البيانات مستضافة على موقع ويمكن الوصول إليها بسرعة كبيرة من الخارج، لكان الأمر أفضل بكثير، لكن <strong>السعي للقيام بحوسبة كثيفة أو معالجة ضخمة مباشرةً على قواعد بيانات ضخمة من مكانها أمر صعب للغاية</strong>. هذا ما شعرت به بقوة قبل قليل."
+        },
+        {
+          "speaker": "أوتسوكا",
+          "text": "ما حجم البيانات تحديدًا؟ هل نتحدث عن تيرابايت؟"
+        },
+        {
+          "speaker": "شيميزو",
+          "text": "بالنسبة للتتابعات (Sequences) وحدها، يصل الحجم إلى مئات الغيغابايت، وعندما نضيف البنى ثلاثية الأبعاد والبيانات الديناميكية، قد تصل إلى عدة تيرابايت."
+        },
+        {
+          "speaker": "أوتسوكا",
+          "text": "أرى أن أفضل طريقة هي توفير حاسوب فائق (سوبر كومبيوتر) متاح باستمرار وبسعة تخزينية كبيرة؛ نضع فيه كل هذه البيانات، ونصل إليه عند الحاجة لإنجاز الحسابات. يبدو لي الخيار الأكثر مرونة."
+        },
+        {
+          "speaker": "شيميزو",
+          "text": "نعم، أتفق تمامًا. ستكون فكرة رائعة لو كان من السهل الحصول على مثل هذه البيئة، وربطها بالشبكة (الإنترنت).<br>فبياناتنا تُنشر علنًا، وليست مجرد ملفاتٍ مخزنة على قرصٍ صلبٍ خاص. <strong>لو كان بالإمكان استيراد البيانات المنشورة بسهولة والتعامل معها محليًا وكأنها على جهازنا، فسيكون ذلك مفيدًا جدًا</strong>."
+        },
+        {
+          "speaker": "أوتسوكا",
+          "text": "في منصتنا VNM Data Hub، نحاول توفير <strong>بيانات يمكن الوصول إليها عبر خادم موجود على نفس الشبكة المحلية، ما يقلل الحاجة للتنزيل أو النسخ بكثرة</strong>.<br>كما ندرس إمكانية تحقيق عوائد مالية عبر بيع بيانات منشورة. هل تظن أن عملية كهذه قابلة للتطبيق؟"
+        },
+        {
+          "speaker": "شيميزو",
+          "text": "في الماضي كان ذلك صعبًا نوعًا ما، ولكن أعتقد أنه يمكن تطبيقه في الوقت الحالي لو خُصص لغرضٍ معين، كأن يتم تسويق البيانات لأبحاثٍ أو تطويرٍ محدد، مع إمكانية الاستفادة من هيئاتٍ مثل TLO. فلا بد من وجود آلية ترخيصية مناسبة."
+        },
+        {
+          "head": "سهولة الوصول تفتح الباب أمام فهم الآليات المؤجلة"
+        },
+        {
+          "speaker": "أوتسوكا",
+          "text": "كثير من الباحثين لديهم أفكار يريدون تنفيذها فعليًا، لكنهم لا يستطيعون، إما لضيق الوقت أو الموارد. برأيك، كم يبلغ حجم تلك الأفكار غير المنفّذة؟"
+        },
+        {
+          "speaker": "شيميزو",
+          "text": "عندما نتحدث عن الديناميكا الجزيئية (MD)، وبالرغم من تطور قوة الحوسبة، تظل صعوبة تغطية جميع الحالات أو الأوضاع عبر الحساب أمرًا واقعًا؛ لأن العملية تعتمد بشكلٍ أساسي على العيّنات (Sampling).<strong>هنا يأتي دور الذكاء الاصطناعي، لكنه يُستخدم غالبًا كصندوقٍ أسود.<br>لذا لو تمكّنا من الحصول على تفسيرٍ واضح للظواهر بدلاً من مجرد نتائج، فسيكون لذلك أثر كبير على تطور العلوم الطبيعية</strong>."
+        },
+        {
+          "speaker": "أوتسوكا",
+          "text": "ليس فقط استخلاص الإجابة المباشرة، بل أيضًا فهم الآلية وراء النتيجة."
+        },
+        {
+          "speaker": "شيميزو",
+          "text": "بالضبط؛ فمحاكاة MD تقوم على القوانين الفيزيائية خطوةً بخطوة، لكن <strong>عندما نحاول تفسير ظواهر تحتاج إلى زمنٍ طويل، لا يمكننا معالجة ذلك مباشرةً بالطريقة التقليدية</strong>. يجب أن نستخدم تمثيلات بحبيباتٍ أكثر خشونة (coarse-graining)، أو نبتكر طريقة أفضل لأخذ العيّنات. هناك عدة أساليب مقترحة لهذا الغرض."
+        },
+        {
+          "speaker": "أوتسوكا",
+          "text": "تحدثت مع بعض الباحثين في علم الأحياء، ورأيت أن كثيرًا منهم ما زال يكتفي باستخدام الطرق المتوافرة بشكل تقليدي لحل مشكلات قائمة، ولا يزال لديهم الكثير من الظواهر التي لم تُختبر بعد، وهذا يتيح لهم الحصول على نتائج بحثية جيدة باستمرار. بينما يذهب فريق آخر إلى دراسة الآليات الأساسية نفسها ويبتكر أنظمة جديدة للبحث. هناك حاجة حقيقية إلى نظمٍ جديدة في هذه المرحلة.<br>فالبحوث تعتمد بشكلٍ كبير على أفكار الباحثين أنفسهم ونوع المشكلات التي يريدون حلّها."
+        },
+        {
+          "speaker": "شيميزو",
+          "text": "أتفق معك تمامًا في هذه النظرة."
+        },
+        {
+          "speaker": "أوتسوكا",
+          "text": "طُرح تساؤل حول نسبة الأشخاص الذين يركزون على فك الآليات بحد ذاتها، فهناك من يقدر بأنهم 10 من كل 100 باحث مثلاً. إن كان لدينا 100 باحث في مؤسسة واحدة، فهناك 10 منهم يهتمون بهذا الاتجاه. وبناءً على التقديرات العامة لعدد الباحثين في اليابان والعالم، قد يصل العدد العالمي إلى آلاف أو عشرات الآلاف من الباحثين.<sup>*3</sup>"
+        },
+        {
+          "speaker": "شيميزو",
+          "text": "بطبيعة الحال، لدى كل باحث رغبة في فهم الآلية أعمق، لكن <strong>تشكل القيود الزمنية والضغوط على نتائج سريعة في الأبحاث المموّلة عائقًا أمام مواصلة البحث طويل الأمد لفهم الآليات بعمق</strong>."
+        },
+        {
+          "speaker": "أوتسوكا",
+          "text": "بالتأكيد، هناك عوامل اقتصادية وغيرها."
+        },
+        {
+          "speaker": "شيميزو",
+          "text": "لذا، فإن ما تطرحه عن <strong>وجود برمجيات أو أدوات تقدم شرحًا أعمق أو تسمح بفهم أفضل للآليات الظاهرة قد يدفع الكثيرين لخوض تلك المغامرة البحثية</strong>."
+        },
+        {
+          "speaker": "أوتسوكا",
+          "text": "لو توفرت أداة تقلل الوقت والجهد المطلوبين، سيتمكن الباحث من إنجاز فكرة من تلك الأفكار المؤجلة في فترات فراغه، أليس كذلك؟"
+        },
+        {
+          "speaker": "شيميزو",
+          "text": "بالتأكيد. أعتقد أن ذلك سيكون له أثرٌ كبيرٌ في دفع عجلة العلم."
+        },
+        {
+          "speaker": "أوتسوكا",
+          "text": "أظن أن كثيرًا من الباحثين لديهم أفكار مؤجلة منذ مدة طويلة، ولكن لم يتمكنوا من تنفيذها بعد."
+        },
+        {
+          "speaker": "شيميزو",
+          "text": "صحيح، أرى أن هذه مشكلة كبيرة جدًا."
+        },
+        {
+          "speaker": "أوتسوكا",
+          "text": "لو بنينا منظومة تُمكّن الباحث من إنجاز تلك الأفكار ذات الطبيعة الجوهرية التي غالبًا ما تُؤجَّل، أعتقد أننا سنحقق تقدمًا كبيرًا.<br><strong>نعني بالأفكار الجوهرية تلك التي يتم تأجيلها بحجة أنها أساسية جدًا أو بعيدة المنال حاليًا</strong>."
+        },
+        {
+          "head": "أهمية تقليص زمن الحوسبة في الاكتشافات"
+        },
+        {
+          "speaker": "أوتسوكا",
+          "text": "ما رأيك في الحوسبة فائقة الأداء (HPC) في هذا السياق؟"
+        },
+        {
+          "speaker": "شيميزو",
+          "text": "أظن أن نمذجة ومحاكاة البروتينات والأحماض النووية مثال بارز؛ <strong>فنحن نحتاج إلى عمليات محاكاة طويلة لمعرفة كيفية تفاعل البروتين مع الجزيئات الأخرى وكيف يتغير هيكله، لذا لو أمكن تسريع هذه المحاكاة بصورة ملحوظة، فسيكون ذلك رائعًا</strong>."
+        },
+        {
+          "speaker": "أوتسوكا",
+          "text": "هل سبب البطء هو كِبر حجم المصفوفات أم تعقّد الحسابات؟"
+        },
+        {
+          "speaker": "شيميزو",
+          "text": "<strong>الإشكالية تكمن في ضخامة عدد الأنماط أو الأوضاع الممكنة للجزيئات، مما يصعّب تغطيتها على نطاق واسع</strong>."
+        },
+        {
+          "speaker": "أوتسوكا",
+          "text": "إذن المسألة هي كثرة الاحتمالات التي يجب استكشافها."
+        },
+        {
+          "speaker": "شيميزو",
+          "text": "نعم. هناك ما يسمى “الالتحام الجزيئي” (Docking)، حيث نبحث عن كيفية ارتباط الجزيء A بالجزيء B. وفي كثير من الأحيان، قد يثبت تجريبيًا ارتباطهما في بنية البلورة، لكن يصعب الحصول على هذه البنية في المحاكاة القائمة على القوانين الفيزيائية.<br>بصورة عامة، <strong>إذا استطعنا تشغيل MD لفترة أطول أو بشكلٍ أشمل، فسنحصل على نتائج أفضل؛ لذا إن استطعنا تسريع الحساب أو زيادة دقته، فسنحسن النمذجة ونعزز دقة النتائج</strong>. بالطبع، هناك عوامل أخرى تتعلق بخشونة النماذج وموثوقية المعلمات، لكن في النهاية يرتبط الأمر بمدى كفاية العيّنات وزمن المحاكاة. فنحن نشغّل المحاكاة لفترة طويلة على أمل أن نصل إلى لحظة حدوث الظاهرة."
+        },
+        {
+          "head": "«تخصصات علمية متفرقة» في مقابل «نماذج عامة»"
+        },
+        {
+          "speaker": "أوتسوكا",
+          "text": "عند لقائي متخصصين في شتى العلوم، وجدت أن البعض لا يحبذ الصيغ الرياضية ولا يحبذ الأساليب الحاسوبية. وكأن هناك من هو “داخل الحاسوب” ومن هو “خارجه”، وبينهما فئة وسيطة.<br>أشعر أن المساحات غير المستكشفة تكمن في التداخل بين هذه التصنيفات."
+        },
+        {
+          "speaker": "شيميزو",
+          "text": "صحيح، هناك اختلافات تعتمد على الأشخاص والتخصصات. عندما بدأت التواصل مع زملاء في كليات الزراعة وغيرها، وجدت أن منهجهم يقوم على التجارب المتواصلة على <strong>بروتين أو جين معين، حيث يتخصصون فيه بعمق، فيقل لديهم الدافع لبناء نماذج عامة أو توحيد الظواهر تحت نموذج واحد</strong>. فبالنسبة لهم، المبالغة في التبسيط أو تحديد المعلمات اعتُبرت “غير دقيقة” أو “غير مقبولة”."
+        },
+        {
+          "speaker": "أوتسوكا",
+          "text": "إذا سألوا: “كيف تحددون المعاملات بهذه الطريقة العشوائية؟” فماذا سيكون ردكم؟"
+        },
+        {
+          "speaker": "شيميزو",
+          "text": "أود أن أوضح أن مجال المعلوماتية أصبح أكثر دقة بمرور الوقت، مما يتيح بناء نماذج قادرة على تفسير الظواهر في الواقع كفرضيات، وهذا له قيمة علمية كبيرة.<br>وبمجرد ظهور بيانات تجريبية أدق، يمكننا توظيف تلك النماذج في فهم الظواهر وتفسيرها، وهذا هو جوهر الأهمية."
+        },
+        {
+          "speaker": "أوتسوكا",
+          "text": "ليست كل التجارب تؤدي إلى بناء نموذج. ولكن إن أمكننا بناء نموذج، يمكننا حينها التنبؤ بسلوك الظواهر المستقبلية."
+        },
+        {
+          "speaker": "شيميزو",
+          "text": "بالضبط، التنبؤ هو المفتاح. عندما تكون لديك محاكاة أو نموذج يفسر الظاهرة، يمكنك استخدامها لتوقع سلوك النظام مستقبلًا.<br>في النهاية، كل باحث يدرس البروتين المعين أو الظاهرة المعينة بدافع الفهم والتفسير."
+        },
+        {
+          "speaker": "أوتسوكا",
+          "text": "لكن ليس كل أحدٍ يرغب في تعميم النموذج؛ إنها مهمة يقوم بها البعض فقط."
+        },
+        {
+          "speaker": "شيميزو",
+          "text": "صحيح. وعندما نحاول التعميم، يُطرح تساؤل حول موثوقية القيم الحاسوبية والمعاملات. لقد صدمتُ حينما عرضتُ نتائج منحنيات AUC-ROC كتقييم دقة نموذجٍ ما، والتي نراها جيدة عند قيمة 0.9 (بحسب اختلاف التخصص). لكن قيل لي: “لماذا ليست 1؟” وكأن قيمة أقل من 1 لا يمكن اعتبارها كافية في مجال العلوم الدقيقة."
+        },
+        {
+          "head": "نهج VN Machine: ابتكار برمجيات مخصصة عبر حوار تفاعلي"
+        },
+        {
+          "speaker": "أوتسوكا",
+          "text": "في الولايات المتحدة، هناك شركة Rescale للحوسبة عالية الأداء في السحابة، حصلت على تمويلات ضخمة مؤخرًا، وهي تقدم باقة شاملة من أشهر البرامج التجارية على السحابة. يمكن تنفيذ برامج مثل MD التي وصلت مرحلة النضوج عبر منصة كهذه، ولن ننافسهم في ذلك، لكنني أرى فرصة في حالات الاستخدام البحثي التي لا تغطيها البرامج الحالية بشكلٍ كافٍ."
+        },
+        {
+          "speaker": "شيميزو",
+          "text": "أتفق معك في هذا التصور.<br>في ما يخص حركة البروتينات، هناك مفهوم “الدومين” وهي أجزاء كبيرة من البروتين، يتخللها أحيانًا مقاطع مرنة (Flexible Linker). <strong>حتى AlphaFold قد لا يُجيد توقع الوضعية الدقيقة لهذا الجزء المرن</strong>. لذا تبقى الأجزاء المرنة هذه محور بحث؛ ومن هنا يأتي الاهتمام الكبير بهذا النوع من الحركة. لو وُجد حل برمجي ثوري يصف ديناميكيات الدومينات أو سلاسل البروتينات وكيفية تفاعلها، فسيكون ذلك مفيدًا بالفعل.<br><strong>أعتقد أن هناك حاجة حقيقية وطلبًا ملحًّا في هذا الموضوع</strong>."
+        },
+        {
+          "speaker": "أوتسوكا",
+          "text": "شكرًا جزيلاً لك على هذا الحديث القيّم. كان من المفيد للغاية سماع رؤيتك حول كلٍّ من عالم الحوسبة وعالم الأحياء. أتطلع للتواصل المستمر معك في المستقبل."
+        },
+        {
+          "speaker": "شيميزو",
+          "text": "الشكر لك بدوري، وأتطلع للتعاون مستقبلًا."
+        },
+        {
+          "footnote": "<sup>*1</sup> البارامترون (Parametron) هو مكوّن منطقي اخترعه الباحث إيتشي غوتو عام 1954 حينما كان طالب دراسات عليا في كلية العلوم بجامعة طوكيو. تتيح هذه التقنية بناء حاسوب باستخدام عدد أقل من الصمامات المفرغة أو الترانزستورات، وقد شُيدت العديد من حواسيب البارامترون في ذلك الوقت. مع حلول ستينيات القرن الماضي، استُخدم الترانزستور بدلًا منه بشكل واسع، لكن المبدأ نفسه أعيد اكتشافه لاحقًا في أنظمة فيزيائية متنوعة، كما عاد الاهتمام به في العقد الثاني من القرن الحادي والعشرين في مجال تطوير الحواسيب الكمومية باستخدام البارامترون. (المصدر: ويكيبيديا)<br><br><sup>*2</sup> محاكاة الديناميكا الجزيئية (MD) هي منهجية تتبع التفاعلات الفيزيائية بين الجزيئات خطوة بخطوة للتنبؤ بكيفية تحرك البروتينات أو الأحماض النووية. وفي المقابل، يقدم AlphaFold تنبؤات للبنية ثلاثية الأبعاد ساكنة ولا يأخذ في الحسبان تطور البنية مع الزمن. لذا يُعد مفيدًا في تصميم الفرضيات الأولية في مراحل اكتشاف الأدوية، لكنه لا يُغني عن المحاكاة الديناميكية المعتمدة على القوانين الفيزيائية عند دراسة ارتباط الجزيئات أو حركتها.<br><br><sup>*3</sup> بحسب تقديرات اليونسكو ومصادر أخرى، يبلغ عدد الباحثين عالميًا (في جميع المجالات) نحو 8.8 ملايين باحث. تشير بعض الإحصاءات إلى أن نحو 36% من الأبحاث منشورة في مجالات الأحياء والعلوم الطبية/الحيوية. تقديرنا الأولي لـ10 آلاف باحث يعدّ متواضعًا مقارنةً بحجم المجتمع العلمي الفعلي؛ فمثلًا تدعم المعاهد الوطنية للصحة NIH نحو 27 ألف باحث رئيسي (PI) في الأبحاث الأساسية، ما يدل على أن من يركّزون على فهم الآليات الأساسية وحدهم قد يصلون إلى عشرات أو مئات الآلاف على مستوى العالم."
+        }
+      ]
+
+    },
+    "article_bio": {
+      "ja": "清水謙多郎（しみず・けんたろう）\n1938年生まれ。東京大学名誉教授。後藤英一研究室でパラメトロンコンピューターの開発に貢献ののち、1980年代初頭にバイオインフォマティクスに主軸を移し、機械学習を用いたタンパク質3D構造予測の先駆者として、また分子動力学シミュレーションによるタンパク質折り畳みとリガンド結合の研究で、創薬や生物学の理解に大きな影響を与える。",
+      "en": "Kentaro Shimizu (Shimizu Kentaro)  \nBorn in 1938. Professor Emeritus, University of Tokyo. After contributing to the development of the parametron computer in Eiichi Goto’s lab, he shifted his focus to bioinformatics in the early 1980s. As a pioneer in protein 3D structure prediction using machine learning and through molecular dynamics simulations of protein folding and ligand binding, he has significantly influenced drug discovery and the understanding of biology.",
+      "zh": "清水谦多郎（Shimizu Kentaro）  \n1938年出生。东京大学名誉教授。在后藤英一实验室为参数管计算机的开发做出贡献后，于1980年代初将研究重心转向生物信息学。作为利用机器学习进行蛋白质3D结构预测的先驱，以及通过分子动力学模拟研究蛋白质折叠和配体结合，他对药物发现和生物学理解产生了重大影响。",
+      "es": "Kentaro Shimizu (Shimizu Kentaro)  \nNacido en 1938. Profesor Emérito de la Universidad de Tokio. Tras contribuir al desarrollo de la computadora parametron en el laboratorio de Eiichi Goto, cambió su enfoque a la bioinformática a principios de la década de 1980. Como pionero en la predicción de estructuras 3D de proteínas utilizando aprendizaje automático y mediante simulaciones de dinámica molecular de plegamiento de proteínas y unión de ligandos, ha influido significativamente en el descubrimiento de fármacos y la comprensión de la biología.",
+      "fr": "Kentaro Shimizu (Shimizu Kentaro)  \nNé en 1938. Professeur émérite de l’Université de Tokyo. Après avoir contribué au développement de l’ordinateur parametron dans le laboratoire d’Eiichi Goto, il a réorienté ses recherches vers la bioinformatique au début des années 1980. Pionnier dans la prédiction des structures 3D des protéines à l’aide de l’apprentissage automatique et par des simulations de dynamique moléculaire sur le repliement des protéines et la liaison des ligands, il a eu un impact significatif sur la découverte de médicaments et la compréhension de la biologie.",
+      "ru": "Кентаро Симидзу (Shimizu Kentaro)  \nРодился в 1938 году. Почетный профессор Токийского университета. После участия в разработке компьютера на параметронах в лаборатории Эйити Гото он переключил свое внимание на биоинформатику в начале 1980-х годов. Как пионер в предсказании 3D-структур белков с использованием машинного обучения и через симуляции молекулярной динамики сворачивания белков и связывания лигандов, он оказал значительное влияние на открытие лекарств и понимание биологии.",
+      "ar": "كينتارو شيميزو (Shimizu Kentaro)  \nولد في عام 1938. أستاذ فخري في جامعة طوكيو. بعد مساهمته في تطوير حاسوب الباراميترون في مختبر إييتشي غوتو، حوّل تركيزه إلى المعلوماتية الحيوية في أوائل الثمانينيات. كرائد في التنبؤ بهياكل البروتينات ثلاثية الأبعاد باستخدام التعلم الآلي ومن خلال محاكاة الديناميكيات الجزيئية لطي البروتينات وربط الليغاند، أحدث تأثيرًا كبيرًا على اكتشاف الأدوية وفهم البيولوجيا."
+    }
+}
+  

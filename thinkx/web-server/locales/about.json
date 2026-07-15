@@ -1,0 +1,139 @@
+{
+    "about_us_title": {
+        "ja": "会社概要",
+        "en": "About us",
+        "zh": "关于我们",
+        "es": "Sobre nosotros",
+        "ru": "О нас",
+        "fr": "À propos de nous",
+        "ar": "عن الشركة"
+    },
+    "about_company_label": {
+        "en": "Company Name",
+        "ja": "社名",
+        "zh": "公司名称",
+        "es": "Nombre de la empresa",
+        "ru": "Название компании",
+        "fr": "Nom de l'entreprise"
+    },
+    "about_company_text": {
+        "en": "ThinkX Inc.",
+        "ja": "株式会社ThinkX",
+        "zh": "ThinkX股份有限公司",
+        "es": "ThinkX S.A.",
+        "ru": "ThinkX Inc.",
+        "fr": "ThinkX Inc."
+    },
+    "about_ceo_label": {
+        "en": "CEO",
+        "ja": "代表者",
+        "zh": "首席执行官",
+        "es": "CEO",
+        "ru": "Генеральный директор",
+        "fr": "PDG"
+    },
+    "about_ceo_text": {
+        "en": "Kazuki Otsuka",
+        "ja": "大塚一輝",
+        "zh": "大冢一树",
+        "es": "Kazuki Otsuka",
+        "ru": "Кадзуки Оцука",
+        "fr": "Kazuki Otsuka"
+    },
+    "about_headquarters_label": {
+        "en": "Headquarters",
+        "ja": "本社",
+        "zh": "总部",
+        "es": "Sede",
+        "ru": "Штаб-квартира",
+        "fr": "Siège"
+    },
+    "about_headquarters_text": {
+        "en": "Premist Akasaka Hinokicyo-Park 113, Akasaka 7-6-45, Minato, Tokyo",
+        "ja": "東京都港区赤坂7-6-45 プレミスト赤坂檜町公園113",
+        "zh": "日本东京都港区赤坂7-6-45 Premist赤坂檜町公園113号",
+        "es": "Premist Akasaka Hinokicyo-Park 113, Akasaka 7-6-45, Minato, Tokio",
+        "ru": "Premist Akasaka Hinokicyo-Park 113, Акасака 7-6-45, Минато, Токио",
+        "fr": "Premist Akasaka Hinokicyo-Park 113, Akasaka 7-6-45, Minato, Tokyo"
+    },
+    "about_established_label": {
+        "en": "Established",
+        "ja": "設立",
+        "zh": "成立时间",
+        "es": "Fundada",
+        "ru": "Основана",
+        "fr": "Établi"
+    },
+    "about_established_text": {
+        "en": "January 21, 2015",
+        "ja": "2015年1月21日",
+        "zh": "2015年1月21日",
+        "es": "21 de enero de 2015",
+        "ru": "21 января 2015 года",
+        "fr": "21 janvier 2015"
+    },
+    "about_capital_label": {
+        "en": "Capital",
+        "ja": "資本金",
+        "zh": "注册资本",
+        "es": "Capital",
+        "ru": "Капитал",
+        "fr": "Capital"
+    },
+    "about_capital_text": {
+        "en": "¥40 million",
+        "ja": "4,000万円",
+        "zh": "4000万日元",
+        "es": "40 millones de yenes",
+        "ru": "40 миллионов иен",
+        "fr": "40 millions de yens"
+    },
+    "about_business_label": {
+        "en": "Business",
+        "ja": "事業内容",
+        "zh": "业务",
+        "es": "Negocios",
+        "ru": "Бизнес",
+        "fr": "Affaires"
+    },
+    "about_investors_label": {
+        "en": "Major Investors",
+        "ja": "主要投資家",
+        "zh": "主要投资者",
+        "es": "Principales inversores",
+        "ru": "Основные инвесторы",
+        "fr": "Principaux investisseurs"
+    },
+    "about_investors_text": {
+        "en": "Monex Ventures Co.,Ltd, Adways Inc.",
+        "ja": "Monex Ventures Co.,Ltd, Adways Inc.",
+        "zh": "Monex Ventures Co.,Ltd, Adways Inc.",
+        "es": "Monex Ventures Co.,Ltd, Adways Inc.",
+        "ru": "Monex Ventures Co.,Ltd, Adways Inc.",
+        "fr": "Monex Ventures Co.,Ltd, Adways Inc."
+    },
+    "about_business_text": {
+        "en": "Development and research of advanced applied software, quantification of the sixth sense",
+        "ja": "応用先端ソフトウェアの開発と研究、第六感の定量化",
+        "zh": "先进应用软件的开发与研究，第六感的量化",
+        "es": "Desarrollo e investigación de software aplicado avanzado, cuantificación del sexto sentido",
+        "ru": "Разработка и исследование передового прикладного программного обеспечения, квантификация шестого чувства",
+        "fr": "Développement et recherche de logiciels appliqués avancés, quantification du sixième sens"
+    },
+    "about_advisors_label": {
+        "en": "Advisor",
+        "ja": "顧問",
+        "zh": "顾问",
+        "es": "Asesor",
+        "ru": "Советник",
+        "fr": "Conseiller"
+    },
+    "about_advisors_text": {
+        "en": "Kentaro Shimizu  Professor Emeritus, University of Tokyo\nMasaki Tateno  Former Director, Nikko Botanical Garden, Graduate School of Science, University of Tokyo\nMasanori Hariyama  Professor, Department of Intelligent Integrated Systems, Graduate School of Information Sciences, Tohoku University\nHiroshi Ishikita  Professor, Department of Applied Chemistry, Graduate School of Engineering, University of Tokyo\nHiromi Seno  Professor, Graduate School of Information Sciences, Tohoku University / Former Chief Examiner for Science, University Establishment Committee\nHiroo Hieda (Honorary Advisor)  Director, Institute for Future Engineering (Public Interest Incorporated Foundation); Director, Toyo Koto Institute; Former Secretary-General, National Security Measures Committee\nToshimi Yamazaki  Former official, Ministry of Internal Affairs and Communications; Advisor, Quantum ICT Forum; Director, Ecology Café (General Incorporated Association)",
+        "ja": "清水謙多郎  東京大学名誉教授\n舘野正樹  前東京大学理学系研究科附属日光植物園園長\n張山昌論  東北大学情報科学研究科知能集積学分野教授\n石北央  東京大学大学院工学系研究科応用化学専攻教授\n瀬野裕美  東北大学情報科学研究科教授/元大学設置委員理学系主査\n稗田浩雄 (名誉顧問)  公益財団法人未来工学研究所理事 東洋琴学研究所所長 元国土安全対策員会事務局長\n山崎俊巳  元総務省官僚、量子ICTフォーラム顧問、一般社団法人エコロジー・カフェ理事",
+        "zh": "Kentaro Shimizu  东京大学名誉教授\nMasaki Tateno  前东京大学理学系研究科附属日光植物园园长\nMasanori Hariyama  东北大学信息科学研究科智能集成学领域教授\nHiroshi Ishikita  东京大学大学院工学系研究科应用化学专攻教授\nHiromi Seno  东北大学信息科学研究科教授 / 前大学设置委员会理学系主查\nHiroo Hieda（名誉顾问）  公益财团法人未来工学研究所理事；东洋琴学研究所所长；前国土安全对策委员会事务局长\nToshimi Yamazaki  前总务省官员；量子ICT论坛顾问；一般社团法人Ecology Café理事",
+        "es": "Kentaro Shimizu  Profesor emérito de la Universidad de Tokio\nMasaki Tateno  Exdirector del Jardín Botánico Nikko, Facultad de Ciencias, Universidad de Tokio\nMasanori Hariyama  Profesor del Área de Sistemas Integrados Inteligentes, Escuela de Ciencias de la Información, Universidad de Tohoku\nHiroshi Ishikita  Profesor del Departamento de Química Aplicada, Escuela de Ingeniería, Universidad de Tokio\nHiromi Seno  Profesora de la Escuela de Ciencias de la Información, Universidad de Tohoku / Exprincipal revisora del área de ciencias en el Comité de Establecimiento de Universidades\nHiroo Hieda (Asesor honorario)  Miembro del consejo del Instituto de Ingeniería Futura (fundación de interés público); Director del Instituto de Estudios del Koto Oriental; Exsecretario general del Comité de Medidas de Seguridad Nacional\nToshimi Yamazaki  Exfuncionario del Ministerio de Asuntos Internos y Comunicaciones; Asesor del Quantum ICT Forum; Director de Ecology Café (asociación civil)",
+        "ru": "Kentaro Shimizu  Почётный профессор Токийского университета\nMasaki Tateno  Бывший директор Ботанического сада Никко, факультет наук, Токийский университет\nMasanori Hariyama  Профессор кафедры интеллектуальных интегрированных систем, Высшая школа информационных наук, Университет Тохоку\nHiroshi Ishikita  Профессор кафедры прикладной химии, Высшая школа инженерии, Токийский университет\nHiromi Seno  Профессор Высшей школы информационных наук Университета Тохоку / бывший главный эксперт по естественным наукам Комитета по учреждению университетов\nHiroo Hieda (Почётный советник)  Член правления Института исследования будущей инженерии (общественный фонд); директор Института исследований японского кото; бывший генеральный секретарь Комитета по национальной безопасности\nToshimi Yamazaki  Бывший чиновник Министерства внутренних дел и коммуникаций; советник Quantum ICT Forum; директор Ecological Café (ассоциация)",
+        "fr": "Kentaro Shimizu  Professeur émérite de l’Université de Tokyo\nMasaki Tateno  Ancien directeur du Jardin botanique de Nikko, Faculté des sciences, Université de Tokyo\nMasanori Hariyama  Professeur, Domaine des systèmes intégrés intelligents, École supérieure des sciences de l’information, Université de Tohoku\nHiroshi Ishikita  Professeur, Département de chimie appliquée, École doctorale d’ingénierie, Université de Tokyo\nHiromi Seno  Professeure à l’École supérieure des sciences de l’information, Université de Tohoku / Ancienne rapporteure principale pour les sciences, Comité d’établissement des universités\nHiroo Hieda (Conseiller honoraire)  Membre du conseil de l’Institut d’ingénierie du futur (fondation d’intérêt public) ; Directeur de l’Institut d’étude du koto oriental ; Ancien directeur général du Secrétariat du Comité des mesures de sécurité nationale\nToshimi Yamazaki  Ancien haut fonctionnaire du Ministère des Affaires intérieures et des Communications ; Conseiller du Quantum ICT Forum ; Directeur d’Ecology Café (association)"
+    }
+}

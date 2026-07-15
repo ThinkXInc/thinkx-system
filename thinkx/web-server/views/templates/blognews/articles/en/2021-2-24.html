@@ -1,0 +1,64 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+
+  <article class="article" data-news-id="2021-2-24">
+    <div class="container">
+      <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}">
+          << </a></span>
+      <p class="date news-date">2021 Feb 14</p>
+      <h2 class="title">Participation in the 'Municipal & Public Week 2021: Local Government Creation EXPO No.4' at Makuhari Messe</h2>
+      <div class="news-image-container">
+        <figure class="news-image news-id-2021-2-24">
+          <img class="news-id-2021-2-24" src="/img/citywalk_expo.png" srcset="/img/citywalk_expo@2x.png 2x" />
+        </figure>
+      </div>
+      <div class="main-text">
+        We were proud to have an exhibit at the 'Local Government and Public Week 2021: Local Government Creation EXPO No.4,' hosted at Makuhari Messe from February 24th to 26th, 2021.
+        <br>
+        The event drew approximately 30,000 visitors and featured 252 exhibiting organizations, making it one of Japan's premier local development events. (Note: The data is based on 2020's results.)
+        <br>
+        <br>
+        Our booth showcased how our technology, such as CITYWALK, has been successfully implemented in Nagasaki City. In addition, we displayed our comprehensive city promotion system, utilizing 4K resolution and drone influencer videos.
+        <br>
+        This attracted considerable interest, leading to productive discussions with numerous municipalities and private companies, including representatives from Beppu, Ibaraki, Shinshu, Toyooka, Ako, Kobe, and Chiba.
+        <br>
+        <br>
+        The feedback from local governments was overwhelmingly positive, with comments such as, "This is precisely the type of service we need."
+        <br>
+        Furthermore, the event's secretariat staff shared their impressions, noting, "This is a truly remarkable service." Clearly, our exhibition resonated well with the attendees.<br>
+        <br>
+        <br>
+        Part of the exhibition video<br>
+        Japan Tourism Agency Demonstration Project in Nagasaki City <br>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/GNZQOK9JAG4" frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe><br>
+        <br>
+        For more information about our products or any further inquiries, please contact us at inquiry@thinkxinc.com.<br>
+        <br>
+      </div>
+      <div class="back-container cf">
+        <span class="back">
+          <a href="/{{ lang }}/blognews?page={{ page }}">Back to list</a>
+        </span>
+      </div>
+    </div>
+  </article>
+</div>
+{% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

@@ -1,0 +1,180 @@
+{# 
+    Insert form to html:
+
+        {% from "inquiry.html" import inquiry_form %}
+
+
+        {{ inquiry_form('inquiry-form', '/inquiry') }}
+
+    Customize the color of message:
+
+        p.message.error { 
+            color: red; 
+        } 
+        p.message.success { 
+            color: green 
+        } 
+
+#}
+{% macro inquiry_form(id, url,
+    place_holder_name="Your Name",
+    place_holder_email="Email",
+    place_holder_phone="Phone",
+    place_holder_job_title="Job Title",
+    place_holder_company_name="Company Name",
+    place_holder_message="How can we assist you?",
+    value_submit_button="Submit",
+    requirement_error="$0 can not be empty.",
+    format_error="$0 is invalid format.",
+    submit_success="Successfully sent.",
+    submit_failed="Failed to send."
+    ) %}
+<form class="inquiry-form {{ id }}" id="{{ id }}">
+    <div class="input-fields">
+        <input type="text" name="name" placeholder="{{ place_holder_name }}">
+        <input type="email" name="email" placeholder="{{ place_holder_email }}">
+        <input type="text" name="phone" placeholder="{{ place_holder_phone }}">
+        <input type="text" name="job_title" placeholder="{{ place_holder_job_title }}">
+        <input type="text" name="company_name" placeholder="{{ place_holder_company_name }}">
+        <textarea name="message" rows="4" placeholder="{{ place_holder_message }}"></textarea>
+    </div>
+    <div class="submit">
+        <input type="submit" value="{{ value_submit_button }}">
+    </div>
+    <p class="message"></p>
+</form>
+
+<script>
+    (function () {
+        const form = document.querySelector("#{{ id }}");
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();
+    
+            function getFieldValue(fieldName) {
+                const field = form.querySelector(`input[name="${fieldName}"]`) 
+                                || form.querySelector(`textarea[name="${fieldName}"]`);
+                return field ? field.value : '';
+            }
+    
+            const name = getFieldValue("name");
+            const email = getFieldValue("email");
+            const phone = getFieldValue("phone");
+            const job_title = getFieldValue("job_title");
+            const company_name = getFieldValue("company_name");
+            const message = getFieldValue("message");
+    
+            const enableSubmitButton = (enabled) => {
+                form.querySelector('input[type="submit"]').disabled = !enabled;
+            };
+    
+            // Disable submit button
+            enableSubmitButton(false);
+    
+            const formData = {
+                'name': name,
+                'email': email,
+                'phone': phone,
+                'job_title': job_title,
+                'company_name': company_name,
+                'message': message
+            }
+
+            function inject(message, values) {
+                return message.replace(/\$(\d+)/g, (match, index) => {
+                    return values[index] || match;
+                });
+            }
+    
+            const validate = (formData) => {
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;  // simple email pattern
+            
+                for (const [field, value] of Object.entries(formData)) {
+                    if (!value) {
+                        let label;
+                        let message;
+                        const baseText = '{{ requirement_error }}';
+                        switch (field) {
+                            case "name":
+                                label = '"{{ place_holder_name }}"'.replace('*', '');
+                                message = inject(baseText, [label])
+                                return [false, message];
+                            case "email":
+                                label = '"{{ place_holder_email }}"'.replace('*', '');
+                                message = inject(baseText, [label])
+                                return [false, message];
+                            case "message":
+                                label = '"{{ place_holder_message }}"'.replace('*', '');
+                                message = inject(baseText, [label])
+                                return [false, message];
+                        }
+                    }
+                    if (field === 'email' && !emailPattern.test(value)) {
+                        const label = '{{ place_holder_email }}'
+                        const baseText = '{{ format_error }}';
+                        const message = inject(baseText, [label]) 
+                        return [false, message];
+                    }
+                }
+                return [true, ''];
+            }
+    
+            const [isValid, errorMsg] = validate(formData);
+            if (!isValid) {
+                showMessage('error', errorMsg);
+                enableSubmitButton(true);
+                return;
+            }
+    
+            // Send inquiry 
+            fetch('{{ url }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;charset=UTF-8'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(result => {
+                console.log(result);
+                if (result.success) {
+                    console.log('success');
+                    showMessage('success', '{{ submit_success | safe }}');
+                    clearInputs();
+                } else {
+                    const error = result.error;
+                    console.log(error);
+                    showMessage('error', '{{ submit_failed | safe }}');
+                }
+    
+                // Enable submit button
+                enableSubmitButton(true);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                showMessage('error', '{{ submit_failed | safe }}');
+    
+                // Enable submit button
+                enableSubmitButton(true);
+            });
+    
+            function showMessage(type, message) {
+                const messageElement = form.querySelector('.message');
+                messageElement.textContent = message;
+                // Remove existing classes
+                messageElement.classList.remove('success', 'error');
+                // Add new class
+                messageElement.classList.add(type);
+            }
+    
+            function clearInputs() {
+                form.querySelector('input[name="name"]').value = '';
+                form.querySelector('input[name="email"]').value = '';
+                form.querySelector('input[name="phone"]').value = '';
+                form.querySelector('input[name="job_title"]').value = '';
+                form.querySelector('input[name="company_name"]').value = '';
+                form.querySelector('textarea[name="message"]').value = '';
+            }
+        });
+    })();
+</script>
+{% endmacro %}

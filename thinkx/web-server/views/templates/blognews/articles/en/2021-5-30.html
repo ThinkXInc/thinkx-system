@@ -1,0 +1,51 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+
+  <article class="article" data-news-id="2021-05-30">
+    <div class="container">
+      <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}">
+          << </a></span>
+      <p class="date news-date">2021 May 30</p>
+      <h2 class="title">Temporary Suspension of CITYWALK (Early Beta) for Major Version Upgrade</h2>
+      <div class="news-image-container">
+        <figure class="news-image news-id-2021-05-30">
+          <img class="news-id-2021-05-30" src="/img/citywalklogoF.png" srcset="/img/citywalklogoF@2x.png 2x"
+            style="display: inline; max-height: 400px;" />
+        </figure>
+      </div>
+      <div class="main-text">
+        We have decided to temporarily pause the release of CITYWALK (Early Beta) on the Store, as we set the stage for a substantial update and relaunch of the next version.
+        <br>
+        <br>
+        The upcoming version of CITYWALK (Early Beta) is designed to offer enhanced interactivity and usability,<br>
+         a result of our focused effort to integrate our advanced spoken language technology more effectively.
+        <br>
+        <br>
+        We genuinely appreciate your continued support as we work towards bringing you an upgraded CITYWALK experience. Thank you.
+
+      </div>
+      <div class="back-container cf">
+        <span class="back">
+          <a href="/{{ lang }}/blognews?page={{ page }}">Back to list</a>
+        </span>
+      </div>
+    </div>
+  </article>
+</div>
+{% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

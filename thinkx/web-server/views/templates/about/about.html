@@ -1,0 +1,51 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+<div id="about" class="main-container">
+  {% include 'common/header.html' %}
+  <div class="about-page article-page main-content">
+
+    <h2 class="title">{{ locale_dict["about_us_title"][lang] }}</h2>
+
+    <article class="message-article">
+        <ul class="info-list">
+            <li>
+                <label>{{ locale_dict["about_company_label"][lang] }}</label> <p>{{ locale_dict["about_company_text"][lang] }}</p>
+            </li>
+            <li>
+                <label>{{ locale_dict["about_ceo_label"][lang] }}</label> <p>{{ locale_dict["about_ceo_text"][lang] }}</p>
+            </li>
+            <li>
+                <label>{{ locale_dict["about_headquarters_label"][lang] }}</label> <p>{{ locale_dict["about_headquarters_text"][lang] }}</p>
+            </li>
+            <li>
+                <label>{{ locale_dict["about_established_label"][lang] }}</label> <p>{{ locale_dict["about_established_text"][lang] }}</p>
+            </li>
+            <li>
+                <label>{{ locale_dict["about_capital_label"][lang] }}</label> <p>{{ locale_dict["about_capital_text"][lang] }}</p>
+            </li>
+            <li>
+                <label>{{ locale_dict["about_investors_label"][lang] }}</label> <p>{{ locale_dict["about_investors_text"][lang] }}</p>
+            </li>
+            <li>
+                <label>{{ locale_dict["about_business_label"][lang] }}</label> <p>{{ locale_dict["about_business_text"][lang] }}</p>
+            </li>
+            <li>
+                <label>{{ locale_dict["about_advisors_label"][lang] }}</label> <p>{{ locale_dict["about_advisors_text"][lang] }}</p>
+            </li>
+        </ul>
+    </article>
+  </div>
+  {% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}
+
+

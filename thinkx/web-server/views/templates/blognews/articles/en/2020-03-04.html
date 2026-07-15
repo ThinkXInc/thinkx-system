@@ -1,0 +1,58 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+  <article class="article" data-news-id="2020-03-04">
+    <div class="container">
+      <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}">
+          << </a></span>
+      <p class="date news-date">2020 Mar 4</p>
+      <h2 class="title">Publication Announcement: "Privacy-Preserving Fast and Exact Linear Equations Solver with Fully Homomorphic Encryption" - Released February 29th</h2>
+      <div class="news-image-container">
+
+      </div>
+      <div class="main-text">
+        
+        The recent paper, "Privacy-Preserving Fast and Exact Linear Equations Solver with Fully Homomorphic Encryption" by Keita Arimitsu and Kazuki Otsuka (published in the Cryptology ePrint Archive on February 29, 2020), proposes a novel solution to a long-standing dilemma.
+        <br>
+        <br>
+        (Keita Arimitsu and Kazuki Otsuka : Cryptology ePrint Archive 2020/02/29)<br>
+        <a href="https://eprint.iacr.org/2020/272.pdf">https://eprint.iacr.org/2020/272.pdf</a>
+        <br>
+        <br>
+        In the realm of data analysis, privacy and machine learning often seem irreconcilable. Privacy dictates that data be withheld, whereas machine learning relies on access to large amounts of data. Fully Homomorphic Encryption (FHE), capable of performing linear operations on encrypted data, has become the focus of extensive research as a potential solution to this paradox.
+        <br>
+        <br>
+        While several protocols exploiting the properties of FHE have been suggested for statistical operations, many are impractical, overly complex, or rely on approximation techniques sensitive to parameter choice. Furthermore, some protocols introduce unfamiliar cryptographic systems.
+        <br>
+        <br>
+        In this paper, we propose a fast, straightforward, and precise privacy-preserving linear equation solver using FHE. Our two-party protocol is secure under at least the semi-honest model and enables accurate computation of the model without bootstrapping.
+        <br>
+        Keywords: <B>Fully Homomorphic Encryption, Machine Learning, Privacy Preservation</B>
+      </div>
+      <figure class="news-image news-id-2020-03-04">
+        <img class="news-id-2020-03-04" src="/img/ciphernet-image.png" srcset="/img/ciphernet-image@2x.png 2x" />
+      </figure>
+      <div class="back-container cf">
+        <span class="back">
+          <a href="/{{ lang }}/blognews?page={{ page }}">Back to list</a>
+        </span>
+      </div>
+    </div>
+  </article>
+</div>
+{% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

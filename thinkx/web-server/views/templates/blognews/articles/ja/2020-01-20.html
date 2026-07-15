@@ -1,0 +1,65 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+
+    <article class="article" data-news-id="2020-01-20">
+      <div class="container">
+        <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}"><<</a></span>
+        <p class="date news-date">2020 Jan 20</p>
+        <h2 class="title">次世代音声案内システムCITYWALKの販売を開始</h2>
+        <div class="news-image-container">
+          <figure class="news-image news-id-2020-01-20">
+            <img class="news-id-2020-01-20" src="/img/citywalkbrochure.png" srcset="/img/citywalkbrochure@2x.png 2x"/>
+          </figure>
+        </div>
+        <div class="main-text">
+
+          街、商業施設、博物館、展示会、イベント、公園、文化施設などの</br>
+          マーケティングを支援する次世代音声案内システムCITYWALKの販売を開始いたしました。</br>
+          </br>
+          CITYWALKはBluetoothデバイスなどの特別な 機器を設置することなく</br>
+          利用者が普段通り動き 回るだけで、</br></br>
+          屋内屋外を問わずスマートフォンにダウンロードしたアプリケーションが</br>
+          位置や状況 に応じて商業施設や都市をガイドしてくれる次世 代の音声案内システムです。</br>
+          </br>
+          <ul>
+            <li>・集客はしたものの鍵となるコンテンツの価値が伝わっていなく、ファンが根付かない。</li>
+            <li>・導線が弱く、目立ったコンテンツにのみ注目され、宣伝効率が悪い。回遊率を上げたい。</li>
+            <li>・リアルからオンラインへつながらず、ネットストアに流れる導線が足りない。SNSでの口コミが足りない。リピート率を上げたい。</li>
+            <li>・インバウンド対応がされておらず、低コストで多言語での説明を実施したい。</li>
+          </ul>
+          </br>
+
+          と言った課題を解決します。</br>
+          </br></br>
+
+          製品の詳細、資料のお申し込みについては</br>
+          </br>
+          <span class="contact-mail">sales@thinkxinc.com</span></br>
+          </br>
+          までお問い合わせください。
+        </div>
+        <div class="back-container cf">
+          <span class="back">
+            <a href="/{{ lang }}/blognews?page={{ page }}">一覧に戻る</a>
+          </span>
+        </div>
+      </div>
+    </article>
+  </div>
+  {% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

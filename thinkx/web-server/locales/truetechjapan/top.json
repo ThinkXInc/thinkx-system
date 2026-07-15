@@ -1,0 +1,82 @@
+{
+    "top_main_copy": {
+        "ja": "専門家が選ぶ、本物のテクノロジー企業を表彰",
+        "en": ""
+    },
+    "top_mission_title": {
+        "ja": "独自技術を開発するテクノロジースタートアップの地位向上のために",
+        "en": ""
+    },
+    "top_mission_description": {
+        "ja": "プロプライエタリな技術を開発するスタートアップは経営難易度が高い一方、社会の革新と、先進国家の地位にとって重要な存在です。\n同時に、財務諸表に反映されない技術価値を正しく評価する主体が少ないために、本質的努力を続けるほど適切な潜在価値の評価が困難になるジレンマがありました。\nそうした現状に対し、独自技術を開発する新興企業の地位向上と振興、それによる社会水準の向上、より世界で尊敬される国となるため、「日本が誇るテクノロジースタートアップ100 - Best Technology Startup 100」事業は優良企業を表彰します。",
+        "en": ""
+    },
+    "top_concept_title": {
+        "ja": "専門家が選ぶ本物のテクノロジー企業",
+        "en": ""
+    },
+    "top_concept_description": {
+        "ja": "費用さえ払えば受賞できる賞も数多くある中で、\n“Best Technology Startup 100”は厳しい基準をクリアした企業のみが選ばれます。\n審査員は10年以上の研究開発のキャリアをもつ人のみで構成されます。",
+        "en": ""
+    },
+    "top_criteria_title": {
+        "ja": "シンプルで明確な選定条件",
+        "en": ""
+    },
+    "top_criteria_1": {
+        "ja": "・プロプライエタリな独自技術を開発する未上場企業であること",
+        "en": ""
+    },
+    "top_criteria_2": {
+        "ja": "・テクニカルファウンダーによって運営されている企業であること",
+        "en": ""
+    },
+    "top_entry_title": {
+        "ja": "エントリー方法",
+        "en": ""
+    },
+    "top_entry_apply_title": {
+        "ja": "自薦",
+        "en": ""
+    },
+    "top_entry_apply_description": {
+        "ja": "公式サイトや問い合わせ先からの応募",
+        "en": ""
+    },
+    "top_entry_referer_title": {
+        "ja": "他薦",
+        "en": ""
+    },
+    "top_entry_referer_description": {
+        "ja": "第三者からの紹介または推薦によるもの",
+        "en": ""
+    },
+    "top_entry_appoint_title": {
+        "ja": "直接指名",
+        "en": ""
+    },
+    "top_entry_appoint_description": {
+        "ja": "当団体からの直接の指名によるノミネート",
+        "en": ""
+    },
+    "top_entry_button": {
+        "ja": "エントリーする",
+        "en": ""
+    },
+    "top_philosophy_title": {
+        "ja": "Best Technology Startup 100の３つの理念",
+        "en": ""
+    },
+    "top_philosophy_1": {
+        "ja": "10年以上の研究開発経験をもつ専門家集団による評価",
+        "en": ""
+    },
+    "top_philosophy_2": {
+        "ja": "明確な基準と透明性",
+        "en": ""
+    },
+    "top_philosophy_3": {
+        "ja": "日本経済に寄与する健全な技術評価文化の醸成",
+        "en": ""
+    }
+}

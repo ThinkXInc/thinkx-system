@@ -1,0 +1,59 @@
+div.about-page {
+    display: flex;
+    flex-direction: column;
+    padding: 200px 100px 100px 100px;
+    article {
+        display: flex;
+        padding: 0 0 100px 0;
+        ul.info-list {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+
+            li {
+                display: flex;
+                align-items: flex-start; // Aligns items to the start vertically
+                margin-bottom: 10px; /* Space between items */
+
+                label {
+                    width: 132px;
+                    white-space: nowrap;
+                    flex-shrink: 0;
+                    text-wrap: wrap;
+                }
+
+                p {
+                    text-align: left;
+                    margin: 0;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: @smartphone-width) {
+    div.article-page.about-page {
+        padding: 120px 60px 62px 60px;
+        article {
+            ul.info-list {
+                li {
+                    display: flex; // Ensures label and paragraph are in a row
+                    align-items: flex-start; // Aligns items to the start vertically
+                    text-align: left; 
+                    label {
+                        width: 97px;
+                        margin-right: 10px; // Space between label and paragraph
+                        text-align: left; // Ensures text in label is left-aligned
+                        flex-shrink: 0;
+                        text-wrap: wrap;
+                        font-size: 15px;
+                    }
+                    p {
+                        width: 100%;
+                        text-align: left; // Ensures text in label is left-aligned
+                    }
+                }
+            }
+        }
+    }
+}

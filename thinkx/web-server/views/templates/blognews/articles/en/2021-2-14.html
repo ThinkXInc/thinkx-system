@@ -1,0 +1,60 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+  <article class="article" data-news-id="2021-2-14">
+    <div class="container">
+      <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}">
+          << </a></span>
+      <p class="date news-date">2021 Feb 14</p>
+      <h2 class="title">Groundbreaking Voice Guidance System, CITYWALK, Commences Pilot Program in Nagasaki City</h2>
+      <div class="news-image-container">
+        <figure class="news-image news-id-2021-2-14">
+          <img class="news-id-2021-2-14" src="/img/glover_panel.png" srcset="/img/glover_panel@2x.png 2x" />
+        </figure>
+      </div>
+      <div class="main-text">
+        Our pioneering voice guidance system, CITYWALK, has commenced its pilot program at popular tourist destinations such as Glover Garden,
+        <br>
+        Dejima, and i+Land Nagasaki, which collectively draw an annual crowd of 400,000.
+        <br>
+        <br>
+        Visitors can simply scan the QR code at the entrance to download the system onto their iPhones (with Android support planned within the year). Upon checking in, 
+        <br>
+        they can enjoy a guided experience as they navigate the premises, with the system automatically offering direction and insights.
+        <br>
+        <br>
+        <div class="news-image-container">
+          <figure class="news-image news-id-2021-2-14">
+            <img class="news-id-2021-2-14" src="/img/dejima_panel.png" srcset="/img/dejima_panel@2x.png 2x" />
+          </figure>
+          <div class="main-text">
+            This trial run is part of a Japan Tourism Agency project in Nagasaki City and will continue for one month, ending on March 15.<br>
+            <br>
+            <br>
+            For additional information or to learn more about our product, please contact us at inquiry@thinkxinc.com.<br>
+            <br>
+          </div>
+          <div class="back-container cf">
+            <span class="back">
+              <a href="/{{ lang }}/blognews?page={{ page }}">Back to list</a>
+            </span>
+          </div>
+        </div>
+      </article>
+    </div>
+    {% include 'common/footer.html' %}
+  </div>
+  
+  {% endblock %}
+  
+  {% block foot %}
+  {% endblock %}

@@ -1,0 +1,83 @@
+{
+    "inquiry_confirm_subject": {
+        "ja": "お問い合わせありがとうございました。",
+        "en": "Thank you for your inquiry.",
+        "zh": "感谢您的咨询。",
+        "fr": "Merci de votre demande.",
+        "es": "Gracias por su consulta.",
+        "ru": "Спасибо за ваш запрос.",
+        "ar": "شكراً لتواصلكم معنا."
+    },
+    "inquiry_confirm_body_1": {
+        "ja": "以下の内容でお問い合わせを受け付けました。",
+        "en": "We have received your inquiry as follows.",
+        "zh": "我们已按以下内容接受了您的咨询。",
+        "fr": "Nous avons reçu votre demande comme suit.",
+        "es": "Hemos recibido su consulta de la siguiente manera.",
+        "ru": "Мы получили ваш запрос следующим образом.",
+        "ar": "لقد تلقينا استفسارك على النحو التالي."
+    },
+    "name_label": {
+        "ja": "お名前",
+        "en": "Name",
+        "zh": "姓名",
+        "fr": "Nom",
+        "es": "Nombre",
+        "ru": "Имя",
+        "ar": "الاسم"
+    },
+    "email_label": {
+        "ja": "メールアドレス",
+        "en": "Email Address",
+        "zh": "电子邮件地址",
+        "fr": "Adresse e-mail",
+        "es": "Dirección de correo electrónico",
+        "ru": "Электронный адрес",
+        "ar": "عنوان البريد الإلكتروني"
+    },
+    "phone_label": {
+        "ja": "電話番号",
+        "en": "Phone Number",
+        "zh": "电话号码",
+        "fr": "Numéro de téléphone",
+        "es": "Número de teléfono",
+        "ru": "Номер телефона",
+        "ar": "رقم الهاتف"
+    },
+    "job_title_label": {
+        "ja": "職名",
+        "en": "Job Title",
+        "zh": "职位",
+        "fr": "Poste",
+        "es": "Título del trabajo",
+        "ru": "Должность",
+        "ar": "المسمى الوظيفي"
+    },
+    "company_name_label": {
+        "ja": "所属・会社名",
+        "en": "Company Name",
+        "zh": "公司名称",
+        "fr": "Nom de l'entreprise",
+        "es": "Nombre de la empresa",
+        "ru": "Название компании",
+        "ar": "اسم الشركة"
+    },
+    "message_label": {
+        "ja": "お問い合わせ内容",
+        "en": "Inquiry Message",
+        "zh": "咨询内容",
+        "fr": "Message de la demande",
+        "es": "Mensaje de consulta",
+        "ru": "Сообщение запроса",
+        "ar": "رسالة الاستفسار"
+    },
+    "inquiry_confirm_body_2": {
+        "ja": "回答までしばらくお待ちください。しばらく経っても連絡がない場合、お手数ですが下記のメールアドレスまでご連絡ください。",
+        "en": "Please wait for a response. If you do not hear from us soon, please contact us at the email address below.",
+        "zh": "请耐心等待回复。如果您在一段时间内没有收到回复、请通过以下电子邮件地址与我们联系。",
+        "fr": "Veuillez attendre une réponse. Si vous ne recevez pas de nouvelles rapidement, veuillez nous contacter à l'adresse e-mail ci-dessous.",
+        "es": "Por favor, espere una respuesta. Si no recibe noticias nuestras pronto, contáctenos en la dirección de correo electrónico a continuación.",
+        "ru": "Пожалуйста, дождитесь ответа. Если вы не получите ответа в ближайшее время, свяжитесь с нами по указанному ниже адресу электронной почты.",
+        "ar": "يرجى انتظار الرد. إذا لم تتلق منا أي أخبار قريبًا، يرجى التواصل معنا عبر البريد الإلكتروني أدناه."
+    }
+}

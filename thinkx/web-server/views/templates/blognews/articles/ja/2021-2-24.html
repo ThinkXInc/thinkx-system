@@ -1,0 +1,58 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+
+    <article class="article" data-news-id="2021-2-24">
+      <div class="container">
+        <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}"><<</a></span>
+        <p class="date news-date">2021 Feb 14</p>
+        <h2 class="title">幕張メッセで行われた「自治体・公共Week 2021 地方創生EXPO 第4回」に出展しました。</h2>
+        <div class="news-image-container">
+          <figure class="news-image news-id-2021-2-24">
+            <img class="news-id-2021-2-24" src="/img/citywalk_expo.png" srcset="/img/citywalk_expo@2x.png 2x"/>
+          </figure>
+        </div>
+        <div class="main-text">
+          2021年2月24日（水）～26日（金）に幕張メッセで開催された「自治体・公共Week 2021 地方創生EXPO 第4回」にブース出展しました。</br>
+          出展者：252団体、</br>
+          来場者約30,000人の日本最大級の地方創生イベントです。（※2020年実績に基づいデータになります。）</br>
+          </br>
+          弊社ブースでは、長崎市での実施の模様、CITYWALKのデモ、4K・ドローンによるインフルエンサー動画を駆使した</br>
+          独自の総合シティプロモーションの仕組みを4K動画で紹介、</br>
+          別府、茨木、信州，豊岡市，赤穂市，神戸市，千葉など、数多くの自治体や民間企業とブース面談を行うことができました。</br>
+          </br>
+          </br>
+          お話しをした自治体様からは「まさにそういうサービスが必要」、事務局の方からも「本当に素晴らしいサービス」と好評をいただき、</br>
+          当社が提唱している総合シティプロモーションの仕組みは、「まち歩き」などを軸とした新たな地方創生の動きを捉えた活動であることを改めて確信できました。</br>
+          </br>
+          </br>
+          展示動画の一部</br>
+          長崎市での観光庁実証事業 </br>
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/GNZQOK9JAG4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></br>
+          </br>
+          製品の導入または詳細についてはinquiry@thinkxinc.comまでお問い合わせください。</br>
+        </div>
+        <div class="back-container cf">
+          <span class="back">
+            <a href="/{{ lang }}/blognews?page={{ page }}">一覧に戻る</a>
+          </span>
+        </div>
+      </div>
+    </article>
+  </div>
+  {% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

@@ -1,0 +1,247 @@
+{
+    "privacy_policy": {
+      "page_title": {
+        "ja": "プライバシーポリシー",
+        "en": "Privacy Policy",
+        "zh": "隐私政策",
+        "fr": "Politique de Confidentialité",
+        "es": "Política de Privacidad",
+        "de": "Datenschutzerklärung",
+        "ar": "سياسة الخصوصية",
+        "ru": "Политика конфиденциальности",
+        "ko": "개인정보 처리방침"
+      },
+      "page_subtitle": {
+        "ja": "",
+        "en": "",
+        "zh": "",
+        "fr": "",
+        "es": "",
+        "de": "",
+        "ar": "",
+        "ru": "",
+        "ko": ""
+      },
+       "last_updated": {
+        "ja": "最終更新日：2025年3月17日",
+        "en": "Last Updated: March 17, 2025",
+        "zh": "最后更新日期：2025年3月17日",
+        "fr": "Dernière mise à jour : 17 mars 2025",
+        "es": "Última actualización: 17 de marzo de 2025",
+        "de": "Zuletzt aktualisiert: 17. März 2025",
+        "ar": "آخر تحديث: 17 مارس 2025",
+        "ru": "Последнее обновление: 17 марта 2025 г.",
+        "ko": "최종 업데이트: 2025년 3월 17일"
+      },
+       "intro": {
+        "ja": "このたびは「NNTM（ナチュラル・ノイズ・セラピー＆メディテーション）」（以下、「本アプリ」）をご利用いただきありがとうございます。本プライバシーポリシーは、ThinkX株式会社（以下、「当社」）が、本アプリの利用者様（以下、「ユーザー」）の情報をどのように収集・利用・保護するかを説明するものです。本アプリをご利用いただくことで、本ポリシーに同意されたものとみなします。",
+        "en": "Thank you for using NNTM (Natural Noise Therapy & Meditation). This Privacy Policy explains how ThinkX Inc. (\"we\" or \"us\") collects, uses, and safeguards information about users (\"you\") of this app. By using the app, you agree to this policy.",
+        "zh": "感谢您使用 NNTM（自然噪音疗法与冥想）。本隐私政策由 ThinkX Inc.（以下简称“我们”）提供，旨在说明我们如何收集、使用及保护用户（以下简称“您”）的信息。使用本应用即表示您同意本政策。",
+        "fr": "Nous vous remercions d’utiliser NNTM (Natural Noise Therapy & Meditation). La présente politique de confidentialité explique comment ThinkX Inc. (« nous ») recueille, utilise et protège les informations concernant les utilisateurs (« vous ») de cette application. En l’utilisant, vous acceptez cette politique.",
+        "es": "Gracias por utilizar NNTM (Natural Noise Therapy & Meditation). Esta Política de Privacidad explica cómo ThinkX Inc. (\"nosotros\") recopila, utiliza y protege la información de los usuarios (\"usted\") de la aplicación. Al usar la aplicación, usted acepta esta política.",
+        "de": "Vielen Dank, dass Sie NNTM (Natural Noise Therapy & Meditation) nutzen. Diese Datenschutzerklärung erklärt, wie ThinkX Inc. (\"wir\") Informationen über Nutzer (\"Sie\") dieser App sammelt, verwendet und schützt. Durch die Nutzung der App stimmen Sie dieser Richtlinie zu.",
+        "ar": "شكرًا لاستخدامكم NNTM (Natural Noise Therapy & Meditation). توضح هذه السياسة كيفية قيام ThinkX Inc. («نحن») بجمع معلومات المستخدمين («أنتم») لهذا التطبيق واستخدامها وحمايتها. باستخدامكم التطبيق، فإنكم توافقون على هذه السياسة.",
+        "ru": "Благодарим вас за использование приложения NNTM (Natural Noise Therapy & Meditation). В настоящей Политике конфиденциальности описывается, как компания ThinkX Inc. (далее — «мы») собирает, использует и защищает информацию о пользователях (далее — «вы»). Пользуясь приложением, вы соглашаетесь с данной политикой.",
+        "ko": "NNTM(Natural Noise Therapy & Meditation)을 이용해주셔서 감사합니다. 본 개인정보 처리방침은 ThinkX Inc.(이하 '당사')가 본 앱 사용자(이하 '사용자')의 정보를 어떻게 수집, 이용, 보호하는지에 대해 설명합니다. 앱을 사용함으로써 본 정책에 동의하신 것으로 간주됩니다."
+      },
+       "section_1_title": {
+        "ja": "1. 収集する情報について",
+        "en": "1. Information We Collect",
+        "zh": "1. 我们收集的信息",
+        "fr": "1. Informations Collectées",
+        "es": "1. Información que Recopilamos",
+        "de": "1. Erhobene Informationen",
+        "ar": "1. المعلومات التي نجمعها",
+        "ru": "1. Собираемая информация",
+        "ko": "1. 수집하는 정보"
+      },
+      "section_1_body": {
+        "ja": "本アプリは、ユーザーの名前やメールアドレスなど、個人を特定できる情報を収集しません。\nAppleの標準的なApp Store解析ツールにより、アプリの利用頻度やクラッシュレポートなどの基本的な統計データを受け取る場合がありますが、これらのデータによりユーザー個人を特定することはできません。",
+        "en": "We do not collect personally identifiable information such as your name or email address. We may receive basic analytics (e.g. usage frequency, crash reports) through Apple’s App Store analytics tools, but this data does not identify you personally.",
+        "zh": "我们不会收集可识别您身份的个人信息（如姓名或电子邮箱）。我们可能通过 Apple App Store 的分析工具获取基本数据（例如使用频率、崩溃报告），但这些数据不会用于识别您的个人身份。",
+        "fr": "Nous ne recueillons pas d’informations personnelles permettant de vous identifier (par exemple, nom ou adresse e-mail). Nous pouvons recevoir des données d’analyse de base via les outils d’Apple (fréquence d’utilisation, rapports de plantage), sans identification personnelle.",
+        "es": "No recopilamos información de identificación personal como su nombre o correo electrónico. Podríamos recibir datos analíticos básicos (frecuencia de uso, informes de fallos) a través de las herramientas de análisis del App Store de Apple, pero estos datos no identifican al usuario individualmente.",
+        "de": "Wir erheben keine personenbezogenen Daten wie Name oder E-Mail-Adresse. Über Apples App-Store-Analysetools erhalten wir möglicherweise grundlegende Analysedaten (z. B. Nutzungsfrequenz, Absturzberichte), die jedoch keine persönliche Identifizierung zulassen.",
+        "ar": "لا نجمع معلومات شخصية محددة للهوية مثل الاسم أو البريد الإلكتروني. قد نحصل على بيانات تحليلية أساسية (مثل تكرار الاستخدام وتقارير الأعطال) عبر أدوات التحليل من متجر Apple App Store، ولكن هذه البيانات لا تحدد هويتكم شخصيًا.",
+        "ru": "Мы не собираем персональные данные, такие как имя или адрес электронной почты. Мы можем получать основные аналитические данные (частота использования, отчёты о сбоях) через инструменты аналитики App Store от Apple, однако они не позволяют идентифицировать пользователя.",
+        "ko": "사용자의 이름, 이메일 등 식별 가능한 개인정보를 수집하지 않습니다. Apple App Store의 기본 분석 도구를 통해 앱 사용 빈도, 오류 보고서 등의 기본 데이터를 받을 수 있으나, 이는 개인을 식별할 수 있는 정보가 아닙니다."
+      },
+       "section_2_title": {
+        "ja": "2. 情報の利用目的",
+        "en": "2. How We Use Your Information",
+        "zh": "2. 我们如何使用这些信息",
+        "fr": "2. Utilisation de Vos Informations",
+        "es": "2. Cómo Usamos la Información",
+        "de": "2. Nutzung der Informationen",
+        "ar": "2. كيفية استخدامنا للمعلومات",
+        "ru": "2. Использование информации",
+        "ko": "2. 정보의 이용 목적"
+      },
+      "section_2_body": {
+        "ja": "解析データは、アプリの品質向上や機能改善のためにのみ利用されます。\n当社ウェブサイトのお問い合わせフォームからご連絡をいただいた場合、入力いただいた内容はお問い合わせ対応にのみ利用します。",
+        "en": "We use basic analytics data solely to improve the quality and functionality of the app. If you contact us (e.g. via our website), we will use your information only to respond to your inquiries.",
+        "zh": "我们仅将基础分析数据用于改进应用质量和功能。如果您通过我们的网站与我们联系，我们只会使用您提供的信息来回应您的咨询。",
+        "fr": "Nous utilisons les données d’analyse uniquement pour améliorer la qualité et les fonctionnalités de l’App. Si vous nous contactez (par exemple via notre site), nous n’utilisons vos informations que pour répondre à vos demandes.",
+        "es": "Utilizamos los datos analíticos básicos exclusivamente para mejorar la calidad y funcionalidades de la aplicación. Si se comunica con nosotros (p. ej., a través de nuestro sitio web), sólo emplearemos la información proporcionada para responder a sus consultas.",
+        "de": "Wir verwenden die grundlegenden Analysetools ausschließlich zur Verbesserung der Qualität und Funktionalität der App. Wenn Sie uns kontaktieren (z. B. über unsere Website), nutzen wir die bereitgestellten Informationen nur, um Ihre Anfragen zu beantworten.",
+        "ar": "نستخدم البيانات التحليلية الأساسية حصريًا لتحسين جودة التطبيق ووظائفه. إذا تواصلتم معنا (مثلًا عبر موقعنا)، فسنستخدم المعلومات المقدمة فقط للرد على استفساراتكم.",
+        "ru": "Мы используем аналитические данные исключительно для улучшения качества и функциональности приложения. Если вы свяжетесь с нами (например, через наш сайт), мы используем предоставленные данные только для ответа на ваши вопросы.",
+        "ko": "기본 분석 데이터는 앱의 품질 및 기능 개선을 위해서만 사용됩니다. 웹사이트 등을 통해 문의할 경우, 제공된 정보는 문의 대응 목적으로만 사용됩니다."
+      },
+       "section_3_title": {
+        "ja": "3. アプリ内課金",
+        "en": "3. In-App Purchases",
+        "zh": "3. 应用内购买",
+        "fr": "3. Achats Intégrés",
+        "es": "3. Compras Dentro de la App",
+        "de": "3. In-App-Käufe",
+        "ar": "3. المشتريات داخل التطبيق",
+        "ru": "3. Покупки внутри приложения",
+        "ko": "3. 인앱 구매"
+      },
+      "section_3_body": {
+        "ja": "本アプリでは、プロ版（地域により価格が異なります）を購入することで、ループ機能や長時間高音質音源、バックグラウンド再生などの全機能を開放できます。\n決済はAppleのApp Store内課金を通じて行われ、当社が直接決済情報を処理・保管することはありません。",
+        "en": "You can unlock all features (loop, high-quality long audio, background playback) by purchasing the Pro version (price varies by region). Payments are processed through Apple’s in-app purchase system; we do not handle or store any payment information directly.",
+        "zh": "通过购买专业版（价格因地区而异）可解锁循环播放、长时间高音质音源和后台播放等全部功能。支付交易由 Apple 的内购系统处理，我们不会直接处理或存储任何支付信息。",
+        "fr": "En achetant la version Pro (dont le prix varie selon la région), vous débloquez toutes les fonctionnalités (lecture en boucle, audio longue durée haute qualité et lecture en arrière-plan). Les paiements sont gérés via le système d’achat intégré d’Apple ; nous ne traitons ni ne stockons aucune information de paiement.",
+        "es": "Con la compra de la versión Pro (cuyo precio varía por región), se desbloquean todas las funciones (reproducción en bucle, audio de larga duración y alta calidad, y reproducción en segundo plano). Los pagos se gestionan a través del sistema de compras integradas de Apple, sin que nosotros procesemos ni almacenemos la información de pago.",
+        "de": "Mit dem Kauf der Pro-Version (regional unterschiedlicher Preis) schalten Sie alle Funktionen frei (Loop, lange hochqualitative Audios, Hintergrundwiedergabe). Zahlungen werden über Apples In-App-Kauf-System abgewickelt; wir verarbeiten oder speichern keine Zahlungsinformationen direkt.",
+        "ar": "عند شراء النسخة الاحترافية (يختلف السعر باختلاف المنطقة)، يتم فتح جميع الميزات مثل التكرار والصوت عالي الجودة والتشغيل في الخلفية. تتم معالجة الدفعات عبر نظام المشتريات داخل التطبيق من Apple، ولا نقوم بمعالجة أو تخزين معلومات الدفع مباشرة.",
+        "ru": "Покупка Pro-версии (цена зависит от региона) разблокирует все функции (зацикливание, высококачественный длинный аудиоматериал, фоновое воспроизведение). Все платежи обрабатываются системой внутриигровых покупок Apple; мы не обрабатываем и не храним платёжные данные напрямую.",
+        "ko": "프로 버전(지역별 가격 상이)을 구매하면 반복 재생, 장시간 고음질 음원, 백그라운드 재생 등의 모든 기능을 이용할 수 있습니다. 결제는 Apple 인앱 결제를 통해 이루어지며, 당사는 결제 정보를 직접 처리하거나 저장하지 않습니다."
+      },
+       "section_4_title": {
+        "ja": "4. 第三者サービスの利用",
+        "en": "4. Third-Party Services",
+        "zh": "4. 第三方服务",
+        "fr": "4. Services Tiers",
+        "es": "4. Servicios de Terceros",
+        "de": "4. Dienste Dritter",
+        "ar": "4. خدمات الجهات الخارجية",
+        "ru": "4. Сторонние сервисы",
+        "ko": "4. 제3자 서비스"
+      },
+      "section_4_body": {
+        "ja": "AppleのApp Storeが提供する基本的な分析機能のほか、本アプリは第三者の広告や分析SDKを組み込んでいません。\n決済に関するデータはAppleのシステムを通じて処理され、お客様が購入時に提供する情報にはAppleのプライバシーポリシーが適用されます。",
+        "en": "Aside from the basic analytics provided by Apple’s App Store, we do not integrate any third-party advertising or analytics SDKs. Payment-related data is handled by Apple’s systems, and Apple’s privacy policy applies to any information you provide during purchase.",
+        "zh": "除 Apple App Store 提供的基础分析功能外，本应用未集成任何第三方广告或分析 SDK。支付相关数据由 Apple 负责处理，您在购买时提供的任何信息均适用 Apple 的隐私政策。",
+        "fr": "Outre les fonctionnalités d’analyse basiques d’Apple (App Store), nous n’intégrons aucun SDK publicitaire ou d’analyse tiers. Les données de paiement sont gérées par Apple, et la politique de confidentialité d’Apple s’applique aux informations que vous fournissez lors d’un achat.",
+        "es": "Además de las funciones básicas de análisis proporcionadas por Apple (App Store), no integramos ningún SDK publicitario o de análisis de terceros. Los datos de pago se gestionan a través de los sistemas de Apple, y su política de privacidad se aplica a la información que usted proporciona al comprar.",
+        "de": "Abgesehen von den grundlegenden Analysetools des Apple App Store binden wir keine Werbe- oder Analyse-SDKs von Drittanbietern ein. Zahlungsbezogene Daten werden über Apples Systeme abgewickelt, es gilt die Datenschutzerklärung von Apple für alle Informationen, die Sie bei einem Kauf angeben.",
+        "ar": "إلى جانب أدوات التحليل الأساسية المقدمة من Apple App Store، لا ندمج أي حزم تطوير إعلانية أو تحليلية تابعة لجهات خارجية في التطبيق. تتم معالجة بيانات الدفع عبر أنظمة Apple، وتسري سياسة الخصوصية الخاصة بـApple على أي معلومات تقدمونها عند الشراء.",
+        "ru": "Помимо базовых аналитических инструментов от App Store, мы не используем сторонние рекламные или аналитические SDK. Данные, связанные с оплатой, обрабатываются системами Apple, и на любую информацию, предоставленную при покупке, распространяется политика конфиденциальности Apple.",
+        "ko": "Apple App Store가 제공하는 기본 분석 기능 외에, 본 앱은 제3자 광고 또는 분석 SDK를 통합하고 있지 않습니다. 결제 관련 데이터는 Apple 시스템을 통해 처리되며, 구매 시 제공되는 모든 정보에는 Apple의 개인정보 처리방침이 적용됩니다."
+      },
+       "section_5_title": {
+        "ja": "5. データセキュリティ",
+        "en": "5. Data Security",
+        "zh": "5. 数据安全",
+        "fr": "5. Sécurité des Données",
+        "es": "5. Seguridad de los Datos",
+        "de": "5. Datensicherheit",
+        "ar": "5. أمان البيانات",
+        "ru": "5. Безопасность данных",
+        "ko": "5. 데이터 보안"
+      },
+      "section_5_body": {
+        "ja": "当社は、クラッシュレポートなどの非個人情報を安全に管理するよう努めていますが、インターネット上での送受信や保管において絶対的な安全性を保証することはできません。\n\nまた、EU一般データ保護規則（GDPR）を含む関連法令を遵守し、ユーザーの皆様には以下の権利があります：\n- アクセス権（当社が保有する個人データの写しを得る権利）\n- 訂正・削除の要求（不正確な情報の更新や削除）\n- 処理の制限および異議（特定の目的でのデータ処理に異議を示す等）\n- データポータビリティ（自分の個人情報を機械判読可能な形式で受け取り、他の事業者等に移転する権利）\n- 同意の撤回（同意に基づく処理をいつでも撤回する権利。ただし、撤回前の処理の適法性は影響を受けません）\n\nこれらの権利を行使したい場合は、後述の「9. お問い合わせ先」に記載の連絡先までご連絡ください。",
+        "en": "We strive to protect non-personal data (e.g. crash reports) securely, but cannot guarantee absolute safety of any data transmitted or stored online. We also comply with relevant laws, including the EU General Data Protection Regulation (GDPR), granting you the following rights:\n- Right of Access (obtain a copy of personal data we hold)\n- Right to Rectification or Erasure (update or delete inaccurate data)\n- Right to Restrict or Object (object to certain processing or request restrictions)\n- Data Portability (receive your personal data in a machine-readable format, transfer it to another provider)\n- Right to Withdraw Consent (revoke consent-based processing at any time, without affecting past lawful processing)\n\nTo exercise these rights, please contact us at the address mentioned in Section 9 below.",
+        "zh": "我们会尽力安全地管理如崩溃报告等非个人信息，但无法保证互联网传输或存储的绝对安全性。我们同时遵守包括欧盟通用数据保护条例（GDPR）在内的相关法律，赋予用户以下权利：\n- 查阅权（获取我们持有的个人数据副本）\n- 更正或删除权（更新或删除不准确的信息）\n- 限制或反对处理权（对特定目的的数据处理提出限制或异议）\n- 数据可携权（以可机读格式接收个人数据并转移至其他服务商）\n- 撤回同意权（随时撤回基于同意的数据处理，但不影响撤回前处理的合法性）\n\n如需行使上述权利，请按照第9节中的联系方式与我们联系。",
+        "fr": "Nous nous efforçons de protéger les données non personnelles (par ex. rapports de plantage) mais ne pouvons garantir une sécurité absolue pour toute transmission ou stockage en ligne. Nous respectons également la réglementation applicable, y compris le Règlement Général sur la Protection des Données (RGPD), ce qui vous octroie les droits suivants :\n- Droit d’Accès (obtenir une copie des données personnelles que nous détenons)\n- Droit de Rectification ou Suppression (corriger ou supprimer des données inexactes)\n- Droit à la Limitation ou Opposition (contester ou restreindre certains traitements)\n- Portabilité des Données (recevoir vos données personnelles dans un format lisible par machine, les transférer à un autre prestataire)\n- Droit de Retrait de Consentement (retirer à tout moment un consentement donné, sans affecter la légalité du traitement antérieur)\n\nPour exercer ces droits, veuillez nous contacter à l’adresse indiquée dans la section 9 ci-dessous.",
+        "es": "Nos esforzamos por proteger de manera segura los datos no personales (p. ej., informes de fallos), pero no podemos garantizar una seguridad absoluta en las transmisiones o almacenamientos en línea. Asimismo, cumplimos con las leyes pertinentes, incluida la normativa europea RGPD, que le otorga los siguientes derechos:\n- Derecho de Acceso (obtener copia de los datos personales que poseemos)\n- Derecho de Rectificación o Supresión (actualizar o eliminar datos inexactos)\n- Derecho a la Limitación u Oposición (restringir u oponerse a ciertos tratamientos de datos)\n- Portabilidad de Datos (recibir sus datos personales en un formato legible por máquina y transferirlos a otro proveedor)\n- Derecho a Retirar el Consentimiento (revocar en cualquier momento el tratamiento basado en consentimiento, sin afectar a la legalidad del tratamiento previo)\n\nPara ejercer estos derechos, póngase en contacto con nosotros en la dirección mencionada en la Sección 9 a continuación.",
+        "de": "Wir bemühen uns, nicht-personenbezogene Daten (z. B. Absturzberichte) sicher zu schützen, können jedoch keine absolute Sicherheit bei der Übertragung oder Speicherung im Internet garantieren. Wir halten uns zudem an geltende Vorschriften einschließlich der EU-Datenschutz-Grundverordnung (DSGVO), die Ihnen folgende Rechte einräumt:\n- Auskunftsrecht (Erhalt einer Kopie der bei uns gespeicherten personenbezogenen Daten)\n- Recht auf Berichtigung oder Löschung (Korrektur oder Löschung unrichtiger Daten)\n- Recht auf Einschränkung oder Widerspruch (Einschränkung bestimmter Verarbeitungen oder Widerspruch gegen diese)\n- Datenübertragbarkeit (Erhalt der eigenen personenbezogenen Daten in einem maschinenlesbaren Format und Übertragung an einen anderen Anbieter)\n- Recht auf Widerruf der Einwilligung (jederzeitige Rücknahme einwilligungsbasierter Verarbeitung, ohne die Rechtmäßigkeit der bisherigen Verarbeitung zu beeinträchtigen)\n\nWenn Sie diese Rechte ausüben möchten, kontaktieren Sie uns bitte unter der in Abschnitt 9 genannten Adresse.",
+        "ar": "نسعى لحماية البيانات غير الشخصية (مثل تقارير الأعطال) بشكل آمن، ولكن لا يمكننا ضمان الأمان المطلق لأي بيانات يتم نقلها أو تخزينها عبر الإنترنت. كما نلتزم بالقوانين ذات الصلة، بما في ذلك اللائحة العامة لحماية البيانات (GDPR)، التي تمنحكم الحقوق التالية:\n- حق الوصول (الحصول على نسخة من بياناتكم الشخصية التي نحتفظ بها)\n- حق التصحيح أو الحذف (تحديث أو حذف المعلومات غير الدقيقة)\n- حق تقييد المعالجة أو الاعتراض عليها (الاعتراض على أغراض معينة من المعالجة أو طلب تقييدها)\n- قابلية نقل البيانات (الحصول على بياناتكم الشخصية بصيغة قابلة للقراءة آليًا ونقلها لمزود آخر)\n- حق سحب الموافقة (إلغاء المعالجة القائمة على الموافقة في أي وقت، دون المساس بشرعية المعالجة السابقة)\n\nلممارسة هذه الحقوق، يُرجى التواصل معنا عبر العنوان المذكور في القسم رقم 9 أدناه.",
+        "ru": "Мы прилагаем усилия для безопасного хранения неперсональных данных (например, отчётов об ошибках), однако не можем гарантировать абсолютную безопасность любой информации, передаваемой или хранящейся в сети Интернет. Мы также соблюдаем соответствующие законы, включая Общий регламент ЕС по защите данных (GDPR), предоставляющий вам следующие права:\n- Право на доступ (получение копии хранящихся у нас персональных данных)\n- Право на исправление или удаление (обновление или удаление неточных данных)\n- Право на ограничение или возражение (ограничение определённых способов обработки или возражение против них)\n- Право на переносимость данных (получение ваших персональных данных в машиночитаемом формате и передача их другому провайдеру)\n- Право на отзыв согласия (в любой момент отозвать согласие на обработку данных, без влияния на законность обработки до отзыва)\n\nЧтобы воспользоваться этими правами, свяжитесь с нами по адресу, указанному в разделе 9.",
+        "ko": "당사는 오류 보고서 등 비개인정보를 안전하게 관리하기 위해 노력하지만, 인터넷을 통한 전송 및 저장에 대해 절대적인 안전을 보장할 수는 없습니다.\n\n또한 EU 일반개인정보보호법(GDPR)을 포함한 관련 법령을 준수하며, 사용자에게는 다음과 같은 권리가 있습니다.\n- 열람권(당사가 보유 중인 개인정보 사본을 받을 권리)\n- 정정·삭제 요구(부정확한 정보의 수정 또는 삭제)\n- 처리 제한 및 반대(특정 목적의 데이터 처리에 대해 이의를 제기하거나 제한을 요구)\n- 데이터 이식성(개인정보를 기계가 읽을 수 있는 형식으로 받아 다른 서비스로 이동할 권리)\n- 동의 철회(언제든지 동의 기반 처리 철회 가능. 단, 철회 전 처리의 적법성은 영향받지 않음)\n\n이러한 권리를 행사하시려면 아래 9번 항목에 기재된 연락처로 문의해주시기 바랍니다."
+      },
+      "section_6_title": {
+        "ja": "6. 未成年者のプライバシー",
+        "en": "6. Children’s Privacy",
+        "zh": "6. 儿童隐私",
+        "fr": "6. Protection des Mineurs",
+        "es": "6. Privacidad de Menores",
+        "de": "6. Kinderdatenschutz",
+        "ar": "6. خصوصية الأطفال",
+        "ru": "6. Конфиденциальность детей",
+        "ko": "6. 미성년자의 개인정보 보호"
+      },
+      "section_6_body": {
+        "ja": "本アプリは、16歳未満（または地域の定める成年年齢に満たない方）から故意に個人情報を収集することはありません。一般向けのコンテンツですが、必要に応じて保護者の方の監督のもとご利用ください。",
+        "en": "We do not knowingly collect personal information from children under 16 (or the relevant age of majority). The app is intended for general audiences, but minors should use it under parental guidance if needed.",
+        "zh": "我们不会主动向16岁以下的儿童（或当地法律规定的法定年龄未达者）收集个人信息。应用面向一般用户，但未成年人应在监护人指导下使用。",
+        "fr": "Nous ne collectons pas sciemment d’informations personnelles concernant les mineurs de moins de 16 ans (ou en dessous de la majorité légale). L’App est destinée au grand public ; l’utilisation par des mineurs doit se faire sous la surveillance d’un adulte si nécessaire.",
+        "es": "No recopilamos intencionadamente datos personales de menores de 16 años (o de la edad legal de mayoría). La aplicación está dirigida a un público general; los menores deben usarla bajo supervisión de un adulto si fuera preciso.",
+        "de": "Wir erheben nicht wissentlich personenbezogene Daten von Kindern unter 16 Jahren (oder dem gesetzlichen Mindestalter). Die App richtet sich an ein allgemeines Publikum, doch Minderjährige sollten sie ggf. unter Aufsicht Erwachsener nutzen.",
+        "ar": "لا نجمع عن قصد أي معلومات شخصية للأطفال دون سن 16 (أو ما يعادل السن القانوني في مناطقكم). التطبيق موجه للجمهور العام، ويجب على القُصّر استخدامه تحت إشراف الوالدين عند الضرورة.",
+        "ru": "Мы намеренно не собираем персональные данные у детей младше 16 лет (или соответствующего возраста совершеннолетия в вашей юрисдикции). Приложение ориентировано на широкую аудиторию, однако несовершеннолетние должны пользоваться им под наблюдением взрослых, если необходимо.",
+        "ko": "본 앱은 만 16세 미만(또는 지역별 성년 기준 미만)의 아동으로부터 고의적으로 개인정보를 수집하지 않습니다. 앱은 일반 이용자를 대상으로 하나, 필요한 경우 보호자의 감독 하에 사용하시기 바랍니다."
+      },
+      "section_7_title": {
+        "ja": "7. 健康に関する免責事項",
+        "en": "7. Health Disclaimer",
+        "zh": "7. 健康免责声明",
+        "fr": "7. Avertissement sur la Santé",
+        "es": "7. Aviso sobre la Salud",
+        "de": "7. Haftungsausschluss (Gesundheit)",
+        "ar": "7. إخلاء المسؤولية الصحية",
+        "ru": "7. Медицинский отказ от ответственности",
+        "ko": "7. 건강 관련 고지"
+      },
+      "section_7_body": {
+        "ja": "本アプリでは、自然から100%録音されたブラウンノイズを提供し、騒音をマスクする効果が期待されますが、医療機器ではありません。医師の診断や治療に代わるものではありません。\n人工的に生成された音を長時間聴くことによる影響は完全には分かっていません。当アプリの音源は自然録音ですが、健康面でご不安がある方は専門家にご相談ください。",
+        "en": "The app provides 100% naturally recorded brown noise to help mask unwanted sounds, but it is not a medical device and does not replace professional medical advice or treatment. The long-term effects of listening to artificially generated sounds are not fully understood. Our audio is naturally recorded, but if you have health concerns, please consult a professional.",
+        "zh": "本应用提供100%自然录制的棕噪声来帮助遮蔽不必要的声音，但它并非医疗设备，不能代替专业医疗建议或治疗。长时间聆听人工生成声音的长期影响尚不明确。我们的音源是自然录制的，如有健康方面疑虑，建议咨询专业人士。",
+        "fr": "L’App propose du bruit brun 100 % naturel pour aider à masquer les bruits gênants, mais ce n’est pas un dispositif médical et cela ne se substitue pas à un avis ou à un traitement médical professionnel. Les effets à long terme de l’écoute prolongée de sons artificiels ne sont pas entièrement connus. Nos enregistrements sont naturels, mais si vous avez des doutes concernant votre santé, veuillez consulter un spécialiste.",
+        "es": "La aplicación ofrece ruido marrón grabado al 100% de la naturaleza para ayudar a enmascarar ruidos no deseados, pero no es un dispositivo médico ni sustituye el consejo o el tratamiento médico profesional. Los efectos a largo plazo de escuchar sonidos artificiales no se conocen completamente. Nuestro audio es grabado en la naturaleza, pero si tiene dudas de salud, consulte con un profesional.",
+        "de": "Die App stellt 100% natürlich aufgenommenes Brown Noise bereit, um störende Geräusche zu maskieren, ist jedoch kein medizinisches Gerät und ersetzt keine medizinische Beratung oder Behandlung. Die langfristigen Auswirkungen von künstlich erzeugten Klängen sind nicht vollständig erforscht. Da unsere Aufnahmen natürlichen Ursprungs sind, wenden Sie sich bei gesundheitlichen Bedenken bitte an einen Facharzt.",
+        "ar": "يوفر التطبيق ضوضاء بنية مسجلة 100% من الطبيعة للمساعدة في حجب الأصوات غير المرغوب فيها، لكنه ليس جهازًا طبيًا ولا يحل محل الاستشارة الطبية الاحترافية أو العلاج. لا تزال التأثيرات طويلة المدى للاستماع الطويل للأصوات الاصطناعية غير مفهومة تمامًا. وبما أن التسجيلات لدينا طبيعية، يرجى استشارة مختص إذا كانت لديكم أي مخاوف صحية.",
+        "ru": "Приложение предлагает «коричневый шум», на 100% записанный из природных источников, чтобы маскировать нежелательные звуки, но оно не является медицинским прибором и не заменяет профессиональные медицинские рекомендации или лечение. Долгосрочное влияние прослушивания искусственно генерируемых звуков полностью не изучено. Наши записи сделаны из натуральных источников, однако при наличии вопросов о здоровье обращайтесь к специалистам.",
+        "ko": "본 앱은 100% 자연에서 녹음된 브라운 노이즈를 제공하여 주변 소음을 차단하도록 돕지만, 의료 기기가 아니며 전문적인 의학적 조언이나 치료를 대체하지는 않습니다. 인공적으로 생성된 소리를 장시간 청취했을 때의 장기적 영향은 완전히 밝혀지지 않았습니다. 본 앱의 음원은 자연 녹음이지만, 건강상의 우려가 있는 경우 전문가와 상담하시기 바랍니다."
+      },
+      "section_8_title": {
+        "ja": "8. プライバシーポリシーの変更",
+        "en": "8. Changes to This Privacy Policy",
+        "zh": "8. 隐私政策的变更",
+        "fr": "8. Modifications de la Politique de Confidentialité",
+        "es": "8. Cambios en esta Política de Privacidad",
+        "de": "8. Änderungen dieser Datenschutzerklärung",
+        "ar": "8. تعديلات على سياسة الخصوصية",
+        "ru": "8. Изменения в Политике конфиденциальности",
+        "ko": "8. 개인정보 처리방침 변경"
+      },
+      "section_8_body": {
+        "ja": "当社は、本ポリシーを必要に応じて改訂する場合があります。改訂後に本アプリをご利用いただくことで、変更後のポリシーに同意いただいたものとみなします。",
+        "en": "We may update this policy as needed. By continuing to use the app after we post any changes, you accept the updated policy.",
+        "zh": "我们可能会根据需要更新本政策。若您在政策更新后继续使用本应用，即视为您同意新的条款。",
+        "fr": "Nous pouvons modifier cette politique de confidentialité si nécessaire. En continuant à utiliser l’App après la publication de modifications, vous acceptez la politique ainsi mise à jour.",
+        "es": "Podemos modificar esta política de privacidad cuando sea necesario. Al seguir usando la aplicación después de que se publiquen los cambios, usted acepta la política actualizada.",
+        "de": "Wir können diese Datenschutzerklärung bei Bedarf aktualisieren. Wenn Sie die App nach Veröffentlichung von Änderungen weiterhin nutzen, stimmen Sie der überarbeiteten Richtlinie zu.",
+        "ar": "قد نقوم بتحديث هذه السياسة عند الضرورة. باستمراركم في استخدام التطبيق بعد نشر أي تحديثات، فإنكم تقرون بالموافقة على السياسة المعدّلة.",
+        "ru": "Мы можем периодически обновлять данную политику. Продолжая пользоваться приложением после публикации изменений, вы соглашаетесь с обновлённой политикой.",
+        "ko": "필요에 따라 본 정책을 변경할 수 있습니다. 변경 사항이 게시된 후에도 앱을 계속 사용하면, 수정된 정책에 동의하는 것으로 간주됩니다."
+      },
+      "section_9_title": {
+        "ja": "9. お問い合わせ先",
+        "en": "9. Contact Us",
+        "zh": "9. 联系方式",
+        "fr": "9. Contact",
+        "es": "9. Contacto",
+        "de": "9. Kontakt",
+        "ar": "9. كيفية التواصل معنا",
+        "ru": "9. Контакты",
+        "ko": "9. 문의처"
+      },
+      "section_9_body": {
+        "ja": "本プライバシーポリシーや本アプリに関するご質問・ご不明点は、以下のメールアドレスまでお問い合わせください。\nsupport@nntmapp.com",
+        "en": "If you have any questions or concerns about this Privacy Policy or the app, please contact us at:\nsupport@nntmapp.com",
+        "zh": "如对本隐私政策或本应用有任何疑问，请通过以下邮箱联系我们：\nsupport@nntmapp.com",
+        "fr": "Pour toute question ou préoccupation concernant cette Politique de Confidentialité ou l’App, veuillez nous contacter à l’adresse e-mail suivante :\nsupport@nntmapp.com",
+        "es": "Si tiene dudas o preguntas sobre esta Política de Privacidad o la aplicación, contáctenos en:\nsupport@nntmapp.com",
+        "de": "Bei Fragen oder Bedenken zu dieser Datenschutzerklärung oder zur App kontaktieren Sie uns bitte unter:\nsupport@nntmapp.com",
+        "ar": "لأي استفسارات أو تساؤلات حول سياسة الخصوصية هذه أو حول التطبيق، يرجى التواصل معنا عبر:\nsupport@nntmapp.com",
+        "ru": "Если у вас есть вопросы или замечания по поводу данной Политики конфиденциальности или приложения, свяжитесь с нами по адресу:\nsupport@nntmapp.com",
+        "ko": "본 개인정보 처리방침이나 앱에 대해 궁금한 점이 있으시면 아래 이메일로 문의해주시기 바랍니다.\nsupport@nntmapp.com"
+      }
+    }
+  }
+  

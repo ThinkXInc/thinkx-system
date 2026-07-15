@@ -1,0 +1,26 @@
+{
+  "name": "transformism",
+  "version": "1.0.0",
+  "scripts": {
+    "compile:views:js": "npx babel src/js --out-dir js --watch",
+    "compile:views:css": "less-watch-compiler './src/less' './css' main.less",
+    "watch": "npm-run-all --parallel compile:views:js compile:views:css"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.14.3",
+    "@babel/core": "^7.14.3",
+    "@babel/preset-env": "^7.14.4",
+    "babel-loader": "^9.1.3",
+    "cpx": "^1.5.0",
+    "js-cookie": "^3.0.5",
+    "less": "^4.1.1",
+    "less-watch-compiler": "^1.15.2",
+    "npm-run-all": "^4.1.5",
+    "webpack": "^5.91.0"
+  },
+  "dependencies": {
+    "onchange": "^7.1.0",
+    "sticky-js": "^1.3.0",
+    "watch": "^0.13.0"
+  }
+}

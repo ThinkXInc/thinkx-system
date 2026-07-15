@@ -1,0 +1,100 @@
+{% extends "general/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="blog-news-article main-container">
+ 
+  {% include 'common/header.html' %}
+  <div class="main-content">
+  <article class="article" data-news-id="2020-04-14">
+    <div class="container">
+      <span class="back"><a href="/{{ lang }}/blognews?page={{ page }}"page={{ page }}">
+          << </a></span>
+      <p class="date news-date">2020 Apr 14</p>
+      <h2 class="title">CEO Otsuka Delivers Online Lecture on "Privacy-Protecting AI and COVID-19: Advancing Towards Rapid Containment"</h2>
+      <div class="news-image-container">
+        <figure class="news-image news-id-2020-04-14">
+          <img class="news-id-2020-04-14" src="/img/dscv1top.jpeg" srcset="/img/dscv1top@2x.jpeg 2x" />
+        </figure>
+      </div>
+      <div class="main-text">
+
+        In response to the escalating COVID-19 situation, CEO Otsuka presented an online lecture discussing the potential of CipherNet technology (privacy-protecting AI) to address present societal challenges.
+        <br>
+        The session, attended by 13 participants ranging from think tanks and venture capitalists to corporate executives and government officials, served as a platform to deliberate on the implications of such advanced technology.
+        <br>
+        <br>
+        As part of ThinkX's continuous commitment to exploiting cutting-edge technology for societal improvement, we're persistently pushing boundaries with research and development, as exemplified by projects such as CITYWALK.
+        <br>
+        <br>
+
+        ------------------------------------------------------------------------
+        <br>
+        ■"Deep Society Club vol. 1"
+        <br>
+        <br>
+        Even after a state of emergency has been declared due to COVID-19, numerous operations within organizations remain incompatible with remote work.
+        <br>
+        However, if we could transition a million jobs to remote work, it would decrease physical interaction, thereby reducing the spread of the virus.
+        <br>
+        <br>
+        Such a transition could be facilitated by employing cutting-edge cryptographic technology, which allows work to proceed even when job-related information is accessed from home.
+        <br>
+        During this session, we covered the basics of privacy-protecting AI, weighing its merits and demerits, and discussing its potential social applications.
+        <br>
+        <br>
+        ■ About the "Deep Society Club"<br>
+        The "Deep Society Club" is an online lecture series that fosters discussion on technological solutions to social problems.
+        <br>
+        <br>
+        ■ Presenter
+        <br>
+        Kazuteru Otsuka, Representative and Researcher, ThinkX,Inc.<br>
+        https://thinkxinc.com/<br>
+        <br>
+        <br>
+        ■ Table of Contents<br>
+        The Essence of Secret Computation<br>
+        Cryptographic Computation Possibilities<br>
+        Advantages and Challenges<br>
+        Current Technology Trends<br>
+        Identifying Its Usefulness<br>
+        Strategies to Boost Remote Workforce and Curb Infection Spread
+        <br>
+        <br>
+        ■ Timeline
+        <br>
+        Part I What is Secret Computation - Computing Privacy Data in Encrypted Form (20 minutes)<br>
+        Part II Strategies to Boost Remote Workforce and Curb Infection Spread (discussion, 30 minutes)<br>
+        ------------------------------------------------------------------------<br>
+        <br>
+
+        <a class="download-link"
+          href="https://www.slideshare.net/KazukiOtsuka/deep-society-club-vol1-ai-231929995/KazukiOtsuka/deep-society-club-vol1-ai-231929995"
+          target="_blank" download>Lecture slides are available.</a>
+        <br>
+        <br>
+        <br>
+        For further information regarding privacy-protecting AI (secret computation), kindly reach us at .<br>
+        <span class="contact-mail">sales@thinkxinc.com</span><br>
+        <br>
+      </div>
+      <div class="back-container cf">
+        <span class="back">
+          <a href="/{{ lang }}/blognews?page={{ page }}"page={{ page }}">Back to list</a>
+        </span>
+      </div>
+    </div>
+  </article>
+</div>
+{% include 'common/footer.html' %}
+</div>
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

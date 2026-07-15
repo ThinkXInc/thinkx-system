@@ -1,0 +1,4 @@
+{
+  "/": 200,
+  "/static/<path:filename>": 404
+}

@@ -1,0 +1,78 @@
+/* ------------------------------------------------------------------
+   about.less – Truetech Japan
+------------------------------------------------------------------- */
+
+@tablet-width:      768px;
+@smartphone-width:  480px;
+
+div#truetech-about, div#truetech-philosophy {
+    /* Full‑height visual with site‑wide background image */
+    min-height: 100vh;
+    background: url('/img/truetechjapan/top/topbg.svg') center top / cover
+                no-repeat;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    /* ----------------------------------------------------
+       Main textual block
+       ---------------------------------------------------- */
+    div.about-page.main-content {
+        width: 100%;
+        max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 120px 0 200px;      /* large vertical rhythm */
+
+        /* -------- Title -------- */
+        h2.title {
+            font-family: sans-serif;
+            font-size: 24px;
+            font-weight: 100;
+            margin: 0 0 40px;
+            text-align: center;
+            color: #757575;
+            line-height: 1.15;
+        }
+
+        /* -------- Main text -------- */
+        article.main-text {
+            font-family: "Lucida Grande", "Lucida Sans Unicode",
+                         "Lucida Sans", Geneva, Arial, sans-serif;
+            font-size: 21px;
+            line-height: 2.0;
+            letter-spacing: -0.003em;
+            font-weight: 400;
+            text-align: left;
+            max-width: 800px;
+            white-space: pre-wrap;     /* keep paragraph breaks */
+            color: #333;
+        }
+    }
+}
+
+/* ---------------------- Responsive tweaks ---------------------- */
+@media (max-width: @tablet-width) {
+    div#truetech-about, div#truetech-philosophy {
+        div.about-page.main-content {
+            padding: 100px 24px 160px;
+
+            h2.title   { font-size: 44px; }
+            article.main-text { font-size: 19px; }
+        }
+    }
+}
+
+@media (max-width: @smartphone-width) {
+    div#truetech-about, div#truetech-philosophy {
+        div.about-page.main-content {
+            padding: 90px 40px 140px 40px;
+
+            h2.title   {
+                font-size: 25px;
+            }
+            article.main-text { font-size: 16px; }
+        }
+    }
+}

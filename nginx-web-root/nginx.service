@@ -1,0 +1,16 @@
+[Unit]
+Description=Nginx HTTP Server (nginx-web-root)
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=/usr/sbin/nginx -p /src/nginx-web-root -c /src/nginx-web-root/nginx.conf
+ExecReload=/usr/sbin/nginx -p /src/nginx-web-root -c /src/nginx-web-root/nginx.conf -s reload
+ExecStop=/usr/sbin/nginx -p /src/nginx-web-root -c /src/nginx-web-root/nginx.conf -s quit
+User=root
+Restart=always
+RestartSec=5
+TimeoutStartSec=300
+
+[Install]
+WantedBy=multi-user.target

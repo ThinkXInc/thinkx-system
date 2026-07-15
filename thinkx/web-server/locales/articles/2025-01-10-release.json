@@ -1,0 +1,66 @@
+{
+  "metadata_blog_2025-01-10-hr": {
+    "ja": {
+      "title": "「プログラマブルリアルタイムマルチステージジョブエージェントスタジオ」の提供を開始",
+      "description": "「プログラマブルリアルタイムマルチステージジョブエージェントスタジオ」の提供を開始",
+      "keywords": "ThinkX, プログラマブルリアルタイムマルチステージジョブエージェントスタジオ"
+    },
+    "en": {
+      "title": "Launch of the 'Programmable Real-Time Multi-Stage Job Agent Studio'",
+      "description": "Launch of the 'Programmable Real-Time Multi-Stage Job Agent Studio'",
+      "keywords": "ThinkX, Programmable Real-Time Multi-Stage Job Agent Studio"
+    },
+    "zh": {
+      "title": "推出“可编程实时多阶段作业代理工作室”",
+      "description": "推出“可编程实时多阶段作业代理工作室”",
+      "keywords": "ThinkX, 可编程实时多阶段作业代理工作室"
+    },
+    "es": {
+      "title": "Lanzamiento del 'Estudio de Agentes de Trabajo de Múltiples Etapas en Tiempo Real Programable'",
+      "description": "Lanzamiento del 'Estudio de Agentes de Trabajo de Múltiples Etapas en Tiempo Real Programable'",
+      "keywords": "ThinkX, Estudio de Agentes de Trabajo de Múltiples Etapas en Tiempo Real Programable"
+    },
+    "ru": {
+      "title": "Запуск «Программируемой в реальном времени многоэтапной студии агентных заданий»",
+      "description": "Запуск «Программируемой в реальном времени многоэтапной студии агентных заданий»",
+      "keywords": "ThinkX, Программируемая в реальном времени многоэтапная студия агентных заданий"
+    },
+    "fr": {
+      "title": "Lancement du « Studio d’agents d’emplois multi-étapes en temps réel programmable »",
+      "description": "Lancement du « Studio d’agents d’emplois multi-étapes en temps réel programmable »",
+      "keywords": "ThinkX, Studio d’agents d’emplois multi-étapes en temps réel programmable"
+    },
+    "ar": {
+      "title": "إطلاق «استوديو الوكيل الوظيفي متعدد المراحل والقابل للبرمجة في الوقت الفعلي»",
+      "description": "إطلاق «استوديو الوكيل الوظيفي متعدد المراحل والقابل للبرمجة في الوقت الفعلي»",
+      "keywords": "ThinkX, استوديو الوكيل الوظيفي متعدد المراحل والقابل للبرمجة في الوقت الفعلي"
+    }
+  },
+  "article_title": {
+    "ja": "「プログラマブルリアルタイムマルチステージジョブエージェントスタジオ」の提供を開始",
+    "en": "Launch of the 'Programmable Real-Time Multi-Stage Job Agent Studio'",
+    "zh": "推出“可编程实时多阶段作业代理工作室”",
+    "es": "Lanzamiento del 'Estudio de Agentes de Trabajo de Múltiples Etapas en Tiempo Real Programable'",
+    "ru": "Запуск «Программируемой в реальном времени многоэтапной студии агентных заданий»",
+    "fr": "Lancement du « Studio d’agents d’emplois multi-étapes en temps réel programmable »",
+    "ar": "إطلاق «استوديو الوكيل الوظيفي متعدد المراحل والقابل للبرمجة في الوقت الفعلي»"
+  },
+  "article_date": {
+    "ja": "2025年1月10日",
+    "en": "January 10, 2025",
+    "zh": "2025年1月10日",
+    "es": "10 de enero de 2025",
+    "ru": "10 января 2025 г.",
+    "fr": "10 janvier 2025",
+    "ar": "10 يناير 2025"
+  },
+  "article_main": {
+    "ja": "ThinkX（東京都港区、代表取締役 大塚一輝）は、Quantz ® Interviewのカスタムエージェント構築性能を拡張し、グラフィカルなリアルタイムエージェントプログラミングを実現する「プログラマブルマルチステージジョブエージェントシステム」の提供を開始。\n\n・97万行を超える独自の基盤システム\n・Quantz ® の特徴、リアルタイム性能、効率的な同時ユーザー処理性能、完全なプライバシー、をもつエージェントプログラミング環境。",
+    "en": "ThinkX (Minato-ku, Tokyo; CEO: Kazuki Otsuka) has extended the custom agent building capabilities of Quantz® Interview and launched a 'Programmable Multi-Stage Job Agent System' that enables graphical, real-time agent programming.\n\n• A proprietary base system with over 970,000 lines of code\n• An agent programming environment leveraging the features of Quantz®: real-time performance, efficient simultaneous user processing, and complete privacy.",
+    "zh": "ThinkX（位于东京都港区，代表董事：大塚一辉）扩展了Quantz® Interview的自定义代理构建功能，推出了可实现图形化实时代理编程的“可编程多阶段作业代理系统”。\n\n・超过97万行代码的独家基础系统\n・利用Quantz®特性（实时性能、高效的并发用户处理能力以及完全的隐私）的代理编程环境。",
+    "es": "ThinkX (Minato-ku, Tokio; Director General: Kazuki Otsuka) ha ampliado las capacidades de construcción de agentes personalizados de Quantz® Interview y ha lanzado el «Sistema de Agentes de Trabajo Multietapa Programable», que permite la programación gráfica de agentes en tiempo real.\n\n• Un sistema de base propio con más de 970.000 líneas de código\n• Un entorno de programación de agentes que aprovecha las características de Quantz®: rendimiento en tiempo real, gestión eficiente de usuarios simultáneos y privacidad total.",
+    "ru": "Компания ThinkX (Токио, район Минато, генеральный директор: Кадзуки Оцука) расширила возможности по созданию пользовательских агентов в Quantz® Interview и запустила «Программируемую многоэтапную систему агентных заданий» с возможностью графического программирования агентов в реальном времени.\n\n• Собственная базовая система, состоящая из более чем 970 000 строк кода\n• Среда программирования агентов, основанная на возможностях Quantz®: высокопроизводительная обработка в реальном времени, эффективная поддержка одновременного доступа пользователей и полная конфиденциальность.",
+    "fr": "ThinkX (Minato-ku, Tokyo, PDG : Kazuki Otsuka) a étendu les capacités de création d’agents personnalisés de Quantz® Interview et a lancé le « Système d’agents d’emplois multi-étapes programmable », qui permet une programmation graphique d’agents en temps réel.\n\n• Un système de base propriétaire dépassant 970 000 lignes de code\n• Un environnement de programmation d’agents qui exploite les caractéristiques de Quantz® : performances en temps réel, gestion efficace des utilisateurs simultanés et confidentialité totale.",
+    "ar": "أعلنت شركة ThinkX (منطقة ميناتو في طوكيو، الرئيس التنفيذي: كازوكي أوتسوكا) عن توسيع قدرات بناء الوكلاء المخصصين في Quantz® Interview وإطلاق «النظام البرمجي لوكلاء الوظائف متعدد المراحل والقابل للبرمجة في الوقت الفعلي»، والذي يتيح برمجة رسومية لوكلاء في الوقت الفعلي.\n\n• نظام أساسي مملوك للشركة يضم أكثر من 970 ألف سطر من التعليمات البرمجية\n• بيئة لبرمجة الوكلاء تستفيد من ميزات Quantz®: الأداء في الوقت الفعلي، والكفاءة في إدارة المستخدمين المتزامنين، والخصوصية الكاملة."
+  }
+}

@@ -1,0 +1,35 @@
+{% extends "common.html" %}
+
+{% block page %}
+<section id=content>
+</section>
+
+<script src=/js/view_controllers/inquiry_view_controller.js></script>
+<script>
+{
+    const lang = "{{ lang }}"
+    const lang_name = "{{ lang_name }}"
+    userPreferences.language = lang;
+
+    // locale text data
+    const localeDict = {{ locale_json | safe }};
+    if (!localeDict) {
+        console.error('locale_json not received.');
+    }
+
+    const inquiryLocale = new Locale(localeDict);
+    console.log(inquiryLocale);
+
+    // country data (names, numerics, dials, codes) 
+    const countries = new Country().countriesFormData(lang);
+    console.log(countries);
+
+    const parentDOMID = 'content'
+    const inquiryViewId = 'inquiryView'
+    const url = `/${lang}/inquiry`
+
+    let inquiryViewController = new InquiryViewController(
+        parentDOMID, inquiryViewId, inquiryLocale, lang, url)
+}
+</script>
+{% endblock %}

@@ -1,0 +1,15 @@
+.DS_Store
+*.sw[a-z]
+*.pyc
+Session.vim
+!.gitkeep
+.idea
+venv*
+.envrc
+.env
+*.pickle
+*.rdb
+.python-version
+.ipynb_checkpoints
+
+cache

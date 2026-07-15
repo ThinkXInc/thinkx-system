@@ -1,0 +1,7 @@
+# Configurations for screen
+hardstatus alwayslastline I%wI
+vbell off
+zombie "^d^r"
+
+# Create the first window for Nginx Log
+screen -t "Nginx Log" 0 journalctl --output=cat -u nginx.service -f
