@@ -32,8 +32,8 @@ sudo ln -sfn /src/thinkx-system/loadbalancer /src/loadbalancer
 # libcommon / simplicity 原本の並置(B案・ARCHIVE.md の参照 SHA が正)
 # *鍵が配置されていない箱(lb)では WARN してスキップ
 
-[ -f /home/kaz/.ssh/deploy_libcommon ] && { cd /src; sudo -u kaz git clone git@github-libcommon:ThinkXInc/libcommon.git; cd /src/libcommon; sudo -u kaz git checkout a316494ff850094b767da041f429092735fd2877; } || printf '\033[33mWARN: deploy_libcommon 無し。libcommon 原本の並置をスキップ\033[0m\n'
-[ -f /home/kaz/.ssh/deploy_simplicity ] && { cd /src; sudo -u kaz git clone git@github-simplicity:ThinkXInc/simplicity.git; cd /src/simplicity; sudo -u kaz git checkout 53f0639449a937fe79935175a867689ee4b40a87; } || printf '\033[33mWARN: deploy_simplicity 無し。simplicity 原本の並置をスキップ\033[0m\n'
+sudo -u kaz test -f /home/kaz/.ssh/deploy_libcommon && { cd /src; sudo -u kaz git clone git@github-libcommon:ThinkXInc/libcommon.git; cd /src/libcommon; sudo -u kaz git checkout a316494ff850094b767da041f429092735fd2877; } || printf '\033[33mWARN: deploy_libcommon 無し。libcommon 原本の並置をスキップ\033[0m\n'
+sudo -u kaz test -f /home/kaz/.ssh/deploy_simplicity && { cd /src; sudo -u kaz git clone git@github-simplicity:ThinkXInc/simplicity.git; cd /src/simplicity; sudo -u kaz git checkout 53f0639449a937fe79935175a867689ee4b40a87; } || printf '\033[33mWARN: deploy_simplicity 無し。simplicity 原本の並置をスキップ\033[0m\n'
 
 # verify
 
