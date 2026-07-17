@@ -3,7 +3,7 @@
 # EC2 2台(web/lb)をゼロから建てて全サイト配信・受け入れ試験 green まで。
 #
 
-## prerequisites(必須。新しいターミナルではまずこれ)
+## prerequisites
 
 ```
 cd ~/Sources/thinkx-system
@@ -19,7 +19,7 @@ cd ~/Sources/thinkx-system
 terraform -chdir=infra/terraform apply -var="env=$ENVX"
 ```
 
-## 2. ssh alias を新 IP に(1分。HostName を出力の public IP へ)
+## 2. ssh alias を新 IP に(1分)
 
 ```
 cd ~/Sources/thinkx-system
@@ -31,7 +31,7 @@ cd ~/Sources/thinkx-system
 vim ~/.ssh/config
 ```
 
-## 3. deploy key(初回のみ。表示に従い GitHub 登録)
+## 3. deploy key(初回のみ)
 
 ```
 cd ~/Sources/thinkx-system
@@ -94,7 +94,7 @@ bash infra/etc/push_env.sh $LB loadbalancer
 ssh $LB 'bash -s' < infra/setup/setup_loadbalancer.sh
 ```
 
-## 10. 受け入れ試験(1〜2分。`ACCEPTANCE: 全サイト green` で完成)
+## 10. 受け入れ試験(1〜2分)
 
 ```
 cd ~/Sources/thinkx-system
