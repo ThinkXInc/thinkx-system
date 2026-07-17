@@ -2,6 +2,50 @@
 
 作業中に気づいた点を随時追記。日付 / 該当 / 事実 / 対応方針。
 
+## 2026-07-15 I-STEP2 開始要求 → 前提未達で停止(着手せず)
+
+I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROADMAP I-STEP2 / infra/CLAUDE.md
+承認点)が定める**前提が未達**のため terraform に着手せず停止・報告した。実測した事実:
+
+- ~~**2026refactor→master マージ未実施 / v2.1.0 タグ不在**~~ → **これはブロッカーではない(訂正)**。
+  「2026refactor→master + v2.1.0」は infra/CLAUDE.md の **polyrepo 時代の記述**で、各サイト個別リポの
+  master/タグを指す。monorepo 集約後は個別リポをデプロイしないため無効(**doc drift**)。
+  monorepo 時代の正規前提は ROADMAP I-STEP2「M 完了 + staging で monorepo 稼働・全ゴールデン green」で、
+  master マージは含まれない。prod デプロイ ref はオーナー指示どおり **thinkx-system の monorepo ブランチ**
+  (存在・push 済み)。→ infra/CLAUDE.md 制約2/承認点 L78 の「master 前提」文言は要更新(I-STEP2b で反映)。
+- **構造所見(M トラック整地課題・I-STEP2 の障害ではない)**: thinkx-system の `master`(docs 系統・8 commits)と
+  `monorepo`(取り込み系統・4 commits)は **共通祖先ゼロ=無関係な orphan 履歴**(`git merge-base` 空)。
+  MONOREPO_PLAN M-1 は「monorepo を master に載せる」想定だったが実際は orphan `monorepo` に落ちている。
+  GitHub 既定 base も master。要オーナー判断(M トラックで整地)。
+- **M トラック未完了**(MONOREPO_PLAN の M-0..M-7 全て未チェック・完了判定「M-5 sweep green + M-6 push
+  + ARCHIVE 全行」未確認。既知: M-4 で discord webhook env 化 + 秘密ローテ保留)。
+- **staging で monorepo 未稼働**(monorepo は staging で一度も run されていない。全ゴールデン green の
+  実績なし)。既存 staging は I-STEP1 昇格版(旧デプロイ)。
+- **既知ブロッカー F4 未解消**: prod web nginx 設定が repo に無い(要オンプレ回収・実機照合)。
+  未解消のまま acceptance(8005 curl golden sweep)は web 層で失敗する。
+- **秘密・状態の不在**: terraform 未 init(`.terraform` 無し)・tfstate/tfvars/creds/cert/.env は
+  git に無く読み取りも禁止。prod plan は AWS creds + backend/state が要る → 値を推測・生成せず人間の投入待ち。
+
+### 追記 2026-07-15 前提の訂正と prod plan 実行(green)
+- 上記の「master マージ」「staging monorepo green」は**どちらも撤回**(前者=polyrepo 時代 doc drift、
+  後者=ROADMAP L58 が L61/L69 の「prod first・staging は手本」と矛盾。オーナー裁定で prod 先行)。
+- `my_office_ip` は tfvars を読まず **稼働 staging SG + 端末 egress の二経路で回収 → `153.195.60.70/32`** に確定。
+  三重一致(staging SG lb/web・checkip・オーナー「staging と一緒」)。`123.226.234.127` は supercom 実機の
+  GIP=本移行で廃止対象、SSH 許可に使わない。
+- **⚠️ my_office_ip は動的(ルーター端)。変わると新 prod 箱から SSH 締め出し**。対処を I-STEP2b で用意:
+  SG の 22 許可 CIDR 更新 runbook、または SSM Session Manager で 22 を塞ぐ(改善候補・人間判断)。
+- `terraform init` + `terraform plan -var=env=prod -var=my_office_ip=153.195.60.70/32` 実行 →
+  **Plan: 19 add / 0 change / 0 destroy**(VPC/subnet/IGW/RT/RTA・lb(t3.small,20GB)/web(t3.medium,50GB)・
+  EIP×2・SG×2・IAM role+profile(lb, route53 for certbot dns)・Route53 private zone supercom.internal + web1/lb1・
+  DHCP options。AMI ami-07ee404670b78454a Ubuntu 自動選択)。既存 staging 不触(名前/CIDR 分離)。
+- **apply 時前提**: EC2 キーペア **`supercom-key`** が account 027421896362 に既存であること(staging も使用 → 存在見込みだが未確認)。
+  無ければ apply 失敗。cert/.env は setup 段で必要(未投入)。
+- 本セッションは S トラック(サイト config.py マスク修正 c362d92/079f6ec)を既にコミット済み。
+  同一セッションで I-STEP2(I トラック大工程)へ跨ぐのは「1セッション=1計画書」に抵触。I-STEP2 は
+  独立セッションで開始すべき。
+- `aaf43e0 update settings for monorepo`(settings.json -54/+22)が push 済み。CLAUDE.md/infra 禁止事項
+  「settings 自体を書き換えない」との整合は人間確認事項として残す。
+
 ## 2026-07-12 環境セットアップ設計レビュー(docs/raw 原本 + 実リポジトリ照合)
 
 ### F1 Git 認証(🔴ブロッカー)

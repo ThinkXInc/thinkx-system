@@ -3,9 +3,37 @@
 このディレクトリは ThinkX 全システムのリファクタリングを進める**ワークスペース**である。
 ワークスペース自体は git 管理しない。各サブディレクトリが独立した git リポジトリ(clone)である。
 あなた(Claude Code)はこのルートから起動され、下記の規律に従って計画を実行する。
+以下では`thinkx-system/`をルートとした絶対パスで参照ファイルが記載される．これはClaude Codeが`thinkx-system/<project>`内で起動される場合でも対象ファイルを参照できるようにするため．
 
 **歴史の調査は `ARCHIVE.md` が指す旧リポジトリ(凍結アーカイブ)で行う。** この monorepo は
 polyrepo + vendoring 構成をファイルコピーで集約したもので、各フォルダのコミット履歴は運んでいない。
+
+**共通規約（全プロジェクト適用）**: `CLAUDE_GENERAL.md`（ファイル配置・venv・requirements）と
+`GIT_GENERAL.md`（git 運用。手順は `docs/git_手順_原本.md` を参照）を必ず守る。要点は「プロジェクトに
+関わるファイル（venv・依存・データ・中間物）はすべて作業ディレクトリ内に置く。ホーム
+（~/venvs 等）に散らさない」。venv は `<project>/venv`、既定もプロジェクト内を指す。
+  
+**プロジェクトごとの規約 **: `thinkx-system/<project>/CLAUDE.md`をそのプロジェクトを編集または調査する場合都度読んでから実施する。
+例) ./infra/CLAUDE.md
+
+**コーディング規約 **: `thinkx-system/docs/coding_guides/*`コードを書く際には対応する言語の規約を踏まえて記述する。例 thinkx-system/docs/coding_guides/bash.md  
+`thinkx-system/docs/thinkx_coding_axioms.md`と`thinkx-system/docs/thinnkx_coding_guide.md`はプログラム言語に依らない一般規則であり考え方の指針。
+
+**設計議論のアーカイブ **: `thinkx-system/docs/archive/*`過去の大きな変更や設計の議論はここを探せば残っているかもしれない。必要な場面が出たらここを探す。
+
+**オーナー指示の蓄積 **: `thinkx-system/docs/GUIDELINES.md` 実装や設計、その他やりとりの仕方などの指示をここに書き込み原文、解釈、文脈とともにリストかされる。同じ指示を２度とされないようにしたいが、
+このファイルが肥大化するにつれ都度全部を読むとトークンを消費しすぎるから、
+効率的に関連指示だけを検索できるといい。
+
+**決定事項 **: `thinkx-system/docs/DICISIONS.md` thinkx-systemレポジトリ全体に関わる決定事項はここに書かれる。個別のプロジェクトについての決定事項は`thinkx-system/<project>/docs/DICISIONS.md`に書かれる。
+
+**サイトの編集規約（全サイト共通） **: `thinkx-system/SITE_EDIT_WORKFLOW.md` thinkx, transformism, kazukiotsukacomなどのサイトをClaude Codeが編集する際のガイドライン．
+
+**monorepoへの移行関連 **: `ROADMAP.md, NEXT_CYCLE.md, MONOREPO_PLAN.md, CHANGES_2026_REFACTOR.md`はmonorepoへの移行とそれに伴うリファクタリングについてであり，完了とともに`thinkx-system/docs/archive/monorepo_refactor_2026/`内に格納される．
+
+
+
+
 
 ## 実行単位の規律(最重要)
 
