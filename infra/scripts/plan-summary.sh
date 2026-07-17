@@ -25,18 +25,39 @@ plan_summary() {
 
   plan="$(mktemp)"
   json="$(mktemp)"
+  local err lockinfo
+  err="$(mktemp)"
+  lockinfo="$tfdir/.terraform.tfstate.lock.info"
 
-  # my_office_ip は既定値が無い必須変数。env MY_OFFICE_IP から渡す。
-  # 未設定なら -input=false により対話プロンプトで固まらず即エラーで返す(観測系はハングさせない)。
-  local ipvar=()
-  [ -n "${MY_OFFICE_IP:-}" ] && ipvar=(-var="my_office_ip=$MY_OFFICE_IP")
+  # 実行前: 別の terraform が state ロックを握っていれば、その持ち主を先に見せる
+  # (ローカル backend はロック中だけ .terraform.tfstate.lock.info を置く)。
+  if [ -f "$lockinfo" ]; then
+    echo "── state ロック中(別の terraform が実行中)───────────────────" >&2
+    python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); print("\n".join(f"  {k}: {d.get(k)}" for k in ("Who","Operation","ID","Created")))' "$lockinfo" 2>/dev/null \
+      || sed 's/^/  /' "$lockinfo" >&2
+    echo "  → その端末で Ctrl-C。残るなら: terraform -chdir=$tfdir force-unlock <上の ID>" >&2
+    echo "────────────────────────────────────────────────────────────" >&2
+  fi
 
-  if ! terraform -chdir="$tfdir" plan -input=false -var="env=$envx" "${ipvar[@]}" -out="$plan" >/dev/null 2>&1; then
-    echo "terraform plan に失敗。要因: AWS 認証 / 構成 / 必須変数 my_office_ip 未設定。" >&2
-    echo "  → MY_OFFICE_IP=<拠点IP>/32 を環境変数で渡す。例: MY_OFFICE_IP=153.195.60.70/32 $0 $envx" >&2
-    rm -f "$plan" "$json"
+  # -input=false: 未設定の必須変数(my_office_ip 等)で対話プロンプトに固まらせない。
+  # -lock-timeout=10s: ロック中でも無限待ちせず 10 秒で諦めて理由を出す(観測系はハングさせない)。
+  # 値は terraform.tfvars(自動読込・gitignore 済み)から取る想定。env だけ実行ごとに渡す。
+  if ! terraform -chdir="$tfdir" plan -input=false -lock-timeout=10s \
+        -var="env=$envx" -out="$plan" >/dev/null 2>"$err"; then
+    echo "── terraform plan 失敗。以下が理由 ───────────────────────────" >&2
+    if grep -qi "state lock" "$err"; then
+      echo "★ state ロックを別プロセスが保持(上/下の Who・Operation が持ち主)。Ctrl-C か force-unlock。" >&2
+    fi
+    if grep -qiE "my_office_ip|No value for required variable" "$err"; then
+      echo "★ 必須変数が未設定。terraform.tfvars 未作成の可能性:" >&2
+      echo "    cd $tfdir && cp terraform.tfvars.example terraform.tfvars  # IP を埋める" >&2
+    fi
+    echo "── terraform の生エラー ─────────────────────────────────────" >&2
+    sed 's/^/  /' "$err" >&2
+    rm -f "$plan" "$json" "$err"
     return 0
   fi
+  rm -f "$err"
   terraform -chdir="$tfdir" show -json "$plan" > "$json" 2>/dev/null || true
 
   diagram="$here/../runbooks/diagram.md"

@@ -283,3 +283,14 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
   2. 恒久: `infra/terraform/variables.tf` の default を `supercom` に修正(+ plan 再提示)。
 - AWS アカウントの確認も完了: **027421896362**(IAM user supercom)が唯一の実在アカウントで、
   staging・旧サイト EC2 群すべてがここに居る。prod も同アカウントに新設で正しい(別本番アカウントの形跡なし)。
+
+## 2026-07-17 plan-summary.sh: ハング原因の可視化 + my_office_ip の恒久解
+- 症状: `scripts/plan-summary.sh prod` が無言で返らない。二因: ①必須変数 my_office_ip に既定なし
+  → terraform plan が対話プロンプト(>/dev/null に飲まれ無言)で停止 ②その停止プロセスが state ロック保持。
+- 恒久解(設計どおり): **`infra/terraform/terraform.tfvars`(gitignore 済み)を作成**し my_office_ip/key_name を置く。
+  terraform が自動読込するので以後 `-var` 不要。実ファイル未作成だったのが原因。雛形 terraform.tfvars.example あり。
+  ※ tfvars は Claude 書込禁止 → オーナーが作成(paste-ready を提示)。
+- スクリプト修正: `-input=false`(プロンプトで固まらせない)+ `-lock-timeout=10s`(ロック中も無限待ちしない)+
+  実行前に .terraform.tfstate.lock.info を読んで Who/Operation/ID を表示 + 失敗時は terraform 生エラーと
+  検出理由(ロック/tfvars 未作成)を表示。無言ハングを排除。
+- 付随知見: ローカル backend は state ロックが1つ。apply の承認待ち中は plan-summary を同時実行できない(仕様)。
