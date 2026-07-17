@@ -133,8 +133,8 @@ sudo apt install -y iftop sysstat nload traceroute
 
 ## install certbot  (*証明書は LB 上で certbot --dns-route53 により取得する(D-22)。Route53 権限は terraform の IAM ロールで付与済みが前提)
 sudo apt update
-sudo apt install certbot
-sudo apt install python3-certbot-nginx
+sudo apt install -y certbot
+sudo apt install -y python3-certbot-nginx
 sudo apt-get install -y python3-certbot-dns-route53  # added for terraform automation
 
 ## 保管場所: thinkx-system/infra/certs/lb-certs.tgz(★秘密鍵を含むため infra/certs/ は .gitignore 必須・コミット禁止)
