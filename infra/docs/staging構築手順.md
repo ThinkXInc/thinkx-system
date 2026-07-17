@@ -12,13 +12,13 @@ WEB=supercom-web-s
 LB=supercom-lb-s
 ```
 
-## 1. terraform apply
+## 1. terraform apply(2〜3分)
 
 ```
 terraform -chdir=infra/terraform apply -var="env=$ENVX"
 ```
 
-## 2. ssh alias を新 IP に(HostName を出力の public IP へ)
+## 2. ssh alias を新 IP に(1分。HostName を出力の public IP へ)
 
 ```
 terraform -chdir=infra/terraform output
@@ -34,7 +34,7 @@ vim ~/.ssh/config
 bash infra/deploykeys/gen_deploy_key.sh thinkx-system libcommon simplicity
 ```
 
-## 4. secrets 配布
+## 4. secrets 配布(1分)
 
 ```
 tar czf /tmp/secrets.tgz -C infra certs deploykeys
@@ -49,7 +49,7 @@ ssh $WEB 'bash -s' < infra/setup/setup_user.sh
 ssh $WEB 'bash -s' < infra/setup/setup_webserver.sh
 ```
 
-## 6. web: 鍵検証 + monorepo
+## 6. web: 鍵検証 + monorepo(1〜2分)
 
 ```
 ssh $WEB 'tar xzf /tmp/secrets.tgz -C /tmp; python3 /tmp/check_deploykey.py thinkx-system'
@@ -58,14 +58,14 @@ ssh $WEB 'python3 /tmp/check_deploykey.py simplicity'
 ssh $WEB 'bash -s' < infra/setup/clone_monorepo.sh
 ```
 
-## 7. .env / assets 配布
+## 7. .env / assets 配布(1〜5分)
 
 ```
 bash infra/etc/push_env.sh $WEB thinkx kazukiotsukacom transformism
 bash infra/etc/push_assets.sh $WEB thinkx
 ```
 
-## 8. web: サイト + nginx
+## 8. web: サイト + nginx(10〜20分)
 
 ```
 ssh $WEB 'bash -s' < infra/setup/setup_thinkx.sh
@@ -84,7 +84,7 @@ bash infra/etc/push_env.sh $LB loadbalancer
 ssh $LB 'bash -s' < infra/setup/setup_loadbalancer.sh
 ```
 
-## 10. 受け入れ試験(`ACCEPTANCE: 全サイト green` で完成)
+## 10. 受け入れ試験(1〜2分。`ACCEPTANCE: 全サイト green` で完成)
 
 ```
 LB_IP=$(terraform -chdir=infra/terraform output -raw lb_public_ip)

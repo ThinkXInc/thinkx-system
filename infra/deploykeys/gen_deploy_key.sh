@@ -11,6 +11,7 @@
 
 gen_deploy_key() {
   local ws repo key ans
+  local G=$'\033[32m' Y=$'\033[33m' R=$'\033[31m' Z=$'\033[0m'
   ws="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")/../.." && pwd)"
   [ $# -ge 1 ] || { echo "usage: gen_deploy_key.sh <repo>...   例: gen_deploy_key.sh simplicity thinkx-system" >&2; return 1; }
 
@@ -19,11 +20,11 @@ gen_deploy_key() {
     if [ -f "$key" ]; then
       printf '%s は既にある。上書きする? [yes/N]: ' "deploy_$repo"
       read -r ans
-      [ "$ans" = "yes" ] || { echo "skip: $repo"; continue; }
+      [ "$ans" = "yes" ] || { printf '%b\n' "${Y}skip: $repo(既存を維持)${Z}"; continue; }
       rm -f "$key" "$key.pub"
     fi
-    ssh-keygen -t ed25519 -N '' -C "supercom:kaz:$repo" -f "$key" -q || return 1
-    echo "generated: infra/deploykeys/deploy_$repo"
+    ssh-keygen -t ed25519 -N '' -C "supercom:kaz:$repo" -f "$key" -q || { printf '%b\n' "${R}FAIL: $repo の鍵生成失敗${Z}"; return 1; }
+    printf '%b\n' "${G}OK: generated infra/deploykeys/deploy_$repo${Z}"
     echo "  登録: pbcopy < $key.pub"
     echo "  URL : https://github.com/ThinkXInc/$repo/settings/keys  (Allow write access は付けない)"
   done

@@ -35,7 +35,8 @@ sudo ln -sfn /src/thinkx-system/loadbalancer /src/loadbalancer
 sudo -u kaz test -f /home/kaz/.ssh/deploy_libcommon && { cd /src; sudo -u kaz git clone git@github-libcommon:ThinkXInc/libcommon.git; cd /src/libcommon; sudo -u kaz git checkout a316494ff850094b767da041f429092735fd2877; } || printf '\033[33mWARN: deploy_libcommon 無し。libcommon 原本の並置をスキップ\033[0m\n'
 sudo -u kaz test -f /home/kaz/.ssh/deploy_simplicity && { cd /src; sudo -u kaz git clone git@github-simplicity:ThinkXInc/simplicity.git; cd /src/simplicity; sudo -u kaz git checkout 53f0639449a937fe79935175a867689ee4b40a87; } || printf '\033[33mWARN: deploy_simplicity 無し。simplicity 原本の並置をスキップ\033[0m\n'
 
-# verify
+# verify  (末尾に色で成否: 緑=OK / 赤=FAIL)
 
 ls -l /src
 cd /src/thinkx-system && sudo -u kaz git log --oneline -1
+[ -d /src/thinkx-system/.git ] && [ -e /src/thinkx/web-server ] && [ -e /src/nginx-web-root/nginx.conf ] && printf '\033[32mOK: monorepo clone + symlink 完了\033[0m\n' || printf '\033[31mFAIL: monorepo clone か symlink が欠けている\033[0m\n'
