@@ -157,3 +157,28 @@ c687662 M-4 done: discord webhook はデモ判定で残置(オーナー裁定)�
 libcommon リファクタの QA 中に検出した2件(vector_database が特性テスト網の外 / DEFAULT_LANG の
 fallback 不整合)は `libcommon/DISCUSSION_2026REFACTOR.md` に記録済み。対応は libcommon Phase 3 の
 管轄で、M(コピー)では扱わない。
+
+## 2026-07-17 CLAUDE_GENERAL.md 整合性チェック(他プロジェクトからの移植)
+
+オーナーが CLAUDE_GENERAL.md を他プロジェクトから持ち込み、CLAUDE.md から参照を追加。
+本プロジェクトとの整合を全数照合した。修正は未実施(規約12: オーナー作成物はオーナー許可後)。
+
+### 不整合(要修正・オーナー判断待ち)
+1. **参照先の不在**: CLAUDE.md L10-11 が参照する `GIT_GENERAL.md` と `docs/git_手順_原本.md` が
+   repo に存在しない(持ち込み漏れ)。→ 元プロジェクトからコピーするか参照を削除。
+2. **冒頭パス不一致**: CLAUDE_GENERAL.md の1行目が `# thinkx-system/docs/CLAUDE_GENERAL.md` だが
+   実体はルート直下。自身の規約9に違反。→ 1行目修正 or docs/ へ移動(どちらに置くか要決定)。
+3. **「このプロジェクトでの適用状況」節が移植元(podcast)のまま**: 依存
+   「anthropic / requests / pyyaml / pillow」は元プロジェクトの内容。thinkx-system の実態は
+   規約1の例外形 = 1コンポーネント1venv(各 */web-server/ が venv + requirements.txt)。要書き直し。
+
+### 適合(実測)
+- .gitignore: venv/・.env・**/.env・!**/.env.example(規約1/6 適合)
+- 4サイト web-server すべて requirements.txt 保持(規約1例外に適合)
+- 規約15 の見本 `infra/docs/raw/✴️【Summary】Run Web App Server (Quantz Web) ver.2.md` 実在
+- ~/venvs に本プロジェクトの残骸なし
+
+### 注記
+- 規約2(config/paths.conf)⇔ 本プロジェクトは「config.py + .env が正」。同思想・別機構で矛盾なし。
+- CLAUDE.md「文書の優先順位」に CLAUDE_GENERAL.md の位置づけが無い。coding_guides と同格の
+  「規範」として明記を推奨(規約変更は人間のみ)。
