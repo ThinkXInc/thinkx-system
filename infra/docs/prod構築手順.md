@@ -3,7 +3,7 @@
 # EC2 2台(web/lb)をゼロから建てて全サイト配信・受け入れ試験 green まで。
 #
 
-## 0. 変数(新しいターミナルを開いたら必ずここから)
+## prerequisites(必須。新しいターミナルではまずこれ)
 
 ```
 cd ~/Sources/thinkx-system
@@ -16,7 +16,6 @@ LB=supercom-lb
 
 ```
 cd ~/Sources/thinkx-system
-: "${ENVX:?手順0の変数を先に貼る}"
 terraform -chdir=infra/terraform apply -var="env=$ENVX"
 ```
 
@@ -43,8 +42,6 @@ bash infra/deploykeys/gen_deploy_key.sh thinkx-system libcommon simplicity
 
 ```
 cd ~/Sources/thinkx-system
-: "${WEB:?手順0の変数を先に貼る}"
-: "${LB:?手順0の変数を先に貼る}"
 tar czf /tmp/secrets.tgz -C infra certs deploykeys
 scp /tmp/secrets.tgz infra/setup/check_deploykey.py $WEB:/tmp/
 scp /tmp/secrets.tgz infra/setup/check_deploykey.py $LB:/tmp/
@@ -54,7 +51,6 @@ scp /tmp/secrets.tgz infra/setup/check_deploykey.py $LB:/tmp/
 
 ```
 cd ~/Sources/thinkx-system
-: "${WEB:?手順0の変数を先に貼る}"
 ssh $WEB 'bash -s' < infra/setup/setup_user.sh
 ssh $WEB 'bash -s' < infra/setup/setup_webserver.sh
 ```
@@ -63,7 +59,6 @@ ssh $WEB 'bash -s' < infra/setup/setup_webserver.sh
 
 ```
 cd ~/Sources/thinkx-system
-: "${WEB:?手順0の変数を先に貼る}"
 ssh $WEB 'tar xzf /tmp/secrets.tgz -C /tmp; python3 /tmp/check_deploykey.py thinkx-system'
 ssh $WEB 'python3 /tmp/check_deploykey.py libcommon'
 ssh $WEB 'python3 /tmp/check_deploykey.py simplicity'
@@ -74,7 +69,6 @@ ssh $WEB 'bash -s' < infra/setup/clone_monorepo.sh
 
 ```
 cd ~/Sources/thinkx-system
-: "${WEB:?手順0の変数を先に貼る}"
 bash infra/etc/push_env.sh $WEB thinkx kazukiotsukacom transformism
 bash infra/etc/push_assets.sh $WEB thinkx
 ```
@@ -83,7 +77,6 @@ bash infra/etc/push_assets.sh $WEB thinkx
 
 ```
 cd ~/Sources/thinkx-system
-: "${WEB:?手順0の変数を先に貼る}"
 ssh $WEB 'bash -s' < infra/setup/setup_thinkx.sh
 ssh $WEB 'bash -s' < infra/setup/setup_kazukiotsukacom.sh
 ssh $WEB 'bash -s' < infra/setup/setup_transformism.sh
@@ -94,7 +87,6 @@ ssh $WEB 'bash -s' < infra/setup/setup_nginx-web-root.sh
 
 ```
 cd ~/Sources/thinkx-system
-: "${LB:?手順0の変数を先に貼る}"
 ssh $LB 'bash -s' < infra/setup/setup_user.sh
 ssh $LB 'tar xzf /tmp/secrets.tgz -C /tmp; python3 /tmp/check_deploykey.py thinkx-system'
 ssh $LB 'bash -s' < infra/setup/clone_monorepo.sh
@@ -106,7 +98,6 @@ ssh $LB 'bash -s' < infra/setup/setup_loadbalancer.sh
 
 ```
 cd ~/Sources/thinkx-system
-: "${LB:?手順0の変数を先に貼る}"
 LB_IP=$(terraform -chdir=infra/terraform output -raw lb_public_ip)
 bash infra/scripts/acceptance-sweep.sh $LB_IP
 ```
