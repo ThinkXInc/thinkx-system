@@ -42,7 +42,7 @@ bash infra/deploykeys/gen_deploy_key.sh thinkx-system libcommon simplicity
 
 ```
 cd ~/Sources/thinkx-system
-tar czf /tmp/secrets.tgz -C infra certs deploykeys
+COPYFILE_DISABLE=1 tar --no-xattrs -czf /tmp/secrets.tgz -C infra certs deploykeys
 scp /tmp/secrets.tgz infra/setup/check_deploykey.py $WEB:/tmp/
 scp /tmp/secrets.tgz infra/setup/check_deploykey.py $LB:/tmp/
 ```

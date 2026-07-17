@@ -11,7 +11,7 @@ push_assets() {
   ws="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")/../.." && pwd)"
   for site in "$@"; do
     [ -d "$ws/$site/web-server/views/video" ] || { printf '%b\n' "${Y}WARN: $site views/video なし(スキップ)${Z}"; warn=$((warn+1)); continue; }
-    if COPYFILE_DISABLE=1 tar czf "/tmp/$site-video.tgz" -C "$ws/$site/web-server/views" video && scp "/tmp/$site-video.tgz" "$host:/tmp/"; then
+    if COPYFILE_DISABLE=1 tar --no-xattrs -czf "/tmp/$site-video.tgz" -C "$ws/$site/web-server/views" video && scp "/tmp/$site-video.tgz" "$host:/tmp/"; then
       printf '%b\n' "${G}OK: $site-video.tgz -> $host:/tmp/${Z}"; ok=$((ok+1))
     else
       printf '%b\n' "${R}FAIL: $site の assets 転送失敗${Z}"; fail=$((fail+1))
