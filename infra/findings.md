@@ -271,3 +271,15 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
 - 暫定: `infra/setup/nginx/web-thinkx.conf` を再構成ドラフトとして作成(8005→uwsgi_thinkx.sock、
   thinkx/truetechjapan/nntm)。**実機照合が必須**。web-setup への配線は照合後(現状 section 8 は
   存在しないパスを symlink=無言スキップ、要修正)。
+
+## 2026-07-17 I-STEP2 事前検査: キーペア名の抜けを検出(🔴 apply 前に要修正)
+- terraform `variables.tf` の既定 `key_name = "supercom-key"` は **AWS に存在しない**
+  (`aws ec2 describe-key-pairs --key-names supercom-key` → InvalidKeyPair.NotFound)。
+- 実在するキーペアは **`supercom`**(ap-northeast-1。staging の supercom-staging-web/lb が現に使用中)。
+  staging は tfvars で `key_name=supercom` を上書きして通していたと推定(tfvars は読取禁止のため未確認)。
+- **提示済みの prod plan はこの既定値のままなので、そのまま apply すると EC2 作成で失敗する。**
+- 対応(I-STEP2b の流儀 = 手作業で埋めず repo に反映):
+  1. 即応: plan/apply に `-var=key_name=supercom` を明示。
+  2. 恒久: `infra/terraform/variables.tf` の default を `supercom` に修正(+ plan 再提示)。
+- AWS アカウントの確認も完了: **027421896362**(IAM user supercom)が唯一の実在アカウントで、
+  staging・旧サイト EC2 群すべてがここに居る。prod も同アカウントに新設で正しい(別本番アカウントの形跡なし)。

@@ -40,7 +40,7 @@ variable "az" {
 variable "key_name" {
   description = "EC2 に紐付ける既存キーペア名(事前に AWS で作成しておく)"
   type        = string
-  default     = "supercom-key"
+  default     = "supercom"
 }
 
 variable "my_office_ip" {
