@@ -307,3 +307,10 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
   - setup_{thinkx,kazukiotsukacom,transformism,nginx-web-root,loadbalancer}.sh の clone 節を
     「symlink 存在ガード」に差し替え。他は staging 実績のまま不変。
   - deploy key は **thinkx-system 1本 +(web のみ)libcommon/simplicity** に集約(staging は 6 本)。
+
+## 2026-07-17 受け入れ試験スクリプト新設 + staging 実測 green
+- 新設 `infra/scripts/acceptance-sweep.sh <LB_IP>`(観測系): 3サイトの tests/golden/route_sweep.json
+  全 GET ルートを `--resolve` で Host→LB IP 固定の https で当て、status を全件照合(DNS 非依存)。
+  ルール→URL 変換は test_route_sweep.py の _concrete と同一(<lang>→en / 他→x)。
+- staging LB(16.76.147.168)で実測: **thinkx 56/56・kazukiotsukacom 4/4・transformism 2/2 = 62/62 green**。
+  prod 受け入れは同スクリプトを prod LB(52.197.179.70)へ向けるだけ。
