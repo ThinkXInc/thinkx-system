@@ -3,12 +3,11 @@
 # prerequisites:
 #  - setup_user.sh
 #  - setup_webserver.sh
-#  - check_deploykey.py nginx-web-root が OK(鍵配置・GitHub 認証)
+#  - check_deploykey.py thinkx-system が OK + setup_monorepo.sh 済み
 #
 
-# clone repository
-cd /src
-sudo -u kaz git clone git@github-nginx-web-root:ThinkXInc/nginx-web-root.git
+# repository(monorepo 前提。clone と symlink は setup_monorepo.sh が行う)
+[ -e /src/nginx-web-root/nginx.conf ] || printf '\033[31mFAIL: /src/nginx-web-root が無い。先に setup_monorepo.sh を流す\033[0m\n'
 
 # systemd
 sudo ln -sf /src/nginx-web-root/nginx.service /etc/systemd/system/nginx.service

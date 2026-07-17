@@ -3,15 +3,12 @@
 # prerequisites:
 #  - setup_user.sh
 #  - setup_webserver.sh
-#  - check_deploykey.py transformism が OK(鍵配置・GitHub 認証)
+#  - check_deploykey.py thinkx-system が OK + setup_monorepo.sh 済み
 #  - push_env.sh transformism(/tmp/transformism.env。真実は transformism/.env)
 #
 
-# clone repository
-cd /src
-sudo -u kaz git clone git@github-transformism:kazukiotsuka/transformism.git
-cd /src/transformism
-sudo -u kaz git checkout 2026refactor
+# repository(monorepo 前提。clone と symlink は setup_monorepo.sh が行う)
+[ -e /src/transformism/web-server ] || printf '\033[31mFAIL: /src/transformism が無い。先に setup_monorepo.sh を流す\033[0m\n'
 
 # .env  (git 管理外。push_env.sh で /tmp/transformism.env を配った前提)
 [ -f /tmp/transformism.env ] && sudo install -o kaz -g serveradmins -m 640 /tmp/transformism.env /src/transformism/.env || printf '\033[33mWARN: transformism.env 未配布(push_env.sh)\033[0m\n'

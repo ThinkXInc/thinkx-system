@@ -294,3 +294,16 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
   実行前に .terraform.tfstate.lock.info を読んで Who/Operation/ID を表示 + 失敗時は terraform 生エラーと
   検出理由(ロック/tfvars 未作成)を表示。無言ハングを排除。
 - 付随知見: ローカル backend は state ロックが1つ。apply の承認待ち中は plan-summary を同時実行できない(仕様)。
+
+## 2026-07-17 F4 クローズ + setup の monorepo 化(prod 構築)
+- **F4 は解決済みだった(私の findings が stale)**: web の 8005/8006/8007 配信は
+  「nginx-web-root(サイト非依存 nginx 基盤・monorepo 収載)+ 各サイト repo 内
+  `web-server/nginx/conf.d/*.conf`」の合成で、staging で確立・全 Host 200 を実測確認。
+  オンプレで 8005 を握る実体は旧 quantz-web nginx 基盤(nginx-web-root の前身)。調査不要、staging が手本。
+- **setup の monorepo 化(I-STEP2b)**: prod は polyrepo 個別 clone ではなく monorepo を 1 回 clone。
+  - 新設 `setup/setup_monorepo.sh`: thinkx-system(branch monorepo)を /src へ clone し、
+    /src/{thinkx,kazukiotsukacom,transformism,nginx-web-root,loadbalancer} を symlink で staging と同一レイアウトに。
+    libcommon(a316494)/simplicity(53f0639)原本は鍵があれば並置 clone(lb では WARN スキップ)。
+  - setup_{thinkx,kazukiotsukacom,transformism,nginx-web-root,loadbalancer}.sh の clone 節を
+    「symlink 存在ガード」に差し替え。他は staging 実績のまま不変。
+  - deploy key は **thinkx-system 1本 +(web のみ)libcommon/simplicity** に集約(staging は 6 本)。

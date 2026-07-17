@@ -3,16 +3,13 @@
 # prerequisites:
 #  - setup_user.sh
 #  - setup_webserver.sh
-#  - check_deploykey.py kazukiotsukacom が OK(鍵配置・GitHub 認証)
+#  - check_deploykey.py thinkx-system が OK + setup_monorepo.sh 済み
 #  - push_env.sh kazukiotsukacom(/tmp/kazukiotsukacom.env。真実は kazukiotsukacom/.env)
 #  - push_assets.sh kazukiotsukacom(/tmp/kazukiotsukacom-video.tgz。真実は kazukiotsukacom/web-server/views/video)
 #
 
-# clone repository
-cd /src
-sudo -u kaz git clone git@github-kazukiotsukacom:ThinkXInc/kazukiotsukacom.git
-cd /src/kazukiotsukacom
-sudo -u kaz git checkout 2026refactor
+# repository(monorepo 前提。clone と symlink は setup_monorepo.sh が行う)
+[ -e /src/kazukiotsukacom/web-server ] || printf '\033[31mFAIL: /src/kazukiotsukacom が無い。先に setup_monorepo.sh を流す\033[0m\n'
 
 # .env  (git 管理外。push_env.sh で /tmp/kazukiotsukacom.env を配った前提)
 [ -f /tmp/kazukiotsukacom.env ] && sudo install -o kaz -g serveradmins -m 640 /tmp/kazukiotsukacom.env /src/kazukiotsukacom/.env || printf '\033[33mWARN: kazukiotsukacom.env 未配布(push_env.sh)\033[0m\n'
