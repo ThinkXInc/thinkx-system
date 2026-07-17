@@ -11,7 +11,8 @@ export NEEDRESTART_MODE=a   # apt 中の needrestart 対話を抑止(サービ�
 
 # hostname
 
-sudo hostnamectl set-hostname lb
+HN=lb1; [ "$ENVX" = staging ] && HN=lb1-stg
+sudo hostnamectl set-hostname "$HN"
 echo 'preserve_hostname: true' | sudo tee /etc/cloud/cloud.cfg.d/99-hostname.cfg > /dev/null
 
 # essential packages

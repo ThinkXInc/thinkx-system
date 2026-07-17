@@ -6,7 +6,8 @@
 
 # hostname
  
-sudo hostnamectl set-hostname web
+HN=web1; [ "$ENVX" = staging ] && HN=web1-stg
+sudo hostnamectl set-hostname "$HN"
 echo 'preserve_hostname: true' | sudo tee /etc/cloud/cloud.cfg.d/99-hostname.cfg > /dev/null
  
 

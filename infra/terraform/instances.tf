@@ -39,8 +39,7 @@ resource "aws_instance" "lb" {
   }
 
   tags = {
-    Name = "${local.name_prefix}-lb" # supercom-prod-lb
-    Host = "supercom3L"              # オンプレのホスト名を継承
+    Name = "supercom-lb1${local.env_suffix}" # 命名規則: infra/docs/hostname.md
     Role = "loadbalancer"
   }
 }
@@ -59,8 +58,7 @@ resource "aws_instance" "web" {
   }
 
   tags = {
-    Name = "${local.name_prefix}-web" # supercom-prod-web
-    Host = "supercom2"                # オンプレのホスト名を継承
+    Name = "supercom-web1${local.env_suffix}" # 命名規則: infra/docs/hostname.md
     Role = "web"
   }
 }

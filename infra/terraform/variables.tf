@@ -59,6 +59,9 @@ variable "my_office_ip" {
 locals {
   is_prod = var.env == "prod"
 
+  # 命名規則(infra/docs/hostname.md): 基本名 {role}{n}、env は接尾辞 -stg(prod は無印)
+  env_suffix = local.is_prod ? "" : "-stg"
+
   # 全リソース共通の接頭辞
   name_prefix = "${var.project}-${var.env}"
 
