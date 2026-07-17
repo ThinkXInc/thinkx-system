@@ -2,7 +2,7 @@
 #
 # prerequisites:
 #  - setup_user.sh
-#  - check_deploykey.py thinkx-system が OK + setup_monorepo.sh 済み
+#  - check_deploykey.py thinkx-system が OK + clone_monorepo.sh 済み
 #  - push_secrets.sh(certs/deploykeys)
 #  - push_env.sh loadbalancer(/tmp/loadbalancer.env。真実は loadbalancer/.env)
 #
@@ -196,8 +196,8 @@ sudo chown kaz:serveradmins /src
 # clone repo  (前提: check_deploykey.py loadbalancer が OK)
 ## *conf.d の proxy_pass は web1.supercom.internal(内部 DNS・D-28/D-31)で repo にコミット済みが前提。EC2 側でのパッチはしない
 
-# (monorepo 前提。clone と symlink は setup_monorepo.sh が行う)
-[ -e /src/loadbalancer/nginx.conf ] || printf '\033[31mFAIL: /src/loadbalancer が無い。先に setup_monorepo.sh を流す\033[0m\n'
+# (monorepo 前提。clone と symlink は clone_monorepo.sh が行う)
+[ -e /src/loadbalancer/nginx.conf ] || printf '\033[31mFAIL: /src/loadbalancer が無い。先に clone_monorepo.sh を流す\033[0m\n'
 
 # symlink
 

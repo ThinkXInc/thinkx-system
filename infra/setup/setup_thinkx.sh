@@ -3,13 +3,13 @@
 # prerequisites:
 #  - setup_user.sh
 #  - setup_webserver.sh
-#  - check_deploykey.py thinkx-system が OK + setup_monorepo.sh 済み
+#  - check_deploykey.py thinkx-system が OK + clone_monorepo.sh 済み
 #  - push_env.sh thinkx(/tmp/thinkx.env。真実は thinkx/.env)
 #  - push_assets.sh thinkx(/tmp/thinkx-video.tgz。真実は thinkx/web-server/views/video)
 #
 
-# repository(monorepo 前提。clone と symlink は setup_monorepo.sh が行う)
-[ -e /src/thinkx/web-server ] || printf '\033[31mFAIL: /src/thinkx が無い。先に setup_monorepo.sh を流す\033[0m\n'
+# repository(monorepo 前提。clone と symlink は clone_monorepo.sh が行う)
+[ -e /src/thinkx/web-server ] || printf '\033[31mFAIL: /src/thinkx が無い。先に clone_monorepo.sh を流す\033[0m\n'
 
 # .env  (git 管理外。push_env.sh で /tmp/thinkx.env を配った前提)
 [ -f /tmp/thinkx.env ] && sudo install -o kaz -g serveradmins -m 640 /tmp/thinkx.env /src/thinkx/.env || printf '\033[33mWARN: thinkx.env 未配布(push_env.sh)\033[0m\n'

@@ -1,4 +1,4 @@
-# monorepo(thinkx-system)clone + /src/<site> symlink
+# clone monorepo(thinkx-system) + /src/<site> symlink
 #
 # prerequisites:
 #  - setup_user.sh(kaz ユーザー・serveradmins グループ)

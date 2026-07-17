@@ -301,7 +301,7 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
   `web-server/nginx/conf.d/*.conf`」の合成で、staging で確立・全 Host 200 を実測確認。
   オンプレで 8005 を握る実体は旧 quantz-web nginx 基盤(nginx-web-root の前身)。調査不要、staging が手本。
 - **setup の monorepo 化(I-STEP2b)**: prod は polyrepo 個別 clone ではなく monorepo を 1 回 clone。
-  - 新設 `setup/setup_monorepo.sh`: thinkx-system(branch monorepo)を /src へ clone し、
+  - 新設 `setup/clone_monorepo.sh`: thinkx-system(branch monorepo)を /src へ clone し、
     /src/{thinkx,kazukiotsukacom,transformism,nginx-web-root,loadbalancer} を symlink で staging と同一レイアウトに。
     libcommon(a316494)/simplicity(53f0639)原本は鍵があれば並置 clone(lb では WARN スキップ)。
   - setup_{thinkx,kazukiotsukacom,transformism,nginx-web-root,loadbalancer}.sh の clone 節を
