@@ -26,8 +26,14 @@ plan_summary() {
   plan="$(mktemp)"
   json="$(mktemp)"
 
-  if ! terraform -chdir="$tfdir" plan -var="env=$envx" -out="$plan" >/dev/null 2>&1; then
-    echo "terraform plan に失敗(AWS 認証 / 構成を確認)" >&2
+  # my_office_ip は既定値が無い必須変数。env MY_OFFICE_IP から渡す。
+  # 未設定なら -input=false により対話プロンプトで固まらず即エラーで返す(観測系はハングさせない)。
+  local ipvar=()
+  [ -n "${MY_OFFICE_IP:-}" ] && ipvar=(-var="my_office_ip=$MY_OFFICE_IP")
+
+  if ! terraform -chdir="$tfdir" plan -input=false -var="env=$envx" "${ipvar[@]}" -out="$plan" >/dev/null 2>&1; then
+    echo "terraform plan に失敗。要因: AWS 認証 / 構成 / 必須変数 my_office_ip 未設定。" >&2
+    echo "  → MY_OFFICE_IP=<拠点IP>/32 を環境変数で渡す。例: MY_OFFICE_IP=153.195.60.70/32 $0 $envx" >&2
     rm -f "$plan" "$json"
     return 0
   fi
