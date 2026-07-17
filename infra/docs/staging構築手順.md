@@ -1,4 +1,4 @@
-# thinkx-system/infra/docs/prod構築手順.md
+# thinkx-system/infra/docs/staging構築手順.md
 #
 # EC2 2台(web/lb)をゼロから建てて全サイト配信・受け入れ試験 green まで。
 #
@@ -7,9 +7,9 @@
 
 ```
 cd ~/Sources/thinkx-system
-ENVX=prod
-WEB=supercom-web
-LB=supercom-lb
+ENVX=staging
+WEB=supercom-web-s
+LB=supercom-lb-s
 ```
 
 ## 1. terraform apply
