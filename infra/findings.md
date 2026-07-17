@@ -314,3 +314,12 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
   ルール→URL 変換は test_route_sweep.py の _concrete と同一(<lang>→en / 他→x)。
 - staging LB(16.76.147.168)で実測: **thinkx 56/56・kazukiotsukacom 4/4・transformism 2/2 = 62/62 green**。
   prod 受け入れは同スクリプトを prod LB(52.197.179.70)へ向けるだけ。
+
+## 2026-07-17 prod web 8005/6/7 無応答の原因と修正
+- 症状: サイト setup の verify が `FAIL: transformism 8006 -> 000` 等。サービスは全 active。
+- 原因: `setup_nginx-web-root.sh` の `systemctl enable --now nginx` は**既に起動中の apt 版 nginx を再起動しない**。
+  unit を nginx-web-root に差し替えても旧プロセス(80番のみ)が残り、8005/6/7 を誰も listen しない。
+  さらに verify が `is-active` のみだったため「OK: nginx-web-root up」と偽緑。
+- 修正: ①enable + **restart** に変更 ②verify を「実プロセス cmdline に nginx-web-root を含む + 8005 応答」に強化
+  ③手順8の順番を nginx-web-root → サイト3つ に変更(各サイト verify がその場で成立)。
+- 箱は restart で復旧、3サイト 200 実測。
