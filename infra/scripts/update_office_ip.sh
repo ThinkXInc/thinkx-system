@@ -24,6 +24,7 @@ if grep -q "\"$IP/32\"" "$TF/terraform.tfvars"; then
   printf '%s は既に許可リストにある\n' "$IP/32"
 else
   sed -i.bak "/^my_office_ips/s|\]|, \"$IP/32\"]|" "$TF/terraform.tfvars"
+  printf '# %s を追加 %s\n' "$IP/32" "$(date +%F)" >> "$TF/terraform.tfvars"
 fi
 grep "^my_office_ips" "$TF/terraform.tfvars"
 terraform -chdir="$TF" apply -var="env=prod"
