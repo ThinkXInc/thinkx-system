@@ -351,3 +351,10 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
 - 実測: 3ドメインとも notAfter=2026-09-15(オンプレ回収の lb-certs.tgz 由来)
 - 新 LB に certbot 自動更新が無い。放置すると 9/15 に全サイト証明書エラー
 - 対応(I-STEP2b): certbot --dns-route53 + EC2 IAM ロール(infra/CLAUDE.md 制約6の通り)。**8月中に要実施**
+
+## run/ スクリプトの D-36 未適用を全面適用(2026-07-18)
+
+- 露出: restart_loadbalancer.sh が緑判定なしで手順に使われた(オーナー指摘)
+- 判定なしだった6本(loadbalancer/quantz 各 run/restart/stop)に色つき判定を追加
+- 全15本の判定行に**スクリプト名を名乗らせた**(複数実行時の帰属問題の再発防止)
+- restart/run の nginx 系は D-48 どおり「is-active + 実プロセスの設定パス + ポート応答」で判定
