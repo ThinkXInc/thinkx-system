@@ -20,7 +20,7 @@ cd ~/Sources/thinkx-system
 ### 1. ssh alias 改名(1分)
 
 ```
-sed -i.bak -e 's/^Host supercom-web-s$/Host supercom-web1-stg/' -e 's/^Host supercom-lb-s$/Host supercom-lb1-stg/' -e 's/^Host supercom-web$/Host supercom-web1/' -e 's/^Host supercom-lb$/Host supercom-lb1/' ~/.ssh/config
+sed -i.bak -e 's/^Host supercom-web-stg$/Host supercom-web1-stg/' -e 's/^Host supercom-lb-stg$/Host supercom-lb1-stg/' -e 's/^Host supercom-web$/Host supercom-web1/' -e 's/^Host supercom-lb$/Host supercom-lb1/' ~/.ssh/config
 grep "^Host supercom" ~/.ssh/config
 ```
 
