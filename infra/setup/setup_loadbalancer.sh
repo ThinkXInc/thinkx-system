@@ -175,6 +175,9 @@ systemctl reload nginx
 EOF
 sudo chmod +x /etc/letsencrypt/renewal-hooks/deploy/reload-nginx.sh
 
+## renewal を dns-route53 に切替  (オンプレ tarball 由来の authenticator=manual は自動更新不可(F14)。Route53 権限は IAM ロール(iam.tf)で付与済み。冪等)
+sudo sed -i 's/^authenticator = manual$/authenticator = dns-route53/' /etc/letsencrypt/renewal/*.conf
+
 # permissions
 
 sudo chown www-data:www-data /var/log/nginx/access.log
@@ -223,5 +226,5 @@ sudo chmod 644 /etc/nginx/.htpasswd_staging
 sudo nginx -t -c /src/loadbalancer/nginx.conf
 sudo systemctl restart nginx
 
-# verify
-systemctl is-active --quiet nginx && printf '\033[32mOK: lb nginx up\033[0m\n' || printf '\033[31mFAIL: lb nginx %s\033[0m\n' "$(systemctl is-active nginx)"
+# verify  (nginx active + renewal に manual が残っていない)
+systemctl is-active --quiet nginx && ! sudo grep -q '^authenticator = manual$' /etc/letsencrypt/renewal/*.conf && printf '\033[32mOK: setup_loadbalancer nginx up・renewal 全件 dns-route53\033[0m\n' || printf '\033[31mFAIL: setup_loadbalancer nginx=%s manual残=%s件\033[0m\n' "$(systemctl is-active nginx)" "$(sudo grep -l '^authenticator = manual$' /etc/letsencrypt/renewal/*.conf 2>/dev/null | wc -l | tr -d ' ')"

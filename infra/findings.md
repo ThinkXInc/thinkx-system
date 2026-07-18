@@ -369,3 +369,9 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
 
 - 実測: launch-wizard-1〜13 と webserver が 22 番を全世界開放。ただし**稼働中インスタンスへの紐付けは無し**(running 4台はすべて supercom-*-sg のみ)→ 即時の実害なし
 - 対応候補: 未使用 SG の削除(オンプレ移行完了後の掃除・I-STEP3 か旧環境凍結時にまとめて)。削除は変更系のためオーナー承認
+
+## F14 対応実装(2026-07-18)
+
+- 実測: IAM ロール(supercom-prod-lb)は付与済み・certbot+dns-route53 プラグイン導入済み・reload hook あり・timer 稼働中。欠落は renewal conf 5件の authenticator=manual のみ
+- 対応(D-49): setup_loadbalancer.sh に冪等 sed(manual→dns-route53)を組込・verify を「manual 残 0 件」まで判定するよう強化。検証は scripts/check_cert_renewal.sh(dry-run)
+- クローズ条件: LB で切替実行後、check_cert_renewal.sh が green(次回自動更新は 8/16 頃・期限 9/15 の 30 日前)
