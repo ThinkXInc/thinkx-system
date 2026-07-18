@@ -337,3 +337,17 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
 - 事象: `https://52.197.179.70/`(Host なし=IP 直打ち)が CN=jessicas.online の**期限切れ証明書**(2025-07-07 失効)+ 502 を返す。ブラウザでは証明書エラーで「つながらない」ように見える(vhost 方式なので IP 直打ちが本番サイトを返さないこと自体は正常。Host つきは 200)。
 - 原因: loadbalancer conf にオンプレ時代の旧サイト(jessicas.online)の server ブロックが残存し、default server に選ばれている。stray `192.168.1.7:8009` と同類の掃除課題。
 - 対応: I-STEP3(またはカットオーバー後の conf 掃除)で旧 server ブロック撤去 + default server を明示(444 を返す catch-all 等)。実施前にオーナー判断。
+
+## 受け入れ green(I-STEP2 構築完了・2026-07-18)
+
+- 経路疎通 check_request_path: 20項目 全緑(私+オーナー双方の実行で一致)
+- 受け入れ acceptance-sweep: **62/62 全ルート一致**(thinkx 56 / kazukiotsukacom 4 / transformism 2)
+- 残: kazukiotsukacom 動画未配布(push_assets.sh → DNS切替手順の手順1に組込済)
+- DNS 実測: 3ドメインとも Route53、apex A=123.226.234.127、TTL 300s、www レコード無し。切替対象は apex 3件のみ
+- 切替手順は `docs/DNS切替手順.md`(切替・戻し・凍結まで)。実行はオーナー承認ゲート
+
+## F14: TLS 証明書の期限 2026-09-15・自動更新未設定(2026-07-18)
+
+- 実測: 3ドメインとも notAfter=2026-09-15(オンプレ回収の lb-certs.tgz 由来)
+- 新 LB に certbot 自動更新が無い。放置すると 9/15 に全サイト証明書エラー
+- 対応(I-STEP2b): certbot --dns-route53 + EC2 IAM ロール(infra/CLAUDE.md 制約6の通り)。**8月中に要実施**
