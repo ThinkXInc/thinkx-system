@@ -331,3 +331,9 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
   prod = tfvars 書き換え + terraform apply(in-place)、staging = SG の 22 番ルールを CLI で入れ替え、
   末尾に4台への SSH 到達を色付きで判定。IP が変わるたびオーナーがこれを1本流すだけ。
 - 根治(inbound 22 の廃止 = SSM Session Manager 化)は I-STEP2b 改善候補のまま維持。
+
+## F13: LB の default server が旧サイト jessicas.online に落ちる(2026-07-18)
+
+- 事象: `https://52.197.179.70/`(Host なし=IP 直打ち)が CN=jessicas.online の**期限切れ証明書**(2025-07-07 失効)+ 502 を返す。ブラウザでは証明書エラーで「つながらない」ように見える(vhost 方式なので IP 直打ちが本番サイトを返さないこと自体は正常。Host つきは 200)。
+- 原因: loadbalancer conf にオンプレ時代の旧サイト(jessicas.online)の server ブロックが残存し、default server に選ばれている。stray `192.168.1.7:8009` と同類の掃除課題。
+- 対応: I-STEP3(またはカットオーバー後の conf 掃除)で旧 server ブロック撤去 + default server を明示(444 を返す catch-all 等)。実施前にオーナー判断。

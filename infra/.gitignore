@@ -18,4 +18,4 @@ override.tf.json
 certs/*
 deploykeys/*
 !deploykeys/gen_deploy_key.sh
-env/*
+env/*terraform/terraform.tfvars.bak
