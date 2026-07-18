@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# thinkx-system/infra/scripts/update_office_ip.sh   【分類: 変更系(SG と tfvars を書き換える)】
+# thinkx-system/infra/scripts/add_current_office_ip.sh   【分類: 変更系(SG と tfvars を書き換える)】
 #
 # ルーターの動的 IP が変わって SSH(22) が締め出されたとき、現在の IP を許可し直す。
 #   - prod: terraform.tfvars の my_office_ip を書き換え → terraform apply(承認プロンプトで yes)
 #   - staging: SG の 22 番ルールを aws CLI で入れ替え(state は旧 infra リポジトリ管轄のため直接)
 #
-#   使い方: bash infra/scripts/update_office_ip.sh
+#   使い方: bash infra/scripts/add_current_office_ip.sh
 
 set -euo pipefail
 
@@ -14,7 +14,7 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
 TF="$HERE/../terraform"
 
 IP="$(curl -s --max-time 10 https://checkip.amazonaws.com)"
-[ -n "$IP" ] || { printf '%b\n' "${R}FAIL: update_office_ip 現在の IP を取得できない${Z}"; exit 1; }
+[ -n "$IP" ] || { printf '%b\n' "${R}FAIL: add_current_office_ip 現在の IP を取得できない${Z}"; exit 1; }
 printf '現在の IP: %s\n' "$IP"
 
 # prod: tfvars のリストに現在 IP を追記して terraform apply(SG は in-place 更新)
@@ -46,8 +46,8 @@ for h in supercom-web1 supercom-lb1 supercom-web1-stg supercom-lb1-stg; do
   fi
 done
 if [ "$fail" -eq 0 ]; then
-  printf '%b\n' "${G}OK: update_office_ip 4台とも SSH 到達($IP/32)${Z}"
+  printf '%b\n' "${G}OK: add_current_office_ip 4台とも SSH 到達($IP/32)${Z}"
 else
-  printf '%b\n' "${R}FAIL: update_office_ip SSH 不達 $fail 台${Z}"
+  printf '%b\n' "${R}FAIL: add_current_office_ip SSH 不達 $fail 台${Z}"
   exit 1
 fi

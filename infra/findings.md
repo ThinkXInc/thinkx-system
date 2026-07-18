@@ -324,10 +324,10 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
   ③手順8の順番を nginx-web-root → サイト3つ に変更(各サイト verify がその場で成立)。
 - 箱は restart で復旧、3サイト 200 実測。
 
-## 2026-07-18 動的 IP 締め出しが現実化 → update_office_ip.sh 新設
+## 2026-07-18 動的 IP 締め出しが現実化 → add_current_office_ip.sh 新設
 - 予告済みリスク(2026-07-15 記録)が発生: ルーター外向き IP が 153.195.60.70 → 116.82.241.252 に変化し、
   prod web/lb への SSH(22)が SG で締め出し。配信(80/443)は無影響。
-- 恒久対応: `infra/scripts/update_office_ip.sh`(変更系)を新設。現在 IP を検出し、
+- 恒久対応: `infra/scripts/add_current_office_ip.sh`(変更系)を新設。現在 IP を検出し、
   prod = tfvars 書き換え + terraform apply(in-place)、staging = SG の 22 番ルールを CLI で入れ替え、
   末尾に4台への SSH 到達を色付きで判定。IP が変わるたびオーナーがこれを1本流すだけ。
 - 根治(inbound 22 の廃止 = SSM Session Manager 化)は I-STEP2b 改善候補のまま維持。
