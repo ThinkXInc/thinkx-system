@@ -39,7 +39,7 @@ resource "aws_security_group" "lb" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [var.my_office_ip]
+    cidr_blocks = var.my_office_ips
   }
 
   egress {
@@ -74,7 +74,7 @@ resource "aws_security_group" "web" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [var.my_office_ip]
+    cidr_blocks = var.my_office_ips
   }
 
   egress {

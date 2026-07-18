@@ -17,19 +17,20 @@ IP="$(curl -s --max-time 10 https://checkip.amazonaws.com)"
 [ -n "$IP" ] || { printf '%b\n' "${R}FAIL: update_office_ip 現在の IP を取得できない${Z}"; exit 1; }
 printf '現在の IP: %s\n' "$IP"
 
-# prod: tfvars を書き換えて terraform apply(SG は in-place 更新)
-sed -i.bak "s|^my_office_ip.*|my_office_ip = \"$IP/32\"|" "$TF/terraform.tfvars"
-grep "^my_office_ip" "$TF/terraform.tfvars"
+# prod: tfvars のリストに現在 IP を追記して terraform apply(SG は in-place 更新)
+# (旧単数形 my_office_ip が残っていればリスト形式へ自動移行)
+sed -i.bak 's|^my_office_ip = "\(.*\)"|my_office_ips = ["\1"]|' "$TF/terraform.tfvars"
+if grep -q "\"$IP/32\"" "$TF/terraform.tfvars"; then
+  printf '%s は既に許可リストにある\n' "$IP/32"
+else
+  sed -i.bak "/^my_office_ips/s|\]|, \"$IP/32\"]|" "$TF/terraform.tfvars"
+fi
+grep "^my_office_ips" "$TF/terraform.tfvars"
 terraform -chdir="$TF" apply -var="env=prod"
 
-# staging: SG の 22 番を現在 IP だけに入れ替え
+# staging: SG の 22 番に現在 IP を追加(既存の許可は残す)
 for sg in supercom-staging-web-sg supercom-staging-lb-sg; do
   gid="$(aws ec2 describe-security-groups --filters "Name=group-name,Values=$sg" --query "SecurityGroups[0].GroupId" --output text)"
-  for cidr in $(aws ec2 describe-security-groups --group-ids "$gid" --query "SecurityGroups[0].IpPermissions[?FromPort==\`22\`].IpRanges[].CidrIp" --output text); do
-    [ "$cidr" = "$IP/32" ] && continue
-    aws ec2 revoke-security-group-ingress --group-id "$gid" --protocol tcp --port 22 --cidr "$cidr" > /dev/null
-    printf '%s: %s を撤去\n' "$sg" "$cidr"
-  done
   aws ec2 authorize-security-group-ingress --group-id "$gid" --protocol tcp --port 22 --cidr "$IP/32" > /dev/null 2>&1 || true
   printf '%s: %s/32 を許可\n' "$sg" "$IP"
 done

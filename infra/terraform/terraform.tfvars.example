@@ -4,8 +4,8 @@
 #   cp terraform.tfvars.example terraform.tfvars
 #   vim terraform.tfvars
 
-# SSH を許可する自分の拠点グローバル IP(必ず /32)
-my_office_ip = "203.0.113.5/32"
+# SSH を許可する拠点グローバル IP のリスト(各要素は必ず /32)
+my_office_ips = ["203.0.113.5/32"]
 
 # 事前に AWS で作成したキーペア名
 key_name = "supercom"

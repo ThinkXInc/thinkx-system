@@ -43,10 +43,11 @@ variable "key_name" {
   default     = "supercom"
 }
 
-variable "my_office_ip" {
-  description = "SSH(22)を許可する自分の拠点グローバル IP。必ず /32 で指定。0.0.0.0/0 は禁止"
-  type        = string
-  # 例: "203.0.113.5/32"。terraform.tfvars で上書きする(tfvars はコミットしない)
+variable "my_office_ips" {
+  description = "SSH(22)を許可する拠点グローバル IP のリスト。各要素は必ず /32。0.0.0.0/0 は禁止"
+  type        = list(string)
+  # 例: ["203.0.113.5/32", "198.51.100.7/32"]。terraform.tfvars で指定(tfvars はコミットしない)
+  # 追加は scripts/update_office_ip.sh(現在地の IP を追記して apply)
 }
 
 # ------------------------------------------------------------
