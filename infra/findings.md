@@ -439,3 +439,8 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
 - terraform_apply staging: 19 add / 0 change / 0 destroy 全成功。web 57.182.107.57 / lb 52.68.142.190
 - Name タグは最初から D-46 準拠(supercom-web1-stg / lb1-stg)→ hostname.md の staging タグ手順は自動消化
 - 発見: outputs.tf の setup_hint が旧世界の構築案内のまま(実害なし)。構築の正は docs/構築手順.md — setup_hint は削除か手順書への誘導に直すべき(次回 .tf を触る際)
+
+## setup_user / setup_webserver に verdict が無かった(2026-07-19・staging 再構築で露出)
+
+- 手順5の出力が gulp --version 表示で終わり成否不明とオーナー確認 → D-36 適用漏れ2本(setup_user.sh / setup_webserver.sh)に verify + 色つき verdict を追加(webserver は hostname が ENVX 期待値かまで判定)
+- 実機は正常を別途実測: hostname=web1-stg(run() の ENVX 修正が有効)・kaz あり・/src に monorepo + symlink + libcommon/simplicity 原本(手順6まで完了状態)

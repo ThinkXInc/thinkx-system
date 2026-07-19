@@ -17,3 +17,6 @@ sudo -u kaz -H tee /home/kaz/.ssh/config > /dev/null <<'EOF'
 Include config.d/*
 EOF
 sudo -u kaz chmod 600 /home/kaz/.ssh/config
+
+# verify  (kaz ユーザーと ssh 設定)
+id kaz > /dev/null 2>&1 && sudo -u kaz test -f /home/kaz/.ssh/config && printf '\033[32mOK: setup_user kaz ユーザーと ssh 設定あり\033[0m\n' || printf '\033[31mFAIL: setup_user kaz=%s /home/kaz/.ssh/config=%s\033[0m\n' "$(id kaz > /dev/null 2>&1 && echo あり || echo なし)" "$(sudo -u kaz test -f /home/kaz/.ssh/config && echo あり || echo なし)"

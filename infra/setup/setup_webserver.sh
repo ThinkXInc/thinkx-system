@@ -198,3 +198,7 @@ docker-compose --version
 mongod --version
 nginx -v
 gulp --version
+# verify  (主要ツールの存在 + hostname が ENVX に一致)
+HNV=web1
+[ "$ENVX" = staging ] && HNV=web1-stg
+command -v python3.9 > /dev/null && command -v node > /dev/null && command -v nginx > /dev/null && command -v mongod > /dev/null && [ "$(hostname)" = "$HNV" ] && printf '\033[32mOK: setup_webserver 完了(python3.9/node/nginx/mongod あり・hostname=%s)\033[0m\n' "$HNV" || printf '\033[31mFAIL: setup_webserver 要確認 python3.9=%s node=%s nginx=%s mongod=%s hostname=%s(期待=%s)\033[0m\n' "$(command -v python3.9 || echo なし)" "$(command -v node || echo なし)" "$(command -v nginx || echo なし)" "$(command -v mongod || echo なし)" "$(hostname)" "$HNV"
