@@ -492,3 +492,10 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
   (「ドメインが thinkxinc.com なんだから ThinkX の配下にあるべき。サイトの1ページとして実装すればいい」)
 - production では 404(Config.ENV 判定)。入口は staging.thinkxinc.com/filedrop(LB の basic auth 配下)のみ
 - LB staging vhost に client_max_body_size 75m(web 側 nginx の既存値と一致)。着地は /src/thinkx-system/Downloads
+
+## filedrop ガードと LB verify の2バグ(2026-07-19・実測で露出)
+
+- staging の thinkx も Config.ENV=production で動いている実測 → /filedrop のガードを ENV 判定から
+  **ホスト名判定(-stg 接尾辞・D-46 準拠)**へ変更(ENV では prod/staging を区別できない)
+- restart_loadbalancer.sh の verify が `curl https://localhost/` で F13 のブラックホール(名前なし直打ち)に
+  自爆し、active なのに FAIL(偽赤)。Host つき(--resolve staging.thinkxinc.com→127.0.0.1)に修正

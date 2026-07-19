@@ -1,5 +1,6 @@
 import sys
 import os
+import socket
 import json
 from os.path import abspath, join
 from urllib.parse import quote
@@ -717,13 +718,15 @@ def internal_server_error(error, lang, lang_name):
 def bad_gateway(error, lang, lang_name):
     return handle_error(error, RateLimitExceededAPIErrorFormat, lang)
 
-#################### filedrop (staging 専用の素材受け取り。production では 404)
+#################### filedrop (staging 専用の素材受け取り)
+# 判定は .env でなくホスト名(D-46: staging の hostname は -stg 接尾辞)。
+# staging の .env も ENV=production で動いているため Config.ENV では区別できない
 FILEDROP_DIR = '/src/thinkx-system/Downloads'
 
 @app.route('/filedrop', methods=['GET', 'POST'])
 def filedrop_handler():
     logger.info(magenta(f'=> /filedrop [{request.method}]'))
-    if Config.ENV == 'production':
+    if not socket.gethostname().endswith('-stg'):
         abort(404)
     os.makedirs(FILEDROP_DIR, exist_ok=True)
     if request.method == 'POST':
