@@ -380,3 +380,10 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
 
 - F14: オーナー実行の check_cert_renewal.sh が green(dry-run 5ドメイン成功)。自動更新成立、クローズ
 - 「kazukiotsukacom 動画未配布」WARN は偽警告だった: staging 実測で動画を持つのは thinkx のみ(8本・prod 配布済み)。kazukiotsukacom / transformism は元々動画なし。setup_kazukiotsukacom.sh に thinkx 由来の展開ブロックが残っていたのが原因 → 除去。DNS切替手順の事前チェックも push_assets thinkx に修正
+
+## staging in-place monorepo 差し替えの事前点検(2026-07-19・D-50)
+
+- staging /src は polyrepo 実ディレクトリ(thinkx / kazukiotsukacom / transformism / nginx-web-root / quantz-web)。`ln -sfn` は差し替え先が実ディレクトリだと中にリンクを作る → clone_monorepo.sh に退避(/src/_old_polyrepo/)を追加。quantz-web は対象外・不触
+- deploy key は追加作業不要: push_secrets.sh が infra/deploykeys(thinkx-system/libcommon/simplicity の3鍵)を運ぶ。GitHub 側登録はリポジトリ単位で済み
+- 手順10/11 の LB_IP が staging で terraform output 不可(state は旧 infra リポジトリ)→ LB_IP を prerequisites の環境ブロックへ移動(staging=16.76.147.168 直値)
+- staging lb にも IAM ロール(supercom-staging-lb)付与済みを実測 → setup_loadbalancer の renewal 切替(D-49)は staging でも成立する

@@ -21,6 +21,14 @@ sudo -u kaz git clone git@github-thinkx-system:ThinkXInc/thinkx-system.git
 cd /src/thinkx-system
 sudo -u kaz git checkout monorepo
 
+# 旧 polyrepo 実ディレクトリの退避  (in-place 差し替え時のみ動く。symlink 先が実ディレクトリのままだと ln -sfn がその中にリンクを作ってしまうため。退避先から戻せば差し替え前に復帰できる)
+
+[ -d /src/thinkx ] && [ ! -L /src/thinkx ] && sudo mkdir -p /src/_old_polyrepo && sudo mv /src/thinkx /src/_old_polyrepo/thinkx
+[ -d /src/kazukiotsukacom ] && [ ! -L /src/kazukiotsukacom ] && sudo mkdir -p /src/_old_polyrepo && sudo mv /src/kazukiotsukacom /src/_old_polyrepo/kazukiotsukacom
+[ -d /src/transformism ] && [ ! -L /src/transformism ] && sudo mkdir -p /src/_old_polyrepo && sudo mv /src/transformism /src/_old_polyrepo/transformism
+[ -d /src/nginx-web-root ] && [ ! -L /src/nginx-web-root ] && sudo mkdir -p /src/_old_polyrepo && sudo mv /src/nginx-web-root /src/_old_polyrepo/nginx-web-root
+[ -d /src/loadbalancer ] && [ ! -L /src/loadbalancer ] && sudo mkdir -p /src/_old_polyrepo && sudo mv /src/loadbalancer /src/_old_polyrepo/loadbalancer
+
 # symlink(staging と同一の /src/<site> レイアウトを再現)
 
 sudo ln -sfn /src/thinkx-system/thinkx /src/thinkx
