@@ -19,7 +19,11 @@ terraform_output() {
   [ -f "$tfdir/terraform.tfstate" ] || { printf '%b\n' "${R}FAIL: terraform_output $env の state が無い(先に terraform_apply.sh $env)${Z}" >&2; return 1; }
 
   if [ -n "$name" ]; then
-    terraform -chdir="$tfdir" output -raw "$name"
+    if [ "$env" = eips ] && [ "$name" = eip_ledger ]; then
+      terraform -chdir="$tfdir" output "$name"
+    else
+      terraform -chdir="$tfdir" output -raw "$name"
+    fi
   else
     terraform -chdir="$tfdir" output
   fi
