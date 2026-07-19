@@ -13,6 +13,11 @@ sudo -u kaz git fetch origin k00bot2
 sudo -u kaz git -C /src/thinkx-system-k00bot2 pull
 sudo ln -sfn /src/thinkx-system-k00bot2/k00bot2 /src/k00bot2
 
+# data 自動 commit/push 用の git identity と push 先(deploy_ec2.md 手順7 で RW 鍵を作った前提)
+sudo -u kaz git -C /src/thinkx-system-k00bot2 config user.name "k00bot2-bot"
+sudo -u kaz git -C /src/thinkx-system-k00bot2 config user.email "kaz@thinkxinc.com"
+[ -f /home/kaz/.ssh/deploy_thinkx-system-rw ] && sudo -u kaz git -C /src/thinkx-system-k00bot2 remote set-url --push origin git@github-thinkx-system-rw:ThinkXInc/thinkx-system.git || printf '\033[33mWARN: RW deploy key 未配置。data の自動 push は失敗する(deploy_ec2.md 手順7)\033[0m\n'
+
 # .env  (git 管理外。/tmp/k00bot2.env を配った前提)
 [ -f /tmp/k00bot2.env ] && sudo install -o kaz -g serveradmins -m 640 /tmp/k00bot2.env /src/k00bot2/.env || printf '\033[33mWARN: k00bot2.env 未配布(deploy_ec2.md 手順2)\033[0m\n'
 

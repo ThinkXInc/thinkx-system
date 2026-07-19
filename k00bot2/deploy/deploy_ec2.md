@@ -58,9 +58,38 @@ supercom2 側の出力から k00bot2 の行が消えていて、web 側に /etc/
 ssh $WEB 'tail -20 /src/k00bot2/data/log_daily.txt'
 ```
 
+## 7. data 自動 push 用の RW deploy key(初回のみ)
+
+data は git 管理(2026-07-19 裁定)で、daily / monthly の run スクリプトが EC2 から commit + push する。
+既存の deploy_thinkx-system は read-only(D-1)のため、push 専用の鍵を EC2 上で生成して追加登録する。
+
+```
+ssh $WEB 'sudo -u kaz ssh-keygen -t ed25519 -f /home/kaz/.ssh/deploy_thinkx-system-rw -N "" -C "supercom-web:thinkx-system:rw"'
+ssh $WEB 'printf "\nHost github-thinkx-system-rw\n    HostName github.com\n    User git\n    IdentityFile ~/.ssh/deploy_thinkx-system-rw\n    IdentitiesOnly yes\n" | sudo -u kaz tee -a /home/kaz/.ssh/config >/dev/null'
+ssh $WEB 'sudo -u kaz cat /home/kaz/.ssh/deploy_thinkx-system-rw.pub'
+```
+
+GitHub → ThinkXInc/thinkx-system → Settings → Deploy keys → Add deploy key に貼る。
+Title: supercom-web-k00bot2-rw / **Allow write access: チェックする**(D-1 read-only 原則の意図的例外。用途は k00bot2 data の自動 push のみ)
+
+```
+ssh $WEB 'sudo -u kaz ssh -T git@github-thinkx-system-rw 2>&1 | head -1'
+ssh $WEB 'sudo -u kaz git -C /src/thinkx-system-k00bot2 remote set-url --push origin git@github-thinkx-system-rw:ThinkXInc/thinkx-system.git'
+```
+
+Hi ThinkXInc/thinkx-system! が出ればOK
+
+## 8. 初回 data 取り込み(EC2 の最新実データを repo へ・初回のみ)
+
+```
+ssh $WEB 'cd /src/k00bot2 && sudo -u kaz git add data && sudo -u kaz git commit -m "data(k00bot2): initial import (supercom2 live data)" && sudo -u kaz git push'
+```
+
 ## 運用: コード更新の反映
 
 ```
 cd ~/Sources/thinkx-system-k00bot2
 ssh $WEB 'sudo -u kaz git -C /src/thinkx-system-k00bot2 pull'
 ```
+
+data は EC2 側の cron が commit + push するため、Mac 側は `git pull` で最新データを取得する(tar 移行は初回のみ)。

@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
-from typing import Any, Dict, Iterator, Set, Union
+from typing import Any, Dict, Iterator, List, Set, Union
 
 
 PathLike = Union[str, Path]
@@ -13,6 +13,27 @@ def ensure_dir(path: PathLike) -> Path:
     p = Path(path)
     p.mkdir(parents=True, exist_ok=True)
     return p
+
+
+def read_lines(path: PathLike) -> List[str]:
+    """
+    テキストを行のリストで読む(strip 済み・空行は捨てる)。
+    ファイルが無ければ空リスト(iter_jsonl と同じ流儀)。
+    """
+    p = Path(path)
+    if not p.exists():
+        return []
+    with p.open("r", encoding="utf-8") as f:
+        return [s for s in (line.strip() for line in f) if s]
+
+
+def write_lines(path: PathLike, lines: List[str]) -> None:
+    """1行=1要素でテキストに書く(上書き・末尾改行あり)。"""
+    p = Path(path)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    with p.open("w", encoding="utf-8") as f:
+        for s in lines:
+            f.write(f"{s}\n")
 
 
 def iter_jsonl(path: PathLike) -> Iterator[Dict[str, Any]]:
