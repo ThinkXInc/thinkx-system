@@ -466,3 +466,11 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
 - Codex サマリーの「未 push 3コミット」は**既に push 済み**(origin と完全同期を実測)。追加で k00bot2 の merge はオーナーにより revert 済み(719e856)・AGENTS.md 新設・terraform_output.sh の2バグ(eips ディレクトリ判定 / map 出力)は Codex 修正済みで eip_ledger 4件の出力を実測確認
 - D-52 / D-53 は DECISIONS に原文つきで記録済み・F16 も記録済みを確認(欠落なし)
 - **polyfill.io 除去(5892559)は staging 反映済みだが prod 未反映を実測**(prod の /src/thinkx-system が 1e65aa9 で停止・テンプレートに参照残存)→ prod へ pull + restart_thinkx が必要(DNS 切替前必須)
+
+## setup_claude_code の偽緑と postinstall ブロック(2026-07-19)
+
+- 露出: npm の allowScripts 既定ブロックで Claude Code の postinstall(本体バイナリ取得)が走らず、
+  claude コマンドは存在するが起動不能。verdict が `command -v` の存在確認だけだったため**緑を出した(偽緑)**
+- 修正: install に `--allow-scripts=@anthropic-ai/claude-code` を明示 + verify を「バージョンが取れること」に変更。
+  教訓は D-48 と同型 — **存在や is-active でなく、機能する証拠で判定する**
+- 小ノイズ: ubuntu ユーザーの .bashrc に autoenv の残骸(activate.sh 不在エラー)。実害なし・掃除は任意

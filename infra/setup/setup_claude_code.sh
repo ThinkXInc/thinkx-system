@@ -5,10 +5,12 @@
 # 前提:
 #  - setup_webserver.sh 済み(node v18+ / tmux が入っている)
 #  - 認証は本スクリプトでは行わない。初回に tmux 内で claude を起動して対話ログイン(オーナー)
+# 注: この npm は allowScripts 既定ブロックのため、postinstall(本体バイナリ取得)の許可指定が必須
 
 echo "== setup_claude_code =="
 
-sudo npm install -g @anthropic-ai/claude-code
+sudo npm install -g --allow-scripts=@anthropic-ai/claude-code @anthropic-ai/claude-code
 
-# verify  (claude と tmux が使えること)
-command -v claude > /dev/null && command -v tmux > /dev/null && printf '\033[32mOK: setup_claude_code claude=%s / tmux あり(初回は tmux 内で claude を起動して対話ログイン)\033[0m\n' "$(claude --version 2>/dev/null | head -1)" || printf '\033[31mFAIL: setup_claude_code claude=%s tmux=%s\033[0m\n' "$(command -v claude || echo なし)" "$(command -v tmux || echo なし)"
+# verify  (存在でなくバージョンが取れること = 本体バイナリまで入っていること)
+CV="$(claude --version 2>/dev/null | head -1)"
+[ -n "$CV" ] && command -v tmux > /dev/null && printf '\033[32mOK: setup_claude_code claude %s / tmux あり(初回は tmux 内で claude を起動して対話ログイン)\033[0m\n' "$CV" || printf '\033[31mFAIL: setup_claude_code claude --version=%s tmux=%s\033[0m\n' "${CV:-取得不可}" "$(command -v tmux || echo なし)"
