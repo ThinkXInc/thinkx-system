@@ -1,0 +1,29 @@
+# page_id: b32261728afafade237ae05951e27c874e5a38f7afd294f6de3d13028337418d
+# url: https://kazukiotsuka.org/about/
+# title: About
+# media_title: 大塚一輝Blog - 20年後の世界
+# published_at: 2011-11-14
+#
+# posting_format:
+# {text}
+#
+# "{article_title} - {media_title}"
+# {link}
+
+## FULLTEXT
+About
+大塚一輝
+1985年生まれ。美と知能と進化の収束、第六感の定量化、がライフワーク。
+https://kazukiotuka.com/ja/
+(日本語)
+https://kazukiotsuka.com
+(English)
+共有:
+クリックして X で共有 (新しいウィンドウで開きます)
+X
+Facebook で共有するにはクリックしてください (新しいウィンドウで開きます)
+Facebook
+いいね
+読み込み中…
+
+## CANDIDATES
