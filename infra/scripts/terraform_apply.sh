@@ -19,10 +19,11 @@ terraform_apply() {
   local other plan_out ans
   tfdir="infra/terraform/envs/$env"
 
-  [ -n "$env" ] || { printf '%b\n' "${Y}注意: 環境の引数がありません。terraform_apply.sh <staging|prod> のように指定してください${Z}"; return 1; }
-  { [ "$env" = staging ] || [ "$env" = prod ]; } || { printf '%b\n' "${Y}注意: 引数は staging か prod です(指定: $env)${Z}"; return 1; }
-  [ -f "$tfdir/variables.tf" ] || { printf '%b\n' "${R}FAIL: terraform_apply $tfdir が無い(リポジトリ直下で実行する)${Z}"; return 1; }
-  [ -f infra/terraform/terraform.tfvars ] || { printf '%b\n' "${R}FAIL: terraform_apply infra/terraform/terraform.tfvars が無い(my_office_ips を書いてから実行。例は terraform.tfvars.example)${Z}"; return 1; }
+  [ -n "$env" ] || { printf '%b\n' "${Y}注意: 環境の引数がありません。terraform_apply.sh <staging|prod|eips> のように指定してください${Z}"; return 1; }
+  { [ "$env" = staging ] || [ "$env" = prod ] || [ "$env" = eips ]; } || { printf '%b\n' "${Y}注意: 引数は staging / prod / eips(EIP 台帳)です(指定: $env)${Z}"; return 1; }
+  [ "$env" = eips ] && tfdir="infra/terraform/eips"
+  [ -d "$tfdir" ] || { printf '%b\n' "${R}FAIL: terraform_apply $tfdir が無い(リポジトリ直下で実行する)${Z}"; return 1; }
+  [ "$env" = eips ] || [ -f infra/terraform/terraform.tfvars ] || { printf '%b\n' "${R}FAIL: terraform_apply infra/terraform/terraform.tfvars が無い(my_office_ips を書いてから実行。例は terraform.tfvars.example)${Z}"; return 1; }
 
   terraform -chdir="$tfdir" init -input=false > /dev/null
   echo "env=$env / dir=$tfdir(state 台帳はこのディレクトリ固有。切替操作なし)"
@@ -31,7 +32,7 @@ terraform_apply() {
   terraform -chdir="$tfdir" plan -input=false -lock-timeout=10s -var "env=$env" | tee "$plan_out"
 
   other=prod; [ "$env" = prod ] && other=staging
-  if grep -q "supercom-$other" "$plan_out"; then
+  if [ "$env" != eips ] && grep -q "supercom-$other" "$plan_out"; then
     printf '%b\n' "${R}FAIL: terraform_apply 差分に supercom-$other(逆環境)が混入。中止${Z}"; return 1
   fi
   if grep -q "No changes." "$plan_out"; then

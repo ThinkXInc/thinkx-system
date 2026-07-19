@@ -66,14 +66,31 @@ resource "aws_instance" "web" {
 # Elastic IP(lb/web とも全 env で固定。staging も頻繁にアクセスするため
 # stop/start・作り直しで IP が変わると ssh config や検証手順が壊れる。
 # 2024-02 以降 IPv4 は自動割当でも EIP でも同額なので稼働中のコスト増なし)
-resource "aws_eip" "lb" {
-  instance = aws_instance.lb.id
-  domain   = "vpc"
-  tags     = { Name = "${local.name_prefix}-eip-lb" }
+# EIP は常設台帳(../eips が唯一のマスター・D-53)が所有する。
+# ここでは tag:Name で自分の環境の分を参照してインスタンスに紐付けるだけ。
+# 環境を destroy しても EIP は台帳に残り、DNS 再設定は不要。
+data "aws_eip" "lb" {
+  filter {
+    name   = "tag:Name"
+    values = ["${local.name_prefix}-eip-lb"]
+  }
 }
 
-resource "aws_eip" "web" {
-  instance = aws_instance.web.id
-  domain   = "vpc"
-  tags     = { Name = "${local.name_prefix}-eip-web" }
+data "aws_eip" "web" {
+  filter {
+    name   = "tag:Name"
+    values = ["${local.name_prefix}-eip-web"]
+  }
+}
+
+resource "aws_eip_association" "lb" {
+  instance_id         = aws_instance.lb.id
+  allocation_id       = data.aws_eip.lb.id
+  allow_reassociation = true
+}
+
+resource "aws_eip_association" "web" {
+  instance_id         = aws_instance.web.id
+  allocation_id       = data.aws_eip.web.id
+  allow_reassociation = true
 }
