@@ -63,8 +63,7 @@ terraform fmt -check                   # .tf の整形チェック(崩れてた�
 ../scripts/status.sh staging     # ← 「(何も立っていない) 合計 $0.00/月」を確認
 terraform validate                     # 構文・型・参照の静的検証(AWS 接続なし)
 ../scripts/plan-summary.sh staging     # 構成図(plan 由来・+作成/~変更/-削除で色分け)と月額。plan もこの中で走る
-terraform apply -var="env=staging"     # 承認して作成。数分で LB+web が立つ
-terraform output                        # IP と ssh コマンド(-i 付き)が出る
+../scripts/terraform_apply.sh staging  # plan 全差分 → yes で作成(workspace 自動選択)。outputs も出る
 ```
 
 ### 2. 中身を流す

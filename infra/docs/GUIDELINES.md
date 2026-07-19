@@ -236,11 +236,11 @@
 ## 対話プロンプトを裸で出さない・破壊操作はラッパー経由(オーナー指示 2026-07-19)
 
 - **原文**: 「これが出てきたが、なぜ急にこれが聞かれているのか意味がわからない。これを聞く必要があるなら、もう少し詳しく説明を出力すべきだ。とりあえず今の自分のグローバルIPをここに入力すればいいはずだが、いちいちそんなの覚えてないのだから、コマンドで出してあげるのが親切だろう。しかし、これはただ単にTerraformのコマンドを叩いているだけだから、destroyをする時のラッパーのスクリプトを用意するべきじゃないか。」
-- **運用**: ①ツールの対話プロンプトが出る状況(tfvars 欠落等)を作らない — ラッパーが値を自動検出して渡す ②変数の description には「なぜ聞かれるのか・値の調べ方」まで書く ③apply/destroy 等の破壊操作は生 terraform でなくラッパースクリプト(plan 全件提示 → yes 確認 → 実行 → 色つき判定)。適用: scripts/destroy_env.sh / variables.tf の description 拡充。plan-summary.sh(2026-07-15)と同系統の教訓
+- **運用**: ①ツールの対話プロンプトが出る状況(tfvars 欠落等)を作らない — ラッパーが値を自動検出して渡す ②変数の description には「なぜ聞かれるのか・値の調べ方」まで書く ③apply/destroy 等の破壊操作は生 terraform でなくラッパースクリプト(plan 全件提示 → yes 確認 → 実行 → 色つき判定)。適用: scripts/terraform_destroy.sh / variables.tf の description 拡充。plan-summary.sh(2026-07-15)と同系統の教訓
 
 ## 生 terraform を手順書に書かない(オーナー指示 2026-07-19・全文は docs/GUIDELINES.md)
 
 - コマンド束のスクリプト化・環境は必須引数・引数無しは黄色注意、の一般規則を terraform に適用。
-  apply=scripts/apply_env.sh、output 参照=scripts/env_output.sh、destroy=scripts/destroy_env.sh。
+  apply=scripts/terraform_apply.sh、output 参照=scripts/terraform_output.sh、destroy=scripts/terraform_destroy.sh。
   workspace(state 台帳の切替)は各スクリプトが env 引数から自動選択し、人間は選ばない。
   手順書(構築手順/DNS切替手順/hostname/運用)から生 terraform コマンドを一掃済み

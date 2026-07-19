@@ -410,7 +410,7 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
 
 ## 旧 staging の terraform state がこの Mac に存在しない(2026-07-19)
 
-- ~/Sources/infra は 7/12 の clone で tfstate / tfvars とも無し。destroy_env.sh は「破壊対象 0 件」で正しく停止(state 喪失の検出にもなった)
+- ~/Sources/infra は 7/12 の clone で tfstate / tfvars とも無し。terraform_destroy.sh は「破壊対象 0 件」で正しく停止(state 喪失の検出にもなった)
 - 実測: staging VPC = vpc-0a837c944d5750395(Name=supercom-staging、192.168.0.0/16)。IAM 名 supercom-staging-lb が残っていると monorepo terraform の staging apply が EntityAlreadyExists で失敗するため IAM も撤去対象
 - 対応: scripts/destroy_old_staging.sh(一回きり・aws CLI・棚卸し全提示 → yes 必須)。private hosted zone は権限都合で対象外(残置無害・コンソールで任意掃除)
 
@@ -421,3 +421,8 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
   lb-sg → VPC を削除して完遂(VPC NotFound 確認済み)。スクリプトは SG 削除を2パス化して反映
 - EIP 2個解放・IAM 名 supercom-staging-lb 解放 → 新 staging の terraform apply(workspace staging)が通せる状態
 - 注意: staging.<domain> の A レコード5件は解放済み IP(16.76.147.168)を指したまま。手順12 で新 EIP に付け替えるまで staging URL は不通
+
+## terraform ラッパーの統一(2026-07-19・オーナー指摘)
+
+- 指摘: apply_env という名前では中身が分からない。従来の「plan-summary で差分チェック → apply」の2段階が簡単
+- 対応: 2段階の形を維持したまま名前を実態に一致させ統一 — plan-summary.sh(名前維持・**workspace 自動選択と引数必須を追加**)/ terraform_apply.sh / terraform_destroy.sh / terraform_output.sh。従来手順との違いは workspace 対応(monorepo で state が同居したため必須)・逆環境ガード・cd 不要のみで、実質同じ流れ

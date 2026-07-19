@@ -15,10 +15,19 @@
 # ============================================================
 
 plan_summary() {
-  local envx="${1:-staging}"
+  local envx="${1:-}"
   local here tfdir plan json diagram
+  local YEL=$'\033[33m' ZC=$'\033[0m'
+  [ -n "$envx" ] || { printf '%b\n' "${YEL}注意: 環境の引数がありません。plan-summary.sh <staging|prod> のように指定してください${ZC}" >&2; return 1; }
+  { [ "$envx" = staging ] || [ "$envx" = prod ]; } || { printf '%b\n' "${YEL}注意: 引数は staging か prod です(指定: $envx)${ZC}" >&2; return 1; }
   here="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" 2>/dev/null && pwd)"
   tfdir="$here/../terraform"
+
+  # workspace(state 台帳)を env から自動選択(prod=default / staging=staging)。人間には選ばせない
+  local ws=default
+  [ "$envx" = staging ] && ws=staging
+  terraform -chdir="$tfdir" workspace select -or-create "$ws" >/dev/null 2>&1 || { echo "workspace $ws を選択できない" >&2; return 0; }
+  echo "env=$envx / workspace=$ws"
 
   command -v terraform >/dev/null 2>&1 || { echo "terraform が見つからない" >&2; return 0; }
   command -v python3   >/dev/null 2>&1 || { echo "python3 が見つからない"   >&2; return 0; }

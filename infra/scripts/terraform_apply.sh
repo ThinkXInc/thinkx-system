@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# thinkx-system/infra/scripts/apply_env.sh   【分類: 変更系(インフラ作成/変更・オーナー承認つき)】
+# thinkx-system/infra/scripts/terraform_apply.sh   【分類: 変更系(インフラ作成/変更・オーナー承認つき)】
 #
 # 指定環境の terraform apply を定型化する(生 terraform コマンドを人間に打たせない)。
 #   - workspace(state の分離面)を env から自動選択: prod=default / staging=staging。
@@ -9,19 +9,19 @@
 #   - terraform.tfvars が無ければ赤 FAIL(my_office_ips を自動補完すると SG 許可元を
 #     現在地 1 個で上書きしてしまうため、apply では補完しない)
 #
-#   使い方: bash infra/scripts/apply_env.sh <staging|prod>
+#   使い方: bash infra/scripts/terraform_apply.sh <staging|prod>
 
 set -euo pipefail
 
-apply_env() {
+terraform_apply() {
   local G=$'\033[32m' R=$'\033[31m' Y=$'\033[33m' Z=$'\033[0m'
   local env="${1:-}" tfdir="infra/terraform"
   local ws=default other plan_out ans
 
-  [ -n "$env" ] || { printf '%b\n' "${Y}注意: 環境の引数がありません。apply_env.sh <staging|prod> のように指定してください${Z}"; return 1; }
+  [ -n "$env" ] || { printf '%b\n' "${Y}注意: 環境の引数がありません。terraform_apply.sh <staging|prod> のように指定してください${Z}"; return 1; }
   { [ "$env" = staging ] || [ "$env" = prod ]; } || { printf '%b\n' "${Y}注意: 引数は staging か prod です(指定: $env)${Z}"; return 1; }
-  [ -f "$tfdir/variables.tf" ] || { printf '%b\n' "${R}FAIL: apply_env $tfdir が無い(リポジトリ直下で実行する)${Z}"; return 1; }
-  [ -f "$tfdir/terraform.tfvars" ] || { printf '%b\n' "${R}FAIL: apply_env $tfdir/terraform.tfvars が無い(my_office_ips を書いてから実行。例は terraform.tfvars.example)${Z}"; return 1; }
+  [ -f "$tfdir/variables.tf" ] || { printf '%b\n' "${R}FAIL: terraform_apply $tfdir が無い(リポジトリ直下で実行する)${Z}"; return 1; }
+  [ -f "$tfdir/terraform.tfvars" ] || { printf '%b\n' "${R}FAIL: terraform_apply $tfdir/terraform.tfvars が無い(my_office_ips を書いてから実行。例は terraform.tfvars.example)${Z}"; return 1; }
 
   terraform -chdir="$tfdir" init -input=false > /dev/null
   [ "$env" = staging ] && ws=staging
@@ -33,10 +33,10 @@ apply_env() {
 
   other=prod; [ "$env" = prod ] && other=staging
   if grep -q "supercom-$other" "$plan_out"; then
-    printf '%b\n' "${R}FAIL: apply_env 差分に supercom-$other(逆環境)が混入。中止${Z}"; return 1
+    printf '%b\n' "${R}FAIL: terraform_apply 差分に supercom-$other(逆環境)が混入。中止${Z}"; return 1
   fi
   if grep -q "No changes." "$plan_out"; then
-    printf '%b\n' "${G}OK: apply_env $env 差分なし(現状と一致)。何もしない${Z}"; return 0
+    printf '%b\n' "${G}OK: terraform_apply $env 差分なし(現状と一致)。何もしない${Z}"; return 0
   fi
 
   printf '%b' "${Y}上の差分どおり $env に apply する? [yes/N] ${Z}"
@@ -44,11 +44,11 @@ apply_env() {
   [ "$ans" = yes ] || { echo "中止(何も変更していない)"; return 1; }
 
   terraform -chdir="$tfdir" apply -input=false -lock-timeout=10s -auto-approve -var "env=$env" \
-    || { printf '%b\n' "${R}FAIL: apply_env $env apply が失敗。上の出力を確認${Z}"; return 1; }
+    || { printf '%b\n' "${R}FAIL: terraform_apply $env apply が失敗。上の出力を確認${Z}"; return 1; }
   echo
   echo "── outputs ──"
   terraform -chdir="$tfdir" output
-  printf '%b\n' "${G}OK: apply_env $env apply 完了${Z}"
+  printf '%b\n' "${G}OK: terraform_apply $env apply 完了${Z}"
 }
 
-apply_env "$@"
+terraform_apply "$@"
