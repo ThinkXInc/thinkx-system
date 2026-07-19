@@ -44,7 +44,7 @@ variable "key_name" {
 }
 
 variable "my_office_ips" {
-  description = "SSH(22)を許可する拠点グローバル IP のリスト。各要素は必ず /32。0.0.0.0/0 は禁止"
+  description = "SSH(22)を許可する拠点グローバル IP のリスト。各要素は必ず /32。0.0.0.0/0 は禁止。通常は terraform.tfvars が供給する — この入力を対話で聞かれたら tfvars 欠落が原因。現在の IP は curl -s https://checkip.amazonaws.com で分かる(追加は scripts/add_current_office_ip.sh)"
   type        = list(string)
   # 例: ["203.0.113.5/32", "198.51.100.7/32"]。terraform.tfvars で指定(tfvars はコミットしない)
   # 追加は scripts/add_current_office_ip.sh(現在地の IP を追記して apply)
