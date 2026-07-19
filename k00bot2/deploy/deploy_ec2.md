@@ -41,7 +41,7 @@ ssh $WEB 'bash -s' < k00bot2/deploy/setup_k00bot2_ec2.sh
 ssh $SRC 'crontab -l'
 ```
 
-k00bot2 の行が deploy/k00bot2.cron と同じ時刻ならOK(違えば k00bot2.cron を実測に合わせてから手順5へ)
+k00bot2 の行が deploy/k00bot2.cron の JST 換算(コメント行)と同じ時刻ならOK(違えば k00bot2.cron を実測の UTC 換算に直してから手順5へ。web EC2 は UTC・supercom2 は JST)
 
 ## 5. 切替: supercom2 停止 → web 有効化(1分)
 
