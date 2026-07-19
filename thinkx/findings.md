@@ -94,3 +94,61 @@
   submodule パスへの参照や `git submodule update --recurse` があれば、その libcommon 取得ステップは
   不要になっている(playbooks 自体の取得は残す)。playbooks 原本での確認は人間判断。
 - deploy 経路コードの変更は無し(計画 S-2「変更があった場合のみコミット」に該当せず。本記録のみ)。
+
+---
+
+## E-1 truetechjapan 受賞企業ページ新設(2026-07-19)
+
+計画外の追加作業(オーナー直接指示)。ROADMAP の管轄としては E トラック
+(SITE_EDIT_WORKFLOW.md)の領域だが、同文書は「カットオーバー前は発効しない」ため
+本セッションはローカル実装 + ローカル検証までで、staging/PR フローには乗せていない。
+
+### 実装
+- ルート: `/truetechjapan/award/<company_key>` と `/truetechjapan/<lang>/award/<company_key>`。
+  nginx(truetechjapan.com server block)の `rewrite ^/(?!truetechjapan)(.*)$ /truetechjapan/$1`
+  により公開 URL は **`https://truetechjapan.com/award/thinkx`**(および `/ja/`・`/en/` 前置)。
+  ID は振らず、企業キー(= JSON ファイル名)がそのまま URL になる。
+- データ: `views/templates/truetechjapan/award_companies/<key>.json`(1企業=1ファイル)。
+- テンプレート: `views/templates/truetechjapan/award_company_page.html`(全企業で共通)。
+- スタイル: `views/src/less/truetechjapan/award_company.less`(main.less に import)。
+- レイアウトの典拠: `views/templates/truetechjapan/sample/受賞企業ページサンプル.pdf`。
+  PDF の斜線ボックスとピンク文字は配布用の記入指示であり、サイトには出さない(オーナー指示)。
+
+### F-E1(既存の失敗・本変更とは無関係): route_sweep ゴールデンが古い
+- 本作業の着手前時点で `tests/test_route_sweep.py` は既に FAIL していた。
+  差分は `/filedrop: golden=None actual=200` の1件のみ。`/filedrop` ルートは main.py に
+  存在するが S-0b でゴールデンを凍結した後に追加されたと見られる。
+- 本セッションで `/filedrop: 200` をゴールデンへ明示追記した(黙った再生成ではなく、
+  既存ルートの取りこぼしの補正として記録)。
+
+### F-E2: pytest が requirements.txt に無い
+- `tests/` は pytest 前提だが `requirements.txt`(本番ピン)にも venv にも pytest が無く、
+  `python -m pytest` が実行できなかった。本セッションで `venv` に pytest を追加導入した
+  (requirements.txt は本番依存のため変更していない)。dev 依存の管理方法は要判断。
+
+### F-E3: config_test に SRC_ROOT を追加
+- 受賞企業 JSON の探索に `Config.SRC_ROOT` を使ったところ、テスト用 Config に同キーが
+  無く AttributeError。conftest の設計(「欠落は顕在化させ反復で補う」)に従い
+  `tests/config_test.py` へ `SRC_ROOT` を追加した。本番 config.py は未変更。
+
+### F-E4(要判断): 認定シール画像の解像度
+- ページ右上の Best Tech 100 シールは既存の `img/truetechjapan/header/header-logo-sp.png`
+  (113x113)を `img/truetechjapan/award_companies/best-tech-100-seal.png` として複製して使用。
+  Retina では甘い。年号入りの高解像度版(`top/top-logo-v2.png` 内)は「2025」が焼き込まれており
+  2026 受賞ページには使えない。年号なし高解像度シールの支給が望ましい。
+
+### F-E5(要判断): 受賞企業データが日本語のみ
+- `award_companies/*.json` は company_name / business / award_reasons が日本語単一値。
+  ラベル(受賞年・創業者・事業内容 等)は locale 化したが、企業固有の値は
+  `/en/award/<key>` でも日本語のまま表示される。英語版を出す場合はデータ構造の
+  多言語化(値を {ja, en} にする)が必要。
+
+### F-E6(要判断): インタビュー節の扱い
+- `interview_url` が null の企業では **節ごと非表示**にした。PDF では見出し「インタビュー」が
+  黒字で、その下にピンクの注記「インタビューをお申し込みの場合、インタビューページへの
+  リンクが記載されます」がある。見出しだけ常時出す解釈も可能。現状は非表示。
+
+### F-E7(既存・未修正): main.py の COMMON_LOCALES_ROOT が壊れている
+- `COMMON_LOCALES_ROOT = join(abspath(__file__), 'libcommon/locales')` は `dirname()` 欠落で
+  `.../main.py/libcommon/locales` を指す。現状どこからも参照されていないため実害なし。
+  規約に反する既存コードを勝手に直さない方針(CLAUDE.md)により未修正・記録のみ。

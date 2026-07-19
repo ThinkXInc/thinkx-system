@@ -1,5 +1,6 @@
 import sys
 import os
+import re
 import socket
 import json
 from os.path import abspath, join
@@ -539,6 +540,23 @@ def truetech_locale(func):
         return func(locale=locale, *args, **kwargs)
     return wrapper
 
+
+# 受賞企業データ。1企業 = 1 JSON、ファイル名(拡張子なし)がそのまま URL キーになる。
+AWARD_COMPANIES_ROOT = join(Config.SRC_ROOT, 'views/templates/truetechjapan/award_companies')
+AWARD_COMPANY_KEY_PATTERN = re.compile(r'^[a-z0-9][a-z0-9_-]*$')
+
+
+def load_award_company(company_key):
+    """受賞企業 JSON を読んで返す。キーが不正、または未登録なら None。"""
+    if not AWARD_COMPANY_KEY_PATTERN.match(company_key):
+        return None
+    company_file_path = join(AWARD_COMPANIES_ROOT, f'{company_key}.json')
+    if not os.path.isfile(company_file_path):
+        return None
+    with open(company_file_path, encoding='utf-8') as company_file:
+        return json.load(company_file)
+
+
 @app.route("/truetechjapan/")
 @app.route("/truetechjapan/<lang>/")
 @truetech_lang
@@ -622,6 +640,31 @@ def truetechjapan_privacy(locale, lang=None, lang_name=None):
         lang_name=lang_name,
         locale_dict=locale.dict(),
         metadata=locale.dict()["metadata_privacy"][lang]
+    )
+
+@app.route("/truetechjapan/award/<company_key>")
+@app.route("/truetechjapan/<lang>/award/<company_key>")
+@truetech_lang
+@truetech_locale
+def truetechjapan_award_company(locale, company_key, lang=None, lang_name=None):
+    logger.info(magenta(f'=> /truetechjapan/award/{company_key} [GET] (lang: {lang})'))
+
+    company = load_award_company(company_key)
+    if company is None:
+        abort(404)
+
+    locale.add_locale_file(f'{LOCALES_ROOT}/truetechjapan/award_company.json')
+
+    metadata = dict(locale.dict()["metadata_award_company"][lang])
+    metadata["title"] = f'{company["company_name"]} | {metadata["title"]}'
+
+    return render_template(
+        '/truetechjapan/award_company_page.html',
+        lang=lang,
+        lang_name=lang_name,
+        locale_dict=locale.dict(),
+        metadata=metadata,
+        company=company
     )
 
 @app.route('/truetechjapan/entry')

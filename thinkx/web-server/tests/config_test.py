@@ -12,14 +12,15 @@
 
 import os
 
-_LOCALES_ROOT = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'locales')
+_SRC_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_LOCALES_ROOT = os.path.join(_SRC_ROOT, 'locales')
 
 
 class Config:
     ENV = 'test'
     DEFAULT_LANG = 'en'
     AVAILABLE_LANGS = ['en', 'ja', 'zh', 'fr', 'ar', 'ru', 'es', 'ko', 'de']
+    SRC_ROOT = _SRC_ROOT
     LOCALES_ROOT = _LOCALES_ROOT
     HOST_URL = 'http://localhost'
     FLASK_APP_SECRET_KEY = 'test-flask-app-secret-key'
