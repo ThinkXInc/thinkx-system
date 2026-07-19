@@ -399,3 +399,11 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
 - terraform workspace 分離を構築手順 prerequisites に組込(staging=workspace staging / prod=default)。LB_IP は workspace 経由で両環境とも terraform output に統一
 - EIP 実測10個(supercom 4 + legacy 6)→ 上限余裕不明のため destroy 先行
 - clone_monorepo.sh の旧ディレクトリ退避は新規箱では no-op のため防御として残置
+
+## F16: /js/simplicity アセットは全環境で 404(既存欠陥・カットオーバー非障害)(2026-07-19)
+
+- thinkx のテンプレート(general/NNTM の common.html)が `/js/simplicity/dist/simplicity.js` 等を参照するが、
+  **オンプレ本番も旧 staging も新 prod もすべて 404**(実測)。views/js/ に simplicity が存在せず、nginx にも
+  マッピングなし。つまり monorepo 移行の退行ではなく従来からの欠陥(パリティは取れている)
+- /src/simplicity(B案・53f0639 固定)はサイト配信に未配線。配線するか、テンプレートから参照を外すかは
+  simplicity リファクタリング側の計画で判断(このセッションでは触らない)

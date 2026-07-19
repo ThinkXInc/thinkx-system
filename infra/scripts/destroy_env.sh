@@ -26,6 +26,9 @@ destroy_env() {
   ip="$(curl -s --max-time 10 https://checkip.amazonaws.com)"
   echo "現在のグローバル IP: $ip を my_office_ip(s) に自動指定(destroy では SG 差分にのみ関わり実質無関係。tfvars 無しでも対話プロンプトを出させないため)"
 
+  # provider 未取得や lock 不整合で plan が止まらないよう先に init(インフラには何も触らない準備操作)
+  terraform -chdir="$tfdir" init -input=false -upgrade > /dev/null
+
   local -a varopt=(-var "env=$env")
   if grep -q 'variable "my_office_ips"' "$tfdir/variables.tf"; then
     varopt+=(-var "my_office_ips=[\"$ip/32\"]")
