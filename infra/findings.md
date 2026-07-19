@@ -444,3 +444,11 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
 
 - 手順5の出力が gulp --version 表示で終わり成否不明とオーナー確認 → D-36 適用漏れ2本(setup_user.sh / setup_webserver.sh)に verify + 色つき verdict を追加(webserver は hostname が ENVX 期待値かまで判定)
 - 実機は正常を別途実測: hostname=web1-stg(run() の ENVX 修正が有効)・kaz あり・/src に monorepo + symlink + libcommon/simplicity 原本(手順6まで完了状態)
+
+## 新 staging 受け入れ green + F13 の環境差症状(2026-07-19)
+
+- **手順4〜11 が「同じ手順の再実行」で素通りし、経路疎通 全ホップ green・受け入れ 62/62 一致(prod と同一結果)**。
+  D-32 の完了指標を staging ゼロ再構築で実証。今回の再実行で露出した抜けは D-36 verdict 漏れ2本(setup_user/setup_webserver、修正済み)のみ
+- check_request_path [1] が staging で NG になった件: F13 の残骸(default server → 死んだ 192.168.1.7:8009)の症状が
+  環境で変わるため(prod=同一サブネットで即 502 / staging=サブネット外ブラックホールでタイムアウト)。
+  [1] の意図は「public IP の 443 到達」なので TCP 接続判定に修正(IP 直打ちの HTTP 応答は vhost 方式の仕様外)

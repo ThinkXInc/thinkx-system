@@ -23,10 +23,11 @@ check_request_path() {
   ok() { printf '%b\n' "${G}ok  [$1] $2${Z}"; }
   ng() { printf '%b\n' "${R}NG  [$1] $2${Z}"; fail=$((fail+1)); }
 
-  # [1] Mac → LB public IP
-  code=$(curl -sk -o /dev/null --max-time 10 -w '%{http_code}' "https://$lb_ip/")
-  [ "$code" != "000" ] && ok 1 "LB public IP $lb_ip の 443 が応答(HTTP $code)" \
-                       || ng 1 "LB public IP $lb_ip の 443 に届かない"
+  # [1] Mac → LB public IP  (TCP 到達で判定。vhost 方式のため IP 直打ちの HTTP 応答は仕様外 —
+  #     default server が F13 の残骸に落ち、prod=502 / staging=タイムアウトと環境で症状が変わる)
+  code=$(python3 -c 'import socket,sys; s=socket.socket(); s.settimeout(5); s.connect((sys.argv[1],443)); print("ok")' "$lb_ip" 2>/dev/null)
+  [ "$code" = "ok" ] && ok 1 "LB public IP $lb_ip の 443 に TCP 到達" \
+                     || ng 1 "LB public IP $lb_ip の 443 に届かない"
 
   # [2] LB nginx(正しい設定で稼働)
   out=$(ssh -o BatchMode=yes -o ConnectTimeout=8 "$lb" \
