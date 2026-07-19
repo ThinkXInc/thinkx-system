@@ -387,3 +387,8 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
 - deploy key は追加作業不要: push_secrets.sh が infra/deploykeys(thinkx-system/libcommon/simplicity の3鍵)を運ぶ。GitHub 側登録はリポジトリ単位で済み
 - 手順10/11 の LB_IP が staging で terraform output 不可(state は旧 infra リポジトリ)→ LB_IP を prerequisites の環境ブロックへ移動(staging=16.76.147.168 直値)
 - staging lb にも IAM ロール(supercom-staging-lb)付与済みを実測 → setup_loadbalancer の renewal 切替(D-49)は staging でも成立する
+
+## 構築手順の setup 呼び出しが ENVX を渡していなかった(2026-07-19)
+
+- 手順5/8/9 が素の `ssh $HOST 'bash -s' <` で、ENVX 依存の setup_webserver / setup_loadbalancer に staging が伝わらず hostname が prod 値(web1/lb1)になるところだった(staging 差し替えの事前点検で発見。prod では偶然無害)
+- prerequisites の run() 経由に統一(setup_*.sh の全呼び出し)。run() は「ssh bash -s がごちゃごちゃしすぎ」というオーナー指示由来の仕組みでもある
