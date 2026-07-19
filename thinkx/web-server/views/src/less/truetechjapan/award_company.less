@@ -7,8 +7,12 @@
 @tablet-width:      1024px;
 @smartphone-width:  710px;
 
-@award-label-bg:    #f0dfa7;   /* 受賞年 / 創業者 / ティアのラベル地色 */
-@award-label-text:  #3d3a2f;
+/* 色・寸法は配布用 PDF からの実測値(300dpi サンプリング)。
+   受賞年 / 創業者ラベルと Top-Tier チップは別物である:
+   ラベル = 直角・単色・黒の太字 / チップ = 角丸・グラデーション・金茶の文字で高さ約 0.4 倍。 */
+@award-label-bg:    #f0d484;   /* 受賞年 / 創業者ラベルの地色(実測 rgb(240,212,132)) */
+@award-label-text:  #000;
+@tier-chip-text:    #b38e0c;   /* Top-Tier の文字色(実測 rgb(179,142,12)) */
 @award-mark-color:  #3c3c46;   /* 見出し先頭の角丸スクエア */
 @award-text:        #2f2f2f;
 
@@ -66,10 +70,13 @@ div#truetech-award-company {
                     padding-top: 8px;
 
                     span.tier-chip {
-                        background: @award-label-bg;
-                        color: @award-label-text;
-                        font-size: 15px;
-                        padding: 5px 16px;
+                        background: linear-gradient(95deg, #fdf1de 0%, #f5e4b0 55%, #efd88f 100%);
+                        color: @tier-chip-text;
+                        font-size: 14px;
+                        font-weight: 600;
+                        line-height: 1.5;
+                        padding: 2px 16px;
+                        border-radius: 6px;
                         white-space: nowrap;
                     }
 
@@ -110,7 +117,8 @@ div#truetech-award-company {
                         background: @award-label-bg;
                         color: @award-label-text;
                         font-size: 16px;
-                        padding: 7px 20px;
+                        font-weight: 600;
+                        padding: 8px 20px;
                         min-width: 74px;
                         text-align: center;
                         white-space: nowrap;
@@ -254,9 +262,12 @@ div#truetech-award-company {
         div.award-company-page.main-content {
             padding: 48px 20px 100px;
 
+            /* ティア + 認定シールは常に右上(オーナー指示)。狭くて社名と横に並べられない
+               ので、column-reverse で社名の少し上・右寄せに置く。 */
             div.company-header {
-                flex-direction: column;
-                gap: 28px;
+                flex-direction: column-reverse;
+                align-items: stretch;
+                gap: 20px;
 
                 div.company-identity {
                     h1.company-name { font-size: 27px; }
@@ -264,7 +275,9 @@ div#truetech-award-company {
                 }
 
                 div.award-mark {
-                    align-items: center;
+                    align-self: flex-end;
+                    align-items: flex-start;
+                    gap: 14px;
                     img.award-seal { width: 84px; }
                 }
             }

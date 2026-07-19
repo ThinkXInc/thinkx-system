@@ -152,3 +152,33 @@
 - `COMMON_LOCALES_ROOT = join(abspath(__file__), 'libcommon/locales')` は `dirname()` 欠落で
   `.../main.py/libcommon/locales` を指す。現状どこからも参照されていないため実害なし。
   規約に反する既存コードを勝手に直さない方針(CLAUDE.md)により未修正・記録のみ。
+
+---
+
+## E-2 多言語化 + Augmented Communications 追加(2026-07-19)
+
+- 企業固有の値(company_name / founders / business / award_reasons)を
+  `{"ja": ..., "en": ...}` 構造に変更。`main.localize_award_company()` が lang で潰す。
+  **訳が未供給(キー無し or 空)なら ja へフォールバック**する(企業から英訳が届く前でも
+  ページを落とさないため)。tier / url / award_year / logo は言語非依存で対象外。
+- `tier` を任意化。null の企業ではチップごと出さない。
+- 配布用 PDF の実測(300dpi サンプリング)で判明したスタイル差を修正(オーナー指摘):
+  - 受賞年 / 創業者ラベル: 直角・単色 `#f0d484`・黒の **font-weight 600**(高さ 30.5pt)
+  - Top-Tier チップ: **別物**。角丸・グラデーション・文字色 `#b38e0c`(金茶)で
+    高さ 12.5pt = ラベルの約 0.41 倍
+- ティア + 認定シールは常に画面右上。スマホでは横に並ばないため `column-reverse` で
+  社名の少し上・右寄せに配置(オーナー指示)。
+
+### F-E8(要判断): 残り3社の tier が未供給
+- Group 1 の enex に tier の記載があるのは ThinkX(Top-Tier)のみ。
+  Augmented Communications / レボーン / Beam Technologies は未指定のため `null`
+  (チップ非表示)で作成した。枠が決まり次第 JSON の `tier` を埋める。
+
+### F-E9(要判断): 創業者名の英語表記
+- 五十嵐 俊治 のローマ字表記は公式サイト(augmented.jp)に記載が無く、読みが一意でない
+  (Shunji / Toshiharu / Toshiji 等)。**人名を推測しない**方針で `founders.en` を空にし、
+  /en でも日本語表記が出るようにした。正式表記の supply が必要。
+
+### F-E10: award_year は 2026 と仮置き
+- enex に受賞年の記載があるのは ThinkX のみ。同一コホートとみなし残りも 2026 とした。
+  異なる場合は JSON の `award_year` を修正する。

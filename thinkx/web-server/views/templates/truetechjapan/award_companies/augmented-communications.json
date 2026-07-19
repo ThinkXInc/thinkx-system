@@ -1,0 +1,33 @@
+{
+  "company_name": {
+    "ja": "Augmented Communications株式会社",
+    "en": "Augmented Communications Inc."
+  },
+  "url": "https://www.augmented.jp",
+  "tier": null,
+  "award_year": 2026,
+  "founders": {
+    "ja": ["五十嵐 俊治"],
+    "en": []
+  },
+  "logo": {
+    "src": "/img/truetechjapan/award_companies/augmented-communications.png",
+    "format": "png",
+    "alignment": "center"
+  },
+  "business": {
+    "ja": "創業者・五十嵐が東京大学博士論文で研究した音声による認知機能推定技術を基盤に、AIで企業の暗黙知をナレッジグラフ化する独自ソリューションを開発。介護・教育・建設など人材育成が課題の業界で、冗長な音声からでも効率的に知識を抽出し、トレーニング時間を大幅短縮。特許技術を活かし、ロボット時代に向けた企業独自の知識継承を支援します。",
+    "en": "Building on voice-based cognitive function estimation technology researched in the founder's doctoral thesis at the University of Tokyo, the company develops a proprietary solution that uses AI to turn a company's tacit knowledge into a knowledge graph. In industries where workforce development is a challenge — nursing care, education and construction — it extracts knowledge efficiently even from unstructured speech, sharply reducing training time. Backed by patented technology, it supports the handover of company-specific knowledge for the coming age of robots."
+  },
+  "award_reasons": {
+    "ja": [
+      "対話と認知機能に関する研究に基づく社会実装に挑戦していること",
+      "技術系研究創業者による独自の技術を開発していること"
+    ],
+    "en": [
+      "Taking on real-world implementation grounded in research into dialogue and cognitive function.",
+      "Developing proprietary technology under a founder with a technical research background."
+    ]
+  },
+  "interview_url": null
+}

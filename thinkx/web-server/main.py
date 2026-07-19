@@ -546,6 +546,11 @@ AWARD_COMPANIES_ROOT = join(Config.SRC_ROOT, 'views/templates/truetechjapan/awar
 AWARD_COMPANY_KEY_PATTERN = re.compile(r'^[a-z0-9][a-z0-9_-]*$')
 
 
+# 企業固有の値のうち多言語で持つフィールド。JSON では {"ja": ..., "en": ...} 形式。
+# tier / url / award_year / logo は言語に依らないので対象外。
+LOCALIZED_AWARD_COMPANY_FIELDS = ('company_name', 'founders', 'business', 'award_reasons')
+
+
 def load_award_company(company_key):
     """受賞企業 JSON を読んで返す。キーが不正、または未登録なら None。"""
     if not AWARD_COMPANY_KEY_PATTERN.match(company_key):
@@ -555,6 +560,18 @@ def load_award_company(company_key):
         return None
     with open(company_file_path, encoding='utf-8') as company_file:
         return json.load(company_file)
+
+
+def localize_award_company(company, lang):
+    """多言語フィールドを lang の値に潰した dict を返す。
+
+    訳が未供給の言語は ja へフォールバックする。企業から訳が届く前でも
+    ページを落とさないため(空文字も未供給として扱う)。
+    """
+    localized_company = dict(company)
+    for field in LOCALIZED_AWARD_COMPANY_FIELDS:
+        localized_company[field] = company[field].get(lang) or company[field]['ja']
+    return localized_company
 
 
 @app.route("/truetechjapan/")
@@ -652,6 +669,7 @@ def truetechjapan_award_company(locale, company_key, lang=None, lang_name=None):
     company = load_award_company(company_key)
     if company is None:
         abort(404)
+    company = localize_award_company(company, lang)
 
     locale.add_locale_file(f'{LOCALES_ROOT}/truetechjapan/award_company.json')
 

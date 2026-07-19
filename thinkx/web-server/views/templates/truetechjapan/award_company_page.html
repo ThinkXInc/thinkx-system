@@ -20,6 +20,7 @@
       </div>
 
       <div class="award-mark">
+        {% if company["tier"] %}
         <div class="tier">
           <span class="tier-chip">{{ company["tier"] }}</span>
           {% set tier_note = locale_dict["award_tier_note"][lang].get(company["tier"]) %}
@@ -27,6 +28,7 @@
           <span class="tier-note">{{ tier_note }}</span>
           {% endif %}
         </div>
+        {% endif %}
         <img class="award-seal"
              src="/img/truetechjapan/award_companies/best-tech-100-seal.png"
              alt="Best Tech 100 Japan">

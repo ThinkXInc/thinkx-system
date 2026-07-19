@@ -1,18 +1,33 @@
 {
-  "company_name": "ThinkX株式会社",
+  "company_name": {
+    "ja": "ThinkX株式会社",
+    "en": "ThinkX Inc."
+  },
   "url": "https://thinkxinc.com",
   "tier": "Top-Tier",
   "award_year": 2026,
-  "founders": ["大塚一輝"],
+  "founders": {
+    "ja": ["大塚一輝"],
+    "en": ["Kazuki Otsuka"]
+  },
   "logo": {
     "src": "/img/truetechjapan/award_companies/thinkx.png",
     "format": "png",
     "alignment": "center"
   },
-  "business": "「知識が創造され普及する方法を変えること」をミッションとして、独自のアルゴリズムに基づくAI応用製品やメディアを開発",
-  "award_reasons": [
-    "創業者自身が独自の数理モデルによる意味解析AIアルゴリズムによる推薦システムを構築、論文化および特許の取得、応用製品に発展させている点",
-    "独自の基礎技術に基づく独創的なコンセプトの応用製品を開発し、グローバル市場にも挑戦している点"
-  ],
+  "business": {
+    "ja": "「知識が創造され普及する方法を変えること」をミッションとして、独自のアルゴリズムに基づくAI応用製品やメディアを開発",
+    "en": "Guided by the mission of changing how knowledge is created and spread, ThinkX develops AI-based applied products and media built on its own algorithms."
+  },
+  "award_reasons": {
+    "ja": [
+      "創業者自身が独自の数理モデルによる意味解析AIアルゴリズムによる推薦システムを構築、論文化および特許の取得、応用製品に発展させている点",
+      "独自の基礎技術に基づく独創的なコンセプトの応用製品を開発し、グローバル市場にも挑戦している点"
+    ],
+    "en": [
+      "The founder personally built a recommendation system driven by a semantic-analysis AI algorithm based on an original mathematical model, published it as research, obtained patents, and grew it into applied products.",
+      "The company develops applied products with original concepts grounded in its own core technology, and is taking on global markets."
+    ]
+  },
   "interview_url": null
 }
