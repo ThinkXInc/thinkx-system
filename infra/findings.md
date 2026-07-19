@@ -407,3 +407,9 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
   マッピングなし。つまり monorepo 移行の退行ではなく従来からの欠陥(パリティは取れている)
 - /src/simplicity(B案・53f0639 固定)はサイト配信に未配線。配線するか、テンプレートから参照を外すかは
   simplicity リファクタリング側の計画で判断(このセッションでは触らない)
+
+## 旧 staging の terraform state がこの Mac に存在しない(2026-07-19)
+
+- ~/Sources/infra は 7/12 の clone で tfstate / tfvars とも無し。destroy_env.sh は「破壊対象 0 件」で正しく停止(state 喪失の検出にもなった)
+- 実測: staging VPC = vpc-0a837c944d5750395(Name=supercom-staging、192.168.0.0/16)。IAM 名 supercom-staging-lb が残っていると monorepo terraform の staging apply が EntityAlreadyExists で失敗するため IAM も撤去対象
+- 対応: scripts/destroy_old_staging.sh(一回きり・aws CLI・棚卸し全提示 → yes 必須)。private hosted zone は権限都合で対象外(残置無害・コンソールで任意掃除)
