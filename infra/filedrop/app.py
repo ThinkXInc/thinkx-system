@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""filedrop — ブラウザのドラッグ&ドロップで素材を /src/thinkx-system/downloads に受け取る内部ツール。
+"""filedrop — ブラウザのドラッグ&ドロップで素材を /src/thinkx-system/Downloads に受け取る内部ツール。
 
 staging LB の basic auth 配下(https://staging.thinkxinc.com/filedrop/)で公開する。
 バインドは 0.0.0.0:8008 だが SG により LB からしか到達できない。
@@ -13,7 +13,7 @@ from email.parser import BytesParser
 from email.policy import default as email_default
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-INBOX = pathlib.Path("/src/thinkx-system/downloads")
+INBOX = pathlib.Path("/src/thinkx-system/Downloads")
 PORT = 8008
 MAX_BYTES = 200 * 1024 * 1024
 

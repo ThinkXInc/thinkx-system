@@ -1,5 +1,5 @@
 [Unit]
-Description=filedrop (browser drag&drop to /src/thinkx-system/downloads)
+Description=filedrop (browser drag&drop to /src/thinkx-system/Downloads)
 After=network.target
 
 [Service]

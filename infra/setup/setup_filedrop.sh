@@ -1,13 +1,13 @@
 # thinkx-system/infra/setup/setup_filedrop.sh
 #
-# filedrop(ブラウザのドラッグ&ドロップで素材を /src/thinkx-system/downloads に受ける)を導入する。
+# filedrop(ブラウザのドラッグ&ドロップで素材を /src/thinkx-system/Downloads に受ける)を導入する。
 # 対象は staging の web のみ。入口は https://staging.thinkxinc.com/filedrop/(LB の basic auth 配下)。
 # 前提: clone_monorepo.sh 済み
 
 echo "== setup_filedrop =="
 
 sudo -u kaz git -C /src/thinkx-system pull --ff-only
-sudo -u kaz mkdir -p /src/thinkx-system/downloads
+sudo -u kaz mkdir -p /src/thinkx-system/Downloads
 sudo ln -sf /src/thinkx-system/infra/filedrop/filedrop.service /etc/systemd/system/filedrop.service
 sudo systemctl daemon-reload
 sudo systemctl enable filedrop
