@@ -6,6 +6,8 @@ This repository's canonical working instructions are `CLAUDE.md` and
 `CLAUDE_GENERAL.md`. Codex must read and follow both before working. When a
 directory or project has its own `CLAUDE.md`, read it before investigating or
 editing that area. For infrastructure work, `infra/CLAUDE.md` is mandatory.
+Codex-specific owner instructions and examples are recorded in
+`.codex/GUIDELINES.md`; read and follow them as well.
 
 Apply the document precedence, one-session/one-plan discipline, restoration
 procedure, coding-guide routing, branch rules, and owner-instruction recording
@@ -32,4 +34,3 @@ Map `.claude/settings.json` safety boundaries to Codex as follows:
 Claude's `PostToolUse` cost hook is not automatically run by Codex. When an edit
 could affect infrastructure cost, run or account for
 `infra/scripts/cost-hook.sh` explicitly, subject to the same project rules.
-
