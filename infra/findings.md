@@ -433,3 +433,9 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
 - plan-summary.sh の構成図の固定部分に旧記述が残存: Host tag supercom2/supercom3L(D-46 で廃止)・
   transformism「Sトラック未適用→人間判断」(D-44 で完遂済み)・命名 supercom-prod-web/lb(実タグは
   supercom-web1/lb1)。差分計算とは無関係の表示のみ。次回図を触る際に更新
+
+## 新 staging apply 完了(2026-07-19)
+
+- terraform_apply staging: 19 add / 0 change / 0 destroy 全成功。web 57.182.107.57 / lb 52.68.142.190
+- Name タグは最初から D-46 準拠(supercom-web1-stg / lb1-stg)→ hostname.md の staging タグ手順は自動消化
+- 発見: outputs.tf の setup_hint が旧世界の構築案内のまま(実害なし)。構築の正は docs/構築手順.md — setup_hint は削除か手順書への誘導に直すべき(次回 .tf を触る際)
