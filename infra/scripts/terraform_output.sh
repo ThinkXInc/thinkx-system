@@ -15,7 +15,7 @@ terraform_output() {
   [ -n "$env" ] || { printf '%b\n' "${Y}注意: 環境の引数がありません。terraform_output.sh <staging|prod|eips> [output名] のように指定してください${Z}" >&2; return 1; }
   { [ "$env" = staging ] || [ "$env" = prod ] || [ "$env" = eips ]; } || { printf '%b\n' "${Y}注意: 引数は staging / prod / eips です(指定: $env)${Z}" >&2; return 1; }
   [ "$env" = eips ] && tfdir="infra/terraform/eips"
-  [ -f "$tfdir/variables.tf" ] || { printf '%b\n' "${R}FAIL: terraform_output $tfdir が無い(リポジトリ直下で実行する)${Z}" >&2; return 1; }
+  [ -d "$tfdir" ] || { printf '%b\n' "${R}FAIL: terraform_output $tfdir が無い(リポジトリ直下で実行する)${Z}" >&2; return 1; }
   [ -f "$tfdir/terraform.tfstate" ] || { printf '%b\n' "${R}FAIL: terraform_output $env の state が無い(先に terraform_apply.sh $env)${Z}" >&2; return 1; }
 
   if [ -n "$name" ]; then
