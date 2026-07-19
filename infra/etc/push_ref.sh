@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # thinkx-system/infra/etc/push_ref.sh   【分類: 変更系(素材ファイルをサーバーへ送るだけ)】
 #
-# 画像・資料などの素材を staging web の受け渡しディレクトリ(downloads/)へ送る。
+# 画像・資料などの素材を staging web の受け渡しディレクトリ(/src/thinkx-system/Downloads/)へ送る。
 # サーバー上の Claude Code セッションには「/src/thinkx-system/Downloads/<ファイル名> を見て」と指示する。
 #
 #   使い方: bash infra/etc/push_ref.sh <ファイル...>
