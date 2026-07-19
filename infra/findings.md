@@ -485,3 +485,10 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
 - 旧計画書から引き継ぐ v2 候補(未実施のメモ): サーバー専用 Anthropic アカウント(個人 Max との分離)/
   tmux 接続専用の制限ユーザー(ssh 共有 = sudo 共有の緩和)/ バックアップリポジトリへの push /
   ブランチ分離(staging→本番昇格)/ staging の pull 型自動反映
+
+## filedrop はサイト内ハンドラーに変更(2026-07-19・オーナー裁定)
+
+- infra の別サービス(8008 常駐)案を撤回し、thinkx の Flask に `/filedrop` を実装
+  (「ドメインが thinkxinc.com なんだから ThinkX の配下にあるべき。サイトの1ページとして実装すればいい」)
+- production では 404(Config.ENV 判定)。入口は staging.thinkxinc.com/filedrop(LB の basic auth 配下)のみ
+- LB staging vhost に client_max_body_size 75m(web 側 nginx の既存値と一致)。着地は /src/thinkx-system/Downloads

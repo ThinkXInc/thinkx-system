@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>File to Staging</title>
+  <style>
+    body{font-family:sans-serif;max-width:640px;margin:40px auto;padding:0 16px;color:#333}
+    #drop{border:3px dashed #aaa;border-radius:12px;padding:60px 20px;text-align:center;color:#777;font-size:18px;cursor:pointer}
+    #drop.over{border-color:#39c;background:#eef7fb}
+    li{margin:4px 0}
+  </style>
+</head>
+<body>
+  <h2>File to Staging</h2>
+  <p>ここにファイルをドラッグ&ドロップ(またはクリックして選択)すると staging サーバーの Downloads に転送されます。</p>
+  <div id="drop">ここにドロップ</div>
+  <input type="file" id="pick" multiple style="display:none">
+  <h3>受信済み</h3>
+  <ul>
+    {% for f in files %}
+    <li>{{ f.name }} ({{ f.kb }} KB)</li>
+    {% else %}
+    <li>(まだありません)</li>
+    {% endfor %}
+  </ul>
+  <script>
+    const d = document.getElementById('drop'), p = document.getElementById('pick');
+    d.onclick = () => p.click();
+    d.ondragover = e => { e.preventDefault(); d.classList.add('over'); };
+    d.ondragleave = () => d.classList.remove('over');
+    d.ondrop = e => { e.preventDefault(); d.classList.remove('over'); send(e.dataTransfer.files); };
+    p.onchange = () => send(p.files);
+    async function send(files) {
+      const f = new FormData();
+      for (const x of files) f.append('file', x, x.name);
+      await fetch('/filedrop', { method: 'POST', body: f });
+      location.reload();
+    }
+  </script>
+</body>
+</html>

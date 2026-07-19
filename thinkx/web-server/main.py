@@ -717,6 +717,35 @@ def internal_server_error(error, lang, lang_name):
 def bad_gateway(error, lang, lang_name):
     return handle_error(error, RateLimitExceededAPIErrorFormat, lang)
 
+#################### filedrop (staging 専用の素材受け取り。production では 404)
+FILEDROP_DIR = '/src/thinkx-system/Downloads'
+
+@app.route('/filedrop', methods=['GET', 'POST'])
+def filedrop_handler():
+    logger.info(magenta(f'=> /filedrop [{request.method}]'))
+    if Config.ENV == 'production':
+        abort(404)
+    os.makedirs(FILEDROP_DIR, exist_ok=True)
+    if request.method == 'POST':
+        saved = 0
+        for f in request.files.getlist('file'):
+            if not f or not f.filename:
+                continue
+            name = os.path.basename(f.filename).replace('/', '_').replace('\\', '_').strip()
+            if name:
+                f.save(os.path.join(FILEDROP_DIR, name))
+                saved += 1
+        logger.info(f'filedrop: saved {saved} file(s)')
+        return redirect('/filedrop')
+    files = sorted(
+        (e for e in os.scandir(FILEDROP_DIR) if e.is_file()),
+        key=lambda e: e.stat().st_mtime, reverse=True)
+    return render_template(
+        '/filedrop.html',
+        files=[{'name': e.name, 'kb': max(1, e.stat().st_size // 1024)} for e in files],
+    )
+
+
 # Register a function to run after the app closes
 @atexit.register
 def cleanup():
