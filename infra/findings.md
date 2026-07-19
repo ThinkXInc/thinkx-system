@@ -460,3 +460,9 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
 - これで staging / prod が**同一手順書(/Users/K00TSUKA/Sources/thinkx-system/infra/docs/構築手順.md)の産物**になった
   = I-STEP3 の中核(monorepo 前提再構築)を前倒しで消化(D-51)。ROADMAP の I-STEP3 項の扱いは人間判断
 - 新 staging は最初から: D-46 命名(タグ・hostname)・証明書自動更新(D-49)・IAM ロール・prod と同一の /src レイアウト
+
+## Codex 並行セッションとの照合(2026-07-19)
+
+- Codex サマリーの「未 push 3コミット」は**既に push 済み**(origin と完全同期を実測)。追加で k00bot2 の merge はオーナーにより revert 済み(719e856)・AGENTS.md 新設・terraform_output.sh の2バグ(eips ディレクトリ判定 / map 出力)は Codex 修正済みで eip_ledger 4件の出力を実測確認
+- D-52 / D-53 は DECISIONS に原文つきで記録済み・F16 も記録済みを確認(欠落なし)
+- **polyfill.io 除去(5892559)は staging 反映済みだが prod 未反映を実測**(prod の /src/thinkx-system が 1e65aa9 で停止・テンプレートに参照残存)→ prod へ pull + restart_thinkx が必要(DNS 切替前必須)
