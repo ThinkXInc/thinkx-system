@@ -426,3 +426,10 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
 
 - 指摘: apply_env という名前では中身が分からない。従来の「plan-summary で差分チェック → apply」の2段階が簡単
 - 対応: 2段階の形を維持したまま名前を実態に一致させ統一 — plan-summary.sh(名前維持・**workspace 自動選択と引数必須を追加**)/ terraform_apply.sh / terraform_destroy.sh / terraform_output.sh。従来手順との違いは workspace 対応(monorepo で state が同居したため必須)・逆環境ガード・cd 不要のみで、実質同じ流れ
+
+## D-52 移行完了 + 構成図の固定文言が古い(2026-07-19)
+
+- prod state の envs/prod への移動後、plan-summary prod = **変更なし**(移行の完全性を実機比較で証明)
+- plan-summary.sh の構成図の固定部分に旧記述が残存: Host tag supercom2/supercom3L(D-46 で廃止)・
+  transformism「Sトラック未適用→人間判断」(D-44 で完遂済み)・命名 supercom-prod-web/lb(実タグは
+  supercom-web1/lb1)。差分計算とは無関係の表示のみ。次回図を触る際に更新
