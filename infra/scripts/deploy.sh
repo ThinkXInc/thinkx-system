@@ -3,7 +3,7 @@
 #
 # push 済みの monorepo(origin/monorepo)を指定環境のサーバーへ反映する。
 #   = 対象箱で git pull → 指定サービスを run/restart_*.sh で再起動(各スクリプトが色つき verdict を出す)
-#   本番が変わるのは このスクリプトを実行した瞬間だけ(pull 型・手動ゲート。CI なし = サーバー編集計画 v1)
+#   本番が変わるのは このスクリプトを実行した瞬間だけ(pull 型・手動ゲート。CI なし = サーバー編集のエージェント化計画 v1)
 #
 #   使い方: bash infra/scripts/deploy.sh <staging|prod> <サービス...>
 #           サービス: thinkx kazukiotsukacom transformism nginx-web-root loadbalancer
