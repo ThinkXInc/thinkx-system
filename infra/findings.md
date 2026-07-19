@@ -452,3 +452,11 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
 - check_request_path [1] が staging で NG になった件: F13 の残骸(default server → 死んだ 192.168.1.7:8009)の症状が
   環境で変わるため(prod=同一サブネットで即 502 / staging=サブネット外ブラックホールでタイムアウト)。
   [1] の意図は「public IP の 443 到達」なので TCP 接続判定に修正(IP 直打ちの HTTP 応答は vhost 方式の仕様外)
+
+## staging ゼロ再構築 完遂(2026-07-19)
+
+- 構築手順 1〜12 をフル実行して完遂: terraform apply(envs/staging)→ setup 群 → 経路疎通 全ホップ green →
+  受け入れ 62/62 → staging.<domain> 5件を 52.68.142.190 へ付替 → 実 DNS 経由で 5ドメインとも 401+正証明書を実測
+- これで staging / prod が**同一手順書(/Users/K00TSUKA/Sources/thinkx-system/infra/docs/構築手順.md)の産物**になった
+  = I-STEP3 の中核(monorepo 前提再構築)を前倒しで消化(D-51)。ROADMAP の I-STEP3 項の扱いは人間判断
+- 新 staging は最初から: D-46 命名(タグ・hostname)・証明書自動更新(D-49)・IAM ロール・prod と同一の /src レイアウト
