@@ -49,7 +49,9 @@ destroy_old_staging() {
   local a; for a in $eips; do aws ec2 release-address --allocation-id "$a" && echo "released $a"; done
 
   echo "== SG / subnet / IGW / route table / VPC 削除 =="
-  local s; for s in $sgs; do aws ec2 delete-security-group --group-id "$s" && echo "deleted $s"; done
+  # SG は相互参照(web-sg が lb-sg を許可元に持つ)で削除順依存があるため 2 パスで消す(2026-07-19 実測)
+  local s pass
+  for pass in 1 2; do for s in $sgs; do aws ec2 delete-security-group --group-id "$s" 2>/dev/null && echo "deleted $s" || true; done; done
   for s in $subnets; do aws ec2 delete-subnet --subnet-id "$s" && echo "deleted $s"; done
   for s in $igw; do aws ec2 detach-internet-gateway --internet-gateway-id "$s" --vpc-id "$vpc"; aws ec2 delete-internet-gateway --internet-gateway-id "$s" && echo "deleted $s"; done
   for s in $rts; do aws ec2 delete-route-table --route-table-id "$s" && echo "deleted $s"; done

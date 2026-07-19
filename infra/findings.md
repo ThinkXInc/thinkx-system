@@ -413,3 +413,11 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
 - ~/Sources/infra は 7/12 の clone で tfstate / tfvars とも無し。destroy_env.sh は「破壊対象 0 件」で正しく停止(state 喪失の検出にもなった)
 - 実測: staging VPC = vpc-0a837c944d5750395(Name=supercom-staging、192.168.0.0/16)。IAM 名 supercom-staging-lb が残っていると monorepo terraform の staging apply が EntityAlreadyExists で失敗するため IAM も撤去対象
 - 対応: scripts/destroy_old_staging.sh(一回きり・aws CLI・棚卸し全提示 → yes 必須)。private hosted zone は権限都合で対象外(残置無害・コンソールで任意掃除)
+
+## 旧 staging 撤去完了(2026-07-19)
+
+- destroy_old_staging.sh 実行(オーナー yes)→ SG 1個と VPC のみ DependencyViolation で残존:
+  **SG の相互参照**(web-sg のルールが lb-sg を許可元参照)による削除順依存。参照元 web-sg 消滅後に
+  lb-sg → VPC を削除して完遂(VPC NotFound 確認済み)。スクリプトは SG 削除を2パス化して反映
+- EIP 2個解放・IAM 名 supercom-staging-lb 解放 → 新 staging の terraform apply(workspace staging)が通せる状態
+- 注意: staging.<domain> の A レコード5件は解放済み IP(16.76.147.168)を指したまま。手順12 で新 EIP に付け替えるまで staging URL は不通
