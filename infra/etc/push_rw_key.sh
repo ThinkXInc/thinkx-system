@@ -32,7 +32,7 @@ EOF
 sudo -u kaz git -C /src/thinkx-system remote set-url --push origin git@github-thinkx-system-rw:ThinkXInc/thinkx-system.git
 REMOTE
 
-# verify  (fetch は読み取り鍵のまま・push だけ書き込み鍵で通ること)
-ssh "$HOST" 'sudo -u kaz git -C /src/thinkx-system push --dry-run origin monorepo' \
+# verify  (先に最新化してから push が通ること。fetch は読み取り鍵のまま・push だけ書き込み鍵)
+ssh "$HOST" 'sudo -u kaz git -C /src/thinkx-system pull --ff-only && sudo -u kaz git -C /src/thinkx-system push --dry-run origin monorepo' \
   && printf '%b\n' "${G}OK: push_rw_key $HOST から thinkx-system へ push 可能(経路は push のみ切替)${Z}" \
   || printf '%b\n' "${R}FAIL: push_rw_key push --dry-run が失敗。GitHub 側の Allow write access を確認${Z}"
