@@ -375,3 +375,8 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
 - 実測: IAM ロール(supercom-prod-lb)は付与済み・certbot+dns-route53 プラグイン導入済み・reload hook あり・timer 稼働中。欠落は renewal conf 5件の authenticator=manual のみ
 - 対応(D-49): setup_loadbalancer.sh に冪等 sed(manual→dns-route53)を組込・verify を「manual 残 0 件」まで判定するよう強化。検証は scripts/check_cert_renewal.sh(dry-run)
 - クローズ条件: LB で切替実行後、check_cert_renewal.sh が green(次回自動更新は 8/16 頃・期限 9/15 の 30 日前)
+
+## F14 クローズ + 動画 WARN の正体(2026-07-18)
+
+- F14: オーナー実行の check_cert_renewal.sh が green(dry-run 5ドメイン成功)。自動更新成立、クローズ
+- 「kazukiotsukacom 動画未配布」WARN は偽警告だった: staging 実測で動画を持つのは thinkx のみ(8本・prod 配布済み)。kazukiotsukacom / transformism は元々動画なし。setup_kazukiotsukacom.sh に thinkx 由来の展開ブロックが残っていたのが原因 → 除去。DNS切替手順の事前チェックも push_assets thinkx に修正

@@ -5,7 +5,6 @@
 #  - setup_webserver.sh
 #  - check_deploykey.py thinkx-system が OK + clone_monorepo.sh 済み
 #  - push_env.sh kazukiotsukacom(/tmp/kazukiotsukacom.env。真実は kazukiotsukacom/.env)
-#  - push_assets.sh kazukiotsukacom(/tmp/kazukiotsukacom-video.tgz。真実は kazukiotsukacom/web-server/views/video)
 #
 
 # repository(monorepo 前提。clone と symlink は clone_monorepo.sh が行う)
@@ -27,10 +26,6 @@ cd /src/kazukiotsukacom/web-server/views
 sudo -u kaz npm install
 sudo -u kaz npx babel src/js --out-dir js
 sudo -u kaz npx lessc src/less/main.less css/main.css
-
-# video  (git 管理外。push_assets.sh で /tmp/kazukiotsukacom-video.tgz を配った前提)
-[ -f /tmp/kazukiotsukacom-video.tgz ] && sudo tar xzf /tmp/kazukiotsukacom-video.tgz -C /src/kazukiotsukacom/web-server/views || printf '\033[33mWARN: kazukiotsukacom 動画未配布(push_assets.sh)\033[0m\n'
-sudo chown -R kaz:serveradmins /src/kazukiotsukacom/web-server/views/video 2>/dev/null
 
 # uwsgi daemon
 sudo ln -sf /src/kazukiotsukacom/web-server/uwsgi/uwsgi_kazukiotsukacom.service /etc/systemd/system/uwsgi_kazukiotsukacom.service
