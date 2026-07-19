@@ -1,0 +1,585 @@
+# page_id: 83ddf25961210ad7ebeccd2334ccf8cc1fa23b86cf5a5a0da6562dc9d7cb45f3
+# url: https://kazukiotsuka.org/
+# title: 大塚一輝 – 20年後の世界
+# media_title: 大塚一輝Blog - 20年後の世界
+# published_at: 2025-04-09
+#
+# posting_format:
+# {text}
+#
+# "{article_title} - {media_title}"
+# {link}
+
+## FULLTEXT
+computing
+禅
+計算
+zen
+Kazuki Otsuka “Zen and Computing（禅とコンピューティング）”@Dubai World Trade Center, UAE 全文文字起こしと和訳
+．
+以下は2025年2月12日 UAE（アラブ首長国連邦）ドバイ World Trade Centerにて，「禅とコンピューティング」のスピーチ全文文字起こしとその日本語訳．
+.
+Today, I will talk about the computing and the relationship between computing and art, at first, and then I
+will talk about this AI. And finally, I will introduce what we are doing recently, and finally, we will reach
+the conclusion about the limit of AI or something. So, before that, I will introduce myself, I will talk a
+little bit, like 5 minutes, using my recent work, which I created for this event, and the title of this
+painting is 001101.
+So, if you are really smart, you might notice something, and this paint has mainly two meanings. One is
+computing, and the second is the art of Kyoto. So, this event is related to Kyoto, so this work is something
+about Kyoto and the art.
+今日は、コンピューティングと芸術の関係について、まずお話し、それからAIについてお話しします。最後に、最近私たちが取り組んでいることを紹介し、最後にAIの限界について結論を出すという流れです。
+その前に、自己紹介を少しさせていただきたいと思います。
+このイベントのために作った作品を使って、5分ほどお話しさせていただきます。
+この絵のタイトルは「001 101」です。
+もしあなたが本当に賢いのであれば、何か気づくかもしれません。この絵には主に2つの意味があります。一つはコンピューティング、もう一つは京都の庭です。このイベントは京都に関連しているので、この作品は京都と禅に関するものです。
+And if you see this, the white is 0, the black is 1. So, the top line is 001 and the bottom line is 101. There
+is a rule named 0110. It is basically the following.
+What does it mean? If the top line is 1, 1 for black, the cell on the left side becomes 1. And if both
+neighbors are black or 1, you can see the lines. If both neighbors are black, the cell between them becomes 0.
+So, this rule 0110 consists of just two simple rules, and it is proven that, surprisingly, just these two
+rules can represent everything in the world. It means it can have the power to represent everything,
+representable by mathematics or our algorithms.
+この絵を見ていただくと、白が0、黒が1です。
+上のラインは001、下のラインは101です。「ルール110」と呼ばれルール（規則）があります。簡単には次のようになります。
+どういう意味でしょう？もし上の列の1、1は黒に対応しますが、次のステップでその左側のマスが1になります。そして、両隣が黒、つまり1なら、その間のマスは次のステップで0になります。つまり、この「110」というルールは、たっ
+た2つのシンプルなルールで構成されているのですが、驚くべきことに、たったのこの2つのルールだけで、世界のすべてを表すことができることが証明されているのです。
+つまり、「数学、またはアルゴリズム的に表現できるものは、何でも表現できる」、力を持っているのです。
+This is really surprising. So, just this simple rule can represent everything in the world. So, for example,
+if we align the white and black blocks like this, not only horizontally but also vertically, we can make some
+grid-like structure like this.
+And this looks like some kind of world, right? And if we apply the two simple rules to this grid, this world
+looks like alive. And if we make this system more complex, we can make much more complex world. This is a
+computer.
+So, a computer also has a power. It has the feature of what the new 110 has. So, this feature is called
+computational universal.
+You know, this is the yard of Kyoto, a famous one. So, the concept of this yard is to represent the universe
+by the smallest elements. So, we can only see small stones and white background.
+これは本当に驚くべきことです。この単純なルールだけで、世界のすべてを表現できるのです。例えば、白と黒のブロックをこのように並べると、水平方向だけでなく垂直方向にも、このようなグリッド状の構造を作ることができます。
+これは何かの世界のように見えますよね。そして、このグリッドに2つのシンプルなルールを適用すると、この世界は生きているように見えます。そして、このシステムをより複雑にすると、より複雑な世界を作ることができます。これはコンピ
+ュータです。
+コンピュータも、このルール110が特徴とする力をもっています。この特徴は「計算普遍性（Computational Universality）」と呼ばれています。
+これは京都の有名な庭園です。この庭園のコンセプトは、「最小の要素で宇宙を表す」というものです。小さな石と白い背景だけで構成されています。
+And the old people, the Japanese people, tried to represent this world or this universe. So, we thought about
+computing. Now we know we can represent everything in the world just by a simple two-component yard.
+And, you know, the concept of elegance. For example, if we say this mathematics is elegant, it means we can
+solve some problem just by a minimum value. We say it’s elegant.
+So, probably the old Japanese people thought something about this concept, which we feel some elegance for
+minimum representation for something. It’s expressed enough. So, now we know the relation.
+So, we can say something we call it’s beautiful is related to the meaning of computing in the first place. And
+this is another work, recent one, which is the analysis of J.S.Bach BWV1013. So, this journal named BWV1013
+consists of only a single line.
+昔の人々、日本人は、このようにして世界、この宇宙を表そうとしました。今、私たちはコンピューティングについて考えてきました。
+今、シンプルな2つの要素からなるルールだけで、この世界のすべてを表すことができることがわかりました。そして、エレガンスという概念。例えば、数学はエレガントだと言う場合、最小の要素だけで問題を解決できることを意味します。
+私たちはそれをエレガントだと言います。
+おそらく、昔の日本人はこの概念について何か考えていたのでしょう。私たちは、最小限の表現で何かを十分に表現するときエレガントさを感じます。今、私たちはその関係を見てきました。
+つまり、<美しい>という言葉で表現されるものは、コンピューティングの本来の意味と関係していると言えるのです。
+これは、私の最近の作品で、J.S.Bach BWV1013の分析結果から作られています。BWV1013というこの曲は、たった1本の旋律線で構成されています。
+We call this kind of tune monophonic music because there is no second line, so there is no harmony. But we
+listen to this tune. The greatness of this tune is this consists of only a single line, but there is a very
+deep structure in this only one sequence.
+So, we can represent music by twelve symbols because the keys are from C to D, one after C, C, D, E, F, G, A,
+B, C, and we have sharps, C sharp, D sharp, F sharp, G sharp, A sharp. So, we have twelve notes, twelve
+combinations. So, every music almost consists of twelve symbols.
+And this single line is also represented by a combination or sequence of these twelve symbols. So, if we
+represent this line by twelve symbols, this becomes like this, and the greatness of this tune is there is a
+whole system of this tune, but this whole system includes subsystems. The green one has a different type of
+structure of the whole music structure.
+この種の曲をモノフォニック音楽と呼びます。なぜなら、2番目のラインがないため、つまり、ハーモニーがないからです。この曲を実際に聴いてみましょう。この曲の素晴らしさは、たった1つのラインで構成されているにもかかわらず、この
+たった1つのシーケンスに非常に深い構造があることです。
+音楽は12の記号で表現できます。キーはCからDまで、C、D、E、F、G、A、B、Cと続きます。そして、シャープ、Cシャープ、Dシャープ、Fシャープ、Gシャープ、Aシャープがあります。ですから、12の音、12の組み合わせが
+あります。そのため、ほとんどの音楽は12の記号で構成されています。
+そして、この単線も、これらの12の記号の組み合わせやシーケンスで表現されます。この線を12個の記号で表すと、こうなります。この曲の素晴らしいところは、この曲全体がひとつのシステムになっていることですが、この全体的なシステ
+ムには、さらに小システムが含まれています。緑色のものは、音楽全体の構造とは異なるタイプの構造を示しています。
+So, we can say the whole structure has a similar type of smaller structure. So, this kind of stuff we call
+self-similar, self-similarity or something. This is the door of function.
+So, the small door is similar to the large door, large door is similar to the small door. So, this kind of
+stuff is called self-similarity. And surprisingly, if we represent, we can represent DNA by just four symbols.
+In the music, we can represent by twelve symbols because the protein structure is decided. It has some
+patterns. We can tell just by four types of proteins.
+And surprisingly, the DNA also has such self-similar structure. It means the part of the whole is similar to
+the whole, or the whole is similar to the part.
+つまり、全体の構造が、より小さな構造と似た形を持っていると言えます。このようなものを自己相似、自己相似性などと呼びます。
+これはロシアの人形ですが、小さい人形は大きい人形に似ており、大きい人形は小さい人形に似ています。このようなものを自己相似性と呼びます。
+そして、驚くべきことに、音楽では、12の記号で表現しましたが、DNAについても、それを構成するタンパク質の種類は決まっているので、たった4つの記号で表現できるわけですが、DNAもこのような自己相似構造を持っています。
+つまり、全体の一部が全体に似ている、あるいは全体が部分に似ているということです。
+And what is the benefit? The benefit is, for example, we injure some part of the world, our body is injured,
+but we can cure it, right? So, because we have a design, we have DNA for every cell of our body, and every
+cell has information to it.
+If some part is broken, if we can see another part, another part has the whole structure. So, that’s why we
+can cure our body even if we injure or broke something. This is a… loud, I’m sorry.
+そのメリットは何でしょうか？メリットとは、例えば、世界のどこかを怪我したとしても、私たちの体は怪我を治すことができますよね？つまり、私たちは設計図を持っているので、体のすべての細胞にDNAがあり、すべての細胞に情報が備わ
+っているのです。
+どこかが壊れても、別の部分を見れば、別の部分には全体の構造がある。だから、どこかを怪我したり壊したりしても、私たちは体を治すことができる。
+これは…うるさいですね、すみません。
+This is a song, a choir. So, in this earth, there are only three creatures who sing a song. Birds, humans, and
+choir.
+And this special choir, named Hamburg Choir, can sing a song. Why we can sing a song? Why we can sing a song?
+Because the song has a complex structure. Complex structure.
+Having a phrase, you know, in human’s music, there is a melody A, melody B, and main part like this. So, in
+the song of choir, we can sing this kind of structure, like melody A, melody B, and main part like this. And
+surprisingly, if we… So, this theory is recorded by myself every year when in Hawaii, Mar-a-Lago.
+Today, it’s February. So, around February or after winter, choirs come to the South Pole from the North
+Atlantic Ocean because of the reproduction season. And we can record choir song when we go to Hawaii in the
+winter.
+So, I go to Hawaii every winter, and I record it by putting hydrophone into the sea. So, what I do is… Just
+like a tune to JS Bach or DNA, I’m trying to symbolize the song of choirs. If we can represent this song by a
+symbol, we can analyze like music, right? So, and we know that, in fact, like JS Bach’s tune or DNA, the choir
+song has also a self-symbol structure which has the same pattern between the whole and part.
+これは歌です。この地球上で歌を歌う生き物は3種類しかいません。鳥、人間、そしてクジラです。
+そして、この特別なクジラ、Humpback Whaleは歌を歌うことができます。なぜこれを歌と言えるのでしょうか？それは、一定の複雑な構造を持っているからです。
+フレーズがある。人間の音楽では、メロディA、メロディB、そしてメインパート、のようになっていますよね。彼らも、メロディA、メロディB、そしてメインパート、のような、こういう構造を歌うことができる。
+そして驚くべきことに、もし我々が… だから、この理論は
+毎年ハワイのマウイ島に行き私自身で録音している。
+今日は今、2月ですね。
+2月頃、冬が終わる頃に、北大西洋から南極に繁殖期のために彼らはやってきます。冬にハワイに行けば、彼らの曲を録音することができます。
+ですから、私は毎年冬にハワイに行き、水中マイクを使って録音しています。私がやっていることは、J.S.バッハの曲やDNAのように、彼らの歌を象徴化しようとしていることです。もしこの曲を記号で表現できれば、音楽のように分析す
+ることができますよね。そして、私たちは理解しました、実際、JSバッハの曲やDNAのように、彼らの曲にも自己相似構造があり、全体と部分の間には同じパターンがあることを。
+This is very surprising.
+So, why the bird and human and what else can sing? Because they are intelligent.
+So, the brain are growing. So, something is related between the intelligence and heart. So, what is
+intelligence? My hypothesis is… So, this question is related about what future of AI.
+And my hypothesis is… It’s the future of human or intelligent, really intelligent creatures. Here, not long
+time ago, people think space is round, right? And now, we know the earth is turn round. So, to find this
+theory, we need deductive thinking.
+これは非常に驚くべきことです。
+では、なぜ鳥や人間、そしてその他にも歌えるものがいるのでしょうか？
+それは彼らが知能を持っているからです。
+脳が成長しているからです。 つまり、知能と心には何らかの関係があるということです。 では、知能とは何でしょうか？
+私の仮説は… この問いは、AIの未来について関連しています。
+そして私の仮説は… 人間、あるいは知能を持つ、本当に知能のある生き物の未来についてです。
+少し前までは、人々は宇宙は丸いと考えていましたよね？そして今では、地球が回っていることが分かっています。この理論を見つけるには「演繹的な」思考が必要です。
+Instead of induction, induction is thinking. Because deduction, this kind of hypothesis is to think about, to
+come up with hypothesis from nothing. Or we cannot, we cannot this kind of hypothesis inductively.
+So, to progress the human civilization, we need deductive thinking. Because we need more sophisticated
+hypothesis and more sophisticated theories. So, this is the future of human basis.
+The AI, if the AI can make a hypothesis, probably we have no meaning of existence. And we might extinct. So,
+this is very important.
+And this is my work. It’s about the design of the computing. Because to make a hypothesis, we have to think
+about a lot of combinations, a lot of patterns of hypothesis.
+And we have to try and learn or we have to choose it. So, if we compute, if we think about this, if we make
+this kind of computing, we need much more powerful computers. And the goodness of quantum computer is the high
+power features.
+So, I designed the special quantum computer for this. But this theory is based on quantum logic. What is
+quantum logic? It’s very, it’s very still questioning.
+帰納ではなく、演繹。なぜなら、この種の理論は、ゼロから仮説を考える必要があります。この種の仮説を帰納的に導くことはできません。
+ですから、人類の文明を発展させるためには、演繹的思考が必要です。なぜなら、より洗練された仮説やより洗練された理論が必要だからです。これが人類の未来の基盤です。
+AIが仮説を立てられるようになれば、おそらく私たちは存在意義を失うでしょう。そして、私たちは絶滅するかもしれません。ですから、これは非常に重要なことです。
+そして、これは私の仕事です。コンピューティングの設計についてです。説を立てるためには、多くの組み合わせや仮説のパターンについて考えなければなりません。
+そして、試行錯誤し、学習し、選択しなければなりません。ですから、もし私たちがコンピューティングを考え、この種のコンピューティングを作ろうとするなら、より強力なコンピューターが必要になります。量子コンピューターの優れた点は
+、その高度な並列性です。
+そこで私は、この目的のために特別な量子コンピュータを設計しました。しかし、この理論は「量子論理」に基づいています。量子論理とは何でしょうか？それは、今だに、非常に不思議な、
+実際に、未解決の問題なのです。
+It’s actually still questioning. This is really about the smallest unit of this world. And how smallest unit
+of this world is computing.
+This is one of the most important and difficult question of us. And to know that, we have to see quantum
+level. We have to observe quantum level.
+So, this experiment is, we use, we have two small, two laser lights and we hit it. We hit the lasers. If we
+hit the lasers, we can see the form of wave.
+So, now we can see that on the black screen. And this is a wave shape, right? So, from a long time ago, like
+around 20th century, we question about the particles, the minimum unit of this world is particles or waves.
+And now we can see the waves.
+But we can also see the particles, right? So, I’m interested in how this world is computing. And to know that,
+we have to know how the quantum particles or quantum unit, like this, in this case, it’s electrocity,
+electrophoton. We call it the photon.
+That’s the unit of light. If we hit two particles of light, we can see waves and particles. But if it’s, if
+the particle is waves, we cannot see.
+これは、この世界の最小単位についてです。この世界の最小単位がどのようにコンピューティングを行うのか。
+これは私たちにとって最も重要で難しい問題のひとつです。それを知るためには、
+量子レベルを観察しなければなりません。
+この実験では、2つの小さなレーザー光線を使用し、それを当てます。レーザーを当てると、波の形が見えます。
+今、黒いスクリーン上でそれを見ることができます。そして、これは波の形ですね。ずっと昔から、20世紀頃から、この世界の最小単位は粒子なのか波なのかという疑問がありました。そして今、波を見ることができます。
+でも粒子も見えますよね。
+私はこの世界の計算方法に興味があります。それを知るためには、量子粒子や量子単位、この場合は電気、エレクトロフォトンがどうなっているかを知らなければなりません。私たちはそれを光子と呼んでいます。
+光の単位です。光の粒子を2つぶつけると、波が見えます。しかし、光が粒子の場合、波は本来見えません。
+Sorry, I forget the details of the experiment because it’s a very long time ago. But the conclusion is, if the
+result of the experiment is only able to be seen, if, yeah, I remember. So, I’m sorry.
+Okay, so, just one basic, just one basic, and we split it. We split it to two groups, and we hit again. So,
+once we, light is split, it’s mirrored, and we hit two rounds again.
+So, this kind of results can be seen only if the light is, if light exists A and the position A and B at the
+same time. This is really contradictory, because we believe that a same existence must exist just in one
+position, right? So, we believe that the same existence, for example, the same human cannot exist in two
+places. It’s not possible.
+But the result of this shows that the particle separated, originated from only one, only one point, yeah. One,
+the same, the same element, the same photon, has to exist in position A and B at the same time. This is really
+contradictory.
+すみません、かなり昔のことなので、実験の詳細を忘れてしまいました。でも結論は、実験の結果が見える場合…いや、すみません、今思い出しました。
+わかりました。ええと、光源がひとつだけです。そう、その単一の光を（ガラスのスプリッターで）二つの経路に分けます。一度スプリットして、（反射させて）もう一度合流します。単一の光（の経路を二つに）分離して、反射させ、もう一度
+合流します。
+ここに表示されているような結果は、（二つに分けた経路上の）Aの位置とBの位置に同じ（存在である）光子が同時に存在する場合にのみ観測できます。
+これは本当に矛盾しています。なぜなら、同じ存在はただ一つの位置にのみ存在しなければならないと私たちは信じているからです。
+ですから、同じ存在、例えば同じ人間が二つの場所に同時に存在することはありえないと私たちは信じています。ありえないですよね。
+しかし、この結果は、たった一つの点から発射された粒子（の経路）が分かれて、その後、同時にAとBの位置に存在したことを示しています。これは本当に矛盾しています。
+So, okay. And if we solve this problem, we might know about the limit of AI, or what is intelligence, or what
+the human, what is the meaning of human basis. So, and as I think before, this kind of problem can be solved
+only cross-interdisciplinary, cross-collaborations.
+By mixing many of our knowledges, we can solve this kind of problem. And so, what we are doing now is to make
+a platform, competing platform for scientists or researchers. And this is our latest system, LLM agent system.
+さて、こうした問題を解決できれば、AIの限界や知能とは何か、人間とは何か、人間らしさとは何か、といったことが分かるかもしれません。
+昔から私自身思うことですが、このような問題は、学際的かつ共同的な取り組みによってのみ解決できるのです。
+多くの知識を混ぜ合わせることで、このような問題を解決することができます。
+そして、私たちが今行っているのは、科学者や研究者のためのプラットフォーム、計算プラットフォームを作ることです。
+これが私たちの最新のシステム、LLMエージェントシステムです。
+Not just chat, but it can program complex workflows involving trial and error. And there are three things this
+platform can do. First, automating construction of middle-sized applications.
+Imagine how many specialists without professional competing skills in this world. And what happens if all of
+their ideas can turn into reality without in-depth computing knowledge. How much faster our human progress
+accelerates.
+And this system allows people who have no skills to build middle-sized applications. To make it just by
+uploading a data to a dedicated drive and interactively build middle-sized applications. Numerous
+applications.
+And we are now integrating this AI, extracted components or know-how, is integrated into our carefully
+designed LLM agent system.
+単なるチャットではなく、試行錯誤を伴う複雑なワークフローをプログラムすることができます。このプラットフォームには3つの機能があります。
+まず、中規模アプリケーションの構築を自動化することです。この世の中に、ソフトウェアスキルを持たない専門家がどれほどいるか想像してみてください。そして、もし彼らのアイデアがすべて、コンピューティングの深い知識がなくても実現
+可能だとしたらどうなるでしょうか。私たちの人間としての進歩はどれほど加速するでしょうか。
+このシステムは、スキルを持たない人でも中規模アプリケーションを構築することを可能にします。専用ドライブにデータをアップロードするだけで、インタラクティブに中規模アプリケーションを構築することができるのです。
+そして、私たちは現在、数々のアプリケーションを実装してきたノウハウや、抽出されたコンポーネントを、私たちのAI、慎重に設計されたLLMエージェントシステムに統合しています。
+The second is special hardware high-performance computing. Cloud systems and processes big data in real-time.
+I talked about high-performance computing yesterday.
+High-performance computing is computing using special hardware like GPU. Now we all know about GPU. But we are
+using another kind of hardware.
+And we are trying to make a sophisticated computing platform which can handle telescope image analysis. You
+know, the telescope image, if it’s really high accurate, the image is really huge. And two, it’s not just
+image, it’s movie.
+So the data is so, so big. And if we analyze it in real-time, our CPU-based computing is not enough. So that’s
+why we are making another type of system using a special hardware, which is mostly called programmable
+accelerator.
+It’s a team, including Tohoku University, who is one of the most high-tech universities in Japan.
+2つ目は、ハイパフォーマンスコンピューティング(HPC)用の特別なハードウェアです。私たちのクラウドシステムは、ビッグデータをリアルタイムで処理します。昨日は、ハイパフォーマンスコンピューティングについてお話ししました。
+ハイパフォーマンスコンピューティング（HPC）とは、GPUのような特殊なハードウェアを使用したコンピューティングです。GPUについては皆さんご存知でしょう。しかし、私たちは別の種類のハードウェアを特に使用します。
+例えば、望遠鏡の画像分析を処理できる高度なコンピューティングプラットフォームの構築を目指しています。ご存知のように、望遠鏡の画像は、非常に精度が高い場合、画像は非常に巨大になります。さらに、（静止した）画像でなく動画です
+。
+データは膨大です。リアルタイムで分析しようとすると、CPUベースのコンピューティングでは十分ではありません。そこで、特殊なハードウェアを使用した別のタイプのシステムを構築しています。これは主にプログラマブルアクセラレータ
+と呼ばれています。
+これは、日本でも最もハイテクな大学のひとつである東北大学を含むチームです。
+And third, Data Hub Marketplace gives incentives to share research data. So now our research data, numerous
+research data, has gone unused.
+Simply because there is no incentive to share it. So the absolute data hub gives possibilities to researchers.
+If more data is shared, more collaborations are accelerated.
+そして3つ目は、データハブ・マーケットプレイスによって研究データの共有を促すインセンティブを提供することです。現在、数多くの研究データが活用されずに眠っています。
+それは、共有するインセンティブがないからです。データハブは研究者に収益の可能性を与えます。より多くのデータが共有されれば、より多くの共同研究が加速します。
+So now our 800,000 line system is running in our dedicated high-performance computer. And it’s getting more
+powerful with teams, top-tier teams, including our in-line researches for Tohoku University. There are a
+variety of applications of this program, but there is one special question.
+現在、80万行のシステムが、専用高性能コンピューターで稼働しています。 トップティアのプロフェッショナルを含むチームにより、さらに強力になっています。
+There is one special question. And the question is, how can we keep this environment up to us, even if the
+population is getting growing and we have no natural resources? So this kind of program has a global emergency
+and universal impact. And one of our answers is accelerating cross-disciplinary collaboration in highly
+segmented and isolated research fields.
+This is the key to solve this kind of problem.
+このシステムにはさまざまな応用がありますが、特別な問いがひとつあります。
+その問いとは、「増え続ける世界人口に公平に資源を確保しながら、持続可能なエネルギーへの移行を迅速に進め、気候変動を緩和するにはどうすればよいか？」というものです。
+世界的に喫緊の課題であり、普遍的な影響力を持つ問いです。
+そして、私たちの答えのひとつは、「高度に細分化され孤立した研究分野における学際的なコラボレーションの加速」です。この種の問題を解決する鍵だと考えています。
+So finally, science says the world is complex. And turning back to the first topic, we talked about the Zen.
+And the concept of Zen says this world is empty.
+This world is complex, but this world is empty. And if we say the complex is meaningful and the empty is
+meaningless,
+the truth is we say love is blind.
+And blind looks empty but meaningful.
+So attention is all you need.
+And all you need is love.
+Thank you for your attention.
+最後に、
+科学は「世界は複雑だ」と言います。
+最初の話題を振り返ると、私たちは禅について話しました。
+禅の概念は言います。「世界は空である」と。
+この世界は複雑で、同時に空である。
+もし、複雑であることを有意味とし、空なものを無意味と呼ぶならば、
+真実は、
+「愛は盲目である (Love is brind)」。
+「盲目」とは、一見して空っぽのようであり、しかし、同時に有意味である。
+だから、「集中だけが必要」（Attention is All you need)であり、
+「必要なのは愛だけ」である（All you need is love）。
+ご清聴ありがとうございました。
+—
+Thank you for the very informative session. I would like to ask, you mentioned about AI and the different
+aspects of it, discovering different aspects of the world, like interpreting the sounds created by intelligent
+creatures such as dolphins or whales or other creatures or beings.
+非常に有益なセッションでした。お伺いしたいのですが、AIとその異なるさまざまな側面、例えばクジラ、その他の生き物や存在が発する音の解釈など、世界のさまざまな側面を発見することについてもお話されましたが、
+So what do you think would be the base of AI when it comes to human emotions? Is it able to interpret or
+replicate or improve on its interpretation on how to improve, basically, or have a better understanding of AI
+connecting to emotions in general?
+Not only with humans but also with other beings.
+では、人間の感情についてAIのベースとなるものは何だとお考えですか？
+解釈したり、複製したり、解釈を改善したり、基本的には、AIが感情全般とつながることで、より理解を深めることができるのでしょうか？人間だけでなく、他の生物ともつながるのでしょうか。
+Because everything has, I believe, its own form of intelligence. So what about understanding from the lowest
+to the highest possible intelligence through AI? So how do you think would be the big breakthrough on this
+field? That’s a really interesting topic.
+なぜなら、私は、あらゆるものに独自の知性があると考えています。AIを通じて、最低レベルから最高レベルの知性を理解することは可能でしょうか？この分野における大きな進歩は、どのようにして起こると思いますか？
+That’s a really interesting topic.
+Actually, a long time ago, I was researching about the emotion, extracting emotion from the human voice. Human
+signals represent our current human emotion. So the point is, the signal can be recorded in unlimited
+frequency, right? So if we get, like, 40,000 Hz voice data, we have this limited data, and we can analyze it,
+and we can extract some emotional patterns from these signals.
+それは実に興味深いテーマですね。
+実は、かなり以前に、私は感情について研究していました。人間の声から感情を抽出するということによって。人間の信号は、現在の人間の感情を表しています。重要なポイントは、信号は無限の周波数で記録されうる、ということです。もし、
+4万ヘルツの音声データのような限られたデータを得て、分析し、そうした信号から感情パターンを抽出することができる。
+But if our world is really about quantum stuff, if our world can be recorded in unlimited frequency, if our
+world, the fundamental unit of our world, has some unlimited space, it means we can extract unlimited
+frequency data from something. So it has unlimited information. So if we analyze, if we can approach to the
+unlimited size of information, we can know everything.
+しかし、もし私たちの世界が本当に量子的なものであり、私たちの世界が「無限の周波数」で記録でき、私たちの世界の基本単位が無限の空間を持っているとすれば、それはつまり、何かから、無限の周波数のデータを抽出できることを意味しま
+す。つまり、無限の情報がある、ということです。もし私たちが、無限のサイズの情報にアプローチすることができれば、すべてを知ることができるでしょう。
+But, so it’s relying on the one big problem, this one has big or not. And the second is a technical problem.
+Technically, if we can know very small world, we can take a data about very small world.
+しかし、それは1つの大きな問題に依存しており、この世界に「無限」が存在するか、にかかっています。
+2つ目は技術的な問題です。技術的には、非常に小さな世界を知ることができれば、その世界に関するデータを取得することができます。
+If we can take unlimited small data, we can know everything. And so now you know the AI has a size, right? So
+this size is decided by the size of matrix. So if we can get the unlimited size of matrix, and if this world
+has unlimited smallness, if we can have the unlimited size of matrix, we can compute everything.
+無限に小さなデータを取得できれば、すべてを知ることができます。さて、AIにはサイズがあることはご存知ですね。このサイズとは、行列のサイズのことです。もし、この世界に無限の小ささが存在しているのであれば、そして、無限の大き
+さの行列が手に入れば、すべてを計算できることになります。
+And we can compute every details of emotion, or every details of human, human, human, sorry, every, any
+information. So everything is, everything is decided by what is the fundamental unit of this world. But, like,
+it’s depend on how detail we define the emotion.
+そして、感情や、人間..失礼、人間、に関わるあらゆる詳細な情報を計算できます。ですから、すべては、この世界の基本単位が何であるかに依存します。
+一方、感情をどの程度詳細に定義するかによっても変わります。
+For example, very huge novel like Dostoevsky, if you read Dostoevsky, we can feel some kind of emotion, and
+which is, which cannot be represented just by 140 text. It’s not possible to represent this kind of emotion.
+So this is depending on how we, how we define, how we see the details of an emotion.
+例えば、ドストエフスキーのような非常に大きな小説を読んだ場合、140文字のテキストでは表現できない感情を私たちは感じることができます。このような感情を表現することは今のところは不可能です。これは、私たちが感情をどのように
+定義し、どのようにその詳細を見るかによって決まります。
+So, and the novels tells, we might have unlimited kind of emotion, right? For example, if we write a size of
+novel, we can, we might be able to represent new type of emotion, right? So we might have unlimited variety of
+emotion. So this is depend on what, how, how, how much we cover the emotion type is. And only just simple
+emotion like surprising, or angry, or happy, it’s really, it’s not difficult for us.
+So far, we can do it, we can do it. So, I believe that in the future, we will, we will use the theater like
+novel, like Dostoevsky. Dostoevsky will be an important theater for understanding human’s emotion.
+And so, this is my, one of my hypothesis about the concept, which I call the combination of science and art.
+小説では、無限の種類の感情を表現できるかもしれません。ですよね？例えば、小説のサイズで書けば、新しいタイプの感情を表現できるかもしれません。ですから、感情の種類は無限にあるかもしれません。問題は、感情の種類をどれだけ、ど
+のようにカバーするかに依存します。驚き、怒り、喜びといった単純な感情だけなら、なんら難しいことではなく、今のところ、私たちはそれをすることができます。ですから、将来、私たちは、ドストエフスキーの小説のようなデータを使うこ
+とになると思います。つまり、ドストエフスキーが人間の感情を理解する上で重要なデータとなるでしょう。
+これが、私が「科学と芸術の融合」と呼ぶコンセプトがもつ複数の仮説のうちのひとつです。
+Arigatou gozaimasu. One more follow-up question.
+Speaking of AI, what is the stat of AI in discovering the other possibilities? So for now, science is able to
+explain most of the practical concepts of life. What about the possibility of AI augmenting and making sci-fi
+or science fiction into a proven science? For example, quantum mechanics. Basically, it mentions that you can
+be connected to some distant place by this entanglement and all.
+ありがとうございました。もう一つ、追加の質問です。
+AIについてですが、AIが他の可能性を発見する状態とはどのようなものでしょうか？ 今のところ、科学は生命の実用的な概念の多くを説明することができます。
+AIがSFを実証済みの科学に拡張し、実現させる可能性についてはどうでしょうか？ 例えば、量子力学です。 基本的には、量子もつれによって、遠く離れた場所と接続することができると言われています。
+So what do you think would be the stand of AI and how can it discover the undiscovered areas of science?
+Because nowadays, we can label like science fiction as something that is a possibility but not yet proven. So
+how do you think AI can come into that working order to make that unproven science into a proven one? Like a
+science fiction into something that is explainable and understandable in the human comprehension. I mean, we
+started with emotion.
+AIはどのような立場を取ると思いますか？また、AIはどのようにして科学の未発見分野を発見できるのでしょうか？現在では、SFのようなものは可能性はあるがまだ証明されていないものとして分類することができます。
+では、AIはどのようにして、その未証明の科学を証明されたものにする作業に取り掛かることができると思いますか？SFを、人間の理解力で説明でき、理解できるものにするような。 つまり、私たちは感情から始めました。
+Understand that emotion is a complex thing. Frequencies, vibrations. There are a lot of things that we are not
+yet able to discover.
+Like what’s beyond space? What is dark matter? Science is an idea, but of course, it’s a vast universe. So how
+do you think AI will come into action and help discover or become conscious of those?
+感情は複雑なものです。周波数、振動。まだ発見されていないものはたくさんあります。
+宇宙の向こう側にあるものは何なのか？ 暗黒物質とは何なのか？ 科学はアイデアですが、もちろん広大な宇宙です。 では、AIがどのように作用し、それらの発見や意識化に役立つと思いますか？
+So now, if we say what is AI, what is the modern AI? This is a machine to represent us, right? So if the
+computing ability is unlimited, it can represent everything of us, everything of our behaviors. It also
+includes our thoughts.
+This question is also the line of the theory of this world. Unlimited. If infinity exists.
+今、もしAIとは何か、現代のAIとは何かと言えば、これは私たちを模倣する機械です。 だから、コンピューティング能力が無限であれば、私たちのすべて、私たちの行動のすべてを表現できます。 思考も含まれます。
+この問いは、この世界の理論の境界線でもあります。無限大。
+Because if infinity exists, basically humans have a motivation to realize everything that we imagine. Like in
+science fiction. So what we can imagine, we realize it in the future. If it is possible. So the problem is, if
+it is possible. So, if it is possible, everything is possible.
+Because the computing speed relies on how much smaller the unit is, right? If it’s a quantum computer, it uses
+more smaller units of elements of this world.
+なぜなら、もし無限大が存在するなら、基本的に人間は想像するすべてを実現する動機があるからです。SFのように。つまり、想像できることはすべて、将来的に実現するということです。
+問題は、それが可能かどうかです。可能であれば、すべてが可能になります。この世界が無限の単位で構成されているとすると、コンピューティングの速度は、ユニットをどれだけ小さくできるかにかかっているわけですよね。それが量子コンピ
+ューターであれば、この世界の要素の（電子的な計算機より）さらに小さな単位を使用するわけです。
+But if we have more smaller elements, smaller elements of quantum something, we will be able to make much
+faster computing. And it might be able to simulate more complex stuff, like the behavior of the sea. We cannot
+compute at all right now.
+ですが、さらに小さな要素、量子よりもさらに小さな要素があれば、さらにもっと高速なコンピューティングが可能になるでしょう。そして、海の挙動のような、より複雑なものをシミュレートできるかもしれません。今はまったく計算できませ
+ん。
+And the human emotion also. Everything is from human behavior. So, my answer is almost similar to the last
+question.
+It is really dependent on how smaller this world can be separated.
+人間の感情もそうです。すべては人間の行動から生まれます。ですから、私の答えは先の質問へのそれとほぼ同じです。
+この世界をどれだけ小さく分離できるかどうかにかなり依るだろう、というものです。
+Thank you so much.
+ありがとうございました。
+Do anyone else have some topic or discussion? Discussion topic or question? Okay, now it’s a good time. Thank
+you for listening.
+他にディスカッションのトピックや質問はありますか？では、そろそろいい時間ですね、ご清聴いただきありがとうございました。
+コメント
+2025/04/09
+2025/04/10
+大塚一輝
+
+## CANDIDATES
+---
+「数学、またはアルゴリズム的に表現できるものは、何でも表現できる」、力を持っているのです。
+{{4}}
+
+---
+驚くべきことに、たったのこの2つのルールだけで、世界のすべてを表すことができることが証明されているのです。
+{{4}}
+
+---
+数学はエレガントだと言う場合、最小の要素だけで問題を解決できることを意味します。
+{{4}}
+
+---
+昔の人々、日本人は、このようにして世界、この宇宙を表そうとしました。
+今、私たちはコンピューティングについて考えてきました。
+{{4}}
+
+---
+これは京都の有名な庭園です。この庭園のコンセプトは、「最小の要素で宇宙を表す」というものです。
+{{4}}
+
+---
+BWV1013というこの曲は、たった1本の旋律線で構成されています。
+{{4}}
+
+---
+このたった1つのシーケンスに非常に深い構造があることです。
+{{4}}
+
+---
+ほとんどの音楽は12の記号で構成されています。
+{{4}}
+
+---
+この曲の素晴らしいところは、この曲全体がひとつのシステムになっていることですが、
+この全体的なシステムには、さらに小システムが含まれています。
+{{4}}
+
+---
+全体の構造が、より小さな構造と似た形を持っていると言えます。
+{{4}}
+
+---
+どこかが壊れても、別の部分を見れば、別の部分には全体の構造がある。
+だから、どこかを怪我したり壊したりしても、私たちは体を治すことができる。
+{{4}}
+
+---
+この地球上で歌を歌う生き物は3種類しかいません。鳥、人間、そしてクジラです。
+{{3}}
+
+---
+なぜこれを歌と言えるのでしょうか？それは、一定の複雑な構造を持っているからです。
+{{4}}
+
+---
+私がやっていることは、J.S.バッハの曲やDNAのように、彼らの歌を象徴化しようとしていることです。
+{{4}}
+
+---
+もしこの曲を記号で表現できれば、音楽のように分析することができます。
+{{4}}
+
+---
+彼らの曲にも自己相似構造があり、全体と部分の間には同じパターンがある。
+{{4}}
+
+---
+では、なぜ鳥や人間、そしてその他にも歌えるものがいるのでしょうか？
+それは彼らが知能を持っているからです。
+脳が成長しているからです。 
+{{4}}
+
+---
+知能と心には何らかの関係があるということです。
+{{3}}
+
+---
+今では、地球が回っていることが分かっています。
+この理論を見つけるには「演繹的な」思考が必要です。
+{{4}}
+
+---
+この種の理論は、ゼロから仮説を考える必要があります。この種の仮説を帰納的に導くことはできません。
+{{4}}
+
+---
+演繹的思考が必要です。なぜなら、より洗練された仮説や理論が必要だからです。これが人類の未来の基盤です。
+{{4}}
+
+---
+AIが仮説を立てられるようになれば、おそらく私たちは存在意義を失うでしょう。
+そして、私たちは絶滅するかもしれません。ですから、これは非常に重要なことです。
+{{4}}
+
+---
+説を立てるためには、多くの組み合わせや仮説のパターンについて考えなければなりません。そして、試行錯誤し、学習し、選択しなければなりません。
+量子コンピューターの優れた点は、その高度な並列性です。そこで私は、この目的のために特別なコンピュータを設計しました。
+この理論は「量子論理」に基づいています。量子論理とは何でしょうか？それは、今だに、非常に不思議な、実際に、未解決の問題なのです。
+{{4}}
+
+---
+この世界の最小単位がどのようにコンピューティングを行うのか。
+{{4}}
+
+---
+この世界の計算方法に興味があります。
+{{4}}
+
+---
+これは本当に矛盾しています。
+なぜなら、同じ存在はただ一つの位置にのみ存在しなければならないと私たちは信じているからです。
+{{4}}
+
+---
+同じ存在、例えば同じ人間が二つの場所に同時に存在することはありえないと私たちは信じています。
+しかし、この結果は、たった一つの点から発射された粒子（の経路）が分かれて、
+その後、同時にAとBの位置に存在したことを示しています。
+{{4}}
+
+---
+科学は「世界は複雑だ」と言います。
+禅は言います。「世界は空である」と。
+{{4}}
+
+---
+「盲目」とは、一見して空っぽのようであり、しかし、同時に有意味である。
+だから、「集中だけが必要」（Attention is All you need)であり、
+「必要なのは愛だけ」である（All you need is love）。
+{{4}}
+
+---
+私たちの世界が「無限の周波数」で記録でき、私たちの世界の基本単位が無限の空間を持っているとすれば、それはつまり、何かから、無限の周波数のデータを抽出できることを意味します。
+{{4}}
+
+---
+もし私たちが、無限のサイズの情報にアプローチすることができれば、すべてを知ることができるでしょう。
+{{4}}
+
+---
+この世界に「無限」が存在するか、にかかっています。
+{{4}}
+
+---
+もし、この世界に無限の小ささが存在しているのであれば、そして、無限の大きさの行列が手に入れば、すべてを計算できることになります。
+{{4}}
+
+---
+ドストエフスキーが人間の感情を理解する上で重要なデータとなるでしょう。
+{{4}}
+
+---
+現代のAIとは何かと言えば、これは私たちを模倣する機械です。 
+だから、コンピューティング能力が無限であれば、私たちのすべて、私たちの行動のすべてを表現できます。 思考も含まれます。
+{{4}}
+
+---
+無限大が存在するなら、基本的に人間は想像するすべてを実現する動機があるからです。
+{{4}}
+
+---
+この世界が無限の単位で構成されているとすると、コンピューティングの速度は、ユニットをどれだけ小さくできるかにかかっているわけです。
+{{4}}
+
+---
+さらに小さな要素、量子よりもさらに小さな要素があれば、さらにもっと高速なコンピューティングが可能になるでしょう。
+そして、海の挙動のような、より複雑なものをシミュレートできるかもしれません。
+{{4}}
+
+--
+この単純なルールだけで、世界のすべてを表現できるのです。
+{{4}}
+
+---
+美しいという言葉で表現されるものは、コンピューティングの本来の意味と関係していると言えるのです。
+{{5}}

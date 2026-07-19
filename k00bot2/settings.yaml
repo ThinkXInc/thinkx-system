@@ -1,0 +1,55 @@
+project:
+  data_dir: "data"
+
+blogs:
+  - name: "大塚一輝Blog - 20年後の世界"
+    sitemap_url: "https://kazukiotsuka.org/sitemap.xml"
+    media_title: "大塚一輝blog"
+    # 必要ならURLフィルタ（正規表現）
+    url_include_regex: ""
+    url_exclude_regex: ""
+
+interviews:
+  - url: "https://type.jp/et/feature/921"
+    media_title: "エンジニアtype"
+    # 任意：ページから拾えないときのヒント
+    date_hint: ""
+    title_hint: ""
+  - url: "https://buildplus.io/jp/blog/ja/leeways-2"
+    media_title: "build+"
+    date_hint: ""
+    title_hint: ""
+  - url: "https://www.wantedly.com/companies/leeways/post_articles/121573"
+    media_title: "wantedly"
+    date_hint: ""
+    title_hint: ""
+
+x:
+  username: "K00TSUKA"
+  exclude: ["retweets", "replies"]   # ノイズを減らすためデフォルトで除外
+  archive_dir: "data/x_archive"      # ここにXアーカイブを置く（任意）
+  latest_max_results: 100
+
+llm:
+  provider: "openai"                 # "openai" or "groq"
+  model: "gpt-4o"
+  temperature: 0.2
+  max_input_chars: 12000             # コスト抑制（ページ本文の投入上限）
+
+dedup:
+  similarity_threshold: 0.5          # 「50%以上一致」を近似する閾値
+
+posting:
+  min_score: 2                       # 日次投稿で採用する最低スコア
+  pick_strategy: "weighted_random"   # "highest" も可
+  daily_post_limit: 2
+  interval_seconds: 10
+
+  template_article: |
+    {text}
+
+    『{article_title}』 {media_title}
+    {link}
+
+  template_x_repost: |
+    {text}
