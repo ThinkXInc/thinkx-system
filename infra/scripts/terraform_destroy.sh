@@ -6,8 +6,7 @@
 #     実質無関係だが、default の無い変数は tfvars が無いと terraform が対話で聞いてくるため)
 #   - 先に plan -destroy の全差分を表示 → yes 入力で destroy 実行(N なら何もせず終了)
 #   - 逆環境の名前(例: staging 指定時に supercom-prod)が差分に混ざっていたら中止
-#   - monorepo の state は workspace で環境分離(prod=default / staging=staging)。
-#     workspace "staging" が存在するディレクトリでのみ自動 select する(旧リポジトリは default のみ)
+#   - 環境ごとの terraform ディレクトリ(envs/<env>)を既定対象にする。切替操作なし
 #
 #   使い方: bash infra/scripts/terraform_destroy.sh <staging|prod> [terraformディレクトリ]
 #   例:     bash infra/scripts/terraform_destroy.sh staging
@@ -17,7 +16,8 @@ set -euo pipefail
 
 terraform_destroy() {
   local G=$'\033[32m' R=$'\033[31m' Y=$'\033[33m' Z=$'\033[0m'
-  local env="${1:-}" tfdir="${2:-infra/terraform}"
+  local env="${1:-}" tfdir
+  tfdir="${2:-infra/terraform/envs/${1:-}}"
   local ip other plan_out ans
 
   { [ "$env" = staging ] || [ "$env" = prod ]; } || { printf '%b\n' "${R}FAIL: terraform_destroy usage: terraform_destroy.sh <staging|prod> [terraformディレクトリ]${Z}"; return 1; }
@@ -34,11 +34,6 @@ terraform_destroy() {
     varopt+=(-var "my_office_ips=[\"$ip/32\"]")
   else
     varopt+=(-var "my_office_ip=$ip/32")
-  fi
-
-  if terraform -chdir="$tfdir" workspace list 2>/dev/null | tr -d '* ' | grep -qx staging; then
-    if [ "$env" = staging ]; then terraform -chdir="$tfdir" workspace select staging; else terraform -chdir="$tfdir" workspace select default; fi
-    echo "workspace: $(terraform -chdir="$tfdir" workspace show)"
   fi
 
   plan_out="$(mktemp)"

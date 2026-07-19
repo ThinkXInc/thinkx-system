@@ -19,3 +19,7 @@ certs/*
 deploykeys/*
 !deploykeys/gen_deploy_key.sh
 env/*terraform/terraform.tfvars.bak
+
+# envs/ の env 指定と共有 tfvars への symlink はコミットする(実体の tfvars は上の ignore のまま)
+!envs/*/env.auto.tfvars
+!envs/*/office.auto.tfvars

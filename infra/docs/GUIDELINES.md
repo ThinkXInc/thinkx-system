@@ -242,5 +242,5 @@
 
 - コマンド束のスクリプト化・環境は必須引数・引数無しは黄色注意、の一般規則を terraform に適用。
   apply=scripts/terraform_apply.sh、output 参照=scripts/terraform_output.sh、destroy=scripts/terraform_destroy.sh。
-  workspace(state 台帳の切替)は各スクリプトが env 引数から自動選択し、人間は選ばない。
+  環境の state は infra/terraform/envs/<env> のディレクトリ分離(.tf は symlink 共有)。切替操作は存在しない。
   手順書(構築手順/DNS切替手順/hostname/運用)から生 terraform コマンドを一掃済み

@@ -27,7 +27,10 @@ else
   printf '# %s を追加 %s\n' "$IP/32" "$(date +%F)" >> "$TF/terraform.tfvars"
 fi
 grep "^my_office_ips" "$TF/terraform.tfvars"
-terraform -chdir="$TF" apply -var="env=prod"
+for E in prod staging; do
+  [ -f "$TF/envs/$E/terraform.tfstate" ] || continue
+  terraform -chdir="$TF/envs/$E" apply -input=false -auto-approve
+done
 
 # staging: SG の 22 番に現在 IP を追加(既存の許可は残す)
 for sg in supercom-staging-web-sg supercom-staging-lb-sg; do
