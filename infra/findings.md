@@ -392,3 +392,10 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
 
 - 手順5/8/9 が素の `ssh $HOST 'bash -s' <` で、ENVX 依存の setup_webserver / setup_loadbalancer に staging が伝わらず hostname が prod 値(web1/lb1)になるところだった(staging 差し替えの事前点検で発見。prod では偶然無害)
 - prerequisites の run() 経由に統一(setup_*.sh の全呼び出し)。run() は「ssh bash -s がごちゃごちゃしすぎ」というオーナー指示由来の仕組みでもある
+
+## D-51: staging ゼロ再構築へ方針変更(2026-07-19)
+
+- in-place 差し替え(D-50)はオーナー指摘で撤回。「いずれ I-STEP3 で必ずやる作業(state 分離・DNS 付替)を先送りしていただけ」が実態だった
+- terraform workspace 分離を構築手順 prerequisites に組込(staging=workspace staging / prod=default)。LB_IP は workspace 経由で両環境とも terraform output に統一
+- EIP 実測10個(supercom 4 + legacy 6)→ 上限余裕不明のため destroy 先行
+- clone_monorepo.sh の旧ディレクトリ退避は新規箱では no-op のため防御として残置
