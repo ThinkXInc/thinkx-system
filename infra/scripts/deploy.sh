@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
 # thinkx-system/infra/scripts/deploy.sh   【分類: 変更系(サーバーへ反映する・本番は承認ゲートそのもの)】
+# 
+# usage:
+#   bash infra/scripts/deploy.sh <staging|prod> <thinkx|kazukiotsukacom|transformism|nginx-web-root|loadbalancer|...>
 #
-# push 済みの monorepo(origin/monorepo)を指定環境のサーバーへ反映する。
-#   = 対象箱で git pull → 指定サービスを run/restart_*.sh で再起動(各スクリプトが色つき verdict を出す)
-#   本番が変わるのは このスクリプトを実行した瞬間だけ(pull 型・手動ゲート。CI なし = サーバー編集のエージェント化計画 v1)
+# example:
+#   bash infra/scripts/deploy.sh prod thinkx
+#   bash infra/scripts/deploy.sh staging thinkx nginx-web-root loadbalancer
 #
-#   使い方: bash infra/scripts/deploy.sh <staging|prod> <サービス...>
-#           サービス: thinkx kazukiotsukacom transformism nginx-web-root loadbalancer
-#   例:     bash infra/scripts/deploy.sh prod thinkx
-#           bash infra/scripts/deploy.sh staging thinkx nginx-web-root loadbalancer
+# 実行されること:
+#   sudo -u kaz git -C /src/thinkx-system pull
+#   run/restart_<service>.sh
 
 set -euo pipefail
 
