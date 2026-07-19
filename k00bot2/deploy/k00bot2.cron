@@ -1,4 +1,4 @@
 # web EC2 は UTC。JST 換算: daily 06:10 / monthly 1日 12:20
 # (supercom2 は JST で daily 06:10 / monthly 1日 03:20。monthly のみ新候補の反映が1日遅れ)
-10 21 * * * kaz /src/k00bot2/run/daily.sh >> /src/k00bot2/data/log_daily.txt 2>&1
-20 3 1 * * kaz /src/k00bot2/run/monthly.sh >> /src/k00bot2/data/log_monthly.txt 2>&1
+10 21 * * * kaz /src/thinkx-system/k00bot2/run/daily.sh >> /src/thinkx-system/k00bot2/data/log_daily.txt 2>&1
+20 3 1 * * kaz /src/thinkx-system/k00bot2/run/monthly.sh >> /src/thinkx-system/k00bot2/data/log_monthly.txt 2>&1
