@@ -35,6 +35,9 @@ deploy() {
     [ -f "infra/run/restart_$svc.sh" ] || { printf '%b\n' "${R}FAIL: deploy infra/run/restart_$svc.sh が無い(リポジトリ直下で実行する)${Z}"; return 1; }
   done
 
+  echo "== deploy $env: Mac に全履歴を fetch(バックアップ・D-55)=="
+  git fetch origin
+
   echo "== deploy $env: git pull =="
   [ "$need_web" = 1 ] && ssh -o ConnectTimeout=8 "$web" 'sudo -u kaz git -C /src/thinkx-system pull'
   [ "$need_lb" = 1 ] && ssh -o ConnectTimeout=8 "$lb" 'sudo -u kaz git -C /src/thinkx-system pull'

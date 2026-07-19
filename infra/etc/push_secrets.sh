@@ -10,7 +10,7 @@ push_secrets() {
   infra="$(cd "$here/.." && pwd)"
 
   # COPYFILE_DISABLE: Mac 拡張属性を除く
-  COPYFILE_DISABLE=1 tar czf /tmp/secrets.tgz -C "$infra" certs deploykeys || return 1
+  COPYFILE_DISABLE=1 tar --exclude='deploykeys/*-rw*' -czf /tmp/secrets.tgz -C "$infra" certs deploykeys || return 1
   scp /tmp/secrets.tgz "$infra/setup/check_deploykey.py" "$host:/tmp/" || return 1
   echo "pushed: secrets.tgz + check_deploykey.py -> $host:/tmp/"
 }
