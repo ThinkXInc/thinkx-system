@@ -34,3 +34,4 @@ credentials
 
 # デザイン原本(.ai/.png の作業ファイル群・配信不要・大容量)。サイト配信は web-server/views/ 側。
 transformism/design/
+downloads/

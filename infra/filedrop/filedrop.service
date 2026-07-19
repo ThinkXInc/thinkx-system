@@ -1,0 +1,12 @@
+[Unit]
+Description=filedrop (browser drag&drop to /src/thinkx-system/downloads)
+After=network.target
+
+[Service]
+User=kaz
+ExecStart=/usr/bin/python3 /src/thinkx-system/infra/filedrop/app.py
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target
