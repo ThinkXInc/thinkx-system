@@ -11,7 +11,7 @@
 cd ~/Sources/thinkx-system
 WEB=supercom-web1
 LB=supercom-lb1
-LB_IP=$(terraform -chdir=infra/terraform output -raw lb_public_ip)
+LB_IP=$(bash infra/scripts/env_output.sh prod lb_public_ip)
 ```
 
 ## 1. 切替前チェック(5分)

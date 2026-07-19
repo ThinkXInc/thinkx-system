@@ -27,7 +27,7 @@ grep "^Host supercom" ~/.ssh/config
 ### 2. AWS Name タグ: prod(2分)
 
 ```
-terraform -chdir=infra/terraform apply -var="env=prod"
+bash infra/scripts/apply_env.sh prod
 ```
 
 ### 3. AWS Name タグ: staging(1分)
