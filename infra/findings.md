@@ -551,3 +551,33 @@ auth の組み直し完了後に追記する。原文は Codex 記述):
 
 なお D-58 が参照する `infra/runbooks/deploy-site.md` はまだ存在しない。deploy.sh の DEPLOY_REF 化と
 同時に新設する(未着手)。
+
+### 訂正(同日): 上の組み直し計画は実行しなかった
+
+上節の「順序: auth → citywalk → infra」「トラック別 clean branch へ cherry-pick」は**採用しなかった**。
+worktree 分離そのものが撤回された(D-49 / D-60)ため、混在チェーン7件を origin/monorepo へ
+**1回 rebase して push しただけ**で解消した(bce5d83)。競合は予告どおり docs/GUIDELINES.md の
+末尾追記1箇所のみで、origin 側「重要な決定・指示はその場で記録する」と auth 側「結論だけを
+先置きしない」を両方残して解決。2649 ファイル・トラック外への波及なしを確認済み。
+
+保留していた root docs/DECISIONS.md の D-58 行も追記しなかった。決定内容が変わったため、
+root は **D-49**(単一ディレクトリ運用の規則6項)として書き直し、infra 側は **D-60**(D-58 の
+撤回範囲)を追加した。root と infra の採番空間は独立しており、Codex が root に書こうとした
+D-58 は infra の D-58 と番号衝突していた。
+
+Mac 側の worktree はすべて解体済み(本体 + k00bot2 のみ)。work/citywalk・work/auth・work/infra・
+work/merge は削除。
+
+### 未修正: infra/CLAUDE.md が D-60 と矛盾している
+
+infra/CLAUDE.md 末尾の「worktree と deploy checkout の分離(D-58)」節のうち、Mac 側の worktree
+分離を指示している2行が D-60 と矛盾する。infra/CLAUDE.md は infra の禁止事項で書き換えが
+禁じられているため未修正のまま残した。削るべきは次の2行:
+
+- 「infra の編集は専用 worktree で行い、他トラックまたは deploy checkout と共有しない。」
+- 「サーバー起動時に Claude/Codex セッションを自動起動する場合、専用の編集 worktree と branch を
+  `WorkingDirectory` に指定する。deploy checkout 上で起動してはならない。」
+
+deploy checkout を clean に保つ・DEPLOY_REF・Mac の現 branch を暗黙のデプロイ元にしない・
+wrapper と承認ゲート・staging からの push は DR 例外、の残り6行は**維持する**(サーバー側の
+分離は撤回対象外)。オーナー判断待ち。
