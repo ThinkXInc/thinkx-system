@@ -515,3 +515,9 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
 - staging web 案1=t3.medium 化 + stop_staging でこまめ停止 / 案2=t3.small のまま swap 2-4GB + docker 停止
 - terraform をサイズの env 独立指定に変更が必要(現状は is_prod 連動で反転不可)。
   instance_type 変更は stop→modify→start の短時間停止・EIP は台帳で維持・prod は承認/タイミング要
+
+## Mac ローカルブランチの別トラック混在と復旧(2026-07-20)
+
+- 受賞企業ページ4社(truetechjapan)は staging に8コミットで存在・未 push だった → staging で origin にリベースし push(6b32e0c)。競合なし・成果は無事
+- 事故: 私が claude-session 変更を Mac でコミットしたら Mac HEAD が auth 線(29c4f78)で、infra コミットが auth に乗り push 拒否 → reset --soft → mixed reset で Mac を無傷復帰(citywalk 未コミット作業も保持)。教訓は D-58(デプロイ/push は staging 経由・Mac 非依存)
+- tmux/claude はインスタンス停止で消える(全プロセス死)。ただし /home/kaz/.claude(認証)は EBS 上で永続 → 再ログイン不要。起動時自動復帰は claude-session.service(D-59)
