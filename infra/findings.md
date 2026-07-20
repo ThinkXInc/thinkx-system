@@ -529,3 +529,25 @@ CLAUDE.md「worktree と deploy checkout の分離」を明文化したので、
 - **deploy.sh が origin/monorepo の暗黙 HEAD を pull** → 明示 DEPLOY_REF に変更(staging 受け入れ済みの ref を prod へ同一適用)。
 - **本セッションの infra 編集は staging deploy checkout 上で直接行い staging から push した = Mac 汚染事故の障害復旧(例外)**。通常は専用 worktree で編集し worktree から push する。
 - 対応方針: 専用 infra worktree を用意した次セッションで上記を実装。本セッションは方針に従いクローズ。
+
+## 3トラック混在履歴の組み直し(2026-07-20・交通整理)
+
+分岐点 a663f6c から、ローカルの1本の線に3トラックが積み上がっていた:
+fe82157(citywalk)→ cf14a9b/d797020/23dd576/29c4f78/2e0e1f4(auth 5件)→ 890e087(citywalk)。
+work/auth も work/citywalk もこの混在線を祖先に持つため、両方を origin/monorepo 上へ組み直す。
+
+競合の実態(機械確認済み):
+- origin 側 12 コミットが触ったのは docs/GUIDELINES.md・infra/**・thinkx/**・docs/WORKTREES.md・.codex/GUIDELINES.md
+- citywalk 2件は citywalk/** と ARCHIVE.md のみ → **origin と重なりゼロ・競合しない**
+- auth 5件は auth/** + docs/{DECISIONS,GUIDELINES,ROADMAP}.md。うち origin と重なるのは
+  **docs/GUIDELINES.md の末尾追記のみ**(origin=「重要な決定・指示はその場で記録する」/
+  auth=「結論だけを先置きせず理由を続ける」)。解決は両ブロックを残すだけ
+- 順序: auth → citywalk → infra(D-58 行)。origin/monorepo が共有トランクなので push は直列化する
+
+infra が保留している root docs/DECISIONS.md の D-58 行(auth の d797020 と追記位置が競合するため、
+auth の組み直し完了後に追記する。原文は Codex 記述):
+
+| D-58 | **monorepo の並行作業を track 別 Git worktree に分離する。** 1 セッション = 1 計画 = 1 専用 worktree = 1 writer とし、共有 worktree への複数 writer を禁止する。デプロイはローカル HEAD から行わず、origin 上の明示的な不変 `DEPLOY_REF` を staging と production へ同一参照で適用する。サーバーの deploy checkout と自動起動する Claude/Codex の編集 worktree も分離する。 | 同一 worktree を複数セッションが操作し、別トラックの HEAD・index・未コミット変更へ干渉した実事故を再発防止するため。ローカル Mac の作業状態と緊急デプロイを独立させるため。|`CLAUDE.md`、`CLAUDE_GENERAL.md`、`docs/WORKTREES.md`、`infra/CLAUDE.md`、`infra/runbooks/deploy-site.md` |
+
+なお D-58 が参照する `infra/runbooks/deploy-site.md` はまだ存在しない。deploy.sh の DEPLOY_REF 化と
+同時に新設する(未着手)。
