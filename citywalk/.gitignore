@@ -1,0 +1,11 @@
+# thinkx-system/citywalk/.gitignore
+#
+# Local dependency and test artifacts for the citywalk rebuild.
+
+node_modules/
+.env*
+web-server/venv/
+web-server/venv-legacy/
+web-server/.pytest_cache/
+web-server/**/__pycache__/
+web-server/tests/.build/

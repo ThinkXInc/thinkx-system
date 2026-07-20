@@ -1,0 +1,41 @@
+# thinkx-system/citywalk/web-server/tests/golden/ui_legacy/ground_truth/keyframes/manifest.tsv
+# output_name	frame_number	nominal_timestamp_seconds	observation
+frame-0001.png	0	0.000	initial create-guide form
+frame-0002.png	60	1.000	initial map/content split
+frame-0003.png	120	2.000	content list stable
+frame-0004.png	240	4.000	spot interaction begins
+frame-0005.png	300	5.000	spot interaction completes
+frame-0006.png	420	7.000	left panel transition begins
+frame-0007.png	480	8.000	left panel transition completes
+frame-0008.png	720	12.000	map spot selection
+frame-0009.png	960	16.000	panel close begins
+frame-0010.png	1020	17.000	panel close completes
+frame-0011.png	1140	19.000	spot interaction begins
+frame-0012.png	1260	21.000	spot interaction midpoint
+frame-0013.png	1320	22.000	spot interaction completes
+frame-0014.png	1500	25.000	content reorder/edit state
+frame-0015.png	1620	27.000	panel transition begins
+frame-0016.png	1680	28.000	panel transition completes
+frame-0017.png	1800	30.000	map interaction stable
+frame-0018.png	1920	32.000	map pan/zoom begins
+frame-0019.png	1980	33.000	map pan/zoom midpoint
+frame-0020.png	2100	35.000	map pan/zoom completes
+frame-0021.png	2220	37.000	select menu opens
+frame-0022.png	2280	38.000	select menu closes
+frame-0023.png	3540	59.000	map navigation begins
+frame-0024.png	3600	60.000	map navigation midpoint
+frame-0025.png	3660	61.000	map navigation stable
+frame-0026.png	3780	63.000	map zoom begins
+frame-0027.png	3900	65.000	map zoom midpoint
+frame-0028.png	4020	67.000	map zoom completes
+frame-0029.png	4080	68.000	form editing stable
+frame-0030.png	4680	78.000	translation panel begins opening
+frame-0031.png	4740	79.000	translation panel midpoint
+frame-0032.png	4800	80.000	translation panel open
+frame-0033.png	5400	90.000	translation panel scroll state 1
+frame-0034.png	6300	105.000	translation panel scroll state 2
+frame-0035.png	7200	120.000	translation panel scroll state 3
+frame-0036.png	7560	126.000	translation selection completes
+frame-0037.png	7680	128.000	translation panel closes
+frame-0038.png	7800	130.000	translated form stable
+frame-0039.png	8040	134.000	final stable state

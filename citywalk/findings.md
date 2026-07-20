@@ -67,3 +67,13 @@ Security exception(D-22)はここに書かず即停止・人間へ報告。
 - `legacy/www/server/application/views/templates/business/main.html:7,19` / 確定取り込み元 SHA の tree に存在しない `/js/business/helpers/session.js` と `/js/business/main.js` を参照 / D-21
 - `legacy/www/server/application/scripts/libcommon:1` / 取り込み元では commit `98e87376e716e82263ae5ff8cfad7dfea40a02cf` の gitlinkだが、legacy 配下は空ディレクトリ / D-21
 - `web-server/tests/golden/ui_legacy/motion/:1` / 旧実ブラウザ環境を起動できていないためローカル再現フレーム列・ground truth 照合は未作成 / C-0c
+- `legacy/.gitignore:27-28` / `views/js/*` は旧 repo で ignore 対象、確定 SHA の `git ls-tree` に `js/business/{helpers/session,main}.js` は存在せず force-add 追跡資産ではない / D-21-JS-a
+- `legacy/www/server/application/views/package.json:8` / build は `src/ECMA` 全体を Babel で `js/` へ生成するが、確定 SHA の source tree に `business/helpers/session.js` と `business/main.js` は存在せず当該2本は再生成不能 / D-21-JS-b
+- `git:0a63bcee55772e19d87ec0234be4947a56a48059` / `src/ECMA/business/main.js` を削除、削除直前の本体は `console.debug('run main.js')` のみ、template の `/js/business/main.js` 参照は残存 / D-21-JS-c
+- `git:283ec59309085436dfb392a1d3c92de89ef70cb0` / `/js/business/helpers/session.js` 参照を追加した同一 commit に当該 source/blob は存在せず、session 実体は `appconfig.js` の `app.session = {}` と新設 `models/session_model.js` / D-21-JS-c
+- `legacy/www/server/application/views/src/ECMA/business/{effects.js,view_components,view_controllers}:1` / createguide の transition・setTimeout・Web Animations 実装は欠落2本と別の追跡 source 群に存在 / D-21-JS-c
+- `legacy/www/server/application/views/templates/business/main.html:7,19` / オーナー裁定により (c) を許容、既知の無害な404として legacy 無変更、アニメーションは `effects.js`・`view_components/*`・`view_controllers/*` が担う / D-21-JS-c
+- `web-server/:1` / C-6 の新実装にはデッドな `/js/business/helpers/session.js`・`/js/business/main.js` 参照を持ち込まない / C-6
+- `web-server/tests/golden/ui_legacy/ground_truth/animation_segments.tsv:S19-S21` / 翻訳パネル実座標 `x=410..659` を可視領域とし、当該区間の地図マスク開始を `x=660` へ変更して差分を再計測 / C-0c
+- `web-server/tests/golden/ui_legacy/ground_truth/motion_reference/:1` / 21区間を裁定fpsで計2,240枚・745×428 PNGへ抽出、PNG自体は無マスク、比較マスクは manifest に分離 / C-0c
+- `.gitattributes:11` / 高密度PNG 582MBを通常Git blob化しないため `motion_reference/**/*.png` のみ Git LFS管理 / C-0c

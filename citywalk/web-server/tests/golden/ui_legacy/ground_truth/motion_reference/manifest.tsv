@@ -1,0 +1,25 @@
+# thinkx-system/citywalk/web-server/tests/golden/ui_legacy/ground_truth/motion_reference/manifest.tsv
+# Source: ../createguideviewdemo.mov; output PNG 745x428; Lanczos scale; start frame 00000; PNG pixels are unmasked so map overlays remain available as evidence.
+# Comparison mask: S01-S18 x=600..1489 at source scale (x=300..744 output); S19-S21 translation panel x=410..659 remains visible and only x=660..1489 is masked (x=330..744 output).
+segment_id	start_timestamp	end_timestamp	fps	output_resolution	comparison_mask_source	frame_count
+S01	0.55	0.90	60	745x428	x=600..1489	21
+S02	1.20	2.20	30	745x428	x=600..1489	30
+S03	3.05	5.35	60	745x428	x=600..1489	138
+S04	5.60	7.20	60	745x428	x=600..1489	96
+S05	7.75	10.70	30	745x428	x=600..1489	89
+S06	12.05	13.45	30	745x428	x=600..1489	42
+S07	14.55	18.90	30	745x428	x=600..1489	131
+S08	20.30	25.30	30	745x428	x=600..1489	150
+S09	27.05	31.70	30	745x428	x=600..1489	140
+S10	32.55	34.75	20	745x428	x=600..1489	44
+S11	36.90	40.05	60	745x428	x=600..1489	189
+S12	59.55	61.60	30	745x428	x=600..1489	62
+S13	62.45	64.05	60	745x428	x=600..1489	96
+S14	65.40	67.45	20	745x428	x=600..1489	41
+S15	69.30	69.65	60	745x428	x=600..1489	21
+S16	71.65	72.35	60	745x428	x=600..1489	42
+S17	77.45	81.95	20	745x428	x=600..1489	90
+S18	85.15	90.25	20	745x428	x=600..1489	102
+S19	92.80	99.70	60	745x428	x=660..1489	414
+S20	102.15	110.60	30	745x428	x=660..1489	254
+S21	118.70	119.50	60	745x428	x=660..1489	48
