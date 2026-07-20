@@ -265,9 +265,12 @@ div#truetech-award-company {
             /* スマホでも社名とティア+シールを左右2カラムで並べる(オーナー指示)。
                社名側が 6〜7 割。横幅が足りない社名は折り返す。
                PC と違い、認定シールがティアラベルの「上」に来る縦積みになる。 */
+            /* 社名は左ボックス(シール + ティア)の高さの中央に合わせる(オーナー指示)。
+               ティアの無い企業は左ボックスが低くなるぶん社名の位置も上がる — 同じ規則で
+               両方を扱うため、企業ごとの分岐は持たない。 */
             div.company-header {
-                flex-direction: row;
-                align-items: flex-start;
+                flex-direction: row-reverse;   /* 左にシール+ティア、右に社名 */
+                align-items: center;
                 gap: 16px;
 
                 div.company-identity {
@@ -289,11 +292,11 @@ div#truetech-award-company {
                     flex: 0 0 auto;
                     max-width: 34%;
                     flex-direction: column-reverse;   /* シールが上、ティアが下 */
-                    align-items: flex-end;
+                    align-items: flex-start;
                     gap: 10px;
 
                     div.tier {
-                        align-items: flex-end;
+                        align-items: flex-start;
                         padding-top: 0;
                         gap: 6px;
                     }
