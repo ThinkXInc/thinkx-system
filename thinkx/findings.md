@@ -174,10 +174,12 @@
   Augmented Communications / レボーン / Beam Technologies は未指定のため `null`
   (チップ非表示)で作成した。枠が決まり次第 JSON の `tier` を埋める。
 
-### F-E9(要判断): 創業者名の英語表記
+### F-E9(解決済み): 創業者名の英語表記
 - 五十嵐 俊治 のローマ字表記は公式サイト(augmented.jp)に記載が無く、読みが一意でない
   (Shunji / Toshiharu / Toshiji 等)。**人名を推測しない**方針で `founders.en` を空にし、
-  /en でも日本語表記が出るようにした。正式表記の supply が必要。
+  /en でも日本語表記が出るようにした。
+- 2026-07-20 オーナーより正式表記の supply: **Igarashi Toshiharu**(ご本人の署名表記。
+  姓+名の順)。語順を westernize せずそのまま採用した。
 
 ### F-E10: award_year は 2026 と仮置き
 - enex に受賞年の記載があるのは ThinkX のみ。同一コホートとみなし残りも 2026 とした。

@@ -262,22 +262,42 @@ div#truetech-award-company {
         div.award-company-page.main-content {
             padding: 48px 20px 100px;
 
-            /* ティア + 認定シールは常に右上(オーナー指示)。狭くて社名と横に並べられない
-               ので、column-reverse で社名の少し上・右寄せに置く。 */
+            /* スマホでも社名とティア+シールを左右2カラムで並べる(オーナー指示)。
+               社名側が 6〜7 割。横幅が足りない社名は折り返す。
+               PC と違い、認定シールがティアラベルの「上」に来る縦積みになる。 */
             div.company-header {
-                flex-direction: column-reverse;
-                align-items: stretch;
-                gap: 20px;
+                flex-direction: row;
+                align-items: flex-start;
+                gap: 16px;
 
                 div.company-identity {
-                    h1.company-name { font-size: 27px; }
-                    a.company-url { font-size: 15px; }
+                    flex: 1 1 auto;
+                    min-width: 0;              /* flex 子の折り返しを許す */
+
+                    h1.company-name {
+                        font-size: 24px;
+                        overflow-wrap: anywhere;
+                    }
+
+                    a.company-url {
+                        font-size: 14px;
+                        overflow-wrap: anywhere;
+                    }
                 }
 
                 div.award-mark {
-                    align-self: flex-end;
-                    align-items: flex-start;
-                    gap: 14px;
+                    flex: 0 0 auto;
+                    max-width: 34%;
+                    flex-direction: column-reverse;   /* シールが上、ティアが下 */
+                    align-items: flex-end;
+                    gap: 10px;
+
+                    div.tier {
+                        align-items: flex-end;
+                        padding-top: 0;
+                        gap: 6px;
+                    }
+
                     img.award-seal { width: 84px; }
                 }
             }
