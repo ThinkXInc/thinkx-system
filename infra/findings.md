@@ -581,3 +581,27 @@ infra/CLAUDE.md 末尾の「worktree と deploy checkout の分離(D-58)」節�
 deploy checkout を clean に保つ・DEPLOY_REF・Mac の現 branch を暗黙のデプロイ元にしない・
 wrapper と承認ゲート・staging からの push は DR 例外、の残り6行は**維持する**(サーバー側の
 分離は撤回対象外)。オーナー判断待ち。
+
+## deploy 議論の論点(a): 編集する場所と配信元の分離(2026-07-20・未裁定)
+
+前提: clone_monorepo.sh がサイトの実体を /src/thinkx → /src/thinkx-system/thinkx の
+シンボリックリンクで作っているため、**deploy checkout がそのまま配信元**になっている。
+一方 staging の Claude Code セッションの存在意義は、スマホやブラウザからサイトを直接いじって
+その場で staging.thinkxinc.com で確認することにある。現状の構成ではこの2つが両立しない。
+
+- **案1: 編集用 checkout を配信元にする** — staging だけシンボリックリンクを編集用へ向ける。
+  編集が即座に見える。欠点: staging が「prod に出す確定 ref をリハーサルする場所」でなくなる。
+- **案2: deploy checkout のみを配信する** — 編集 → commit → push → DEPLOY_REF で反映、で初めて
+  見える。正しいが、1行直すたびにこのループを回すのはスマホ運用として重い。
+- **案3: staging に2面持つ** — staging.thinkxinc.com = deploy checkout(確定 ref のリハーサル)/
+  edit.staging.thinkxinc.com = 編集用 checkout(即時プレビュー)。役割の違うものを1つの箱に
+  押し込めているのが混乱の根本なので設計としては一番素直。欠点: vhost と uwsgi がもう1組増えて
+  メモリを食う。staging web は t3.small で空き 459MB・スワップ 0 の実測なので、D-57 の
+  medium 化とセットでないと成立しない。
+
+前セッションの推薦は案3。**オーナー裁定は未了**。deploy.sh の DEPLOY_REF 化はこの結論に従属する。
+
+論点(b): 「デプロイは Mac 非依存」をどこまで取るか。deploy.sh は Mac から ssh する Mac 起点の
+スクリプト。D-58 の趣旨を「Mac のローカル**リポジトリの状態**に依存してデプロイ内容が決まるのを
+やめる」と読むなら、DEPLOY_REF を明示した時点で目的は達せられ、Mac 起点のままでよい。
+staging から prod へ ssh させる案は staging に prod の鍵を置くことになり攻撃面が広がる。未裁定。
