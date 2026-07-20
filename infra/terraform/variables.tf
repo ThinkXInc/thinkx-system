@@ -73,8 +73,10 @@ locals {
     Managed = "terraform"
   }
 
-  web_type = local.is_prod ? "t3.medium" : "t3.small"
-  lb_type  = local.is_prod ? "t3.small" : "t3.micro"
+  # サイズは env ごとに独立(D-57)。配信専用の prod は小さく、開発(Claude Code+ビルド)する
+  # staging web は RAM 余裕のため大きく = 従来の prod>staging を web で反転。lb は両 env とも micro
+  web_type = local.is_prod ? "t3.small" : "t3.medium"
+  lb_type  = "t3.micro"
 
   subnet_cidr = local.is_prod ? "192.168.1.0/24" : "192.168.2.0/24"
   lb_ip       = local.is_prod ? "192.168.1.10" : "192.168.2.10"
