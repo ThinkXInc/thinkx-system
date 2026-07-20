@@ -87,3 +87,8 @@
   `03_DATA_AND_INFRA.md` のモデル配置とオーナー裁定ではサービス側に置く。
 - オーナー裁定により、初版 E2E client は `auth/reference-client/` に最小実装を置く。
   旧 quantz-web の統合は後続計画とする。
+- auth 単独の project-local venv は未整備で、system Python には pytest がなく、canonical libcommon の
+  venv には mongoengine がないため、auth の pytest は conftest 収集前に停止する。L 計画中の
+  Session 拡張は canonical libcommon 側の全テストで担保する。A 計画の最初の項目(A-0相当)で
+  auth 用 venv を作成し、requirements の依存を導入したうえで、auth pytest が収集・実行できることを
+  確認する必要がある。依存は未承認のまま system や既存 venv へ追加しない。
