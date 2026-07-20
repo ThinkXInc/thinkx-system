@@ -103,3 +103,20 @@
 - canonical一時bakeとauth snapshotはbyte identical。auth snapshotの再bake前後にtracked差分なし。
 - canonical HEADの最終ゲートは pytest 84 passed、ruff All checks passed、pyright 0 errors
   (既存warnings 5件)。これをもってL計画を完了する。
+
+## Auth A-0 単独テスト環境
+
+- `auth/web-server/venv` を `/opt/homebrew/bin/python3.11` 3.11.15 arm64で作成した。配置は
+  CLAUDE_GENERALのcomponent-local `venv` 規則に従い、既存 `auth/.gitignore` の `venv/` 対象内。
+- runtime直接依存の根拠は次のとおり。Flaskはmain/accounts/sso、redisはssoとlibcommon Session、
+  mongoengineはUser/init_mongodb、pymongoはvendored mongomodelのbson、pytzはUser/mongomodel、
+  pydanticはlibcommon response format、msgpackはSession serializer、google-authはGoogle token検証、
+  pycryptodomeはUserが使うCipher、requestsはauth_clientとGoogle transportがimportする。
+  PyJWTは現行scaffoldでは未importだが、確定auth-specのRS256 ID Token署名・検証に用いる唯一の
+  JWTライブラリとして `PyJWT==2.13.0` を固定した。RS256実行に必要なcryptographyも、google-authの
+  推移依存へ偶然依存しないよう `cryptography==49.0.0` を直接固定した。Authlibは導入していない。
+- test直接依存はpytest、conftestが使うmongomockとfakeredis。`pip check`はbroken requirementsなし。
+- venvからのimportでlibcommon package pathは `auth/web-server/libcommon`、Session moduleも同snapshot内。
+  別cloneやPyPIのlibcommonは参照していない。
+- auth pytestは21件をcollectし、14 passed / 7 skipped / 1 warning。skipはA-9で置換予定の旧PROTOCOL
+  v1規約テスト。warningはMongoEngineの既存uuidRepresentation既定値に関するdeprecation。
