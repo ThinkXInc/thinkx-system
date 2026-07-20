@@ -1,0 +1,72 @@
+# thinkx-system/citywalk/web-server/tests/inventory/routes_legacy.txt
+#
+# Legacy blueprint route registrations (67 lines).
+#
+
+scripts/api/addresses.py:51:@blueprint_addresses.route('/v1/addresses/produce', methods=['POST'])
+scripts/api/apps.py:121:@blueprint_apps.route('/app/version/check/<app_type_str>', methods=['GET'])
+scripts/api/apps.py:41:@blueprint_apps.route('/app/version', methods=['GET'])
+scripts/api/apps.py:83:@blueprint_apps.route('/app/version', methods=['POST'])
+scripts/api/contents.py:175:@blueprint_contents.route('/v1/contents/guide/update', methods=['POST'])
+scripts/api/contents.py:269:@blueprint_contents.route('/v1/contents/guide/delete', methods=['POST'])
+scripts/api/contents.py:332:@blueprint_contents.route('/v1/contents/guide/list', methods=['GET'])
+scripts/api/contents.py:371:@blueprint_contents.route('/demo/1/contents/guide/list', methods=['GET'])
+scripts/api/contents.py:89:@blueprint_contents.route('/v1/contents/guide/create', methods=['POST'])
+scripts/api/geo.py:21:@blueprint_geo.route('/v1/geo/address/ja/getbypostalcode', methods=['POST'])
+scripts/api/histories.py:142:@ blueprint_histories.route('/v1/histories/location/hgps', methods=['POST'])
+scripts/api/histories.py:190:@ blueprint_histories.route('/v1/histories/location/pathnet', methods=['POST'])
+scripts/api/histories.py:238:@blueprint_histories.route('/v1/histories/app/launch', methods=['POST'])
+scripts/api/histories.py:263:@blueprint_histories.route('/v1/histories/app/enterbackground', methods=['POST'])
+scripts/api/histories.py:286:@blueprint_histories.route('/v1/histories/app/terminate', methods=['POST'])
+scripts/api/histories.py:309:@blueprint_histories.route('/v1/histories/facilitypanel/selected', methods=['POST'])
+scripts/api/histories.py:335:@blueprint_histories.route('/v1/histories/guide/checkin', methods=['POST'])
+scripts/api/histories.py:370:@blueprint_histories.route('/v1/histories/guide/start', methods=['POST'])
+scripts/api/histories.py:402:@blueprint_histories.route('/v1/histories/guide/stop', methods=['POST'])
+scripts/api/histories.py:434:@blueprint_histories.route('/v1/histories/guide/finish', methods=['POST'])
+scripts/api/histories.py:467:@blueprint_histories.route('/v1/histories/question/answer', methods=['POST'])
+scripts/api/histories.py:507:@blueprint_histories.route('/v1/histories/audiocontent/play', methods=['POST'])
+scripts/api/histories.py:544:@blueprint_histories.route('/v1/histories/audiocontent/stop', methods=['POST'])
+scripts/api/histories.py:584:@blueprint_histories.route('/v1/histories/audiocontent/finish', methods=['POST'])
+scripts/api/histories.py:95:@blueprint_histories.route('/v1/histories/location/gps', methods=['POST'])
+scripts/api/items.py:191:@blueprint_items.route('/v1/items/update', methods=['POST'])
+scripts/api/items.py:284:@blueprint_items.route('/v1/items/delete', methods=['POST'])
+scripts/api/items.py:336:@blueprint_items.route('/v1/items/list', methods=['GET'])
+scripts/api/items.py:370:@blueprint_items.route('/v1/items/storeinfo/create', methods=['POST'])
+scripts/api/items.py:379:@blueprint_items.route('/v1/items/storeinfo/update', methods=['POST'])
+scripts/api/items.py:388:@blueprint_items.route('/v1/items/storeinfo/delete', methods=['POST'])
+scripts/api/items.py:397:@blueprint_items.route('/v1/items/storeinfo/list', methods=['GET'])
+scripts/api/items.py:64:@blueprint_items.route('/v1/items/create', methods=['POST'])
+scripts/api/organizations.py:1026:@blueprint_organizations.route(
+scripts/api/organizations.py:1094:@blueprint_organizations.route(
+scripts/api/organizations.py:1175:@blueprint_organizations.route(
+scripts/api/organizations.py:1262:@blueprint_organizations.route(
+scripts/api/organizations.py:1343:@blueprint_organizations.route('/organizations/icon/upload', methods=['POST'])
+scripts/api/organizations.py:1364:@blueprint_organizations.route('/organizations/exists', methods=['POST'])
+scripts/api/organizations.py:382:@blueprint_organizations.route('/organizations/signup', methods=['POST'])
+scripts/api/organizations.py:573:@blueprint_organizations.route(
+scripts/api/organizations.py:643:@blueprint_organizations.route('/organizations/signin', methods=['POST'])
+scripts/api/organizations.py:709:@blueprint_organizations.route(
+scripts/api/organizations.py:797:@blueprint_organizations.route(
+scripts/api/organizations.py:861:@blueprint_organizations.route(
+scripts/api/organizations.py:929:@blueprint_organizations.route(
+scripts/api/purchase.py:101:@blueprint_purchases.route('/v1/purchases/purchase', methods=['POST'])
+scripts/api/ratings.py:189:@blueprint_ratings.route('/v1/ratings/facility/<facility_id>/get', methods=['GET'])
+scripts/api/ratings.py:210:@blueprint_ratings.route('/v1/ratings/facility/submit', methods=['POST'])
+scripts/api/ratings.py:260:@blueprint_ratings.route('/v1/ratings/citywalk/submit', methods=['POST'])
+scripts/api/users.py:288:@blueprint_users.route('/v1/users/signup', methods=['POST'])
+scripts/api/users.py:414:@blueprint_users.route('/v1/users/signup/confirm', methods=['POST'])
+scripts/api/users.py:472:@blueprint_users.route('/v1/users/signin', methods=['POST'])
+scripts/api/users.py:531:@blueprint_users.route('/v1/users/update', methods=['POST'])
+scripts/api/users.py:613:@blueprint_users.route('/v1/users/email/update', methods=['POST'])
+scripts/api/users.py:689:@blueprint_users.route('/v1/users/email/verify', methods=['POST'])
+scripts/api/users.py:749:@blueprint_users.route('/v1/users/password/update', methods=['POST'])
+scripts/api/users.py:830:@blueprint_users.route('/v1/users/password/reset', methods=['POST'])
+scripts/api/users.py:886:@blueprint_users.route('/v1/users/password/reset/confirm', methods=['POST'])
+scripts/api/users.py:963:@blueprint_users.route('/v1/users/icon/upload', methods=['POST'])
+scripts/api/users.py:987:@blueprint_users.route('/v1/users/exists', methods=['POST'])
+scripts/views/business.py:103:@blueprint_business.route('/business/settings')
+scripts/views/business.py:146:@blueprint_business.route('/business/createguide')
+scripts/views/business.py:40:@blueprint_business.route('/business/top')
+scripts/views/business.py:48:@blueprint_business.route('/business/home')
+scripts/views/business.py:81:@blueprint_business.route('/business/signup')
+scripts/views/business.py:95:@blueprint_business.route('/business/signin')

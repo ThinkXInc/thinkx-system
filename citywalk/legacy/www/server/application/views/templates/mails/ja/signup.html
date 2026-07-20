@@ -1,0 +1,22 @@
+{%extends "mails/mail_base.html" %}
+{% block content %}
+<article class="message" style="color: #333; margin-bottom: 20px;">
+  <img src="/img/mail/ilrsa.png" style="width: 200px; height: 200px; display: block; margin: 0 auto; margin-bottom: 10px;"/>
+  My name is Ilrsa, the core system of this service. I just wanted to say welcome and thanks for signing up.</br></br>
+  By the way, my database covers almost all titles in the world. It mainly speciallizes for turning up masterpieces live in obscurity in the long history!</br>
+  The system has been carefully designed to cluster the people who have similar intersts and simulate the segmented grapevine. </br>
+  It'll be more clever as user's information increases.</br>
+  Anyway, I'll do the best to give you a new experience!</br>
+  Thanks,</br></br>
+
+  (Don't forget to confirm your account)
+
+
+</article>
+
+<a href="{{ confirm_url }}" class="button" style="padding: 9px 30px; background-color: #40a6a2; color: #FFF; font-size: 0.9em;
+box-shadow:rgba(12, 106, 101, 0.4) 0px 0px 1px 1px inset;
+-wekit-box-shadow:rgba(12, 106, 101, 0.4) 0px 0px 1px 1px inset;
+-moz-box-shadow:rgba(12, 106, 101, 0.4) 0px 0px 1px 1px inset;
+border: none;">Confirm</a>
+{% endblock %}

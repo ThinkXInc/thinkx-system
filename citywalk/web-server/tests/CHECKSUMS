@@ -1,0 +1,10 @@
+# thinkx-system/citywalk/web-server/tests/CHECKSUMS
+#
+# Golden, inventory, and vendored-copy integrity ledger for the citywalk rebuild.
+#
+
+# C-0a legacy inventories (sha256)
+3a357996ab53dc5d6ad08299d39bc2cbdcc0b757246bd353b3a9126490648ce1  citywalk/web-server/tests/inventory/routes_legacy.txt
+71a20fdeeff7d4ad109076508798d4d4d5bfee0123a78020dead020287a5b17d  citywalk/web-server/tests/inventory/templates_legacy.txt
+7ebbf7d68beb0c288a7145760416fa6e75e9ec31be32e39f03f43eff80a7883b  citywalk/web-server/tests/inventory/ecma_legacy.txt
+6fac53edd16d3ba0cea7a6866b5c7e21d9fef0edc97c85c4e2161af30f5aad8e  citywalk/web-server/tests/inventory/img_legacy.txt

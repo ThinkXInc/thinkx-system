@@ -1,0 +1,287 @@
+@charset "UTF-8";
+// createguide.less
+
+/* Google Map Optional: Makes the sample page fill the window. */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;  // remove scroll bar
+}
+
+#createguideview {
+    height: 100%; // needs to make google map full screen.
+}
+
+#leftwindow {
+    position: absolute;
+    left: 0;
+    top: 0;
+    min-width: 500px;
+    width: 40%;
+    height: 100%;
+    background-color: #fff;
+    .box-shadow (@left: 0px, @top: 0px, @size: 4px, @spread: 0px, @color: rgba(0, 0, 0, 0.3));
+    header {
+        height: 70px;
+        svg.logo-business {
+            width: 140px;
+            margin: 20px 20px;
+        }
+    }
+}
+
+#pageNavigationView {
+    border-bottom: 1px solid @border-gray;
+    ul.breadcrumbs {
+        padding: 10px 10px 10px 13px;
+        li {
+            float: left;
+            padding-left: 13px;
+        }
+    }
+    div.backbutton {
+        padding: 8px 25px;
+        cursor: pointer;
+        img.backarrow {
+            width: 18px;
+            height: 18px;
+        }
+        span.pagebacktitle {
+            margin-left: 10px;
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: @pagebacktitle-gray; //@blue; 
+            vertical-align: 3px;
+            -webkit-font-smoothing: antialiased;
+        }
+    }
+    div.backbutton:hover {
+        background-color: @hover-gray;
+    }
+}
+
+.pageNavigationViewInsertBuckButton {
+  .fadeInToBottom(0.4s, 0s, 1);
+}
+
+
+#contentTableView {
+    li.contentTableViewCell {
+        padding: 40px 20px 26px 26px;
+        border-bottom: 1px solid @border-gray;
+        cursor: pointer;
+        div.header {
+            span.label {
+                float: right;
+                background-color: #3a3a3a; //blue;
+                color: @white;
+                padding: 2px 7px;
+                border-radius: 2px;
+                font-size: 0.78rem;
+                font-weight: 200;
+            }
+            span.title {
+                float: left;
+                //font-weight: 600;
+                font-size: 1.2rem;
+                font-weight: 300;
+                color: @text-black;
+            }
+        }
+        div.body {
+            margin: 10px 0 0 0;
+            span.text {
+                color: @text-gray;
+                font-weight: 100;
+                font-size: 0.9rem;
+            }
+        }
+        div.footer {
+            margin: 6px 0 0 0;
+            font-size: 0.7rem;
+            color: @text-gray-light;
+            span.updated {
+                float: right;
+            }
+            span.edited {
+                float: right;
+                span.by {
+                    padding-right: 2px;
+                }
+                span.author {
+                    padding-right: 4px;
+                }
+            }
+        }
+    }
+    li.contentTableViewCell:hover {
+        background-color: @hover-gray;
+    }
+}
+
+#editContentView {
+    overflow-y: scroll;
+    height: calc(100vh - 150px);
+
+    div.editheader {
+        display: flex;
+        position: fixed;
+        flex-direction: row;
+        align-items: center;
+        padding: 12px 18px 5px 18px;
+        background-color: @bgcolor-light;
+        z-index: 1;
+        width: 40%;  // must be same as #leftwindow if position is fixed
+        min-width: 500px;  // must be same as #leftwindow if position is fixed
+
+        h2.headertitle {
+            flex: 2;
+            font-size: 1.4rem;
+            color: #8b8b8b;
+            -webkit-font-smoothing: antialiased;
+        }
+        button.cancel {
+            flex: initial;
+            border: none;
+            background: transparent;
+            font-weight: 200;
+            color: @blue; //#343434;//@keycolor;
+            padding: 12px 14px;
+        }
+        button.save {
+            flex: initial;
+            background: @blue;//#343434;//@keycolor;
+            color: @white;
+            border: none;
+            padding: 9px 32px;
+            border-radius: 3px;
+        }
+    }
+    div.editheader.onscroll {
+        .box-shadow (@left: 0px, @top: 7px, @size: 3px, @spread: -6px, @color: rgba(0, 0, 0, 0.08));
+    }
+
+    div.editContentViewScrollContainer {
+        padding: 85px 18px 20px 18px;
+        div.textField.nameField {
+            margin-bottom: 20px;
+        }
+        div.textField.titleField {
+            margin-bottom: 20px;
+        }
+        div.textField.textField {
+            margin-bottom: 20px;
+        }
+        div.settingsarea {
+            div.settings {
+                div.setting {
+                    margin-bottom: 20px;
+                    h5.title {
+                        font-size: 1rem;
+                        color: @text-darkgray;
+                        padding: 5px 0;
+                        font-weight: 400;
+                    }
+                    p.description {
+                        color: @text-gray;
+                        font-size: 0.7rem;
+                        font-weight: 200;
+                        margin-bottom: 7px;
+                    }
+                    div.dropdownButton {
+                        width: 240px;
+                    }
+                }
+            }
+            a.displayall {
+                font-size: 0.9rem;
+            }
+            div.basicsettings {
+                div.targets {
+                    h5.title {
+
+                    }
+                    p.description {
+
+                    }
+               }
+            }
+            div.advancedsettings {
+            }
+        }
+    }
+}
+
+#translateResultsTableView {
+    display: flex;
+    flex-direction: column;
+    width: 375px;
+    //height: 600px;
+    position: absolute;
+    top: 0px;
+    left: 40%;
+    z-index: 3;
+    background: white;
+    .box-shadow (@left: 0px, @top: 0px, @size: 21px, @spread: 3px, @color: rgba(0, 0, 0, 0.3));
+    ul.listContainer {
+        li.translateResultsTableViewCell {
+            display: flex;
+            flex-direction: row;
+            height: 70px;
+            border-bottom: 1px solid #eee;
+            div.left {
+                display: flex;
+                flex-direction: column;
+                padding: 3px;
+                width: 39px;
+                span.lang {
+                    background-color: #f1f1f1;
+                    color: #9b9b9b;
+                    padding: 1px 6px;
+                    font-size: 0.9em;
+                    width: fit-content;
+                }
+            }
+            div.main {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                width: 78.5%;
+                word-break: break-word;
+                font-size: 0.8em;
+                span.text {
+                }
+            }
+            div.right {
+                display: flex;
+                flex-direction: column;
+                margin-left: auto;
+                span.play {
+
+                }
+
+            }
+        }
+    }
+    div.footer {
+        display: flex;
+        justify-content: right;
+        align-items: center;
+        span.translatedby {
+            font-size: 0.7em;
+            color: #bbb;
+        }
+        img.DeepLLogo {
+
+        }
+    }
+}
+
+
+#map {
+    /* Always set the map height explicitly to define the size of the div
+     * element that contains the map. */
+    height: 100%;
+    width: 100%;
+}

@@ -1,0 +1,36 @@
+{% extends "business/main.html" %}
+{% block page %}
+<section id=signupConfirmView class=signupConfirmView>
+    <div class="viewContainer">
+        <h2 id=signupConfirmViewPageTitle class=signupConfirmViewPageTitle>
+            {{ locale_dict["page_title"][lang] |safe }}
+        </h2>
+        <p id=signupConfirmViewPageDescription class=signupConfirmViewPageDescription>
+            {{ locale_dict["page_description"][lang] |safe }}
+        </h2>
+        <div id=signupConfirmViewInsertImage class=signupConfirmViewInsertImage>
+            <img src="/img/apng/mainB_60_noloop.png"/>
+        </div>
+    </div>
+</section>
+<script>
+    // Total seconds to wait
+    let seconds = 5;
+    function countdown() {
+        seconds = seconds - 1;
+        if (seconds < 0) {
+            // Chnage your redirection link here
+            PageControl.goTo("/business/home#intro");
+        } else {
+            // Update remaining seconds
+            //document.getElementById("countdown_en").innerHTML = seconds;
+            //document.getElementById("countdown_ja").innerHTML = seconds;
+            // Count down using javascript
+            window.setTimeout("countdown()", 1000);
+        }
+    }
+    // Run countdown function
+    countdown();
+</script>
+{% endblock %}
+ 

@@ -1,0 +1,21 @@
+{% extends "mails/en/base.html" %}
+{% block header %}
+<h1 class="Hi" style="font-size:1.7em; font-weight: normal;">
+Hi {{ organization_member.first_name }} {{ organization_member.last_name }},
+</h1>
+{% endblock %}
+{% block content %}
+<article class="message" style="color: #333; margin-bottom: 20px;">
+  Someone tried to sign up for an CITYWALK account</br>
+  with {{ organization_member.email }}. If it was you,</br>
+  enter this confirmation code in the app:</br>
+
+  <a href="{{ validation_url }}" class="button" style="padding: 9px 30px; background-color: #40a6a2; color: #FFF; font-size: 0.9em;
+  box-shadow:rgba(12, 106, 101, 0.4) 0px 0px 1px 1px inset;
+  -wekit-box-shadow:rgba(12, 106, 101, 0.4) 0px 0px 1px 1px inset;
+  -moz-box-shadow:rgba(12, 106, 101, 0.4) 0px 0px 1px 1px inset;
+  border: none; text-decoration: none;">Confirm</a>
+
+</article>
+
+{% endblock %}

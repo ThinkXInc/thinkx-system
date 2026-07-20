@@ -1,0 +1,354 @@
+{
+    "validation_error": {
+        "en": "invalid submit values.",
+        "ja": "送信された値が不正です。",
+        "zh": "invalid submit values (zh)"
+
+    },
+    "required_fields_not_satisfied": {
+        "en": "This field is required.",
+        "ja": "このフィールドは必須です。",
+        "zh": "This error message (chinese) has not been defined yet."
+    },
+    "invalid_format_error": {
+        "en": "$0 is invalid format as $0.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+    },
+    "save_error": {
+        "en": "saving $0 failed with error $1",
+        "ja": "エラー:$1のために$0の保存に失敗しました。",
+        "zh": "This error message (chinese) has not been defined yet."
+    },
+    "name_too_long_error": {
+        "en": "This field is maximum length of $0, but $1.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+    },
+    "invalid_value_error": {
+        "en": "$0 is invalid as $1.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    }, 
+    "invalid_user_id_error": {
+        "en": "$0 is invalid as user_id.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "invalid_name_error": {
+        "en": "$0 is invalid as name.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "invalid_email_format_error": {
+        "en": "Use the standard email format. e.g. name@domain.com.",
+        "ja": "正しいメールアドレス形式で入力してください。 (例) name@domain.com.",
+        "zh": "正形式入力 (例) name@domain.com."
+ 
+    },
+    "invalid_zip_code_format_error": {
+        "en": "Use the standard postalcode format, like 100-2000.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "invalid_tel_country_code_format_error": {
+        "en": "Use only numbers for tel_country_code, like 81. but $0.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "invalid_tel_format_error": {
+        "en": "$0 is invalid telephone number format.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "invalid_lat_lng_format_error": {
+        "en": "lat and lng must be a float number but $0.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "password_contains_no_alphabet_error": {
+        "en": "Password must contain at least 1 alphabet.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "password_contains_no_number_error": {
+        "en": "Password must contain at least 1 number.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "invalid_password_format_error": {
+        "en": "Password must be at least eight characters, and containing a combination of uppercase letters, lowercase letters and numbers.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "confirmation_password_not_corresponding_error": {
+        "en": "Confirmation password is not corresponding.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "invalid_content_type": {
+        "en": "$0 in header is invalid as content_type.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "invalid_country_error": {
+        "en": "$0 is invalid as Country.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "invalid_organization_name_error": {
+        "en": "$0 is invalid as organization name.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "invalid_organization_type_error": {
+        "en": "$0 is invalid as OrganizationType.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "email_not_corresponding_error": {
+        "en": "$0 is not corresponding with the current email address.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "confirmation_code_not_corresponding_error": {
+        "en": "the confirmation code you entered is not correct.",
+        "ja": "一致していません",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "mail_validation_code_not_corresponding_error": {
+        "en": "the mail verification code you entered is not correct.",
+        "ja": "一致していません",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "user_already_exists_error": {
+        "en": "user from $0 already exists.",
+        "ja": "$0はすでに存在するユーザーです。",
+        "zh": "This error message (chinese) has not been defined yet."
+    },
+    "organization_member_already_exists_error": {
+        "en": "organization member from $0 already exists.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "user_not_found_error": {
+        "en": "user from $0 not found.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "organization_not_found_error": {
+        "en": "organization from $0 not found.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "organization_member_not_found_error": {
+        "en": "organization member from $0 not found.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "address_not_found_error": {
+        "en": "address from $0 not found.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "organization_member_permission_denied_error": {
+        "en": "organization member $0 has no privilieges for the action $1.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "organization_member_cannot_resign_admin_role_error": {
+        "en": "organization member $0 cannot resign admin role. at least one admin is required.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "organization_keyname_already_exists_error": {
+        "en": "$0 already exists.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "target_member_not_found_error": {
+        "en": "organization member from _id $0 not found.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "content_not_found_error": {
+        "en": "content by index $0 and language $1 not found.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "session_doesnt_exist_error": {
+        "en": "session has expired.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "password_incorrect_error": {
+        "en": "the given password is incorrect for the account of $0.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "previous_password_incorrect_error": {
+        "en": "the previous password incorrect for the account of $0",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "new_passwords_not_corresponding_error": {
+        "en": "the new password is not corresponding.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "invalid_password_reset_code_error": {
+        "en": "the password reset code is invalid.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "invalid_timestamp_error": {
+        "en": "$0 is invalid as timestamp.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "invalid_lat_lng_error": {
+        "en": "($0, $1) is invalid as (lat, lon).",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "invalid_facility_id_error": {
+        "en": "$0 is invalid as facility_id.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+    },
+    "invalid_question_id_error": {
+        "en": "$0 is invalid as question_id.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "invalid_answer_error": {
+        "en": "$0 is invalid as answer.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "invalid_audio_content_id_error": {
+        "en": "$0 is invalid as audio_content_id.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "invalid_playback_rate_error": {
+        "en": "$0 is invalid as playback_rate.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "invalid_check_in_panel_id_error": {
+        "en": "$0 is invalid as check_in_panel_id.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "invalid_x_y_error": {
+        "en": "($0, $1) is invalid as (x, y).",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "item_not_found": {
+        "en": "item from $0 not found.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "store_info_not_found": {
+        "en": "store info from $0 not found.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "invalid_item_type": {
+        "en": "$0 is invalid as item_type.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "invalid_index": {
+        "en": "$0 is invalid as index.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "invalid_name_length": {
+        "en": "the length of name $0 must be within $1 to $2 charactors.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "invalid_title_length": {
+        "en": "the length of title $0 must be within $1 to $2 charactors.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "invalid_text_length": {
+        "en": "the length of text $0 must be within $1 to $2 charactors.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "invalid_description_length": {
+        "en": "the length of description $0 is invalid. must be $1 to $2 charactors.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "invalid_language": {
+        "en": "$0 is invalid name of language.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+ 
+    },
+    "email_sent_failed": {
+        "en": "email sent to $0 failed with error $1.",
+        "ja": "This error message (japanese) has not been defined yet.",
+        "zh": "This error message (chinese) has not been defined yet."
+    },
+    "": {
+        "en": ""
+    }
+}
+
+

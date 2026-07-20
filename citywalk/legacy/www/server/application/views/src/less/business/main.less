@@ -1,0 +1,115 @@
+@charset "UTF-8";
+// main.less
+
+@import '../common.less';
+@import 'view_components.less';
+
+@import 'colorscheme.less';
+
+@font-face {
+  font-family: "GeosansLight";
+  src: url('/fonts/GeosansLight.ttf?-b7qzp2') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+.cf:before,
+.cf:after {
+    content: " ";
+    display: table;
+}
+.cf:after {
+    clear: both;
+}
+.cf {
+    *zoom: 1;
+}
+
+::-webkit-scrollbar {
+    width: @scrollbar-width;
+}
+  
+::-webkit-scrollbar-button {
+  background-color: #525252;
+}
+ 
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: none;
+  background-color: @scrollbar-track;
+}
+ 
+::-webkit-scrollbar-thumb {
+  background-color: @scrollbar-thumb;
+}
+
+// ----- body
+body {
+  font-family: sans-serif, 'Roboto';
+}
+
+// ----- main.html
+
+section#content {
+  height: 100%;
+  width: 100%;
+}
+
+header.mainHeader {
+    display: flex;
+    justify-content: space-between;
+    height: 70px;
+    background-color: @white;
+
+    svg.logo-business {
+        width: 230px;
+        margin: 20px 20px;
+    }
+    ul.right {
+        display: flex;
+        flex-direction: row;
+        li {
+            cursor: pointer;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            margin-right: 20px;
+            .transition-all(.3s);
+            p.name {
+                margin-right: 8px;
+            }
+            img.headerMenuIconClose {
+                width: 14px;
+            }
+        }
+        li:hover {
+            // TODO: hover animation
+            p.name {
+            }
+            img.headerMenuIconClose {
+            }
+        }
+        li.organization {
+            p.name {
+            }
+            img.headerMenuIconClose {
+            }
+        }
+        li.organizationMember {
+            p.name {
+            }
+            img.headerMenuIconClose {
+            }
+        }
+    }
+
+}
+
+
+
+
+// ----- views
+@import 'createguide.less';
+@import 'signup.less';
+@import 'signup_confirm.less';
+@import 'home.less';
+@import 'settings.less';

@@ -1,0 +1,418 @@
+{% extends "business/main.html" %}
+
+{% block page %}
+<script src=/js/business/view_components/textfield.js></script>
+<script src=/js/business/view_components/dropdown_button.js></script>
+<script src=/js/business/view_components/input_page_view_controller.js></script>
+<script src=/js/business/view_components/position_map.js></script>
+<script src=/js/business/view_controllers/signup_view_controller.js></script>
+<!--<script src=/js/business/view_components/map_pointer.js type=module></script>-->
+<section id=signupView class=inputPageView>
+
+    <h2 id=signupViewPage1Title class=inputPageViewPageTitle></h2>
+    <p id=signupViewPage1Description class=inputPageViewPageDescription></h2>
+    <div id=signupViewOrganizationNameTextField class=textField></div>
+    <div id=signupViewOrganizationTypeDropdownButton class=dropdownButton></div>
+    <div id=signupViewOrganizationBusinessDescriptionTextField class=textField></div>
+    <div id=signupViewCountryDropdownButton class=dropdownButton></div>
+    <button id=signupViewPage1NextButton class="nextButton ripple-button"></button>
+    <div id=signupViewPage1AlertMessage class="alertMessage"></div>
+
+    <button id=signupViewPage2BackButton class=backButton></button>
+    <h2 id=signupViewPage2Title class=inputPageViewPageTitle></h2>
+    <div id=signupViewZipcodeTextField class=textField></div>
+    <div id=signupViewCityTextField class=textField></div>
+    <div id=signupViewProvinceTextField class=textField></div>
+    <div id=signupViewAddress1TextField class=textField></div>
+    <div id=signupViewAddress2TextField class=textField></div>
+    <div id=signupViewPositionMap class=positionMap></div>
+    <div id=signupViewTelCountryCodeDropdownButton class=dropdownButton></div>
+    <div id=signupViewTelTextField class=textField></div>
+    <button id=signupViewPage2NextButton class="nextButton ripple-button"></button>
+    <div id=signupViewPage2AlertMessage class="alertMessage"></div>
+
+    <button id=signupViewPage3BackButton class=backButton></button>
+    <h2 id=signupViewPage3Title class=inputPageViewPageTitle></h2>
+    <div id=signupViewMemberFirstNameTextField class=textField></div>
+    <div id=signupViewMemberLastNameTextField class=textField></div>
+    <div id=signupViewEmailTextField class=textField></div>
+    <div id=signupViewPasswordTextField class=textField></div>
+    <div id=signupViewPasswordConfirmTextField class=textField></div>
+    <button id=signupViewPage3NextButton class="nextButton ripple-button"></button>
+    <div id=signupViewPage3AlertMessage class="alertMessage"></div>
+
+    <h2 id=signupViewPage4Title class=inputPageViewPageTitle></h2>
+    <p id=signupViewPage4Description class=inputPageViewPageDescription></h2>
+ 
+    <script src="https://maps.googleapis.com/maps/api/js?language={{ lang }}&key=AIzaSyArpYMqJmFKUJlpdv90ZGwQZ0aOIL-O5VI&callback=initMap" async defer></script>
+</section>
+
+<script>
+{
+    const lang = "{{ lang }}"
+    userDefaults.language = lang;
+
+    // locale text data
+    const locale = {{ locale_json |safe }};
+    if (locale) {
+        console.log(locale)
+    } else {
+        console.error('locale_json not received.')
+    }
+
+    // country data (names, numerics, dials, codes) 
+    // ref. language.js
+    const countries = countriesFormData(lang);
+    console.log(countries);
+
+    // default coordinate
+    const lat = 46.943986;
+    const lng = 7.426123;
+    const defaultCoordinate = new Coordinate(lat, lng);
+
+    let vc = new SignupViewController(
+        'signupView',
+        [
+            [
+                new Title('signupViewPage1Title',
+                    locale['page_1_title'][lang]),
+                new Description('signupViewPage1Description',
+                    locale['page_1_description'][lang]),
+                new TextField('signupViewOrganizationNameTextField',
+                    TextFieldType.singleline,
+                    locale['page_1_organization_name_title'][lang],
+                    'organization_name',
+                    locale['page_1_organization_name_placeholder'][lang],
+                    20, 1,
+                    false, false),
+                new DropdownButton('signupViewOrganizationTypeDropdownButton',
+                    locale['page_1_organization_type_title'][lang],
+                    locale['page_1_organization_type_description'][lang],
+                    'organization_type',
+                    DropdownMenuType.list,
+                    DropdownMenuDisplayPositionType.bottomover,
+                    // generate pairs ('{official name}', '{ISO3166-1-numeric}')
+                    OrganizationType[`__${lang}__`].map((name, i) => {
+                        return new ListMenu(name, OrganizationType.values[i])
+                        })
+                    ),
+                new TextField('signupViewOrganizationBusinessDescriptionTextField',
+                    TextFieldType.multiplelines,
+                    locale['page_1_business_description_title'][lang],
+                    'business_description',
+                    locale['page_1_business_description_placeholder'][lang],
+                    100, 2,
+                    true, true),
+                new DropdownButton('signupViewCountryDropdownButton',
+                    locale['page_1_country_title'][lang],
+                    locale['page_1_country_description'][lang],
+                    'country',
+                    DropdownMenuType.list,
+                    DropdownMenuDisplayPositionType.bottomover,
+                    // generate pairs ('{official name}', '{ISO3166-1-numeric}')
+                    countries.names.map((name, i) => {
+                        return new ListMenu(name, countries.codes[i])
+                        })
+                    ),
+                new NextButton('signupViewPage1NextButton',
+                    locale['page_1_nextbutton_title'][lang]),
+                new AlertMessage('signupViewPage1AlertMessage')
+            ],
+            [
+                new BackButton('signupViewPage2BackButton',
+                    locale['page_2_backbutton_title'][lang]),
+                new Title('signupViewPage2Title',
+                    locale['page_2_title'][lang]),
+                new TextField('signupViewZipcodeTextField',
+                    TextFieldType.singleline,
+                    locale['page_2_zipcode_title'][lang],
+                    'zipcode',
+                    locale['page_2_zipcode_placeholder'][lang],
+                    30, 1,
+                    false),
+                new Wrapper(
+                    'cityProvinceWrapper',
+                    [
+                        new TextField('signupViewCityTextField',
+                            TextFieldType.singleline,
+                            locale['page_2_city_title'][lang],
+                            'city',
+                            locale['page_2_city_placeholder'][lang],
+                            40, 1,
+                            false),
+                        new TextField('signupViewProvinceTextField',
+                            TextFieldType.singleline,
+                            locale['page_2_province_title'][lang],
+                            'province',
+                            locale['page_2_province_placeholder'][lang],
+                            40, 1,
+                            false),
+                    ],
+                ),
+                new TextField('signupViewAddress1TextField',
+                    TextFieldType.singleline,
+                    locale['page_2_address1_title'][lang],
+                    'address1',
+                    locale['page_2_address1_placeholder'][lang],
+                    100, 1,
+                    false),
+                new TextField('signupViewAddress2TextField',
+                    TextFieldType.singleline,
+                    locale['page_2_address2_title'][lang],
+                    'address2',
+                    locale['page_2_address2_placeholder'][lang],
+                    100, 0,
+                    false),
+                new PositionMap('signupViewPositionMap',
+                    'lat',
+                    'lng',
+                    defaultCoordinate,
+                    defaultCoordinate,
+                    locale['page_2_positionmap_label'][lang]
+                    ),
+                new DropdownButton('signupViewTelCountryCodeDropdownButton',
+                    locale['page_2_telcountry_title'][lang],
+                    locale['page_2_telcountry_description'][lang],
+                    'tel_country_code',
+                    DropdownMenuType.list,
+                    DropdownMenuDisplayPositionType.upperover,
+                    // generate pairs ('{official name} +{dial number}', '{ISO3166-1-numeric}')
+                    countries.dials.map((dial, i) => {
+                        return new ListMenu(
+                            `${countries.names[i]} +${dial}`,
+                            dial)
+                        })
+                    ),
+                new TextField('signupViewTelTextField',
+                    TextFieldType.singleline,
+                    locale['page_2_tel_title'][lang],
+                    'tel',
+                    locale['page_2_tel_placeholder'][lang],
+                    20, 1,
+                    false),
+                new NextButton('signupViewPage2NextButton',
+                    locale['page_2_nextbutton_title'][lang]),
+                new AlertMessage('signupViewPage2AlertMessage')
+            ],
+            [
+                new BackButton('signupViewPage3BackButton',
+                    locale['page_3_backbutton_title'][lang]),
+                new Title('signupViewPage3Title',
+                    locale['page_3_title'][lang]),
+                new AlertMessage('signupViewPage3AlertMessage'),
+                new TextField('signupViewMemberFirstNameTextField',
+                    TextFieldType.singleline,
+                    locale['page_3_firstname_title'][lang],
+                    'first_name',
+                    locale['page_3_firstname_placeholder'][lang],
+                    100, 1,
+                    false),
+                new TextField('signupViewMemberLastNameTextField',
+                    TextFieldType.singleline,
+                    locale['page_3_lastname_title'][lang],
+                    'last_name',
+                    locale['page_3_lastname_placeholder'][lang],
+                    100, 1,
+                    false),
+                new TextField('signupViewEmailTextField',
+                    TextFieldType.singleline,
+                    locale['page_3_email_title'][lang],
+                    'email',
+                    locale['page_3_email_placeholder'][lang],
+                    100, 1,
+                    false),
+                new TextField('signupViewPasswordTextField',
+                    TextFieldType.singleline,
+                    locale['page_3_password_title'][lang],
+                    'password',
+                    locale['page_3_password_placeholder'][lang],
+                    100, 8,
+                    false, true, true),
+                new TextField('signupViewPasswordConfirmTextField',
+                    TextFieldType.singleline,
+                    locale['page_3_password_confirm_title'][lang],
+                    'password_confirm',
+                    locale['page_3_password_confirm_placeholder'][lang],
+                    100, 8,
+                    false, true, true),
+                new NextButton('signupViewPage3NextButton',
+                    locale['page_3_nextbutton_title'][lang]
+                    ),
+            ],
+            [
+                new Title('signupViewPage4Title',
+                    locale['page_4_title'][lang]),
+                new Description('signupViewPage4Description',
+                    locale['page_4_description'][lang]),
+            ] 
+        ],
+        SignupDataModel,
+        null,
+        {
+            // page 0
+            'signupViewOrganizationNameTextField': [
+                [
+                    ValidationErrorType.required,
+                    validationErrorMessages["field_required"][lang]
+                ],
+                [  
+                    ValidationErrorType.length,
+                    validationErrorMessages["length_must_be"][lang].replace('$0', 1).replace('$1', 20),
+                    [1, 20]
+                ],
+            ],
+            'signupViewOrganizationTypeDropdownButton': [
+                [
+                    ValidationErrorType.required,
+                    validationErrorMessages["field_required"][lang]
+                ]
+            ],
+            'signupViewOrganizationBusinessDescriptionTextField': [
+                [
+                    ValidationErrorType.required,
+                    validationErrorMessages["field_required"][lang]
+                ],
+                [  
+                    ValidationErrorType.length,
+                    validationErrorMessages["length_must_be"][lang].replace('$0', 1).replace('$1', 100),
+                    [1, 100]
+                ],
+            ],
+            'signupViewCountryDropdownButton': [
+                [
+                    ValidationErrorType.required,
+                    validationErrorMessages["field_required"][lang]
+                ]
+            ],
+            // page 1
+            'signupViewZipcodeTextField': [
+                [
+                    ValidationErrorType.required,
+                    validationErrorMessages["field_required"][lang]
+                ],
+                [  
+                    ValidationErrorType.format,
+                    validationErrorMessages["invalid_postalcode_format"][lang]
+                ]
+            ],
+            'signupViewCityTextField': [
+                [
+                    ValidationErrorType.required,
+                    validationErrorMessages["field_required"][lang]
+                ],
+                [  
+                    ValidationErrorType.length,
+                    validationErrorMessages["length_must_be"][lang].replace('$0', 1).replace('$1', 40),
+                    [1, 40]
+                ],
+            ],
+            'signupViewProvinceTextField': [
+                [
+                    ValidationErrorType.required,
+                    validationErrorMessages["field_required"][lang]
+                ],
+                [  
+                    ValidationErrorType.length,
+                    validationErrorMessages["length_must_be"][lang].replace('$0', 1).replace('$1', 40),
+                    [1, 40]
+                ],
+            ],
+            'signupViewAddress1TextField': [
+                [
+                    ValidationErrorType.required,
+                    validationErrorMessages["field_required"][lang]
+                ],
+                [  
+                    ValidationErrorType.length,
+                    validationErrorMessages["length_must_be"][lang].replace('$0', 1).replace('$1', 40),
+                    [1, 40]
+                ],
+            ],
+            'signupViewAddress2TextField': [
+                [  
+                    ValidationErrorType.length,
+                    validationErrorMessages["length_must_be"][lang].replace('$0', 1).replace('$1', 40),
+                    [1, 40]
+                ],
+            ],
+            'signupViewTelCountryCodeDropdownButton': [
+                [
+                    ValidationErrorType.required,
+                    validationErrorMessages["field_required"][lang]
+                ],
+            ],
+            'signupViewTelTextField': [
+                [
+                    ValidationErrorType.required,
+                    validationErrorMessages["field_required"][lang]
+                ],
+                [  
+                    ValidationErrorType.format,
+                    validationErrorMessages["invalid_tel_format"][lang]
+                ]
+            ],
+            // page 2
+            'signupViewMemberFirstNameTextField': [
+                [
+                    ValidationErrorType.required,
+                    validationErrorMessages["field_required"][lang]
+                ],
+                [  
+                    ValidationErrorType.length,
+                    validationErrorMessages["length_must_be"][lang].replace('$0', 1).replace('$1', 100),
+                    [1, 100]
+                ],
+            ],
+            'signupViewMemberLastNameTextField': [
+                [
+                    ValidationErrorType.required,
+                    validationErrorMessages["field_required"][lang]
+                ],
+                [  
+                    ValidationErrorType.length,
+                    validationErrorMessages["length_must_be"][lang].replace('$0', 1).replace('$1', 100),
+                    [1, 100]
+                ],
+            ],
+            'signupViewEmailTextField': [
+                [
+                    ValidationErrorType.required,
+                    validationErrorMessages["field_required"][lang]
+                ],
+                [  
+                    ValidationErrorType.format,
+                    validationErrorMessages["invalid_email_format"][lang]
+                ]
+            ],
+            'signupViewPasswordTextField': [
+                [
+                    ValidationErrorType.required,
+                    validationErrorMessages["field_required"][lang]
+                ],
+                [  
+                    ValidationErrorType.format,
+                    validationErrorMessages["invalid_password_format"][lang]
+                ]
+            ],
+            'signupViewPasswordConfirmTextField': [
+                [
+                    ValidationErrorType.required,
+                    validationErrorMessages["field_required"][lang]
+                ],
+                [  
+                    ValidationErrorType.format,
+                    validationErrorMessages["password_not_corresponding"][lang]
+                ]
+            ]
+        },
+        locale,
+        lang
+        //cookieExcludes=['password', 'password_confirm']
+        );
+    
+    // set initial page 
+    vc.page = 0;
+}
+</script>
+{% endblock %}
+ 

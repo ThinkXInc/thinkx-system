@@ -1,0 +1,33 @@
+{% extends "mails/en/base.html" %}
+{% block header %}
+<h1 class="Hi" style="font-size:1.7em; font-weight: normal;">Hi {{ user.first_name }} {{ user.last_name }},</h1>
+{% endblock %}
+{% block content %}
+<article class="message" style="color: #333; margin-bottom: 20px;">
+  Someone tried to sign up for an CITYWALK account</br>
+  with {{ user.email }}. If it was you,</br>
+  enter this confirmation code in the app:</br>
+  <div id="confirmation_code" style="font-weight: 500; text-align: center; font-size: 1.2em; color: #333; margin-top: 20px; margin-bottom: 20px;">
+    {{ confirmation_code }}
+  </div>
+  <!--
+  <img src="/img/mail/ilrsa.png" style="width: 200px; height: 200px; display: block; margin: 0 auto; margin-bottom: 10px;"/>
+  My name is Ilrsa, the core system of this service. I just wanted to say welcome and thanks for signing up.</br></br>
+  By the way, my database covers almost all titles in the world. It mainly speciallizes for turning up masterpieces live in obscurity in the long history!</br>
+  The system has been carefully designed to cluster the people who have similar intersts and simulate the segmented grapevine. </br>
+  It'll be more clever as user's information increases.</br>
+  Anyway, I'll do the best to give you a new experience!</br>
+  Thanks,</br></br>
+
+  (Don't forget to confirm your account)
+  -->
+
+
+</article>
+
+<a href="{{ confirm_url }}" class="button" style="padding: 9px 30px; background-color: #40a6a2; color: #FFF; font-size: 0.9em;
+box-shadow:rgba(12, 106, 101, 0.4) 0px 0px 1px 1px inset;
+-wekit-box-shadow:rgba(12, 106, 101, 0.4) 0px 0px 1px 1px inset;
+-moz-box-shadow:rgba(12, 106, 101, 0.4) 0px 0px 1px 1px inset;
+border: none;">Confirm</a>
+{% endblock %}

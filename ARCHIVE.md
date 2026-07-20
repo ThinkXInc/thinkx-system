@@ -15,6 +15,7 @@ SHA・日付は M-2(リポジトリごとの取り込み)で1行ずつ確定・�
 | `infra/` | git@github.com:ThinkXInc/infra.git | 2026refactor | `4ef472643019d8fbe09972a4b0581a7aa2511562` | 2026-07-15 |
 | `loadbalancer/` | git@github.com:ThinkXInc/loadbalancer.git | 2026refactor | `5ac8ceb6b917009826884f7c60011cfdef3a6d39` | 2026-07-15 |
 | `nginx-web-root/` | git@github.com:ThinkXInc/nginx-web-root.git | 2026refactor | `9214f267b88544daecb8110a7307f3d5bf031d85` | 2026-07-15 |
+| `citywalk/` | git@github.com:ThinkXInc/citywalkservers.git | develop | `d54ec193a463974e06bb9a1584845aa55097d548` | 2026-07-20 — 取り込み時に `business.py` / `items.py` の Basic 認証資格情報と `main.py` の Flask secret_key を redact (`citywalk/findings.md` 参照) |
 
 ## 取り込み対象外(記録)
 
@@ -25,7 +26,6 @@ SHA・日付は M-2(リポジトリごとの取り込み)で1行ずつ確定・�
 - **`simplicity`** — 同上(B案)。原本は独立リポジトリとして並置(`/src/simplicity/.git`)。参照 SHA
   `53f0639449a937fe79935175a867689ee4b40a87`(URL: git@github.com:ThinkXInc/simplicity.git)。
 - `quantz-web` — 裁定済み: 後続(新システム設計時に判断)。monorepo に含めない。
-- `citywalk` — 非 git の作業ディレクトリ。オーナー裁定で含めない(2026-07-15)。
 
 ## submodule の扱い(M-2/M-3/M-4)
 

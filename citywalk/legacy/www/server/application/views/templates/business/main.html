@@ -1,0 +1,52 @@
+{%extends "business/base.html" %}
+
+{% block head %}
+<link rel=stylesheet href=/css/business/main.css>
+<script src=/js/business/appconfig.js></script>
+<script src=/js/business/userdefaults.js></script>
+<script src=/js/business/helpers/session.js></script>
+<script src=/js/business/models.js></script>
+<script src=/js/business/effects.js></script>
+<script src=/js/business/utils.js></script>
+<script src=/js/data/countries.js></script>
+<script src=/js/data/enums.js></script>
+<script src=/js/business/messages/errors.js></script>
+<script src=/js/business/models/session_model.js></script>
+<script src=/js/business/models/user.js></script>
+<script src=/js/business/models/organization.js></script>
+<script src=/js/business/models/organization_member.js></script>
+<script src=/js/business/models/content.js></script>
+<script src=/js/business/main.js></script>
+<script src=/js/business/helpers/pagecontrol.js></script>
+<script src=/js/business/helpers/language.js></script>
+<script src=/js/business/helpers/geocoding.js></script>
+<script src=/js/libs/js-cookie/js.cookie.min.js></script>
+
+{% if organization %}
+  {% for key, val in organization.__class__.__structure__.items() %}
+  <input type=hidden model=organization id={{ key }} value="{{ organization[key] or '' }}" />
+  {% endfor %}
+{% endif %}
+{% if organization_member %}
+  {% for key, val in organization_member.__class__.__structure__.items() %}
+  <input type=hidden model=organization_member id={{ key }} value="{{ organization_member[key] or '' }}" />
+  {% endfor %}
+{% endif %}
+
+<script>
+  app.session.organization = Organization.load('organization');
+  app.session.organizationMember = OrganizationMember.load('organization_member');
+  console.table(app.session.organization);
+  console.table(app.session.organizationMember);
+</script>
+{% endblock %}
+
+{% block content %}
+  <section id=content>
+	  {% block page %}
+	  {% endblock %}
+  </section>
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

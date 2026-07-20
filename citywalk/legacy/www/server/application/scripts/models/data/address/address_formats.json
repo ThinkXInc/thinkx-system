@@ -1,0 +1,677 @@
+{
+  "JP": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "sublocality_level_2",
+      "sublocality_level_3",
+      "sublocality_level_2"
+    ]
+  },
+  "US": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "sublocality"
+    ],
+    "address1": [
+      "route",
+      "street_number"
+    ]
+  },
+  "CN": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "sublocality_level_1"
+    ],
+    "address1": [
+      "route",
+      "street_number"
+    ]
+  },
+  "AU": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "administrative_area_level_2"
+    ],
+    "address1": [
+      "locality",
+      "route",
+      "street_number"
+    ]
+  },
+  "CA": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "sublocality_level_1",
+      "route",
+      "street_number"
+    ]
+  },
+  "DE": {
+    "province": [
+      "administrative_area_level_1",
+      "administrative_area_level_2"
+    ],
+    "city": [
+      "administrative_area_level_3"
+    ],
+    "address1": [
+      "sublocality_level_1",
+      "route",
+      "street_number"
+    ]
+  },
+  "IN": {
+    "province": [
+      "administrative_area_level_1",
+      "administrative_area_level_2",
+      "localityality"
+    ],
+    "city": [
+      "sublocality_level_1"
+    ],
+    "address1": [
+      "sublocality_level_2",
+      "route",
+      "premise"
+    ]
+  },
+  "ES": {
+    "province": [
+      "administrative_area_level_1",
+      "administrative_area_level_2"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "route",
+      "street_number"
+    ]
+  },
+  "SE": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "postal_town"
+    ],
+    "address1": [
+      "sublocality_level_1",
+      "route",
+      "street_number"
+    ]
+  },
+  "GB": {
+    "province": [
+      "administrative_area_level_2"
+    ],
+    "city": [
+      "postal_town"
+    ],
+    "address1": [
+      "sublocality_level_1",
+      "route",
+      "street_number"
+    ]
+  },
+  "AF": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "administrative_area_level_2"
+    ],
+    "address1": [
+      "locality",
+      "plus_code"
+    ]
+  },
+  "AL": {
+    "province": [
+      "administrative_area_level_1",
+      "administrative_area_level_2"
+    ],
+    "city": [
+      "postal_town"
+    ],
+    "address1": [
+      "locality",
+      "route",
+      "street_number"
+    ]
+  },
+  "DZ": {
+    "province": [
+      "administrative_area_level_1",
+      "administrative_area_level_2"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "sublocality_level_1",
+      "route",
+      "plus_code"
+    ]
+  },
+  "AD": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "route",
+      "street_number"
+    ]
+  },
+  "AO": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "administrative_area_level_2"
+    ],
+    "address1": [
+      "locality",
+      "plus_code"
+    ]
+  },
+  "AG": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "plus_code"
+    ]
+  },
+  "AR": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "administrative_area_level_2"
+    ],
+    "address1": [
+      "locality",
+      "route",
+      "street_number"
+    ]
+  },
+  "AW": {
+    "province": [
+      "locality"
+    ],
+    "city": [
+      "sublocality_level_1"
+    ],
+    "address1": [
+      "route",
+      "street_number"
+    ]
+  },
+  "AT": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "sublocality_level_1"
+    ],
+    "address1": [
+      "route",
+      "street_number"
+    ]
+  },
+  "AZ": {
+    "province": [
+      "administrative_area_level_2"
+    ],
+    "city": [
+      "sublocality_level_1"
+    ],
+    "address1": [
+      "plus_code"
+    ]
+  },
+  "BS": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "plus_code"
+    ]
+  },
+  "BH": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "route",
+      "plus_code"
+    ]
+  },
+  "BD": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "sublocality_level_1",
+      "plus_code"
+    ]
+  },
+  "BB": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "route"
+    ]
+  },
+  "BY": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "sublocality_level_1",
+      "route",
+      "street_number"
+    ]
+  },
+  "BE": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "sublocality_level_1",
+      "route",
+      "street_number"
+    ]
+  },
+  "BZ": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "route",
+      "plus_code"
+    ]
+  },
+  "BJ": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "sublocality_level_1",
+      "plus_code"
+    ]
+  },
+  "BM": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "route",
+      "street_number",
+      "premise"
+    ]
+  },
+  "BT": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "route",
+      "street_number"
+    ]
+  },
+  "BO": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "sublocality_level_1",
+      "route",
+      "street_number"
+    ]
+  },
+  "BA": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "route",
+      "street_number"
+    ]
+  },
+  "BW": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "sublocality_level_1",
+      "route",
+      "street_number"
+    ]
+  },
+  "BR": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "administrative_area_level_1"
+    ],
+    "address1": [
+      "sublocality_level_1",
+      "route",
+      "street_number"
+    ]
+  },
+  "VG": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "plus_code"
+    ]
+  },
+  "BN": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "route"
+    ]
+  },
+  "BG": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "neighborhood",
+      "route",
+      "street_number"
+    ]
+  },
+  "BF": {
+    "province": [
+      "administrative_area_level_2"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "neighborhood",
+      "route",
+      "plus_cpde"
+    ]
+  },
+  "KH": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "administrative_area_level_2"
+    ],
+    "address1": [
+      "locality",
+      "sublocality_level_1",
+      "route",
+      "street_number"
+    ]
+  },
+  "CM": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "administrative_area_level_2"
+    ],
+    "address1": [
+      "locality",
+      "plus_code"
+    ]
+  },
+  "CV": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "sublocality_level_1",
+      "route",
+      "plus_code"
+    ]
+  },
+  "KY": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "route",
+      "street_number"
+    ]
+  },
+  "CL": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "administrative_area_level_2"
+    ],
+    "address1": [
+      "locality",
+      "route",
+      "street_number"
+    ]
+  },
+  "CO": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "administrative_area_level_2"
+    ],
+    "address1": [
+      "neighborhood",
+      "route",
+      "street_number"
+    ]
+  },
+  "UY": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "route",
+      "street_number"
+    ]
+  },
+  "PE": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "sublocality_level_1",
+      "route",
+      "street_number"
+    ]
+  },
+  "EC": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "sublocality_level_1",
+      "route",
+      "street_number"
+    ]
+  },
+  "VE": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "route",
+      "street_number"
+    ]
+  },
+  "SR": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "sublocality_level_1",
+      "route",
+      "street_number"
+    ]
+  },
+  "SP": {
+    "province": [
+      "administrative_area_level_2"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "route",
+      "street_number"
+    ]
+  },
+  "PT": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "route",
+      "street_number"
+    ]
+  },
+  "FR": {
+    "province": [
+      "administrative_area_level_2"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "route",
+      "street_number"
+    ]
+  },
+  "IT": {
+    "province": [
+      "administrative_area_level_2"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "route",
+      "street_number"
+    ]
+  },
+  "MX": {
+    "province": [
+      "administrative_area_level_1"
+    ],
+    "city": [
+      "locality"
+    ],
+    "address1": [
+      "sublocality_level_1",
+      "route",
+      "street_number"
+    ]
+  }
+}

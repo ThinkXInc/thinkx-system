@@ -1,0 +1,336 @@
+@charset "UTF-8";
+// view_components.less
+
+@input-border: #7a7a7a;
+@input-border-hover: #202020;
+
+div.dropdownButton {
+    div.dropdownButtonClickable {
+        border: 1px solid @input-border;
+        border-radius: 4px;
+        padding: 8px 14px;
+        cursor: pointer;
+        h6.description {
+            font-size: 0.7rem;
+            color: @text-gray;
+            font-weight: 300;
+        }
+        span.title {
+            font-size: 1rem;
+            font-weight: 100;
+            color: @text-black-light;
+        }
+        img.downarrow {
+            position: relative;
+            top: 0px;
+            width: 12px;
+            height: 12px;
+            float: right;
+        }
+        div.footer {
+           p.alertMessage {
+                color: @alert-red;
+                font-size: 0.9rem;
+                padding-left: 0px;
+            }
+        }
+    }
+    ul.listmenu {
+        background: @bgcolor-light;
+        position: absolute;
+        width: 100%;
+        .box-shadow(1px, 1px, 6px, 1px, rgba(0, 0, 0, 13%));
+        border-radius: 6px;
+        z-index: 2;
+
+        li.listitem {
+            background-color: @bgcolor-light;
+            cursor: pointer;
+            padding: 10px 16px;
+            color: @text-black-light;
+            font-size: 1.1rem;
+            border-bottom: 1px solid #eee;
+        }
+        li.listitem:hover {
+            background-color: rgb(241, 241, 241);
+        }
+    }
+}
+div.dropdownButton.alert {
+    div.dropdownButtonClickable {
+        border: 1px solid @alert-red;
+        h6.description {
+            color: @alert-red;
+        }
+    }
+}
+
+div.textField {
+    div.inputouter {
+        padding: 4px 12px;
+        border: solid 1px @input-border;
+        border-radius: 3px;
+        box-sizing: border-box;
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        overflow: hidden;
+        overflow-y: auto;
+        position: relative;
+
+        h6.title {
+            font-size: 0.7rem;
+            font-weight: 400;
+            color: @text-gray;
+            -webkit-font-smoothing: antialiased;
+            letter-spacing: 0.011em;
+            font-size: 12px;
+            line-height: 16px;
+            margin: 2px 0px 0px 3px;
+            position: relative;
+        }
+        input, textarea {
+            resize: none;
+            border: none;
+            margin: 14px 0 0 0;
+            background: transparent;
+            outline: none;
+            font-weight: 400;
+            font-size: 1.1rem;
+            color: @text-darkgray;
+            line-height: 24px;
+            //flex: 1;  // TODO: remove if not necessary
+            display: inline-block;
+            white-space: pre-wrap;
+            vertical-align: top;
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        ::placeholder {
+            font-weight: 100;
+            color: @text-placeholder;
+        }
+        div.footer {
+            span.indicator {
+
+            }
+            span.message {
+
+            }
+            span.counter {
+                float: right;
+                font-size: 0.7rem;
+                color: @text-gray-light;
+            }
+            p.alertMessage {
+                color: @alert-red;
+                font-size: 0.9rem;
+                padding-left: 0px;
+            }
+        }
+    }
+}
+div.textField.alert {
+    div.inputouter {
+        border: 1px solid @alert-red;
+        h6.title {
+            color: @alert-red;
+        }
+    }
+}
+div.textField.overMaximumTextCount {
+    div.inputouter {
+        div.footer {
+           span.counter {
+                color: @alert-red;
+            }
+        }
+    }
+}
+
+div.mapPointer {
+    position: absolute;
+    &::after {
+        .rippleCircles(3s, 0s, 5px, rgba(0, 0, 0, 0.5), -20px, -86px);
+    }
+    //&::before {
+    //    .rippleCircles(3s, 0.5s, 5px, rgba(0, 0, 0, 0.5), -20px, -86px);
+    //}
+    img.arrow {
+        position: absolute;
+        opacity: 0;
+        width: 24px;
+        top: -19px;
+        left: -11px;
+        width: 24px;
+        //height: 56px;
+    }
+    ul.listMenu {
+        visibility: hidden;  // TODO: not good
+        background: @bgcolor-light;
+        position: relative;
+        //top: -63px;
+        //left: 12px;
+        .box-shadow(0px, 2px, 7px, 4px, rgba(0, 0, 0, 13%));
+        border-radius: 2px;
+        border: 0.1px solid #9c9c9c;
+        z-index: 2;
+
+        li.listItem {
+            background-color: @bgcolor-light;
+            cursor: pointer;
+            padding: 10px 15px;
+            color: #6e6e6e;
+            font-size: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        li.listItem:hover {
+            background-color: rgb(241, 241, 241);
+        }
+    }
+}
+div.mapPointer.single {
+    img.arrow {
+    }
+    ul.listMenu {
+        top: -63px;
+        left: 12px;
+        li.listItem {
+        }
+        li.listItem:hover {
+        }
+    }
+}
+div.mapPointer.double {
+    img.arrow {
+    }
+    ul.listMenu {
+        top: -63px;
+        left: 12px;
+        li.listItem {
+        }
+        li.listItem:hover {
+        }
+    }
+}
+div.mapPointer.show {
+    img.arrow {
+        .fadeInToBottom(1s, .5s, 1);
+    }
+    ul.listMenu {
+        .popUpFromLeftBottom(@duration: .5s, @delay: 0s);
+    }
+}
+div.mapPointer.close {
+    img.arrow {
+        .fadeOutToBottom(1s, 0s, 1);
+    }
+    ul.listMenu {
+        .popDownToLeftBottom(@duration: .5s, @delay: 0s);
+    }
+}
+
+div.mapBalloon {
+    position: absolute;
+    span.dot {
+        visibility: hidden;  // TODO: not good
+        position: relative;
+        top: -8px;
+        left: -8px;
+        height: 16px;
+        width: 16px;
+        background-color: @blue;
+        border-radius: 50%;
+        display: inline-block;
+        opacity: 1;
+        .box-shadow(1px, 1px, 3px, 0px, rgba(0, 0, 0, 7%));
+        //opacity: 1;
+        //width: 31px;
+    }
+    div.balloon {
+        visibility: hidden;  // TODO: not good
+        flex-direction: column;
+        position: relative;
+        top: -102px;
+        left: -8px;
+        width: 158px;
+        height: 65px;
+        padding: 4px 6px;
+        background: white;
+        border: 0.1px solid #b8b8b8;
+        border-radius: 3px;
+        .box-shadow(1px, 1px, 10px, 2px, rgba(0, 0, 0, 10%));
+        
+        //.background-image-2x('/img/parts/map_balloon.png');
+        //background-image: url(/img/parts/map_balloon.png);
+        //background-image: image-set(url(/img/parts/map_balloon.png) 1x, url(/img/parts/map_balloon@2x.png) 2x);
+        //background-image: -webkit-image-set(url(/img/parts/map_balloon.png) 1x, url(/img/parts/map_balloon@2x.png) 2x);
+        //background-repeat: no-repeat;
+        //background-size: contain;
+
+        img.balloonleg {
+            position: absolute;
+            top: 63px;
+            left: 5px;
+            width: 19px;
+        }
+        span.title {
+            font-weight: 500;
+            font-size: 0.9em;
+            color: @text-gray;
+            height: 12px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        p.text {
+            margin-top: 4px;
+            font-size: 1em;
+            color: @text-darkgray;
+            overflow: hidden;
+            height: 37px;
+            text-overflow: ellipsis;
+            word-break: break-word;
+            // TODO: "..." at the end 
+        }
+    }
+}
+div.mapBalloon.hide {
+    background-color: aqua;
+    span.dot {
+    }
+    div.balloon {
+    }
+}
+div.mapBalloon.show {
+    span.dot {
+        .popUpFromCenter(.3s, .25s);
+    }
+    div.balloon {
+        .popUpFromLeftBottom(.3s, 0s);
+    }
+}
+div.mapBalloon.close {
+    span.dot {
+        .popDownToCenter(1s, 0.5s);
+    }
+    div.balloon {
+        .popDownToLeftBottom(.5s, 0s);
+    }
+}
+div.mapBalloon.focus {
+    span.dot {
+    }
+    div.balloon {
+        .scaleUp(0.4s, 0s, 0%, 100%);
+    }
+}
+div.mapBalloon.unfocus {
+    span.dot {
+    }
+    div.balloon {
+        .scaleDown(0.2s, 0s, 0%, 100%);
+    }
+}
