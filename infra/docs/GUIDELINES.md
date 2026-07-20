@@ -244,3 +244,15 @@
   apply=scripts/terraform_apply.sh、output 参照=scripts/terraform_output.sh、destroy=scripts/terraform_destroy.sh。
   環境の state は infra/terraform/envs/<env> のディレクトリ分離(.tf は symlink 共有)。切替操作は存在しない。
   手順書(構築手順/DNS切替手順/hostname/運用)から生 terraform コマンドを一掃済み
+
+## worktree とデプロイに関する恒久指示(オーナー指示 2026-07-20)
+
+- **原文**: 「ローカルのGitの履歴とは全く独立してデプロイができる必要がある」
+- **運用**: monorepo の並行作業は track ごとの専用 Git worktree で行い、同一 working tree を
+  複数セッションで共有しない。通常のデプロイは origin 上の承認済み `DEPLOY_REF` を staging で
+  確認した後、同一 ref を production に適用する。ローカル Mac の現在の Git 状態(branch・HEAD・
+  未コミット変更)をデプロイ元にしない。サーバーで自動起動する Claude/Codex は専用編集 worktree を
+  使用し、clean に保つ deploy checkout では起動しない。
+- **文書の分担**: 決定理由=`docs/DECISIONS.md`(D-58) / 拘束規則=`infra/CLAUDE.md` /
+  worktree の割当と手順=`docs/WORKTREES.md` / インフラ固有操作=`infra/docs` 配下 /
+  Codex 固有の停止判断=`.codex/GUIDELINES.md`

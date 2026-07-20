@@ -76,3 +76,15 @@ WEB_IP=<web_priv> DO_CERTBOT=no ssh ubuntu@<lb_pub> 'bash -s' < setup/lb-setup.s
 - 本番デプロイの ref 指定
 - transformism を載せるか / quantz を載せるか
 - I-STEP2 の開始(前提: Phase 3 完了 + 2026refactor→master マージ)
+
+### worktree と deploy checkout の分離（D-58）
+
+- infra の編集は専用 worktree で行い、他トラックまたは deploy checkout と共有しない。
+- staging/prod サーバーの deploy checkout は常に clean に保ち、対話エージェントの編集場所にしない。
+- サーバー起動時に Claude/Codex セッションを自動起動する場合、専用の編集 worktree と branchを
+  `WorkingDirectory` に指定する。deploy checkout 上で起動してはならない。
+- デプロイ対象は origin 上に存在する明示的な `DEPLOY_REF` とする。
+- staging で受け入れ確認したものと完全に同一の `DEPLOY_REF` を production に適用する。
+- ローカル Mac の現在 branch、未コミット変更、現在の HEAD を暗黙のデプロイ元にしない。
+- state-changing operation は repository wrapper と既存の承認ゲートを通す。
+- staging サーバーからの commit/push は障害復旧時の例外であり、通常フローにしない。
