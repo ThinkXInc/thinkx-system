@@ -92,3 +92,14 @@
   Session 拡張は canonical libcommon 側の全テストで担保する。A 計画の最初の項目(A-0相当)で
   auth 用 venv を作成し、requirements の依存を導入したうえで、auth pytest が収集・実行できることを
   確認する必要がある。依存は未承認のまま system や既存 venv へ追加しない。
+
+## Auth L-4 libcommon v2.2.0 配布整合性
+
+- L-4 実行時点の `auth/**/libcommon/VERSION` は1件で、`auth/web-server/libcommon/VERSION` のみ。
+  reference-client は C 計画で作成するため、snapshot 追加直後に全snapshot照合を再実行する。
+- canonical `v2.2.0` を正規 `scripts/bake.sh` でauthと一時ディレクトリへ再bakeした。
+  VERSION保存値、VERSIONを除いたauth treeの再計算値、canonical一時bake値はすべて
+  `caf94015027a627b95abd54e8e222908f79fcded750b1d345016d60d5a10a3d6` で一致した。
+- canonical一時bakeとauth snapshotはbyte identical。auth snapshotの再bake前後にtracked差分なし。
+- canonical HEADの最終ゲートは pytest 84 passed、ruff All checks passed、pyright 0 errors
+  (既存warnings 5件)。これをもってL計画を完了する。
