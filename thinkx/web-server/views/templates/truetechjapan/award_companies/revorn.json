@@ -4,11 +4,11 @@
     "en": "REVORN Co., Ltd."
   },
   "url": "https://www.revorn.co.jp",
-  "tier": null,
+  "tier": "Top-Tier",
   "award_year": 2026,
   "founders": {
     "ja": ["松岡広明"],
-    "en": []
+    "en": ["Matsuoka Hiroaki"]
   },
   "logo": {
     "src": "/img/truetechjapan/award_companies/revorn.svg",
