@@ -521,3 +521,11 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
 - 受賞企業ページ4社(truetechjapan)は staging に8コミットで存在・未 push だった → staging で origin にリベースし push(6b32e0c)。競合なし・成果は無事
 - 事故: 私が claude-session 変更を Mac でコミットしたら Mac HEAD が auth 線(29c4f78)で、infra コミットが auth に乗り push 拒否 → reset --soft → mixed reset で Mac を無傷復帰(citywalk 未コミット作業も保持)。教訓は D-58(デプロイ/push は staging 経由・Mac 非依存)
 - tmux/claude はインスタンス停止で消える(全プロセス死)。ただし /home/kaz/.claude(認証)は EBS 上で永続 → 再ログイン不要。起動時自動復帰は claude-session.service(D-59)
+
+## 次の infra セッションへの是正事項(worktree 方針 D-58・2026-07-20)
+
+CLAUDE.md「worktree と deploy checkout の分離」を明文化したので、既存実装を次セッション(専用 worktree 用意後)で是正する:
+- **claude-session.service の WorkingDirectory が deploy checkout(/src/thinkx-system)を指す** → CLAUDE.md 違反。専用の編集 worktree+branch を指すよう変更。attach_claude.sh / setup_claude_code.sh も編集 worktree 起点へ。
+- **deploy.sh が origin/monorepo の暗黙 HEAD を pull** → 明示 DEPLOY_REF に変更(staging 受け入れ済みの ref を prod へ同一適用)。
+- **本セッションの infra 編集は staging deploy checkout 上で直接行い staging から push した = Mac 汚染事故の障害復旧(例外)**。通常は専用 worktree で編集し worktree から push する。
+- 対応方針: 専用 infra worktree を用意した次セッションで上記を実装。本セッションは方針に従いクローズ。
