@@ -499,3 +499,19 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
   **ホスト名判定(-stg 接尾辞・D-46 準拠)**へ変更(ENV では prod/staging を区別できない)
 - restart_loadbalancer.sh の verify が `curl https://localhost/` で F13 のブラックホール(名前なし直打ち)に
   自爆し、active なのに FAIL(偽赤)。Host つき(--resolve staging.thinkxinc.com→127.0.0.1)に修正
+
+## インスタンスサイズ実測と最適化の判断材料(2026-07-20)
+
+測定(staging web t3.small・Claude Code 起動中・ビルドなし):
+- 2GB 中 1245MB 使用・空き 459MB・**スワップ 0**(OOM 即死のリスク)
+- claude 517MB / node 系(VS Code Remote 等)~320MB / uwsgi×3 ~230MB
+- **docker + containerd が active(~150-200MB 無駄)** — staging web に docker 不要(quantz 用)
+- prod web(t3.medium)は 464MB / prod lb(t3.small)は 265MB 使用 = 大きく余っている
+
+判断:
+- ボトルネックはメモリのみ(CPU は load 0.00・2vCPU は全サイズ共通)
+- **設計反転**: 配信専用の prod は縮小可(web medium→small / lb small→micro・月約$30減)、
+  開発する staging web はむしろ余裕が要る
+- staging web 案1=t3.medium 化 + stop_staging でこまめ停止 / 案2=t3.small のまま swap 2-4GB + docker 停止
+- terraform をサイズの env 独立指定に変更が必要(現状は is_prod 連動で反転不可)。
+  instance_type 変更は stop→modify→start の短時間停止・EIP は台帳で維持・prod は承認/タイミング要
