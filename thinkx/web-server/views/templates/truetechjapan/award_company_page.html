@@ -58,7 +58,9 @@
         </div>
       </dl>
 
-      <div class="company-logo-frame align-{{ company['logo']['alignment'] }}">
+      {# background は白抜きロゴ用。指定が無ければ地色なしで置く #}
+      <div class="company-logo-frame align-{{ company['logo']['alignment'] }}
+                  {%- if company['logo'].get('background') %} bg-{{ company['logo']['background'] }}{% endif %}">
         <img class="company-logo" src="{{ company['logo']['src'] }}"
              alt="{{ company['company_name'] }}">
       </div>
