@@ -70,3 +70,20 @@
   実行経路で注入が効いていることを兼ねて確認している。
 - 環境 / `web-server/libcommon/{ruff.toml,pyrightconfig.json}` は vendored libcommon 自身の lint 設定であり auth の
   ゲートではない。auth のゲートは `python3 -m pytest -q tests`(規約ゲート test_conventions.py を含む)の1本。
+
+## OIDC 確定仕様の実装前調査で確認した事実
+
+- `docs/auth-spec/01_PROTOCOL_FLOW.md` の失効フロー例は auth 中央 Session に
+  `Session.revoke_all(user.subject_id)` を渡す。一方、同ファイルの signin は
+  `Session.start(str(user.id), browser_context_id=bctx)` で中央 Session の逆引きを ObjectId 文字列で作る。
+  オーナー裁定により、中央 Session 失効は `Session.revoke_all(str(user.id))`、サービスへの外部失効通知は
+  `subject_id` を使う。`01_PROTOCOL_FLOW.md` / `03_DATA_AND_INFRA.md` への訂正反映が必要。
+- オーナー裁定により、auth 側の接続済みサービスは
+  `ConnectedService(subject, client_id, connected_at)` として独立 collection に保存し、
+  `(subject, client_id)` に複合 unique index を置く。旧 `User.services` は使用しない。
+- `ServicePrincipal(issuer, subject, local_user_id)` は各サービス側が所有する identity mapping、
+  `ConnectedService(subject, client_id, connected_at)` は auth 側が所有する接続記録であり、別モデルである。
+  `docs/auth-spec/01_PROTOCOL_FLOW.md:18` は auth MongoDB の一覧に `ServicePrincipal` を含めるが、
+  `03_DATA_AND_INFRA.md` のモデル配置とオーナー裁定ではサービス側に置く。
+- オーナー裁定により、初版 E2E client は `auth/reference-client/` に最小実装を置く。
+  旧 quantz-web の統合は後続計画とする。
