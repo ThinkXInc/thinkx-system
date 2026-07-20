@@ -248,11 +248,12 @@
 ## worktree とデプロイに関する恒久指示(オーナー指示 2026-07-20)
 
 - **原文**: 「ローカルのGitの履歴とは全く独立してデプロイができる必要がある」
-- **運用**: monorepo の並行作業は track ごとの専用 Git worktree で行い、同一 working tree を
-  複数セッションで共有しない。通常のデプロイは origin 上の承認済み `DEPLOY_REF` を staging で
-  確認した後、同一 ref を production に適用する。ローカル Mac の現在の Git 状態(branch・HEAD・
-  未コミット変更)をデプロイ元にしない。サーバーで自動起動する Claude/Codex は専用編集 worktree を
-  使用し、clean に保つ deploy checkout では起動しない。
-- **文書の分担**: 決定理由=`docs/DECISIONS.md`(D-58) / 拘束規則=`infra/CLAUDE.md` /
-  worktree の割当と手順=`docs/WORKTREES.md` / インフラ固有操作=`infra/docs` 配下 /
-  Codex 固有の停止判断=`.codex/GUIDELINES.md`
+- **運用**: 通常のデプロイは origin 上の承認済み `DEPLOY_REF` を staging で確認した後、同一 ref を
+  production に適用する。ローカル Mac の現在の Git 状態(branch・HEAD・未コミット変更)をデプロイ元に
+  しない。サーバーの deploy checkout は clean に保ち、対話エージェントの編集場所にしない。
+- **訂正(同日)**: 当初あわせて決めた「Mac 側を track ごとの worktree に分離する」は撤回した(D-60)。
+  Mac は単一ディレクトリ `~/Sources/thinkx-system` + 単一 branch `monorepo` に戻す。撤回しても
+  デプロイの Mac 非依存は変わらない — 根拠が別(配信物の再現性)だからである。
+- **文書の分担**: 決定理由=`docs/DECISIONS.md`(D-49)と `infra/docs/DECISIONS.md`(D-58/D-60) /
+  拘束規則=`infra/CLAUDE.md` / 議論の原文=`docs/archive/discussion-2026-07-20-worktree.md` /
+  インフラ固有操作=`infra/docs` 配下 / Codex 固有の停止判断=`.codex/GUIDELINES.md`
