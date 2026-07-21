@@ -1,0 +1,11 @@
+[Unit]
+Description=Pull origin and reflect it (thinkx-system deploy tick)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=kaz
+Environment=HOME=/home/kaz
+WorkingDirectory=/src/thinkx-system
+ExecStart=/usr/local/bin/deploy_tick.sh %i
