@@ -64,12 +64,13 @@ deploy_production_from_staging() {
     while git rev-parse --verify --quiet "origin/$br" >/dev/null; do br="release/$day-$n"; n=$((n+1)); done
 
     echo
-    echo "$br を切る(承認の凍結)"
+    echo "cutting release branch $br (承認の凍結)..."
     git branch "$br" "$sha"
     git push --quiet origin "$br"
 
-    echo "$br を production へ"
+    echo "creating PullRequest ($br->production)..."
     gh pr create --base production --head "$br" --title "$br" --body "承認 SHA: $sha" >/dev/null
+    echo "merging ($br->production)..."
     gh pr merge "$br" --merge --delete-branch=false >/dev/null
     git fetch --quiet origin
   fi
@@ -107,7 +108,7 @@ deploy_production_from_staging() {
     done'
   printf '%b\n' "${Y}  公開ドメインはまだオンプレを指しています(DNS 未切替)${Z}"
 
-  printf '%b\n' "${G}OK: 本番へ反映しました${Z}"
+  printf '%b\n' "${G}OK: deployed to production${Z}"
 }
 
 deploy_production_from_staging "$@"

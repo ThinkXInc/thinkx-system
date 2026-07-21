@@ -41,7 +41,9 @@ pr_and_merge_to_develop() {
 
   if git merge-base --is-ancestor "$sha" origin/develop 2>/dev/null; then
     printf '%b\n' "${G}develop は既に $src の内容を含んでいます。やることはありません${Z}"
-    printf '%b\n' "${Y}  staging に出すには: bash infra/scripts/deploy_staging_from.sh $src${Z}"
+    echo
+    echo "If you deploy, run:"
+    echo "bash infra/scripts/deploy_staging_from.sh $src"
     return 0
   fi
 
@@ -54,7 +56,8 @@ pr_and_merge_to_develop() {
     git log --oneline --no-merges "origin/$src..origin/develop"
     echo
     printf '%b\n' "${Y}  staging の上で直接編集されたものが手元に戻っていない可能性があります。${Z}"
-    printf '%b\n' "${Y}  戻すには: bash infra/scripts/merge_develop_into.sh $src${Z}"
+    echo "To bring them back, run:"
+    echo "bash infra/scripts/merge_develop_into.sh $src"
     echo
   fi
 
@@ -84,15 +87,17 @@ pr_and_merge_to_develop() {
   [ "$ans" = yes ] || { printf '%b\n' "${Y}中止しました(何も変更していません)${Z}"; return 0; }
 
   echo
-  echo "PR を作る"
+  echo "creating PullRequest ($src->develop)..."
   gh pr create --base develop --head "$src" --title "develop: $src の内容を取り込む" --body "" >/dev/null
 
-  echo "merge する"
+  echo "merging ($src->develop)..."
   gh pr merge "$src" --merge --delete-branch=false >/dev/null
 
   git fetch --quiet origin
-  printf '%b\n' "${G}OK: develop に merge しました${Z}"
-  printf '%b\n' "${Y}  staging のサーバーに出すには: bash infra/scripts/deploy_staging_from.sh $src${Z}"
+  printf '%b\n' "${G}OK: merged to develop${Z}"
+  echo
+  echo "If you deploy, run:"
+  echo "bash infra/scripts/deploy_staging_from.sh $src"
 }
 
 pr_and_merge_to_develop "$@"

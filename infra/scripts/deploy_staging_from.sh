@@ -43,7 +43,8 @@ deploy_staging_from() {
     banner "develop に入っていない $src のコミット"
     git log --oneline "origin/develop..origin/$src"
     echo
-    printf '%b\n' "${Y}  先にこれを実行してください: bash infra/scripts/pr_and_merge_to_develop.sh $src${Z}"
+    echo "Run this first:"
+    echo "bash infra/scripts/pr_and_merge_to_develop.sh $src"
     return 1
   fi
 
@@ -71,8 +72,10 @@ deploy_staging_from() {
       [ "$c" = 200 ] && printf "  \033[32m%-24s %s\033[0m\n" "$h" "$c" || printf "  \033[31m%-24s %s\033[0m\n" "$h" "$c"
     done'
 
-  printf '%b\n' "${G}OK: staging へ反映しました${Z}"
-  printf '%b\n' "${Y}  本番へ出すには: bash infra/scripts/deploy_production_from_staging.sh${Z}"
+  printf '%b\n' "${G}OK: deployed to staging${Z}"
+  echo
+  echo "If you deploy to production, run:"
+  echo "bash infra/scripts/deploy_production_from_staging.sh"
 }
 
 deploy_staging_from "$@"

@@ -59,7 +59,7 @@ merge_develop_into() {
   git merge --no-edit origin/develop
   git push origin "$dst"
 
-  printf '%b\n' "${G}OK: $dst に取り込んで push しました${Z}"
+  printf '%b\n' "${G}OK: merged to $dst and pushed${Z}"
 }
 
 merge_develop_into "$@"
