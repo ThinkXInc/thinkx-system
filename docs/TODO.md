@@ -11,11 +11,13 @@ archive されない。作戦をまたいで残る課題はこちらに置く。
 
 | # | 項目 | 優先度 | 対象 | 状態 |
 |---|---|---|---|---|
-| 1 | Typekit の和文フォント 1.9MB 取得を軽くする | 高 | 全サイト共通 | 未着手 |
+| 1 | Typekit の和文フォント 1.9MB 取得を軽くする | 高 | 全サイト共通 | **設定変更済・効果未実測** |
 | 2 | libcommon が `AWS_ACCESS_KEY_ID` を平文でログ出力する | 高 | libcommon 原本 + vendored 全コピー | 未着手 |
 | 3 | `base.html` の言語リダイレクトが `load` 依存 | 中 | thinkx 系サイト | 未着手 |
 | 4 | transformism の表示開始が `load` 依存(thinkx と同一の地雷) | 高 | transformism | 未着手 |
-| 5 | css/js に gzip が効いておらず Cache-Control も無い | 中 | loadbalancer | 未着手 |
+| 5 | css/js に gzip が効いておらず Cache-Control も無い | 中 | loadbalancer | **修正済・nginx reload 待ち** |
+| 6 | `views/video/` を本番へ運ぶ経路が存在しない | 高 | thinkx(構造) | 未着手 |
+| 7 | `GeosansLight` が指定されているのに読み込まれていない | 中 | thinkx | オーナー判断待ち |
 
 ---
 
@@ -27,8 +29,38 @@ archive されない。作戦をまたいで残る課題はこちらに置く。
 - **問題**: Typekit(kitId `bez6hty`)が `m?features=ALL&v=4&chunks=…` で **1,888 kB** を取得する。
   自前資産(document + CSS + JS + 画像)が約 160 kB なので、**ページ重量の約 93% が
   このフォント1本**。実測: staging `/ja/award/revorn`・2026-07-21・DevTools Network。
-- **制約**: **書体は変えない。** 手段は subset 化・ウェイト削減・読み込み方(`font-display`・
-  preload・self-host)に限る。フォントの差し替えは選択肢に入れない。
+- **制約**: **書体は変えない。** フォントの差し替えは選択肢に入れない。
+
+### 調査で判明したこと(2026-07-21・当初の推測は誤りだった)
+
+Adobe Fonts の管理画面を実見して、当初立てた仮説が2つとも外れていたことが判明した。
+
+| 当初の推測 | 実際 |
+|---|---|
+| 収録ウェイトを絞れば効く | **既に R/400/normal の1つだけ**。削る余地なし |
+| 動的サブセットを有効化すべき | **既に Dynamic Subsetting 有効**。設定済み |
+| — | 真因は **Vertical Features + OpenType Features が全有効**(`features=ALL`) |
+
+`jp78` `jp90` `jp04` `trad` は旧字体・異体字の別グリフ群、`ruby` はルビ用、
+`fwid/hwid/pwid/twid/qwid` は幅違いの複製。動的サブセットは「どの文字を送るか」を
+絞るが、機能を全要求すると各文字が異体字ごと付いてくる。
+CSS/LESS 全体に `font-feature-settings` / `font-variant` / `writing-mode` /
+`text-orientation` が**1件も無い**ことを確認済みで、これらは一つも使われていない。
+
+### 実施した変更(2026-07-21)
+
+- `Vertical Features` OFF / `OpenType Features` OFF → `featureSettings: "NONE"`
+- `FONT DISPLAY` を `auto` → **`swap`**
+- kit を旧 `bez6hty` から `qbw6sek` へ差し替え(commit a1d819d)
+
+`optional` は不採用。初回訪問で代替フォントのまま差し替えないため、オーナー要件
+「指定したフォントが表示されていなければならない」に反する。
+
+### 未確認(次にやること)
+
+**削減幅を実測していない。** 1,888 kB からどこまで落ちたかはブラウザでしか測れない。
+デプロイ後に DevTools(`Disable cache`)で `m?features=…` の Size を見る。
+あわせて日本語の見た目を目視確認する(理論上は標準合字が効かなくなるだけ)。
 - **背景と、問題の質が変わったこと(2026-07-21 追記)**: 表示が `window.load` 待ちだった頃は
   これが直接「表示まで6秒」を作っていた。表示開始を `DOMContentLoaded` に移した
   (`views/src/js/main.js`)ことで描画はもう待たないが、**代わりにフォントの差し替えが
@@ -106,3 +138,32 @@ archive されない。作戦をまたいで残る課題はこちらに置く。
 - **既存の対応との関係**: `c180008 fix(nginx): css/js を gzip し、Cache-Control を明示する`
   は **`nginx-web-root/nginx.conf` のみ**を変更しており、truetechjapan 等を配る経路
   (loadbalancer → thinkx の nginx)には入っていない。同じ手当てを横展開する必要がある。
+- **実施済み(2026-07-21 / commit 72535b6)**: `loadbalancer/nginx.conf` に `gzip_types` +
+  `gzip_proxied any` 等を追加。**反映には loadbalancer の nginx reload が必要で未実施**
+  (承認が要る操作)。`Cache-Control` は入れていない — conf.d の複数ブロックが自前の
+  `add_header Cache-Control` を持ち、http レベルに置くと nginx の継承規則により
+  そのブロックでは黙って無効化されるため、ブロック単位で別途判断する。
+
+## 6. `views/video/` を本番へ運ぶ経路が存在しない(優先度: 高)
+
+- **問題**: 動画は `thinkx/.gitignore:36` の対象で git に乗らず、**infra のデプロイ
+  スクリプトに `video` の記述が一つも無い**。staging へは filedrop(`main.py:787`・
+  hostname が `-stg` の時のみ有効)で入れられるが、本番では 404 になるため使えない。
+- **今の危険**: 圧縮版への差し替え(commit 6e2eda4)は HTML の参照だけが git に乗っている。
+  **このまま本番デプロイすると、本番は存在しないファイルを指して背景動画が消える。**
+- **CSS/JS との違い**: あちらはビルドで再生成できるため `31664de` の配線
+  (`build_and_restart.sh` の babel + lessc)で解決したが、**動画は生成できない**ので
+  同じ手が使えない。運搬そのものの仕組みが要る。
+- **選択肢**: staging から prod へ scp / 本番にも受け取り口を用意 / 動画だけ別の配布経路
+  (S3 等)。いずれも本番への操作を伴うためオーナー判断が要る。
+
+## 7. `GeosansLight` が指定されているのに読み込まれていない(優先度: 中)
+
+- **問題**: ビルド済み CSS・本番 CSS ともに `@font-face` が0件で、Typekit の kit にも
+  収録が無く、ローカルの `@font-face` は `main.less:23-29` でコメントアウト。
+  **供給源がどこにも無い**まま6箇所で指定されている。詳細は `thinkx/findings.md` F-E15。
+- **オーナー要件との関係**: 「英文でも和文でも指定したフォントが表示されていなければ
+  ならない」に**現状違反している**。ただし今見えている見た目が既にフォールバック後の姿
+  なので、復活させると見た目が変わる。バグ修正ではなく**設計判断**。
+- **判断待ち**: (a) 今の見た目が正なら CSS から指定を消す (b) 本来当てたかったなら
+  `@font-face` を復活させる(`views/fonts/GeosansLight.ttf` は本番で 200 を返す)。
