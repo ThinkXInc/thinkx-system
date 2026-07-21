@@ -798,3 +798,79 @@ web の nginx は 80 ではなく 8005/8006/8007 で listen(各 uwsgi の前段)
 誤り訂正: 一度「web は nginx を動かしていない(80 が応答しない)」と判断したが誤り。
 web の nginx は 8005/8006/8007 で listen している。`curl localhost:80` の結果だけで
 役割を推論したのが浅かった(オーナー指摘)。
+
+## デプロイ経路の残件つぶし(2026-07-21・実測)
+
+### staging の timer は「動くが自分の更新で必ずコケる」状態だった
+
+`/usr/local/bin/deploy_tick.sh` は前日インストールされたコピーがそのまま動いていた。git 側で
+`sync_from_origin.sh` に改名してもインストール済みのコピーは消えないため、timer は古い実装を
+実行し続けていた。その古い実装は最後に「自分自身を git 上の `deploy_tick.sh` から入れ直す」ため、
+存在しないファイルを参照して失敗し、異常終了の通知を出していた。
+
+`:page_facing_up:`(成功)が混ざっていたのは、再起動が不要な回は入れ直しの手前で return して
+いたため。**timer の入れ直しで解消する。**
+
+### 自己更新が実行中のスクリプトを truncate していた(修正済み)
+
+```bash
+install -m 0755 "$REPO/infra/run/sync_from_origin.sh" "$SELF_INSTALLED"
+```
+
+`$SELF_INSTALLED` は実行中のファイルそのもの。`install` は同じ inode を truncate して書き直すので、
+bash が読み進めている途中で中身が入れ替わる。冒頭コメントで「git が実行中のスクリプトを書き換えると
+壊れるから複製側を動かす」と書いておきながら、その複製を自分で書き換えていた。**発火するのは
+「このスクリプト自身が変わったデプロイのとき」だけ**なので、平時のテストでは出ない。
+
+別名に置いてから `mv`(rename)に変更した。rename なら実行中の側は古い実体を読み続ける。
+
+### 配信が非圧縮だった(修正済み)
+
+```
+Content-Length: 129944      ← main.css が非圧縮
+Last-Modified: Mon, 20 Jul 2026 00:59:44 GMT
+ETag: "6a5d7300-1fb98"
+                            ← Content-Encoding なし
+                            ← Cache-Control なし
+```
+
+`nginx.conf` に `gzip on;` はあったが **`gzip_types` が無い**。nginx の既定は `text/html` のみなので、
+css・js・svg・json がすべて非圧縮で流れていた。`main.css` は 130KB → gzip で 20KB 程度になる。
+
+`Cache-Control` の欠落(2026-07-21 の「本番が古く見える」の原因)と同じ場所なので、まとめて修正した。
+
+### サーバー自体は遅くない(切り分けの記録)
+
+```
+staging web (localhost:8005, Host: truetechjapan.com)
+  /ja/award/augmented-communications   ttfb 0.004s  17543B  200
+  /css/main.css                        ttfb 0.001s 129944B  200
+staging lb  (https 経由・TLS 込み)
+  /ja/award/augmented-communications   ttfb 0.010s  17543B  200
+```
+
+アプリの生成は 4ms、LB 込みでも 10ms。「サイトが遅い」の原因はサーバー側の処理時間ではない。
+(サイト側の診断は担当セッションの持ち場。ここは配信基盤の事実のみ記録する)
+
+### 3サイトのコンパイル配線を確定(解決済み・懸案だった項目)
+
+`transformism` と `kazukiotsukacom` は `views/js` `views/css` に git 追跡されたファイルが
+残っており、「コンパイルが同じパスへ書き出して repo が恒久的に dirty になる」ことを懸念して
+配線を見送っていた。実測で解消した。
+
+```
+                tracked css   tracked js   babel/lessc の出力先との衝突
+thinkx              0             0        なし
+transformism        4            22        なし(追跡物は common.css / lib/jQuery.js 等の実ソース)
+kazukiotsukacom     0             7        js/main.js のみ重なるが、babel の出力とバイト単位で一致
+```
+
+staging 上で `npx babel src/js --out-dir /tmp/...` して `cmp` した結果、両サイトとも
+`main.js` は追跡済みファイルと**一致**。`main.css` はどちらのサイトでも追跡されていない。
+**dirty にはならないので、3サイトとも同じ形で配線した。** site 側のファイル構成は変更していない。
+
+### 残件
+
+- **ファイル名にハッシュを入れる**(`main.<hash>.css`)。`no-cache` は毎回の再検証で回避しているが、
+  根本策ではない。テンプレート側の参照を書き換える必要があるためサイト側の仕事
+- **`bash.md` との食い違い**(冒頭の分類宣言)。規約を変えるかは人間の判断(既出)
