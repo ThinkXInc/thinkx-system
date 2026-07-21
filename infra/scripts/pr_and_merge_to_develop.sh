@@ -14,6 +14,8 @@
 
 set -euo pipefail
 
+. "$(dirname "${BASH_SOURCE[0]:-$0}")/lib/banner.sh"
+
 pr_and_merge_to_develop() {
   local G=$'\033[32m' R=$'\033[31m' Y=$'\033[33m' Z=$'\033[0m'
   local src sha back svc ans
@@ -48,8 +50,7 @@ pr_and_merge_to_develop() {
   # merge commit は中身を持たないので数えない(PR の履歴が並ぶだけで読めなくなる)
   back="$(git rev-list --count --no-merges "origin/$src..origin/develop")"
   if [ "$back" != 0 ]; then
-    echo
-    printf '%b\n' "${Y}注意: develop にあって $src に無いコミットが $back 件あります${Z}"
+    banner "注意: develop にあって $src に無いコミット($back 件)"
     git log --oneline --no-merges "origin/$src..origin/develop"
     echo
     printf '%b\n' "${Y}  staging の上で直接編集されたものが手元に戻っていない可能性があります。${Z}"
@@ -71,21 +72,22 @@ pr_and_merge_to_develop() {
     case " ${targets[*]-} " in *" $svc "*) ;; *) targets+=("$svc") ;; esac
   done <<< "$(git diff --name-only "origin/develop...$sha")"
 
-  echo "== $src から develop に入る内容 =="
+  banner "$src -> develop"
   git log --oneline origin/develop.."$sha"
-  echo
-  echo "== これを staging に出したとき再起動されるもの =="
+
+  banner "再起動(変更)されるサービス"
   if [ "${#targets[@]}" -eq 0 ]; then echo "  なし(配信物の変更なし)"; else printf '  %s\n' "${targets[@]}"; fi
   echo
 
-  printf '%b' "${Y}$src を develop に merge します。よければ yes と入力: ${Z}"
+  printf '%b' "${Y}continue? (yes/no): ${Z}"
   read -r ans
   [ "$ans" = yes ] || { printf '%b\n' "${Y}中止しました(何も変更していません)${Z}"; return 0; }
 
-  echo "== PR を作る =="
+  echo
+  echo "PR を作る"
   gh pr create --base develop --head "$src" --title "develop: $src の内容を取り込む" --body "" >/dev/null
 
-  echo "== merge する =="
+  echo "merge する"
   gh pr merge "$src" --merge --delete-branch=false >/dev/null
 
   git fetch --quiet origin

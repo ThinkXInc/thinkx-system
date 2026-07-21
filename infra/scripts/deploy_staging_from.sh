@@ -18,6 +18,8 @@
 
 set -euo pipefail
 
+. "$(dirname "${BASH_SOURCE[0]:-$0}")/lib/banner.sh"
+
 deploy_staging_from() {
   local G=$'\033[32m' R=$'\033[31m' Y=$'\033[33m' Z=$'\033[0m'
   local src host fail=0
@@ -38,8 +40,7 @@ deploy_staging_from() {
 
   if ! git merge-base --is-ancestor "origin/$src" origin/develop 2>/dev/null; then
     printf '%b\n' "${R}FAIL: develop はまだ $src の内容を含んでいません${Z}"
-    echo
-    echo "== develop に入っていない $src のコミット =="
+    banner "develop に入っていない $src のコミット"
     git log --oneline "origin/develop..origin/$src"
     echo
     printf '%b\n' "${Y}  先にこれを実行してください: bash infra/scripts/pr_and_merge_to_develop.sh $src${Z}"
@@ -50,8 +51,7 @@ deploy_staging_from() {
   # checkout にあるファイルを使うと、そのファイル自体をこれから配る回に「まだ無い」で止まる
   # (実際に本番と staging LB の両方で無かった。2026-07-21 実測)。
   for host in supercom-web1-stg supercom-lb1-stg; do
-    echo
-    echo "== $host を develop に合わせる =="
+    banner "$host -> develop に合わせる"
     git show "origin/develop:infra/run/sync_from_origin.sh" \
       | ssh -o ConnectTimeout=8 "$host" 'sudo bash -s staging' || fail=$((fail+1))
   done
@@ -64,8 +64,7 @@ deploy_staging_from() {
     return 1
   fi
 
-  echo
-  echo "== 確認(staging の web に直接) =="
+  banner "確認(staging の web に直接)"
   ssh -o ConnectTimeout=8 supercom-web1-stg 'for hp in "thinkxinc.com:8005" "truetechjapan.com:8005" "transformism.art:8006" "kazukiotsuka.com:8007"; do
       h="${hp%%:*}"; p="${hp##*:}"
       c="$(curl -s -o /dev/null -w "%{http_code}" -m 10 -H "Host: $h" "http://localhost:$p/" || true)"
