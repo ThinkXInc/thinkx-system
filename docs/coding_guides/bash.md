@@ -65,6 +65,14 @@ bash 4+ の機能は使えないとき:
 > を実行する
 > とシンプルにする
 
+上の統合スクリプトは、続く指示で撤回された。
+
+> 問題はローカルなのかリモートなのか、ファイル名からよくわからないということだ。リモートのブランチはデベロップからしかありえないのだから、from developとわざわざ書いてるのがおかしいだろ。
+
+> pr_and_merge_to_develop.sh monorepo でdevelopにローカルを反映
+> deploy_staging.sh でremote developを使ってstagingをデプロイ
+> 単にこの2つだけあればいいだろう。
+
 > いっぺんに全部リスタートはやめた方がいいので、全部やるなら全部引数に指定して直列で叩くということを唯一の方法とすべきだろう。引数が何もなかったら指定してくれとアラートを出すべきだろう。
 
 **NG**
@@ -80,6 +88,17 @@ local src="${1:-monorepo}"
 ```
 
 ```bash
+# 取りうる値が1つしかないのに引数で受ける
+# (staging に出るのは常に origin/develop なので、branch を選ぶ余地は無い)
+bash deploy_staging_from.sh monorepo
+```
+
+```bash
+# 唯一の値を名前に書く(from develop 以外ありえないので冗長)
+bash deploy_staging_from_develop.sh
+```
+
+```bash
 # 引数が無いと全部を対象にする
 [ "$#" -eq 0 ] && set -- thinkx transformism kazukiotsukacom
 ```
@@ -87,25 +106,17 @@ local src="${1:-monorepo}"
 **OK**
 
 ```bash
-# 操作ごとに1本。branch は必ず引数で指定する
+# 操作ごとに1本。取りうる値が1つしかないものは引数にしない
 bash pr_and_merge_to_develop.sh monorepo
-bash deploy_staging_from.sh monorepo
-```
-
-```bash
-# まとめたいときは、上の2本を呼ぶだけの薄い1本にする
-deploy_staging_from_monorepo() {
-  bash infra/scripts/pr_and_merge_to_develop.sh monorepo || return 1
-  bash infra/scripts/deploy_staging_from.sh monorepo || return 1
-}
+bash deploy_staging.sh
 ```
 
 ```bash
 # 引数が無ければ何もせず、指定を促す
 if [ "$#" -eq 0 ]; then
   printf '%b\n' "${Y}branch を指定してください。${Z}"
-  echo "  使い方: bash infra/scripts/deploy_staging_from.sh <branch>"
-  echo "  例:     bash infra/scripts/deploy_staging_from.sh monorepo"
+  echo "  使い方: bash infra/scripts/merge_develop_into.sh <branch>"
+  echo "  例:     bash infra/scripts/merge_develop_into.sh monorepo"
   return 1
 fi
 ```

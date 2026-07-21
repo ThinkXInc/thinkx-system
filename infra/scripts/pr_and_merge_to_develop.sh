@@ -7,12 +7,14 @@
 #   例:     bash infra/scripts/pr_and_merge_to_develop.sh monorepo
 #
 # ここでやるのは git だけである。サーバーには触らない。
-# staging のサーバーに出すのは deploy_staging_from.sh <branch>。
+# staging のサーバーに出すのは deploy_staging.sh。
 #
 # branch は必ず指定する。既定値を置かない。手元の作業 branch が何かは、そのときの
 # 作業によって変わる(monorepo とは限らない)。
 
 set -euo pipefail
+
+. "$(dirname "${BASH_SOURCE[0]:-$0}")/lib/banner.sh"
 
 pr_and_merge_to_develop() {
   local G=$'\033[32m' R=$'\033[31m' Y=$'\033[33m' Z=$'\033[0m'
@@ -39,7 +41,9 @@ pr_and_merge_to_develop() {
 
   if git merge-base --is-ancestor "$sha" origin/develop 2>/dev/null; then
     printf '%b\n' "${G}develop は既に $src の内容を含んでいます。やることはありません${Z}"
-    printf '%b\n' "${Y}  staging に出すには: bash infra/scripts/deploy_staging_from.sh $src${Z}"
+    echo
+    echo "If you deploy, run:"
+    echo "bash infra/scripts/deploy_staging.sh"
     return 0
   fi
 
@@ -48,12 +52,12 @@ pr_and_merge_to_develop() {
   # merge commit は中身を持たないので数えない(PR の履歴が並ぶだけで読めなくなる)
   back="$(git rev-list --count --no-merges "origin/$src..origin/develop")"
   if [ "$back" != 0 ]; then
-    echo
-    printf '%b\n' "${Y}注意: develop にあって $src に無いコミットが $back 件あります${Z}"
-    git log --oneline --no-merges "origin/$src..origin/develop"
+    banner "注意: develop にあって $src に無いコミット($back 件)"
+    git --no-pager log --oneline --no-merges "origin/$src..origin/develop"
     echo
     printf '%b\n' "${Y}  staging の上で直接編集されたものが手元に戻っていない可能性があります。${Z}"
-    printf '%b\n' "${Y}  戻すには: bash infra/scripts/merge_develop_into.sh $src${Z}"
+    echo "To bring them back, run:"
+    echo "bash infra/scripts/merge_develop_into.sh $src"
     echo
   fi
 
@@ -71,26 +75,29 @@ pr_and_merge_to_develop() {
     case " ${targets[*]-} " in *" $svc "*) ;; *) targets+=("$svc") ;; esac
   done <<< "$(git diff --name-only "origin/develop...$sha")"
 
-  echo "== $src から develop に入る内容 =="
-  git log --oneline origin/develop.."$sha"
-  echo
-  echo "== これを staging に出したとき再起動されるもの =="
+  banner "$src -> develop"
+  git --no-pager log --oneline origin/develop.."$sha"
+
+  banner "再起動(変更)されるサービス"
   if [ "${#targets[@]}" -eq 0 ]; then echo "  なし(配信物の変更なし)"; else printf '  %s\n' "${targets[@]}"; fi
   echo
 
-  printf '%b' "${Y}$src を develop に merge します。よければ yes と入力: ${Z}"
+  printf '%b' "${Y}continue? (yes/no): ${Z}"
   read -r ans
   [ "$ans" = yes ] || { printf '%b\n' "${Y}中止しました(何も変更していません)${Z}"; return 0; }
 
-  echo "== PR を作る =="
+  echo
+  echo "creating PullRequest ($src->develop)..."
   gh pr create --base develop --head "$src" --title "develop: $src の内容を取り込む" --body "" >/dev/null
 
-  echo "== merge する =="
+  echo "merging ($src->develop)..."
   gh pr merge "$src" --merge --delete-branch=false >/dev/null
 
   git fetch --quiet origin
-  printf '%b\n' "${G}OK: develop に merge しました${Z}"
-  printf '%b\n' "${Y}  staging のサーバーに出すには: bash infra/scripts/deploy_staging_from.sh $src${Z}"
+  printf '%b\n' "${G}OK: merged to develop${Z}"
+  echo
+  echo "If you deploy, run:"
+  echo "bash infra/scripts/deploy_staging.sh"
 }
 
 pr_and_merge_to_develop "$@"
