@@ -755,3 +755,25 @@ URL が変わらない。「本番に出したのに古いものが見える」�
 2. 検証が素のドメイン = オンプレを見ていた(AWS の成否と無関係に 200 が返っていた)
 3. `$br・` の多バイト文字で `unbound variable`(全処理後の最終行・実害なし・誤って FAIL 報告)
 4. kaz が sudoers に居ないため timer が User=kaz では動かない(staging で露出)
+
+## スクリプトの整理(2026-07-21・オーナー指示)
+
+オーナー指摘3点をまとめて反映:
+
+1. **`【分類: 変更系】` の表示をやめる。** `docs/coding_guides/bash.md` は「分類を冒頭コメントで
+   宣言する」を規範として求めているが、オーナーは表示を不要と判断した。**規約と食い違うため記録する**
+   (CLAUDE.md「上位と下位が食い違ったら上位に従い、食い違いを findings に記録する」)。
+   bash.md を変えるかどうかは人間の判断。
+2. **`sync_servers_from_origin.sh` を廃止。** 「これがいつ・何の場面で必要なのか分からない」が正しい。
+   timer が全台に入れば Mac から同期を叩く場面は存在しない。デプロイの入口は
+   `deploy_production_from_staging.sh` 1本だけにし、ssh の呼び出しはその中へ畳んだ。
+   途中で止まった場合は**同じコマンドをもう一度実行する**(production に取り込み済みなら
+   release を切り直さず反映だけやり直す)。覚えることが1つで済む。
+3. **`build_thinkx.sh` を廃止し `build_and_restart.sh <service>` に統合。** サービスごとに
+   ファイルを増やすのが誤り。あわせて `sync_from_origin.sh` が別に持っていた restart と
+   verify のロジックもここへ集約した(また二重化していた)。
+
+結果、この経路のスクリプトは3本:
+- `infra/scripts/deploy_production_from_staging.sh` — 唯一のデプロイの入口
+- `infra/run/sync_from_origin.sh` — この箱を origin に合わせる(timer と手動が共有する唯一の実装)
+- `infra/run/build_and_restart.sh <service>` — 1サービスを作り直して再起動し応答を確かめる

@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # thinkx-system/infra/scripts/sync_servers_from_origin.sh
-#   【分類: 変更系(サーバーを origin に合わせる)】
 #
 # 指定 env の web と lb を、origin の対応 branch に合わせる。
 # 「デプロイ」ではなくその一部分。**デプロイの入口は

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# thinkx-system/infra/run/sync_from_origin.sh   【分類: 変更系(この箱を origin に合わせる)】
+# thinkx-system/infra/run/sync_from_origin.sh
 #
 # このサーバーを origin の指定 branch に合わせ、必要なものを作り直して再起動する。
 # 「デプロイ」ではなくその一部分。デプロイの入口は
@@ -45,31 +45,12 @@ notify() {
 
 services_for() {
   case "$1" in
-    thinkx/*)          echo uwsgi_thinkx ;;
-    transformism/*)    echo uwsgi_transformism ;;
-    kazukiotsukacom/*) echo uwsgi_kazukiotsukacom ;;
-    nginx-web-root/*)  echo nginx ;;
-    loadbalancer/*)    echo nginx ;;
+    thinkx/*)          echo thinkx ;;
+    transformism/*)    echo transformism ;;
+    kazukiotsukacom/*) echo kazukiotsukacom ;;
+    nginx-web-root/*)  echo nginx-web-root ;;
+    loadbalancer/*)    echo loadbalancer ;;
   esac
-}
-
-verify_service() {
-  local code
-  case "$1" in
-    uwsgi_thinkx)          code="$(curl -s -o /dev/null -w '%{http_code}' -H 'Host: thinkxinc.com'    http://localhost:8005/ || true)" ;;
-    uwsgi_transformism)    code="$(curl -s -o /dev/null -w '%{http_code}' -H 'Host: transformism.art' http://localhost:8006/ || true)" ;;
-    uwsgi_kazukiotsukacom) code="$(curl -s -o /dev/null -w '%{http_code}' -H 'Host: kazukiotsuka.com' http://localhost:8007/ || true)" ;;
-    nginx)                 code="$(systemctl is-active nginx >/dev/null 2>&1 && echo 200 || echo 000)" ;;
-    *)                     code=200 ;;
-  esac
-  [ "$code" = 200 ]
-}
-
-restart_all() {
-  local s
-  for s in "$@"; do
-    systemctl restart "$s" 2>/dev/null || systemctl restart "$s.service" || true
-  done
 }
 
 sync_from_origin() {
@@ -131,22 +112,13 @@ $(g log --oneline "origin/$branch..HEAD" | head -20)
     return 0
   fi
 
-  # 配信物が生成物のサイトは restart の前にビルドする(ソースを配っただけでは css/js に出ないため)
+  # ビルド・再起動・検証は build_and_restart.sh 1本が持つ。ここでは呼ぶだけ。
   for svc in "${targets[@]}"; do
-    case "$svc" in
-      uwsgi_thinkx) [ -f "$REPO/infra/run/build_thinkx.sh" ] && bash "$REPO/infra/run/build_thinkx.sh" ;;
-    esac
-  done
-
-  restart_all "${targets[@]}"
-  sleep 3
-
-  for svc in "${targets[@]}"; do
-    if ! verify_service "$svc"; then
-      # ここだけ reset --hard を使う。戻しは巻き戻しなので早送りにならない。
-      # 直前に clean を確認して早送りした直後なので、消えるのは今入れた分だけ。
+    if ! bash "$REPO/infra/run/build_and_restart.sh" "$svc"; then
+      # 戻しは巻き戻しなので早送りにならない。直前に clean を確認して早送りした
+      # 直後なので、消えるのは今入れた分だけ。
       g reset --hard --quiet "$prev"
-      restart_all "${targets[@]}"
+      for svc in "${targets[@]}"; do bash "$REPO/infra/run/build_and_restart.sh" "$svc" || true; done
       notify ":rotating_light: **$host** \`${new:0:7}\` の反映で **$svc** が応答しません。\`${prev:0:7}\` へ戻しました。"
       trap - ERR
       return 1
