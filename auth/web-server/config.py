@@ -5,6 +5,10 @@ import os
 
 class Config:
     ENV = os.environ.get('ENV', 'development')
+    AUTH_PUBLIC_BASE_URL = os.environ.get(
+        'AUTH_PUBLIC_BASE_URL', 'http://127.0.0.1:8020'
+    )
+    OIDC_ID_TOKEN_TTL_SEC = 600
 
     # --- 言語 (libcommon/web/flask_helpers.py の要求キー) ---
     DEFAULT_LANG = 'en'

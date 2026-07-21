@@ -26,6 +26,7 @@ from libcommon.web.google_oauth_helper import configure_google_oauth
 
 from sso import blueprint_sso
 from accounts import blueprint_accounts
+from oidc.endpoints import blueprint_oidc
 
 # Logger
 from libcommon.logger import Logger
@@ -48,6 +49,8 @@ REQUIRED_KEYS_IN_CONFIG = [
     'REDIS_SESSION_PORT',
     'REDIS_SESSION_DB_NUMBER',
     'REDIS_SESSION_EXPIRATION_TIME_SEC',
+    'AUTH_PUBLIC_BASE_URL',
+    'OIDC_ID_TOKEN_TTL_SEC',
 ]
 check_config(Config, REQUIRED_KEYS_IN_CONFIG)
 
@@ -74,6 +77,7 @@ app.session_interface = RedisSessionInterface(
 
 app.register_blueprint(blueprint_sso)
 app.register_blueprint(blueprint_accounts)
+app.register_blueprint(blueprint_oidc)
 
 logger.info(green('auth service initialized.'))
 

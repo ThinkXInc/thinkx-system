@@ -148,3 +148,14 @@
   配線し、UserInfo の課金材料を User.services から ConnectedService + ServiceEntitlement へ移した。
   レビュー追補後の auth pytest は49件 collect、41 passed / 8 skipped / 1既存 warning。追加skip 1件は
   loopback実MongoDBを明示した場合だけ走る A-1 integration test。
+
+## Auth A-2 署名鍵・JWKS・OpenID Provider metadata
+
+- `web-server/oidc/id_token.py` / active SigningKey を使う RS256 ID Token issuer を追加した。
+  ID Token は `kid` header と iss/sub/aud/exp/iat/nonce/auth_time の認証claimだけを持つ。
+- `GET /oauth/jwks` / retired 以外の SigningKey を RSA public JWK(kty/use/alg/kid/n/e)として公開し、
+  private keyを応答へ含めない。`Cache-Control: public, max-age=300`を付与した。
+- `GET /.well-known/openid-configuration` / 固定 `AUTH_PUBLIC_BASE_URL` をissuerとして、authorize/token/
+  userinfo/jwks/logout、code response、public subject、RS256、client_secret_basic、PKCE S256を公開する。
+- `tests/test_oidc_discovery.py` / metadata、retired鍵除外、必須claimとactive kid、公開JWKによる実検証を
+  4テストで固定した。A-2後のauth pytestは53件collect、45 passed / 8 skipped / 1既存warning。
