@@ -1027,3 +1027,52 @@ staging web の上で編集して commit した場合、その箱の HEAD には
 
 一般則として、環境をまたいで比較するものは照合順序・タイムゾーン・改行コードを
 明示的に固定する。ここは macOS(Mac)と Linux(EC2)をまたぐので特に効く。
+
+## 3回目の本番デプロイ — アセット配布込みで完走(2026-07-21)
+
+動画を差し替えた回。アセット配布をデプロイに組み込んだ直後の実走で、**組み込みが
+無ければ HTML だけが本番へ行って 404 になっていた**ケースそのものだった。
+
+```
+アセット(views/video)を確かめる
+  thinkx: アセットが supercom-web1 と違うので配ります
+  thinkx-video.tgz  100%  343MB  46.6MB/s  00:07
+  OK: thinkx の video を supercom-web1 へ配って展開した
+
+supercom-web1 -> production に合わせる
+  skip: この箱(web)の nginx は loadbalancer の設定で動いていない
+  == compile thinkx ==  Successfully compiled 3 files with Babel (374ms)
+  == restart thinkx (uwsgi_thinkx) ==  OK: thinkx -> 200
+
+supercom-lb1 -> production に合わせる
+  == restart loadbalancer (nginx) ==  OK: loadbalancer -> 200
+  skip: thinkx はこの箱(lb1)で動いていない
+```
+
+反映後の実測:
+
+```
+/src/thinkx/web-server/views/video/
+  Sitetop2025_7_13noaudio.mp4       13M  kaz:serveradmins
+  VNMachineCloudIntro1.1_21MB.mp4   20M  kaz:serveradmins
+配信 206 / 206
+HTML が指す先と実ファイルが一致(404 なし)
+```
+
+箱ごとの担当判定が本番の両方で正しく働いた。web は loadbalancer を飛ばし、lb は
+thinkx を飛ばし、それぞれ自分の担当だけを再起動している。
+
+### 通知文の読みにくさが1つ残った
+
+`skip: この箱(web)の nginx は loadbalancer の設定で動いていない` は**正しい判定**だが、
+「web の nginx が壊れている」と読めてしまう。意味は「今チェックしているのは loadbalancer
+というサービスで、この箱の nginx はその設定では動いていないので担当外」である。
+`skip: loadbalancer はこの箱(web)の担当ではない(nginx は nginx-web-root の設定で動作中)`
+のように、主語を揃えたほうがよい。次のセッションで直す。
+
+## 本番の3サイト構成(2026-07-21 時点・実測)
+
+```
+supercom-web1  nginx = nginx-web-root の設定    uwsgi_thinkx active
+supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニットのみ存在)
+```
