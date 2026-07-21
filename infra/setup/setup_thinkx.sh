@@ -5,7 +5,7 @@
 #  - setup_webserver.sh
 #  - check_deploykey.py thinkx-system が OK + clone_monorepo.sh 済み
 #  - push_env.sh thinkx(/tmp/thinkx.env。真実は thinkx/.env)
-#  - push_assets.sh thinkx(/tmp/thinkx-video.tgz。真実は thinkx/web-server/views/video)
+#  - infra/scripts/push_assets.sh <host> thinkx(/tmp/thinkx-video.tgz。真実は thinkx/web-server/views/video)
 #
 
 # repository(monorepo 前提。clone と symlink は clone_monorepo.sh が行う)
