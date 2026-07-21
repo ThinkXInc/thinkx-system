@@ -649,3 +649,228 @@ staging から prod へ ssh させる案は staging に prod の鍵を置くこ�
 - `deploy_tick.sh` のサービス判定が host を見ていない。`loadbalancer/` の変更で web 側でも
   nginx を再起動し、`nginx-web-root/` の変更で lb 側でも再起動する。動作は壊れないが無関係な
   再起動が起きる。staging で挙動を観察してから直す
+
+## 配信物のビルドがデプロイ経路に無かった(2026-07-21・本番で露出)
+
+受賞企業ページの本番反映で、テンプレートと LESS は届いたのに **css が古いまま**で表示が崩れた。
+`views/css` と `views/js` は `.gitignore` の生成物であり、ソースを配っただけでは配信に出ない。
+`setup_*.sh` には front build があるが、**`deploy.sh` / `restart_*.sh` には無かった**(設計漏れ)。
+
+実測:
+- `award_company.less` 12519B(Jul 21 06:03・デプロイ済み)/ `main.css` 117017B(Jul 18 04:31・古い)
+- repo の npm タスクは `--watch` 常駐用のみ。ワンショットは
+  `npx babel src/js --out-dir js` と `npx lessc src/less/main.less css/main.css` を直接叩く
+
+対応: `infra/run/build_thinkx.sh` を新設し、`deploy.sh` と `deploy_tick.sh` の restart 前に実行。
+**条件分岐で「変わったときだけ」にしない**(判定を誤ると古い配信物を出し続ける)。冪等なので毎回実行する。
+
+**サイトごとに事情が違う(未解決・要調査)**:
+
+| サイト | views/src | css 追跡 | js 追跡 | ビルド配線 |
+|---|---|---|---|---|
+| thinkx | あり | 0 | 0 | **配線済み**(両方とも生成物) |
+| kazukiotsukacom | あり | 0 | 7 | 未配線 |
+| transformism | あり | 4 | 22 | 未配線 |
+
+`transformism` と `kazukiotsukacom` は js/css の一部が **git 追跡されている**。babel/lessc は同じパスへ
+書き出すため、生成物が commit 済みの内容と1バイトでも違えば **ビルドのたびに repo が dirty になり、
+以後のデプロイが恒久的に止まる**。現状 3サイトとも dirty=0 なので一致しているようだが確証がない。
+確認してから配線する。確認方法: 該当サイトでビルドを流し `git status --porcelain` が空のままか見る。
+
+## ディスク実測(2026-07-21)
+
+```
+prod web    49G 中 8.9G (19%)  空き 40G   repo 3.0G / .git 935M
+prod lb     20G 中 5.9G (31%)  空き 14G
+staging web 20G 中  12G (58%)  空き 8.2G  ← 一番きつい
+staging lb  20G 中 6.0G (32%)  空き 14G
+```
+
+Mac のローカルが 5GB 超なのは node_modules・venv・LFS 動画など git 管理外を含むため。
+サーバーの clone は 3.0G。当面足りるが、**staging web は citywalk legacy 取り込みで 58% に上がった**。
+citywalk を本格的に載せると効く。D-57(t3.medium 化)はメモリの話でディスクとは独立。
+
+## 検証が旧サーバーを見ていた(2026-07-21・重大)
+
+本番反映後の確認を素のドメイン(`https://truetechjapan.com` 等)で行っていたが、**これらは
+DNS 未切替でオンプレ(123.226.234.127)を指している**。AWS のデプロイが成功しようが失敗しようが
+200 が返るため、**検証として成立していなかった**。
+
+```
+thinkxinc.com / truetechjapan.com / transformism.art / kazukiotsuka.com  -> 123.226.234.127(オンプレ)
+staging.*                                                                -> 52.68.142.190(AWS)
+```
+
+`deploy_production_from_staging.sh` の確認ブロックと手順書の確認 URL を、web へ直接当てる形
+(`ssh supercom-web1` から `curl -H "Host: ..." localhost:800X`)に変更した。公開ドメインでの
+確認は DNS 切替後に意味を持つ。
+
+派生して判明したこと:
+- 受賞企業ページの URL は `/truetechjapan/award/<company_key>`(`/award_companies/<key>` ではない)
+- AWS 本番は4社とも 200・css も新ビルド(129944B)で、**デプロイ自体は完全に成功していた**
+- LB の vhost は `prod.*` と `staging.*` のみで素のドメインを持たない。切替時に追加が要る
+
+## deploy.sh の多バイト文字による unbound variable(2026-07-21)
+
+`"...(origin/$br・再起動: ...)"` で `$br` の直後に多バイト文字 `・` が続き、`set -u` 下で
+`br?: unbound variable` になった。**変数展開の直後が非 ASCII なら `${br}` と括る。**
+全処理が終わった後の最終行だったため実害は無かったが、ラッパーが非ゼロ終了を見て
+「FAIL: 反映が止まりました」と誤報した。
+
+## 静的資産に Cache-Control が無い(2026-07-21・再発する)
+
+受賞企業ページの本番反映後、`prod.truetechjapan.com` で表示が崩れて見えた。原因は**ブラウザキャッシュ**。
+プライベートウィンドウでは正常に表示された(オーナー確認)。
+
+切り分けの根拠 — staging と prod は**サーバー側で完全に同一**だった:
+
+```
+staging css : f49755422a5a515c17f2b81d9cfced5c  129944B
+prod    css : f49755422a5a515c17f2b81d9cfced5c  129944B   (md5 一致)
+staging page: 17543B / prod page: 17543B                  (一致)
+```
+
+`/css/main.css` のヘッダに `Cache-Control` が無く、`Last-Modified` と `ETag` のみ。
+この場合ブラウザはヒューリスティックキャッシュを使い、`Last-Modified` からの経過時間の
+約10%を勝手に「新鮮」と見なす。古い css を一度読むと数時間そのまま使われる。
+
+**これは毎回のデプロイで再発する。** ファイル名が固定(`main.css`)なので、内容が変わっても
+URL が変わらない。「本番に出したのに古いものが見える」は切り分けが難しく、今日は
+「デプロイが失敗した」と誤認する原因になった。エンドユーザー側でも、変更前に訪れた人は
+しばらく古い css を見る。
+
+対応案(未着手・人間判断):
+- ファイル名にハッシュを付ける(`main.<hash>.css`)。最も確実だがテンプレート側の参照を変える必要がある
+- クエリで busting する(`main.css?v=<build>`)。軽いが CDN によっては効かない
+- nginx で `Cache-Control` を明示する。即効性はあるが、短くすると毎回取りに行く
+
+## 初回の本番デプロイが新フローで完走(2026-07-21)
+
+`deploy_production_from_staging.sh` -> release/2026-07-21 の凍結 -> production への取り込み ->
+サーバー反映 -> 受賞企業ページ4社が AWS 本番で 200。DNS は意図的に未切替(正しいデプロイの
+確認後に切り替える方針・オーナー)。
+
+途中で露出して修正した実バグ:
+1. 配信物のビルドがデプロイ経路に無かった(css が古いまま)
+2. 検証が素のドメイン = オンプレを見ていた(AWS の成否と無関係に 200 が返っていた)
+3. `$br・` の多バイト文字で `unbound variable`(全処理後の最終行・実害なし・誤って FAIL 報告)
+4. kaz が sudoers に居ないため timer が User=kaz では動かない(staging で露出)
+
+## スクリプトの整理(2026-07-21・オーナー指示)
+
+オーナー指摘3点をまとめて反映:
+
+1. **`【分類: 変更系】` の表示をやめる。** `docs/coding_guides/bash.md` は「分類を冒頭コメントで
+   宣言する」を規範として求めているが、オーナーは表示を不要と判断した。**規約と食い違うため記録する**
+   (CLAUDE.md「上位と下位が食い違ったら上位に従い、食い違いを findings に記録する」)。
+   bash.md を変えるかどうかは人間の判断。
+2. **`sync_servers_from_origin.sh` を廃止。** 「これがいつ・何の場面で必要なのか分からない」が正しい。
+   timer が全台に入れば Mac から同期を叩く場面は存在しない。デプロイの入口は
+   `deploy_production_from_staging.sh` 1本だけにし、ssh の呼び出しはその中へ畳んだ。
+   途中で止まった場合は**同じコマンドをもう一度実行する**(production に取り込み済みなら
+   release を切り直さず反映だけやり直す)。覚えることが1つで済む。
+3. **`build_thinkx.sh` を廃止し `build_and_restart.sh <service>` に統合。** サービスごとに
+   ファイルを増やすのが誤り。あわせて `sync_from_origin.sh` が別に持っていた restart と
+   verify のロジックもここへ集約した(また二重化していた)。
+
+結果、この経路のスクリプトは3本:
+- `infra/scripts/deploy_production_from_staging.sh` — 唯一のデプロイの入口
+- `infra/run/sync_from_origin.sh` — この箱を origin に合わせる(timer と手動が共有する唯一の実装)
+- `infra/run/build_and_restart.sh <service>` — 1サービスを作り直して再起動し応答を確かめる
+
+## 箱ごとの担当判定(2026-07-21・実測)
+
+web と lb は同じリポジトリを持つため、変更パスからサービスを判定すると「LB の設定変更で web を
+巻き戻す」「lb で thinkx を起動する」が起きうる。実測で判別方法を確定した。
+
+```
+web : nginx active -> /src/thinkx-system/nginx-web-root/nginx.service   uwsgi_thinkx active
+lb  : nginx active -> /src/thinkx-system/loadbalancer/nginx.service     uwsgi_thinkx inactive(ユニットは存在する)
+web の nginx は 80 ではなく 8005/8006/8007 で listen(各 uwsgi の前段)
+```
+
+判定は2段:
+1. **`systemctl is-active` で「この箱で現に動いているか」**。ユニットの有無では判別できない
+   (lb にも uwsgi_thinkx のユニットが inactive で存在する。有無で判定すると lb で thinkx が起動する)
+2. **nginx はどちらの箱でも動いているので、`/etc/systemd/system/nginx.service` の実体が
+   どのディレクトリを指すか**で web(nginx-web-root)と lb(loadbalancer)を見分ける
+
+誤り訂正: 一度「web は nginx を動かしていない(80 が応答しない)」と判断したが誤り。
+web の nginx は 8005/8006/8007 で listen している。`curl localhost:80` の結果だけで
+役割を推論したのが浅かった(オーナー指摘)。
+
+## デプロイ経路の残件つぶし(2026-07-21・実測)
+
+### staging の timer は「動くが自分の更新で必ずコケる」状態だった
+
+`/usr/local/bin/deploy_tick.sh` は前日インストールされたコピーがそのまま動いていた。git 側で
+`sync_from_origin.sh` に改名してもインストール済みのコピーは消えないため、timer は古い実装を
+実行し続けていた。その古い実装は最後に「自分自身を git 上の `deploy_tick.sh` から入れ直す」ため、
+存在しないファイルを参照して失敗し、異常終了の通知を出していた。
+
+`:page_facing_up:`(成功)が混ざっていたのは、再起動が不要な回は入れ直しの手前で return して
+いたため。**timer の入れ直しで解消する。**
+
+### 自己更新が実行中のスクリプトを truncate していた(修正済み)
+
+```bash
+install -m 0755 "$REPO/infra/run/sync_from_origin.sh" "$SELF_INSTALLED"
+```
+
+`$SELF_INSTALLED` は実行中のファイルそのもの。`install` は同じ inode を truncate して書き直すので、
+bash が読み進めている途中で中身が入れ替わる。冒頭コメントで「git が実行中のスクリプトを書き換えると
+壊れるから複製側を動かす」と書いておきながら、その複製を自分で書き換えていた。**発火するのは
+「このスクリプト自身が変わったデプロイのとき」だけ**なので、平時のテストでは出ない。
+
+別名に置いてから `mv`(rename)に変更した。rename なら実行中の側は古い実体を読み続ける。
+
+### 配信が非圧縮だった(修正済み)
+
+```
+Content-Length: 129944      ← main.css が非圧縮
+Last-Modified: Mon, 20 Jul 2026 00:59:44 GMT
+ETag: "6a5d7300-1fb98"
+                            ← Content-Encoding なし
+                            ← Cache-Control なし
+```
+
+`nginx.conf` に `gzip on;` はあったが **`gzip_types` が無い**。nginx の既定は `text/html` のみなので、
+css・js・svg・json がすべて非圧縮で流れていた。`main.css` は 130KB → gzip で 20KB 程度になる。
+
+`Cache-Control` の欠落(2026-07-21 の「本番が古く見える」の原因)と同じ場所なので、まとめて修正した。
+
+### サーバー自体は遅くない(切り分けの記録)
+
+```
+staging web (localhost:8005, Host: truetechjapan.com)
+  /ja/award/augmented-communications   ttfb 0.004s  17543B  200
+  /css/main.css                        ttfb 0.001s 129944B  200
+staging lb  (https 経由・TLS 込み)
+  /ja/award/augmented-communications   ttfb 0.010s  17543B  200
+```
+
+アプリの生成は 4ms、LB 込みでも 10ms。「サイトが遅い」の原因はサーバー側の処理時間ではない。
+(サイト側の診断は担当セッションの持ち場。ここは配信基盤の事実のみ記録する)
+
+### 3サイトのコンパイル配線を確定(解決済み・懸案だった項目)
+
+`transformism` と `kazukiotsukacom` は `views/js` `views/css` に git 追跡されたファイルが
+残っており、「コンパイルが同じパスへ書き出して repo が恒久的に dirty になる」ことを懸念して
+配線を見送っていた。実測で解消した。
+
+```
+                tracked css   tracked js   babel/lessc の出力先との衝突
+thinkx              0             0        なし
+transformism        4            22        なし(追跡物は common.css / lib/jQuery.js 等の実ソース)
+kazukiotsukacom     0             7        js/main.js のみ重なるが、babel の出力とバイト単位で一致
+```
+
+staging 上で `npx babel src/js --out-dir /tmp/...` して `cmp` した結果、両サイトとも
+`main.js` は追跡済みファイルと**一致**。`main.css` はどちらのサイトでも追跡されていない。
+**dirty にはならないので、3サイトとも同じ形で配線した。** site 側のファイル構成は変更していない。
+
+### 残件
+
+- **ファイル名にハッシュを入れる**(`main.<hash>.css`)。`no-cache` は毎回の再検証で回避しているが、
+  根本策ではない。テンプレート側の参照を書き換える必要があるためサイト側の仕事
+- **`bash.md` との食い違い**(冒頭の分類宣言)。規約を変えるかは人間の判断(既出)

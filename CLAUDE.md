@@ -27,7 +27,7 @@ polyrepo + vendoring 構成をファイルコピーで集約したもので、�
 
 **決定事項 **: `thinkx-system/docs/DICISIONS.md` thinkx-systemレポジトリ全体に関わる決定事項はここに書かれる。個別のプロジェクトについての決定事項は`thinkx-system/<project>/docs/DICISIONS.md`に書かれる。
 
-**サイトの編集規約（全サイト共通） **: `thinkx-system/SITE_EDIT_WORKFLOW.md` thinkx, transformism, kazukiotsukacomなどのサイトをClaude Codeが編集する際のガイドライン．
+**サイトの編集規約（全サイト共通） **: `thinkx-system/docs/SITE_EDIT_WORKFLOW.md` thinkx, transformism, kazukiotsukacomなどのサイトをClaude Codeが編集する際のガイドライン．
 
 **monorepoへの移行関連 **: `ROADMAP.md, NEXT_CYCLE.md, MONOREPO_PLAN.md, CHANGES_2026_REFACTOR.md`はmonorepoへの移行とそれに伴うリファクタリングについてであり，完了とともに`thinkx-system/docs/archive/monorepo_refactor_2026/`内に格納される．
 

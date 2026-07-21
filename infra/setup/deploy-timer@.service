@@ -1,13 +1,13 @@
 [Unit]
-Description=Pull origin and reflect it (thinkx-system deploy tick)
+Description=Sync this box to origin (thinkx-system)
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=oneshot
 WorkingDirectory=/src/thinkx-system
-ExecStart=/usr/local/bin/deploy_tick.sh %i
+ExecStart=/usr/local/bin/sync_from_origin.sh %i
 
 # root で動かす。kaz は sudoers に入っていないため User=kaz では systemctl も
 # /usr/local/bin への install も動かない(2026-07-21 実測)。
-# git だけは deploy_tick.sh 側で `sudo -H -u kaz` として実行し、所有者を壊さない。
+# git だけは sync_from_origin.sh 側で `sudo -H -u kaz` として実行し、所有者を壊さない。
