@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+# thinkx-system/infra/scripts/deploy_staging_from.sh
+#
+# staging の web と LB を develop に合わせる。
+#
+#   使い方: bash infra/scripts/deploy_staging_from.sh <branch>
+#   例:     bash infra/scripts/deploy_staging_from.sh monorepo
+#
+# 引数の branch は「出したいのはこの branch の内容だ」という指定である。develop が
+# その内容を含んでいることを先に確かめ、含んでいなければ止める(まだ merge して
+# いないのに「出した」と思い込むのを防ぐ)。
+#
+# ここでやるのはサーバーへの反映だけである。git には触らない。
+# develop に取り込むのは pr_and_merge_to_develop.sh <branch>。
+#
+# timer が入っていれば60秒以内に勝手に追いつくが、ここで実行して結果をその場で見せる。
+# timer が先に引いていれば「既に一致」で即座に何もせず返るので、二重に走っても衝突しない。
+
+set -euo pipefail
+
+deploy_staging_from() {
+  local G=$'\033[32m' R=$'\033[31m' Y=$'\033[33m' Z=$'\033[0m'
+  local src host fail=0
+
+  if [ "$#" -eq 0 ]; then
+    printf '%b\n' "${Y}branch を指定してください。${Z}"
+    echo "  使い方: bash infra/scripts/deploy_staging_from.sh <branch>"
+    echo "  例:     bash infra/scripts/deploy_staging_from.sh monorepo"
+    return 1
+  fi
+  src="$1"
+
+  [ -f infra/run/sync_from_origin.sh ] || { printf '%b\n' "${R}FAIL: リポジトリ直下で実行する${Z}"; return 1; }
+
+  git fetch --quiet origin
+  git rev-parse --verify --quiet "origin/$src" >/dev/null ||
+    { printf '%b\n' "${R}FAIL: origin/$src が無い${Z}"; return 1; }
+
+  if ! git merge-base --is-ancestor "origin/$src" origin/develop 2>/dev/null; then
+    printf '%b\n' "${R}FAIL: develop はまだ $src の内容を含んでいません${Z}"
+    echo
+    echo "== develop に入っていない $src のコミット =="
+    git log --oneline "origin/develop..origin/$src"
+    echo
+    printf '%b\n' "${Y}  先にこれを実行してください: bash infra/scripts/pr_and_merge_to_develop.sh $src${Z}"
+    return 1
+  fi
+
+  # 実行する本体は origin/develop から取り出して ssh の標準入力で渡す。サーバーの
+  # checkout にあるファイルを使うと、そのファイル自体をこれから配る回に「まだ無い」で止まる
+  # (実際に本番と staging LB の両方で無かった。2026-07-21 実測)。
+  for host in supercom-web1-stg supercom-lb1-stg; do
+    echo
+    echo "== $host を develop に合わせる =="
+    git show "origin/develop:infra/run/sync_from_origin.sh" \
+      | ssh -o ConnectTimeout=8 "$host" 'sudo bash -s staging' || fail=$((fail+1))
+  done
+
+  if [ "$fail" -ne 0 ]; then
+    echo
+    printf '%b\n' "${R}FAIL: staging への反映が止まりました${Z}"
+    printf '%b\n' "${Y}  git 側は終わっています。develop を merge し直す必要はありません。${Z}"
+    printf '%b\n' "${Y}  上に出ている理由を解消してから、同じコマンドをもう一度実行してください。${Z}"
+    return 1
+  fi
+
+  echo
+  echo "== 確認(staging の web に直接) =="
+  ssh -o ConnectTimeout=8 supercom-web1-stg 'for hp in "thinkxinc.com:8005" "truetechjapan.com:8005" "transformism.art:8006" "kazukiotsuka.com:8007"; do
+      h="${hp%%:*}"; p="${hp##*:}"
+      c="$(curl -s -o /dev/null -w "%{http_code}" -m 10 -H "Host: $h" "http://localhost:$p/" || true)"
+      [ "$c" = 200 ] && printf "  \033[32m%-24s %s\033[0m\n" "$h" "$c" || printf "  \033[31m%-24s %s\033[0m\n" "$h" "$c"
+    done'
+
+  printf '%b\n' "${G}OK: staging へ反映しました${Z}"
+  printf '%b\n' "${Y}  本番へ出すには: bash infra/scripts/deploy_production_from_staging.sh${Z}"
+}
+
+deploy_staging_from "$@"

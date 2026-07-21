@@ -5,7 +5,7 @@
 # 真実は infra/.env(.gitignore)の DISCORD_WEBHOOK_DEPLOY_BOT。
 # 名指しで取る(将来 .env に別ボットの webhook が増えても取り違えないため)。
 #
-# 配布先を checkout の外(/etc/thinkx)にする理由: deploy_tick.sh が git を動かすため、
+# 配布先を checkout の外(/etc/thinkx)にする理由: sync_from_origin.sh が git を動かすため、
 # checkout 内に置くと消える。サーバー側は URL 単体の平文ファイル。
 #
 # 値は端末にも履歴にも出さない(抜き出しから scp まで、一度も echo しない)。

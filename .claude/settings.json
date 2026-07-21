@@ -45,8 +45,6 @@
       "Write(ARCHIVE.md)",
       "Edit(.claude/**)",
       "Write(.claude/**)",
-      "Edit(/CLAUDE.md)",
-      "Write(/CLAUDE.md)",
 
       "Bash(aws iam:*)",
       "Bash(aws ec2 terminate-instances:*)",
