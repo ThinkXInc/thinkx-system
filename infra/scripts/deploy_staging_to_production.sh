@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
-# thinkx-system/infra/scripts/release.sh   【分類: 変更系(本番に反映する・これが承認そのもの)】
+# thinkx-system/infra/scripts/deploy_staging_to_production.sh
+#   【分類: 変更系(本番に反映する・これが承認そのもの)】
 #
-# staging(origin/develop)の現在地を凍結して本番へ出す。
+# 今 staging で動いているもの(origin/develop)を、そのまま凍結して本番へ出す。
+# staging で目視確認した状態と、本番に出るものが同一であることを保証する。
 #
-#   使い方: bash infra/scripts/release.sh
+#   使い方: bash infra/scripts/deploy_staging_to_production.sh
 #
 # これを実行することが「承認」である。実行した瞬間の origin/develop が release として
 # 凍結され、以後 develop がどう動いても本番に出るのはこの一点だけになる。
@@ -19,7 +21,7 @@
 
 set -euo pipefail
 
-release() {
+deploy_staging_to_production() {
   local G=$'\033[32m' R=$'\033[31m' Y=$'\033[33m' Z=$'\033[0m'
   local sha day br n svc ans u code
   local -a targets=()
@@ -99,4 +101,4 @@ release() {
   printf '%b\n' "${G}OK: $br を本番へ反映しました($sha)${Z}"
 }
 
-release "$@"
+deploy_staging_to_production "$@"
