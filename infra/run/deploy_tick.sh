@@ -7,9 +7,12 @@
 #
 #   使い方: deploy_tick.sh <staging|prod>
 #
-#   staging -> origin/develop を追う。未コミットの編集、または未 push のコミットがあれば
-#              反映せず通知する(git reset --hard で作業台を壊さないため)
-#   prod    -> origin/production を追う。誰も編集しないので無条件で合わせる
+#   staging -> origin/develop を追う
+#   prod    -> origin/production を追う
+#
+# どちらも「きれいなときだけ早送り(merge --ff-only)、何か手が入っていたら消さずに止めて通知」。
+# reset --hard は使わない。サーバー上の直接変更を無言で消すのを避けるため(オーナー裁定 2026-07-21)。
+# 止まった先の判断は人間が行う(その変更を commit して origin に取り込み、きれいにしてから再開)。
 #
 # 反映後に検証し、落ちていたら直前の ref へ戻して通知する。
 
@@ -59,14 +62,14 @@ restart_all() {
 
 deploy_tick() {
   local env="${1:?usage: deploy_tick.sh <staging|prod>}"
-  local branch guard host prev new changed ahead svc
+  local branch host prev new changed ahead svc
   local -a targets=()
 
   host="$(hostname)"
 
   case "$env" in
-    staging) branch=develop;    guard=yes ;;
-    prod)    branch=production; guard=no  ;;
+    staging) branch=develop ;;
+    prod)    branch=production ;;
     *) echo "FAIL: 第1引数は staging か prod(指定: $env)" >&2; return 1 ;;
   esac
 
@@ -82,22 +85,22 @@ deploy_tick() {
 
   [ "$prev" = "$new" ] && return 0
 
-  if [ "$guard" = yes ]; then
-    if [ -n "$(git status --porcelain)" ]; then
-      notify ":warning: **$host** 未コミットの変更があるため反映を見送りました。commit + push してください。
+  # サーバー側に何か手が入っていたら、消さずに止めて人間に渡す(staging / prod 共通)
+  if [ -n "$(git status --porcelain)" ]; then
+    notify ":warning: **$host** 未コミットの変更があるため反映を見送りました。消していません。commit + push してください。
 \`\`\`
 $(git status --short | head -20)
 \`\`\`"
-      return 0
-    fi
-    ahead="$(git rev-list --count "origin/$branch..HEAD")"
-    if [ "$ahead" != 0 ]; then
-      notify ":warning: **$host** push されていないコミットが $ahead 件あるため反映を見送りました。push してください。
+    return 0
+  fi
+
+  ahead="$(git rev-list --count "origin/$branch..HEAD")"
+  if [ "$ahead" != 0 ]; then
+    notify ":warning: **$host** \`origin/$branch\` に無いコミットが $ahead 件あるため早送りできません。消していません。push して \`$branch\` に取り込んでください。
 \`\`\`
 $(git log --oneline "origin/$branch..HEAD" | head -20)
 \`\`\`"
-      return 0
-    fi
+    return 0
   fi
 
   changed="$(git diff --name-only "$prev" "$new")"
@@ -109,7 +112,7 @@ $(git log --oneline "origin/$branch..HEAD" | head -20)
     case " ${targets[*]-} " in *" $svc "*) ;; *) targets+=("$svc") ;; esac
   done <<< "$changed"
 
-  git reset --hard --quiet "$new"
+  git merge --ff-only --quiet "$new"
 
   sudo install -m 0755 "$REPO/infra/run/deploy_tick.sh" "$SELF_INSTALLED"
 
@@ -123,6 +126,8 @@ $(git log --oneline "origin/$branch..HEAD" | head -20)
 
   for svc in "${targets[@]}"; do
     if ! verify_service "$svc"; then
+      # ここだけ reset --hard を使う。戻しは巻き戻しなので早送りにならない。
+      # 直前に clean を確認して早送りした直後なので、消えるのは今入れた分だけ。
       git reset --hard --quiet "$prev"
       restart_all "${targets[@]}"
       notify ":rotating_light: **$host** \`${new:0:7}\` の反映で **$svc** が応答しません。\`${prev:0:7}\` へ戻しました。"
