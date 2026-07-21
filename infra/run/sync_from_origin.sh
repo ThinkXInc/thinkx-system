@@ -39,6 +39,7 @@ set -euo pipefail
 REPO=/src/thinkx-system
 WEBHOOK_FILE=/etc/thinkx/discord_webhook
 SELF_INSTALLED=/usr/local/bin/sync_from_origin.sh
+BLOCKED_STATE=/var/lib/thinkx/blocked_notified
 
 # git は必ず kaz として実行する(root が触ると所有者が壊れる)
 g() { sudo -H -u kaz git -C "$REPO" "$@"; }
@@ -54,6 +55,21 @@ box_label() {
     *)                 echo "$1"          ;;
   esac
 }
+
+# 止まっているときの通知は1回だけにする。
+# 反映を見送っている間は毎回(60秒ごと)同じ状況が続くため、素直に通知すると同じ文面が
+# 延々と流れる。「何が原因で止まっているか」が変わったときだけ知らせる。
+# 状況が変われば(人が commit した・別のコミットが来た)また通知される。
+notify_once() {
+  local key="$1" text="$2"
+  mkdir -p "$(dirname "$BLOCKED_STATE")"
+  [ "$(cat "$BLOCKED_STATE" 2>/dev/null)" = "$key" ] && return 0
+  printf '%s' "$key" > "$BLOCKED_STATE"
+  notify "$text"
+}
+
+# 止まっていた状態から抜けたら、次に止まったときは必ず通知されるようにする
+clear_blocked() { rm -f "$BLOCKED_STATE"; }
 
 notify() {
   local text="$1" url
@@ -104,7 +120,7 @@ ssh '"$host"' '"'"'journalctl -u deploy-timer@'"$env"' -n 50 --no-pager'"'"'
 
   # サーバー側に何か手が入っていたら、消さずに止めて人間に渡す(staging / prod 共通)
   if [ -n "$(g status --porcelain)" ]; then
-    notify ":warning: **$box** このサーバーの上で編集されたファイルがあるので、反映を止めました。
+    notify_once "dirty:$new:$(g status --porcelain | cksum)" ":warning: **$box** このサーバーの上で編集されたファイルがあるので、反映を止めました。
 **編集は消していません。そのままです。**
 \`\`\`
 $(g status --short | head -20)
@@ -119,7 +135,7 @@ cd /src/thinkx-system && git add -A && git commit -m '内容' && git push
 
   ahead="$(g rev-list --count "origin/$branch..HEAD")"
   if [ "$ahead" != 0 ]; then
-    notify ":warning: **$box** このサーバーの上で作られたまま、まだ送られていないコミットが $ahead 件あります。反映を止めました。
+    notify_once "ahead:$new:$prev" ":warning: **$box** このサーバーの上で作られたまま、まだ送られていないコミットが $ahead 件あります。反映を止めました。
 **コミットは消していません。そのままです。**
 \`\`\`
 $(g log --oneline "origin/$branch..HEAD" | head -20)
@@ -144,6 +160,7 @@ ssh $host 'cd /src/thinkx-system && git push'
   done <<< "$changed"
 
   g merge --ff-only --quiet "$new"
+  clear_blocked
 
   # 自分自身の入れ替え。install は同じファイルを truncate して書き直すため、実行中の
   # このスクリプトを直接上書きすると bash が読んでいる途中で中身が入れ替わる。
