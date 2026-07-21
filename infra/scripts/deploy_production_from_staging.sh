@@ -74,13 +74,17 @@ deploy_production_from_staging() {
 
   # サーバーを production に合わせる。実装はサーバー側の sync_from_origin.sh 1つだけで、
   # systemd timer が呼ぶのも同じもの。手動と自動で挙動が食い違わない。
+  #
+  # 実行する本体は origin/production から取り出して ssh の標準入力で渡す。サーバーの
+  # checkout にあるファイルを使うと、そのファイル自体をこれから配る回に「まだ無い」で
+  # 止まる(実際に本番と staging LB の両方で無かった。2026-07-21 実測)。
+  # 渡すのは Mac の作業ツリーではなく「いま production にあるもの」なので、サーバーが
+  # このあと自分で持つことになるものと同一である。
   for host in supercom-web1 supercom-lb1; do
     echo
     echo "== $host を production に合わせる =="
-    ssh -o ConnectTimeout=8 "$host" '
-      test -x /usr/local/bin/sync_from_origin.sh ||
-        sudo install -m 0755 /src/thinkx-system/infra/run/sync_from_origin.sh /usr/local/bin/
-      sudo /usr/local/bin/sync_from_origin.sh prod' || fail=$((fail+1))
+    git show "origin/production:infra/run/sync_from_origin.sh" \
+      | ssh -o ConnectTimeout=8 "$host" 'sudo bash -s prod' || fail=$((fail+1))
   done
 
   if [ "$fail" -ne 0 ]; then
