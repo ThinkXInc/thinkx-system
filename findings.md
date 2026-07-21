@@ -152,6 +152,20 @@ c687662 M-4 done: discord webhook はデモ判定で残置(オーナー裁定)�
   - tree_sha256 全一致 `ab534a69ddb3ade5634253bc0d8b0c1bd6ea4e215a856b4320eb9b60b5495b04`
 - コピー欠落起因の落ちは無し(M-3 の force-add 復元が効いている)。
 
+## 事故記録: ビルド生成物を直接編集した(2026-07-21)
+TrueTech の表示遅延修正で `thinkx/web-server/views/js/main.js` を直接編集した。
+同ファイルは `views/src/js/main.js` から babel が生成する生成物で `.gitignore` 済み。
+次のビルドで消える変更だった。詳細と再発防止は `thinkx/findings.md` の F-E14 に記録。
+配線の穴(ワークスペース側):
+1. ルート CLAUDE.md は `<project>/CLAUDE.md` を都度読めと規定するが、thinkx /
+   kazukiotsukacom / transformism の CLAUDE.md はいずれも views ビルドに触れていない。
+   規定どおり読んだ唯一の文書が必要な事実を持っていなかった(主因)。
+2. `docs/SITE_REQUIREMENTS.md` は必要な事実(L17-19)を持つが、CLAUDE.md から参照されていない。
+3. CLAUDE.md L30 のパス欠落(`docs/` 抜け)。本日修正済み。ビルド詳細を持たない文書のため
+   今回の直接原因ではない。
+役割別必読の新設・3サイト CLAUDE.md へのビルド節追加・SITE_REQUIREMENTS へのコマンド明記は
+提案済み・未着手。
+
 ## 参考: libcommon の実発見(別台帳)
 
 libcommon リファクタの QA 中に検出した2件(vector_database が特性テスト網の外 / DEFAULT_LANG の
