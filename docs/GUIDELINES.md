@@ -83,3 +83,14 @@ Rules（records と同じ形式）
 - **文脈**: worktree 分離の撤回議論を、当初 auth-spec の `04_DECISIONS_AND_RATIONALE.md` に倣った
   構造化文書(決定/理由/却下)として書いたところ、オーナーから上記の指示を受けて会話形式へ書き直した。
   適用: docs/archive/discussion-2026-07-20-worktree.md
+
+## 名前は重要なものを先に置く(オーナー指示 2026-07-21)
+
+- **原文**: 「deploy_production_from_staging.sh とか つまり重要なものが先に来るんだ。これはプロダクションを操作しようとしているんだから、プロダクションが先に来るべきなんだよ。」
+- **解釈**: スクリプト名・関数名・識別子は、**操作の対象(何に影響するか)を動詞の直後に置く**。
+  経路や出所は後ろに回す。読み手が最初に知りたいのは「何が変わるのか」であり、
+  「どこから来るのか」ではない。`deploy_staging_to_production` は時系列(staging → production)の
+  順で並べているが、危険度の順ではない。本番を触るスクリプトは名前の2語目で本番だと分かるべき。
+- **文脈**: 本番反映スクリプトを `release.sh` として作ったところ「名前から何が起きるか分からない」と
+  指摘され、`deploy_staging_to_production.sh` に改名。さらに上記の指示で
+  `deploy_production_from_staging.sh` へ再改名した。
