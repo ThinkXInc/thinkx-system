@@ -53,7 +53,7 @@ pr_and_merge_to_develop() {
   back="$(git rev-list --count --no-merges "origin/$src..origin/develop")"
   if [ "$back" != 0 ]; then
     banner "注意: develop にあって $src に無いコミット($back 件)"
-    git log --oneline --no-merges "origin/$src..origin/develop"
+    git --no-pager log --oneline --no-merges "origin/$src..origin/develop"
     echo
     printf '%b\n' "${Y}  staging の上で直接編集されたものが手元に戻っていない可能性があります。${Z}"
     echo "To bring them back, run:"
@@ -76,7 +76,7 @@ pr_and_merge_to_develop() {
   done <<< "$(git diff --name-only "origin/develop...$sha")"
 
   banner "$src -> develop"
-  git log --oneline origin/develop.."$sha"
+  git --no-pager log --oneline origin/develop.."$sha"
 
   banner "再起動(変更)されるサービス"
   if [ "${#targets[@]}" -eq 0 ]; then echo "  なし(配信物の変更なし)"; else printf '  %s\n' "${targets[@]}"; fi

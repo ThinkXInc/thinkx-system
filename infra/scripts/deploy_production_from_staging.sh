@@ -47,7 +47,7 @@ deploy_production_from_staging() {
     done <<< "$(git diff --name-only "origin/production...$sha")"
 
     banner "develop -> production(本番に出す内容)"
-    git log --oneline origin/production.."$sha"
+    git --no-pager log --oneline origin/production.."$sha"
     echo
     echo "承認対象: $sha"
 

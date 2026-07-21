@@ -49,7 +49,7 @@ merge_develop_into() {
 
   back="$(git rev-list --count --no-merges "HEAD..origin/develop")"
   banner "develop -> $dst に入るコミット($back 件)"
-  git log --oneline --no-merges "HEAD..origin/develop"
+  git --no-pager log --oneline --no-merges "HEAD..origin/develop"
   echo
 
   printf '%b' "${Y}continue? (yes/no): ${Z}"
