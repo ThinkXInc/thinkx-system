@@ -42,7 +42,7 @@ deploy_production_from_staging() {
         *) continue ;;
       esac
       case " ${targets[*]-} " in *" $svc "*) ;; *) targets+=("$svc") ;; esac
-    done <<< "$(git diff --name-only origin/production "$sha")"
+    done <<< "$(git diff --name-only "origin/production...$sha")"
 
     echo
     echo "== 本番に出す内容 =="

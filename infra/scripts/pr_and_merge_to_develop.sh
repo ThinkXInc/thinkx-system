@@ -45,11 +45,12 @@ pr_and_merge_to_develop() {
 
   # staging の上で直接編集されたものが develop に入っていて、手元の branch に無い場合。
   # 止めはしないが、放っておくと手元と staging が食い違ったまま離れていく。
-  back="$(git rev-list --count "origin/$src..origin/develop")"
+  # merge commit は中身を持たないので数えない(PR の履歴が並ぶだけで読めなくなる)
+  back="$(git rev-list --count --no-merges "origin/$src..origin/develop")"
   if [ "$back" != 0 ]; then
     echo
     printf '%b\n' "${Y}注意: develop にあって $src に無いコミットが $back 件あります${Z}"
-    git log --oneline "origin/$src..origin/develop"
+    git log --oneline --no-merges "origin/$src..origin/develop"
     echo
     printf '%b\n' "${Y}  staging の上で直接編集されたものが手元に戻っていない可能性があります。${Z}"
     printf '%b\n' "${Y}  戻すには: bash infra/scripts/merge_develop_into.sh $src${Z}"
@@ -68,7 +69,7 @@ pr_and_merge_to_develop() {
       *) continue ;;
     esac
     case " ${targets[*]-} " in *" $svc "*) ;; *) targets+=("$svc") ;; esac
-  done <<< "$(git diff --name-only origin/develop "$sha")"
+  done <<< "$(git diff --name-only "origin/develop...$sha")"
 
   echo "== $src から develop に入る内容 =="
   git log --oneline origin/develop.."$sha"
