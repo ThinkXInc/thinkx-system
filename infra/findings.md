@@ -689,3 +689,30 @@ staging lb  20G 中 6.0G (32%)  空き 14G
 Mac のローカルが 5GB 超なのは node_modules・venv・LFS 動画など git 管理外を含むため。
 サーバーの clone は 3.0G。当面足りるが、**staging web は citywalk legacy 取り込みで 58% に上がった**。
 citywalk を本格的に載せると効く。D-57(t3.medium 化)はメモリの話でディスクとは独立。
+
+## 検証が旧サーバーを見ていた(2026-07-21・重大)
+
+本番反映後の確認を素のドメイン(`https://truetechjapan.com` 等)で行っていたが、**これらは
+DNS 未切替でオンプレ(123.226.234.127)を指している**。AWS のデプロイが成功しようが失敗しようが
+200 が返るため、**検証として成立していなかった**。
+
+```
+thinkxinc.com / truetechjapan.com / transformism.art / kazukiotsuka.com  -> 123.226.234.127(オンプレ)
+staging.*                                                                -> 52.68.142.190(AWS)
+```
+
+`deploy_production_from_staging.sh` の確認ブロックと手順書の確認 URL を、web へ直接当てる形
+(`ssh supercom-web1` から `curl -H "Host: ..." localhost:800X`)に変更した。公開ドメインでの
+確認は DNS 切替後に意味を持つ。
+
+派生して判明したこと:
+- 受賞企業ページの URL は `/truetechjapan/award/<company_key>`(`/award_companies/<key>` ではない)
+- AWS 本番は4社とも 200・css も新ビルド(129944B)で、**デプロイ自体は完全に成功していた**
+- LB の vhost は `prod.*` と `staging.*` のみで素のドメインを持たない。切替時に追加が要る
+
+## deploy.sh の多バイト文字による unbound variable(2026-07-21)
+
+`"...(origin/$br・再起動: ...)"` で `$br` の直後に多バイト文字 `・` が続き、`set -u` 下で
+`br?: unbound variable` になった。**変数展開の直後が非 ASCII なら `${br}` と括る。**
+全処理が終わった後の最終行だったため実害は無かったが、ラッパーが非ゼロ終了を見て
+「FAIL: 反映が止まりました」と誤報した。

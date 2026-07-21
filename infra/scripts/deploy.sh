@@ -114,7 +114,7 @@ deploy() {
     esac
   done
 
-  printf '%b\n' "${G}OK: deploy $env 反映完了(origin/$br・再起動: $*)${Z}"
+  printf '%b\n' "${G}OK: deploy $env 反映完了(origin/${br}・再起動: $*)${Z}"
 }
 
 deploy "$@"

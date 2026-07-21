@@ -86,17 +86,28 @@ deploy_production_from_staging() {
   if [ "${#targets[@]}" -gt 0 ]; then
     echo "== prod へ反映 =="
     bash infra/scripts/deploy.sh prod "${targets[@]}" || {
-      printf '%b\n' "${R}FAIL: prod への反映が止まりました。上のメッセージに従って対処し、deploy.sh prod ${targets[*]} を再実行してください${Z}"
-      printf '%b\n' "${Y}production への取り込みは完了しています($br)。やり直すのは反映だけです${Z}"
+      echo
+      printf '%b\n' "${R}FAIL: サーバーへの反映が止まりました${Z}"
+      printf '%b\n' "${Y}  release の凍結と production への取り込みは完了しています($br)。${Z}"
+      printf '%b\n' "${Y}  git 側はやり直す必要がありません。上の DIRTY / NON-FF / WRONG-BRANCH の${Z}"
+      printf '%b\n' "${Y}  指示に従ってサーバーを整えてから、次の1行だけを再実行してください:${Z}"
+      echo
+      printf '%b\n' "    bash infra/scripts/deploy.sh prod ${targets[*]}"
+      echo
       return 1
     }
   fi
 
-  echo "== 確認 =="
-  for u in https://thinkxinc.com https://truetechjapan.com https://transformism.art https://kazukiotsuka.com; do
-    code="$(curl -s -o /dev/null -w '%{http_code}' -m 10 "$u" || true)"
-    [ "$code" = 200 ] && printf "  %b%-34s %s%b\n" "$G" "$u" "$code" "$Z" || printf "  %b%-34s %s%b\n" "$R" "$u" "$code" "$Z"
-  done
+  # 確認は web に直接当てる。素のドメイン(thinkxinc.com 等)は DNS 未切替でオンプレを
+  # 指しており、AWS のデプロイが成功しようが失敗しようが 200 を返す(2026-07-21 実測)。
+  # 公開ドメインでの確認は DNS 切替後に意味を持つ。
+  echo "== 確認(AWS の web に直接) =="
+  ssh -o ConnectTimeout=8 supercom-web1 'for hp in "thinkxinc.com:8005" "transformism.art:8006" "kazukiotsuka.com:8007"; do
+      h="${hp%%:*}"; p="${hp##*:}"
+      c="$(curl -s -o /dev/null -w "%{http_code}" -m 10 -H "Host: $h" "http://localhost:$p/" || true)"
+      [ "$c" = 200 ] && printf "  \033[32m%-24s %s\033[0m\n" "$h" "$c" || printf "  \033[31m%-24s %s\033[0m\n" "$h" "$c"
+    done'
+  printf '%b\n' "${Y}  公開ドメインはまだオンプレを指しています(DNS 未切替)。AWS の確認は prod.* か上記で行う${Z}"
 
   printf '%b\n' "${G}OK: $br を本番へ反映しました($sha)${Z}"
 }
