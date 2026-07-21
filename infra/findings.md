@@ -777,3 +777,24 @@ URL が変わらない。「本番に出したのに古いものが見える」�
 - `infra/scripts/deploy_production_from_staging.sh` — 唯一のデプロイの入口
 - `infra/run/sync_from_origin.sh` — この箱を origin に合わせる(timer と手動が共有する唯一の実装)
 - `infra/run/build_and_restart.sh <service>` — 1サービスを作り直して再起動し応答を確かめる
+
+## 箱ごとの担当判定(2026-07-21・実測)
+
+web と lb は同じリポジトリを持つため、変更パスからサービスを判定すると「LB の設定変更で web を
+巻き戻す」「lb で thinkx を起動する」が起きうる。実測で判別方法を確定した。
+
+```
+web : nginx active -> /src/thinkx-system/nginx-web-root/nginx.service   uwsgi_thinkx active
+lb  : nginx active -> /src/thinkx-system/loadbalancer/nginx.service     uwsgi_thinkx inactive(ユニットは存在する)
+web の nginx は 80 ではなく 8005/8006/8007 で listen(各 uwsgi の前段)
+```
+
+判定は2段:
+1. **`systemctl is-active` で「この箱で現に動いているか」**。ユニットの有無では判別できない
+   (lb にも uwsgi_thinkx のユニットが inactive で存在する。有無で判定すると lb で thinkx が起動する)
+2. **nginx はどちらの箱でも動いているので、`/etc/systemd/system/nginx.service` の実体が
+   どのディレクトリを指すか**で web(nginx-web-root)と lb(loadbalancer)を見分ける
+
+誤り訂正: 一度「web は nginx を動かしていない(80 が応答しない)」と判断したが誤り。
+web の nginx は 8005/8006/8007 で listen している。`curl localhost:80` の結果だけで
+役割を推論したのが浅かった(オーナー指摘)。

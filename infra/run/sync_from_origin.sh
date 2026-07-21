@@ -7,7 +7,7 @@
 #
 # 呼ばれ方は2つ。どちらも同じこの実装を通る(経路を増やさないため):
 #   - systemd timer(deploy-timer@<env>.timer)から60秒ごと
-#   - Mac から infra/scripts/sync_servers_from_origin.sh 経由で ssh
+#   - Mac から infra/scripts/deploy_production_from_staging.sh 経由で ssh
 # 直接実行前提(source しない)。実体は setup_deploy_timer.sh が /usr/local/bin へ複製する
 # (実行中に git がスクリプト自身を書き換えると bash が壊れるため、必ず複製側を動かす)。
 #
@@ -113,17 +113,20 @@ $(g log --oneline "origin/$branch..HEAD" | head -20)
   fi
 
   # ビルド・再起動・検証は build_and_restart.sh 1本が持つ。ここでは呼ぶだけ。
+  local failed="" s2
   for svc in "${targets[@]}"; do
-    if ! bash "$REPO/infra/run/build_and_restart.sh" "$svc"; then
-      # 戻しは巻き戻しなので早送りにならない。直前に clean を確認して早送りした
-      # 直後なので、消えるのは今入れた分だけ。
-      g reset --hard --quiet "$prev"
-      for svc in "${targets[@]}"; do bash "$REPO/infra/run/build_and_restart.sh" "$svc" || true; done
-      notify ":rotating_light: **$host** \`${new:0:7}\` の反映で **$svc** が応答しません。\`${prev:0:7}\` へ戻しました。"
-      trap - ERR
-      return 1
-    fi
+    if ! bash "$REPO/infra/run/build_and_restart.sh" "$svc"; then failed="$svc"; break; fi
   done
+
+  if [ -n "$failed" ]; then
+    # 戻しは巻き戻しなので早送りにならない。直前に clean を確認して早送りした
+    # 直後なので、消えるのは今入れた分だけ。
+    g reset --hard --quiet "$prev"
+    for s2 in "${targets[@]}"; do bash "$REPO/infra/run/build_and_restart.sh" "$s2" || true; done
+    notify ":rotating_light: **$host** \`${new:0:7}\` の反映で **$failed** が応答しません。\`${prev:0:7}\` へ戻しました。"
+    trap - ERR
+    return 1
+  fi
 
   notify ":white_check_mark: **$host** \`$branch\` を \`${new:0:7}\` へ反映しました。
 再起動: ${targets[*]}
