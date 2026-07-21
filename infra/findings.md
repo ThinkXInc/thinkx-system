@@ -620,3 +620,32 @@ staging から prod へ ssh させる案は staging に prod の鍵を置くこ�
   release branch は `git branch <名前> origin/develop` で作る — checkout を伴わないので安全
 - 未実装: `develop` / `production` branch(未作成)、`gh` 認証(未実施)、pull 型 timer(本体未着手)。
   それまでのつなぎとして手順書に「手動デプロイ」節を残している
+
+## デプロイ方式の実地投入で露出した3点(2026-07-21)
+
+- **貼り付け用コマンドは折り返す長さにしない。** `ssh host 'a && b'` を渡したところ、
+  ターミナル幅で折り返されて `git -C` の引数が次行に落ち、「fetch は成功したが checkout は失敗」
+  という半端な状態になった。原因が分かりにくい。1コマンド1ブロックに分割する
+  (zsh のインラインコメント禁止と同種の、手渡し用ブロックの制約)
+- **`git branch <名> origin/monorepo` は上流も origin/monorepo にする。** develop / production を
+  作った直後、両方が origin/monorepo を追跡していた。`git branch -u` で直す必要がある。
+  放置すると `git status` / `git pull` が別ブランチと比較して混乱する
+- **サーバー側 checkout は先に fetch が要る。** `checkout -B develop origin/develop` は
+  remote-tracking ref がローカルに無いと `'origin/develop' is not a commit` で落ちる。
+  staging web は事前の診断で fetch 済みだったため通り、lb だけ落ちて差が出た
+
+投入結果(2026-07-21):
+- staging web / lb = develop・dirty 0(get-pip.py は .gitignore で除外)
+- prod web / lb = production(40e5e96 = prod の従前の配信内容)。4サイト 200 で無影響
+- prod web は dirty 3(get-pip.py)。prod はまだ .gitignore 更新を受け取っていないため正常。
+  ただし**この状態で deploy.sh prod を叩くと DIRTY で止まる**。初回本番デプロイの前に
+  prod の get-pip.py を消しておく
+- `production` は当初 origin/monorepo から作ってしまい、prod を 7/19 から今日の先端へ
+  50コミット飛ばすところだった。prod の現在地(40e5e96)へ `git branch -f` で戻してから
+  checkout した。**新しい branch を作って既存サーバーに載せるときは、branch の起点を
+  サーバーの現在地に合わせる**(でないと checkout が無検証の一括デプロイになる)
+
+既知の粗さ(未修正):
+- `deploy_tick.sh` のサービス判定が host を見ていない。`loadbalancer/` の変更で web 側でも
+  nginx を再起動し、`nginx-web-root/` の変更で lb 側でも再起動する。動作は壊れないが無関係な
+  再起動が起きる。staging で挙動を観察してから直す
