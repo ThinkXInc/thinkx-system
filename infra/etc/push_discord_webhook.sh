@@ -2,8 +2,8 @@
 # etc/push_discord_webhook.sh — Discord webhook URL を host の /etc/thinkx/ へ配る
 #   Mac から: infra/etc/push_discord_webhook.sh supercom-web1-stg
 #
-# 真実は infra/.env(.gitignore)。`KEY=値` でも URL 単体でも読める
-# (ファイル内から webhook URL のパターンだけを抜き出すため、形式に依存しない)。
+# 真実は infra/.env(.gitignore)の DISCORD_WEBHOOK_DEPLOY_BOT。
+# 名指しで取る(将来 .env に別ボットの webhook が増えても取り違えないため)。
 #
 # 配布先を checkout の外(/etc/thinkx)にする理由: deploy_tick.sh が git を動かすため、
 # checkout 内に置くと消える。サーバー側は URL 単体の平文ファイル。
@@ -12,6 +12,7 @@
 
 push_discord_webhook() {
   local host="${1:?usage: push_discord_webhook.sh <ssh-host>}"
+  local key=DISCORD_WEBHOOK_DEPLOY_BOT
   local here infra src tmp
 
   here="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
@@ -24,11 +25,20 @@ push_discord_webhook() {
   # shellcheck disable=SC2064
   trap "rm -f '$tmp'" RETURN
 
-  grep -oEm1 'https://discord(app)?\.com/api/webhooks/[A-Za-z0-9_/-]+' "$src" > "$tmp" || {
-    echo "FAIL: $src に Discord webhook URL が見つからない" >&2
+  # $key の値だけを取り出す。前後の空白・引用符を落とし、URL の形かどうかまで検査する。
+  sed -n "s/^[[:space:]]*${key}[[:space:]]*=[[:space:]]*[\"']\{0,1\}\([^\"']*\)[\"']\{0,1\}[[:space:]]*$/\1/p" "$src" \
+    | head -1 > "$tmp"
+
+  [ -s "$tmp" ] || {
+    echo "FAIL: $src に $key の行が無い" >&2
+    echo "      形式: $key=https://discord.com/api/webhooks/..." >&2
     return 1
   }
-  [ -s "$tmp" ] || { echo "FAIL: 抜き出した URL が空" >&2; return 1; }
+
+  grep -qE '^https://discord(app)?\.com/api/webhooks/[A-Za-z0-9_/-]+$' "$tmp" || {
+    echo "FAIL: $key の値が Discord webhook URL の形をしていない(値は表示しない)" >&2
+    return 1
+  }
 
   chmod 600 "$tmp"
   scp -q "$tmp" "$host:/tmp/discord_webhook" || return 1
