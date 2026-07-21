@@ -222,3 +222,30 @@
   BEAM の飯村氏は**公式サイトが自ら "Kazuki Iimura"(名+姓)と表記**している。
 - 各人の自称表記を尊重してそのまま採用した。サイト全体で語順を統一する方針にするなら
   一括で決める必要がある。
+
+### F-E14(事故): ビルド生成物を直接編集した(2026-07-21)
+
+- **何が起きたか**: TrueTech の表示遅延(表示まで約6000ms)を直す際、
+  `web-server/views/js/main.js` を直接編集した。同ファイルは `views/src/js/main.js` から
+  babel が生成する**ビルド生成物**で `.gitignore` 済み(`thinkx/.gitignore:35`)。
+  次のビルドで消える変更だった。`git status` に何も出ないことで気づき、
+  `git check-ignore` で確定。`src/js/main.js` を直して babel で焼き直した。
+- **必要な事実がどこにあったか(いずれも既存)**:
+  - `docs/SITE_REQUIREMENTS.md` L17-19 —「views/src/js … babel/lessc で書き出される」
+    「gitignoreに実生成物 views/js, views/css, views/video」
+  - `thinkx/docs/受賞企業ページの作り方.md` §2-4 —「`css/main.css` は `.gitignore` 済み
+    (ビルド生成物)」。ただし **lessc/CSS のみで babel/JS の記載は無い**。踏んだのは JS 側。
+- **なぜ届かなかったか(配線の穴)**:
+  1. ルート CLAUDE.md は「`<project>/CLAUDE.md` を都度読め」と規定するが、`thinkx/CLAUDE.md` に
+     views ビルドの記載も `thinkx/docs/` への言及も無い。**規定どおり読んだ唯一の文書が
+     必要な事実を持っていなかった。** これが主因。
+  2. `docs/SITE_REQUIREMENTS.md` はルート CLAUDE.md のどこからも参照されていない。
+  3. ルート CLAUDE.md L30 が `thinkx-system/SITE_EDIT_WORKFLOW.md` を指すが実体は
+     `docs/SITE_EDIT_WORKFLOW.md`(他行は `docs/` 付き。ここだけ欠落)。ただし同文書は
+     ビルド詳細を持たず「カットオーバー前は未発効」のため、今回の直接原因ではない。
+  4. 同型の3サイト(thinkx / kazukiotsukacom / transformism)は package.json のビルド
+     スクリプトが一字一句同じで、**3つとも CLAUDE.md にビルド記載が無い**。
+     配線を直さない限り**どのサイトでも再発する**。
+- **再発防止**: 編集前に `git check-ignore <path>` を打つ(ignore = 生成物を疑う)。
+  文書側の配線(役割別必読の新設・3サイト CLAUDE.md へのビルド節・SITE_REQUIREMENTS への
+  コマンド明記・受賞企業ページの作り方 §2-4 への babel 追記)は提案済み・オーナー承認待ち。
