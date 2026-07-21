@@ -9,37 +9,41 @@
 #   bash infra/scripts/deploy.sh staging thinkx nginx-web-root loadbalancer
 #
 # 実行されること:
-#   git fetch origin && git diff --quiet && git diff --cached --quiet && git merge --ff-only origin/<ref>
+#   sudo -u kaz git -C /src/thinkx-system fetch origin
+#   現在 branch が env の branch か検査                          # 違えば止める
+#   sudo -u kaz git -C /src/thinkx-system diff --quiet           # 汚れていたら止める
+#   sudo -u kaz git -C /src/thinkx-system merge --ff-only origin/<ref>
 #   bash /src/thinkx-system/infra/run/restart_<service>.sh
 #
-#   staging -> origin/develop に合わせる
-#   prod    -> origin/production に合わせる
+# env と branch の対応:
+#   prod    -> production
+#   staging -> develop
 #
-# 【重要】サービス引数が選ぶのは「再起動するプロセス」だけである。
+# 【サービス引数が選ぶのは再起動するプロセスだけ】
 #   撒かれるコードは常に全サービス分(git はリポジトリ全体を動かすため)。
 #   `deploy.sh prod thinkx` は「thinkx だけ本番に出す」ではなく
-#   「全サービスのコードを本番に合わせ、thinkx のプロセスだけ再起動する」。
-#   サービスを選んで出す仕組みは持っていない(足並みを揃える方式・デプロイ手順書の原則)。
+#   「全サービスのコードを production に合わせ、thinkx のプロセスだけ再起動する」。
 #
-# 【なぜ merge --ff-only か】
-#   pull(ref 非指定)はサーバーが今 checkout しているブランチに依存するため、
-#   「prod は常に production」が保証されない。かといって reset --hard は
-#   サーバー上の直接変更を無言で消す。ff-only + dirty チェックなら、
-#   きれいなときだけ早送りし、何か手が入っていれば消さずに止めて人間に渡す。
+# 設計方針:
+#   - git pull(ref 非指定)は使わない。撒く ref は env から一意に決める。
+#   - reset --hard は使わない。サーバー上の変更を無言で消さない。
+#   - サーバーに未コミット/未マージの変更があれば、消さずに止める。その先の判断は人間が行う。
+#   - restart スクリプトはサーバー側 checkout から実行する。Mac の作業ツリーを入力にしない
+#     (Mac から `bash -s <` で流すと、撒いたコードと再起動手順の出所が食い違う)。
 
 set -euo pipefail
 
 deploy() {
   local G=$'\033[32m' R=$'\033[31m' Y=$'\033[33m' Z=$'\033[0m'
-  local env="${1:-}" web lb svc ref need_web=0 need_lb=0
+  local env="${1:-}" web lb svc br need_web=0 need_lb=0
 
   [ -n "$env" ] || { printf '%b\n' "${Y}注意: 環境の引数がありません。deploy.sh <staging|prod> <サービス...> のように指定してください${Z}"; return 1; }
   { [ "$env" = staging ] || [ "$env" = prod ]; } || { printf '%b\n' "${Y}注意: 第1引数は staging か prod です(指定: $env)${Z}"; return 1; }
   shift
   [ "$#" -ge 1 ] || { printf '%b\n' "${Y}注意: 再起動するサービスがありません。thinkx kazukiotsukacom transformism nginx-web-root loadbalancer から指定してください${Z}"; return 1; }
 
-  web=supercom-web1; lb=supercom-lb1; ref=production
-  [ "$env" = staging ] && web=supercom-web1-stg && lb=supercom-lb1-stg && ref=develop
+  web=supercom-web1; lb=supercom-lb1; br=production
+  [ "$env" = staging ] && { web=supercom-web1-stg; lb=supercom-lb1-stg; br=develop; }
 
   for svc in "$@"; do
     case "$svc" in
@@ -50,23 +54,50 @@ deploy() {
     [ -f "infra/run/restart_$svc.sh" ] || { printf '%b\n' "${R}FAIL: deploy infra/run/restart_$svc.sh が無い(リポジトリ直下で実行する)${Z}"; return 1; }
   done
 
+  # サーバー側で「明示 branch へ ff-only で揃える」。
+  # branch 違い / 汚れ / 独自コミットのいずれでも、何も消さずに非ゼロで返る。
+  sync_remote() {
+    local host="$1"
+    ssh -o ConnectTimeout=8 "$host" "
+      set -e
+      G=/src/thinkx-system
+      sudo -u kaz git -C \$G fetch --quiet origin
+
+      cur=\$(sudo -u kaz git -C \$G rev-parse --abbrev-ref HEAD)
+      if [ \"\$cur\" != $br ]; then
+        echo 'WRONG-BRANCH: /src/thinkx-system は '\"\$cur\"' に居ます($br のはずです)。'
+        echo '  → sudo -u kaz git -C /src/thinkx-system checkout -B $br origin/$br'
+        exit 1
+      fi
+
+      if ! sudo -u kaz git -C \$G diff --quiet || ! sudo -u kaz git -C \$G diff --cached --quiet; then
+        echo 'DIRTY: 未コミットの変更があります。何も消さずに中止しました。'
+        sudo -u kaz git -C \$G status --short
+        echo '  → 必要なら commit・push して $br に取り込み、きれいになってから再実行してください。'
+        exit 1
+      fi
+
+      if ! sudo -u kaz git -C \$G merge --ff-only origin/$br; then
+        echo 'NON-FF: origin/$br に無いコミットがあります。何も消さずに中止しました。'
+        sudo -u kaz git -C \$G log --oneline origin/$br..HEAD
+        echo '  → 必要なら push して $br に取り込み、早送り可能になってから再実行してください。'
+        exit 1
+      fi
+
+      sudo -u kaz git -C \$G log --oneline -1
+    "
+  }
+
   echo "== deploy $env: Mac に全履歴を fetch(バックアップ・D-55)=="
   git fetch origin
 
-  echo "== deploy $env: origin/$ref へ早送り(汚れていたら止める)=="
-  for host in $([ "$need_web" = 1 ] && echo "$web"; [ "$need_lb" = 1 ] && echo "$lb"); do
-    ssh -o ConnectTimeout=8 "$host" "
-      sudo -u kaz git -C /src/thinkx-system fetch --quiet origin || exit 1
-      sudo -u kaz git -C /src/thinkx-system diff --quiet || { echo 'FAIL: 未コミットの変更がある'; sudo -u kaz git -C /src/thinkx-system status --short; exit 2; }
-      sudo -u kaz git -C /src/thinkx-system diff --cached --quiet || { echo 'FAIL: ステージ済みの変更がある'; sudo -u kaz git -C /src/thinkx-system status --short; exit 2; }
-      sudo -u kaz git -C /src/thinkx-system merge --ff-only origin/$ref || { echo 'FAIL: 早送りできない(サーバー側に origin/$ref に無いコミットがある)'; sudo -u kaz git -C /src/thinkx-system log --oneline origin/$ref..HEAD; exit 3; }
-      sudo -u kaz git -C /src/thinkx-system log --oneline -1
-    " || {
-      printf '%b\n' "${R}FAIL: deploy $env $host の更新で止まりました。サーバー側に手が入っています。${Z}"
-      printf '%b\n' "${Y}消さずに止めています。その変更を commit して origin/$ref に取り込み、$ref がきれいになってから再実行してください。${Z}"
-      return 1
-    }
-  done
+  echo "== deploy $env: origin/$br へ ff-only で揃える =="
+  if [ "$need_web" = 1 ]; then
+    sync_remote "$web" || { printf '%b\n' "${R}FAIL: deploy $env web($web)の同期が中止されました。上のメッセージに従って対処してください${Z}"; return 1; }
+  fi
+  if [ "$need_lb" = 1 ]; then
+    sync_remote "$lb" || { printf '%b\n' "${R}FAIL: deploy $env lb($lb)の同期が中止されました。上のメッセージに従って対処してください${Z}"; return 1; }
+  fi
 
   for svc in "$@"; do
     echo "== deploy $env: restart $svc =="
@@ -76,7 +107,7 @@ deploy() {
     esac
   done
 
-  printf '%b\n' "${G}OK: deploy $env 反映完了(origin/$ref・再起動: $*)${Z}"
+  printf '%b\n' "${G}OK: deploy $env 反映完了(origin/$br・再起動: $*)${Z}"
 }
 
 deploy "$@"
