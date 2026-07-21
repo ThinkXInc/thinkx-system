@@ -125,6 +125,13 @@ $(g log --oneline "origin/$branch..HEAD" | head -20)
     return 0
   fi
 
+  # 配信物が生成物のサイトは restart の前にビルドする(deploy.sh と同じ理由)
+  for svc in "${targets[@]}"; do
+    case "$svc" in
+      uwsgi_thinkx) [ -f "$REPO/infra/run/build_thinkx.sh" ] && bash "$REPO/infra/run/build_thinkx.sh" ;;
+    esac
+  done
+
   restart_all "${targets[@]}"
   sleep 3
 

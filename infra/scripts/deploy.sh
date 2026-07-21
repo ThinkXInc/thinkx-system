@@ -100,6 +100,13 @@ deploy() {
   fi
 
   for svc in "$@"; do
+    # 配信物が生成物のサイトは restart の前に必ずビルドする。
+    # ソース(src/less・src/js)を配っただけでは css/js に反映されず、古い配信物が出続ける
+    # (2026-07-21 に本番で実際に起きた)。冪等なので毎回実行する。
+    if [ -f "infra/run/build_$svc.sh" ]; then
+      echo "== deploy $env: build $svc =="
+      ssh -o ConnectTimeout=8 "$web" "bash /src/thinkx-system/infra/run/build_$svc.sh"
+    fi
     echo "== deploy $env: restart $svc =="
     case "$svc" in
       loadbalancer) ssh -o ConnectTimeout=8 "$lb"  "bash /src/thinkx-system/infra/run/restart_$svc.sh" ;;

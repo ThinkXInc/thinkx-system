@@ -649,3 +649,43 @@ staging から prod へ ssh させる案は staging に prod の鍵を置くこ�
 - `deploy_tick.sh` のサービス判定が host を見ていない。`loadbalancer/` の変更で web 側でも
   nginx を再起動し、`nginx-web-root/` の変更で lb 側でも再起動する。動作は壊れないが無関係な
   再起動が起きる。staging で挙動を観察してから直す
+
+## 配信物のビルドがデプロイ経路に無かった(2026-07-21・本番で露出)
+
+受賞企業ページの本番反映で、テンプレートと LESS は届いたのに **css が古いまま**で表示が崩れた。
+`views/css` と `views/js` は `.gitignore` の生成物であり、ソースを配っただけでは配信に出ない。
+`setup_*.sh` には front build があるが、**`deploy.sh` / `restart_*.sh` には無かった**(設計漏れ)。
+
+実測:
+- `award_company.less` 12519B(Jul 21 06:03・デプロイ済み)/ `main.css` 117017B(Jul 18 04:31・古い)
+- repo の npm タスクは `--watch` 常駐用のみ。ワンショットは
+  `npx babel src/js --out-dir js` と `npx lessc src/less/main.less css/main.css` を直接叩く
+
+対応: `infra/run/build_thinkx.sh` を新設し、`deploy.sh` と `deploy_tick.sh` の restart 前に実行。
+**条件分岐で「変わったときだけ」にしない**(判定を誤ると古い配信物を出し続ける)。冪等なので毎回実行する。
+
+**サイトごとに事情が違う(未解決・要調査)**:
+
+| サイト | views/src | css 追跡 | js 追跡 | ビルド配線 |
+|---|---|---|---|---|
+| thinkx | あり | 0 | 0 | **配線済み**(両方とも生成物) |
+| kazukiotsukacom | あり | 0 | 7 | 未配線 |
+| transformism | あり | 4 | 22 | 未配線 |
+
+`transformism` と `kazukiotsukacom` は js/css の一部が **git 追跡されている**。babel/lessc は同じパスへ
+書き出すため、生成物が commit 済みの内容と1バイトでも違えば **ビルドのたびに repo が dirty になり、
+以後のデプロイが恒久的に止まる**。現状 3サイトとも dirty=0 なので一致しているようだが確証がない。
+確認してから配線する。確認方法: 該当サイトでビルドを流し `git status --porcelain` が空のままか見る。
+
+## ディスク実測(2026-07-21)
+
+```
+prod web    49G 中 8.9G (19%)  空き 40G   repo 3.0G / .git 935M
+prod lb     20G 中 5.9G (31%)  空き 14G
+staging web 20G 中  12G (58%)  空き 8.2G  ← 一番きつい
+staging lb  20G 中 6.0G (32%)  空き 14G
+```
+
+Mac のローカルが 5GB 超なのは node_modules・venv・LFS 動画など git 管理外を含むため。
+サーバーの clone は 3.0G。当面足りるが、**staging web は citywalk legacy 取り込みで 58% に上がった**。
+citywalk を本格的に載せると効く。D-57(t3.medium 化)はメモリの話でディスクとは独立。
