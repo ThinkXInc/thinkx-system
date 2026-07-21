@@ -1,14 +1,20 @@
 #!/usr/bin/env bash
-# thinkx-system/infra/run/deploy_tick.sh   【分類: 変更系(箱の中身を origin に合わせる)】
+# thinkx-system/infra/run/sync_from_origin.sh   【分類: 変更系(この箱を origin に合わせる)】
 #
-# systemd timer から60秒ごとに呼ばれる。origin の監視ブランチが動いていたら反映する。
+# このサーバーを origin の指定 branch に合わせ、必要なものを作り直して再起動する。
+# 「デプロイ」ではなくその一部分。デプロイの入口は
+# infra/scripts/deploy_production_from_staging.sh 1本だけである。
+#
+# 呼ばれ方は2つ。どちらも同じこの実装を通る(経路を増やさないため):
+#   - systemd timer(deploy-timer@<env>.timer)から60秒ごと
+#   - Mac から infra/scripts/sync_servers_from_origin.sh 経由で ssh
 # 直接実行前提(source しない)。実体は setup_deploy_timer.sh が /usr/local/bin へ複製する
 # (実行中に git がスクリプト自身を書き換えると bash が壊れるため、必ず複製側を動かす)。
 #
 # root で動く。git だけ `sudo -u kaz` で実行する(リポジトリの所有者が kaz のため)。
 # kaz は sudoers に入っていないので、User=kaz では systemctl も install も動かない(実測)。
 #
-#   使い方: deploy_tick.sh <staging|prod>
+#   使い方: sync_from_origin.sh <staging|prod>
 #
 #   staging -> origin/develop を追う
 #   prod    -> origin/production を追う
@@ -23,7 +29,7 @@ set -euo pipefail
 
 REPO=/src/thinkx-system
 WEBHOOK_FILE=/etc/thinkx/discord_webhook
-SELF_INSTALLED=/usr/local/bin/deploy_tick.sh
+SELF_INSTALLED=/usr/local/bin/sync_from_origin.sh
 
 # git は必ず kaz として実行する(root が触ると所有者が壊れる)
 g() { sudo -H -u kaz git -C "$REPO" "$@"; }
@@ -66,8 +72,8 @@ restart_all() {
   done
 }
 
-deploy_tick() {
-  local env="${1:?usage: deploy_tick.sh <staging|prod>}"
+sync_from_origin() {
+  local env="${1:?usage: sync_from_origin.sh <staging|prod>}"
   local branch host prev new changed ahead svc
   local -a targets=()
 
@@ -80,7 +86,7 @@ deploy_tick() {
   esac
 
   # 反映の途中で落ちても黙って死なない(通知してから終わる)
-  trap 'notify ":rotating_light: **'"$host"'** deploy_tick が異常終了しました。journalctl -u deploy-timer@'"$env"' を確認してください。"' ERR
+  trap 'notify ":rotating_light: **'"$host"'** sync_from_origin が異常終了しました。journalctl -u deploy-timer@'"$env"' を確認してください。"' ERR
 
   g fetch --quiet origin
 
@@ -118,14 +124,14 @@ $(g log --oneline "origin/$branch..HEAD" | head -20)
 
   g merge --ff-only --quiet "$new"
 
-  install -m 0755 "$REPO/infra/run/deploy_tick.sh" "$SELF_INSTALLED"
+  install -m 0755 "$REPO/infra/run/sync_from_origin.sh" "$SELF_INSTALLED"
 
   if [ "${#targets[@]}" -eq 0 ]; then
     notify ":page_facing_up: **$host** \`$branch\` を \`${new:0:7}\` へ更新(再起動が要るサービスの変更なし)"
     return 0
   fi
 
-  # 配信物が生成物のサイトは restart の前にビルドする(deploy.sh と同じ理由)
+  # 配信物が生成物のサイトは restart の前にビルドする(ソースを配っただけでは css/js に出ないため)
   for svc in "${targets[@]}"; do
     case "$svc" in
       uwsgi_thinkx) [ -f "$REPO/infra/run/build_thinkx.sh" ] && bash "$REPO/infra/run/build_thinkx.sh" ;;
@@ -154,4 +160,4 @@ $(g log --oneline -1 "$new")"
   trap - ERR
 }
 
-deploy_tick "$@"
+sync_from_origin "$@"

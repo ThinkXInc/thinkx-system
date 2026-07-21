@@ -28,7 +28,7 @@ deploy_production_from_staging() {
 
   command -v gh >/dev/null 2>&1 || { printf '%b\n' "${R}FAIL: gh が無い${Z}"; return 1; }
   gh auth status >/dev/null 2>&1 || { printf '%b\n' "${R}FAIL: gh が未認証。gh auth login を実行する${Z}"; return 1; }
-  [ -f infra/scripts/deploy.sh ] || { printf '%b\n' "${R}FAIL: リポジトリ直下で実行する${Z}"; return 1; }
+  [ -f infra/scripts/sync_servers_from_origin.sh ] || { printf '%b\n' "${R}FAIL: リポジトリ直下で実行する${Z}"; return 1; }
 
   git fetch --quiet origin
   sha="$(git rev-parse origin/develop)"
@@ -38,7 +38,7 @@ deploy_production_from_staging() {
     return 0
   fi
 
-  # 再起動が要るサービスを変更パスから判定する(deploy_tick.sh の services_for と同じ対応)
+  # 何が再起動されるかを事前に見せるためだけの判定(実際の判定はサーバー側が行う)
   while read -r path; do
     [ -n "$path" ] || continue
     case "$path" in
@@ -83,24 +83,21 @@ deploy_production_from_staging() {
   gh pr create --base production --head "$br" --title "$br" --body "承認 SHA: $sha" >/dev/null
   gh pr merge "$br" --merge --delete-branch=false >/dev/null
 
-  if [ "${#targets[@]}" -gt 0 ]; then
+  if true; then
     echo "== prod へ反映 =="
-    bash infra/scripts/deploy.sh prod "${targets[@]}" || {
+    bash infra/scripts/sync_servers_from_origin.sh prod || {
       echo
       printf '%b\n' "${R}FAIL: サーバーへの反映が止まりました${Z}"
       printf '%b\n' "${Y}  release の凍結と production への取り込みは完了しています($br)。${Z}"
       printf '%b\n' "${Y}  git 側はやり直す必要がありません。上の DIRTY / NON-FF / WRONG-BRANCH の${Z}"
       printf '%b\n' "${Y}  指示に従ってサーバーを整えてから、次の1行だけを再実行してください:${Z}"
       echo
-      printf '%b\n' "    bash infra/scripts/deploy.sh prod ${targets[*]}"
+      printf '%b\n' "    bash infra/scripts/sync_servers_from_origin.sh prod"
       echo
       return 1
     }
   fi
 
-  # 確認は web に直接当てる。素のドメイン(thinkxinc.com 等)は DNS 未切替でオンプレを
-  # 指しており、AWS のデプロイが成功しようが失敗しようが 200 を返す(2026-07-21 実測)。
-  # 公開ドメインでの確認は DNS 切替後に意味を持つ。
   echo "== 確認(AWS の web に直接) =="
   ssh -o ConnectTimeout=8 supercom-web1 'for hp in "thinkxinc.com:8005" "transformism.art:8006" "kazukiotsuka.com:8007"; do
       h="${hp%%:*}"; p="${hp##*:}"
