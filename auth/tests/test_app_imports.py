@@ -14,6 +14,14 @@ def test_core_blueprints_are_registered():
     assert 'accounts' in app.blueprints
 
 
+def test_google_oauth_client_id_is_injected_at_startup():
+    from config import Config
+    from libcommon.web import google_oauth_helper
+    import main  # noqa: F401
+
+    assert google_oauth_helper._client_id == Config.GOOGLE_OAUTH_CLIENT_ID
+
+
 def test_healthcheck_route_exists():
     from main import app
     rules = {rule.rule for rule in app.url_map.iter_rules()}

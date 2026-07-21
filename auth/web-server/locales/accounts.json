@@ -3,6 +3,10 @@
         "en": "Signed in.",
         "ja": "ログインしました。"
     },
+    "signup_pending": {
+        "en": "Check your email to complete registration.",
+        "ja": "登録を完了するため、メールを確認してください。"
+    },
     "user_already_exists": {
         "en": "An account already exists for {0}.",
         "ja": "{0} のアカウントは既に存在します。"

@@ -1,8 +1,10 @@
-# config.py.example (auth)
+# auth/web-server/config.py
 # 実際の config.py は各環境で作成 (既存アプリと同じ流儀)。secret はコミットしない。
 
+import os
+
 class Config:
-    ENV = 'development'
+    ENV = os.environ.get('ENV', 'development')
 
     # --- 言語 (libcommon/web/flask_helpers.py の要求キー) ---
     DEFAULT_LANG = 'en'

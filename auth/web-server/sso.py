@@ -38,6 +38,8 @@ from libcommon.web.http_errors import (
 )
 
 from models.data.user import User, UserNotFoundError
+from models.data.connected_service import ConnectedService
+from models.data.service_entitlement import ServiceEntitlement
 from protocol import (
     PROTOCOL_VERSION, build_userinfo, with_exchange_token, with_protocol_version,
 )
@@ -90,10 +92,14 @@ def _service_config(service_id):
     return Config.SSO_SERVICES.get(service_id)
 
 
-def _issue_auth_code(user_id, service_id):
+def _issue_auth_code(user_id, service_id, auth_generation):
     """一回限りの認可コードを発行して Redis へ (TTL 付き)。"""
     auth_code = secrets.token_urlsafe(32)
-    payload = json.dumps({'user_id': user_id, 'service_id': service_id})
+    payload = json.dumps({
+        'user_id': user_id,
+        'service_id': service_id,
+        'auth_generation': auth_generation,
+    })
     _redis.setex(CODE_PREFIX + auth_code, Config.SSO_CODE_TTL_SEC, payload)
     logger.info(cyan(f'SSO auth_code issued for user {user_id} service_id={service_id}'))
     return auth_code
@@ -123,9 +129,13 @@ def _consume_auth_code(auth_code):
     return json.loads(val)
 
 
-def _issue_access_token(user_id, service_id):
+def _issue_access_token(user_id, service_id, auth_generation):
     access_token = secrets.token_urlsafe(32)
-    payload = json.dumps({'user_id': user_id, 'service_id': service_id})
+    payload = json.dumps({
+        'user_id': user_id,
+        'service_id': service_id,
+        'auth_generation': auth_generation,
+    })
     _redis.setex(TOKEN_PREFIX + access_token, Config.SSO_ACCESS_TOKEN_TTL_SEC, payload)
     return access_token
 
@@ -159,7 +169,11 @@ def _verify_service_secret(service_id, service_secret, lang):
 
 def _userinfo_response(user, lang, extra=None):
     """UserInfo を SuccessFormat (フラット data + code + message) で返す。"""
-    data = build_userinfo(user)
+    data = build_userinfo(
+        user,
+        connected_services=ConnectedService.objects(subject=user.subject_id),
+        entitlements=ServiceEntitlement.objects(subject=user.subject_id),
+    )
     if extra:
         data.update(extra)
     return SuccessFormat(
@@ -207,10 +221,15 @@ def authorize(lang, lang_name):
             logger.error(red(f'authorize: session user not found: {user_id}'))
             Session.clear()
         else:
-            user.ensure_service(service_id)
-            auth_code = _issue_auth_code(str(user.id), service_id)
-            query = urlencode({'auth_code': auth_code, 'state': state})
-            return redirect(f'{redirect_uri}?{query}')
+            if not user.is_active() or not user.is_primary_email_verified():
+                Session.clear()
+            else:
+                user.ensure_service(service_id)
+                auth_code = _issue_auth_code(
+                    str(user.id), service_id, user.auth_generation
+                )
+                query = urlencode({'auth_code': auth_code, 'state': state})
+                return redirect(f'{redirect_uri}?{query}')
 
     # 未ログイン -> 中央ログイン画面。成功後フロントが同じ /authorize へ戻る
     return render_template(
@@ -260,7 +279,17 @@ def token_exchange(lang, lang_name):
         error = UnexpectedAPIErrorFormat(lang=lang)
         return with_protocol_version(error).http_response()
 
-    access_token = _issue_access_token(str(user.id), service_id)
+    if (
+        not user.is_active()
+        or not user.is_primary_email_verified()
+        or payload.get('auth_generation') != user.auth_generation
+    ):
+        error = UnauthorizedAPIErrorFormat(lang=lang, field_name='auth_code')
+        return with_protocol_version(error).http_response()
+
+    access_token = _issue_access_token(
+        str(user.id), service_id, user.auth_generation
+    )
     logger.info(green(f'token_exchange OK user_id={user.id} service_id={service_id}'))
     return _userinfo_response(user, lang, extra={
         'access_token': access_token,
@@ -291,6 +320,14 @@ def userinfo(lang, lang_name):
         error = UnauthorizedAPIErrorFormat(lang=lang, field_name='user_id')
         return with_protocol_version(error).http_response()
 
+    if (
+        not user.is_active()
+        or not user.is_primary_email_verified()
+        or payload.get('auth_generation') != user.auth_generation
+    ):
+        error = UnauthorizedAPIErrorFormat(lang=lang, field_name='access_token')
+        return with_protocol_version(error).http_response()
+
     return _userinfo_response(user, lang)
 
 
@@ -316,6 +353,10 @@ def users_get(lang, lang_name, user_id):
     try:
         user = User.find_user_by_id(user_id)
     except UserNotFoundError:
+        error = UnauthorizedAPIErrorFormat(lang=lang, field_name='user_id')
+        return with_protocol_version(error).http_response()
+
+    if not user.is_active() or not user.is_primary_email_verified():
         error = UnauthorizedAPIErrorFormat(lang=lang, field_name='user_id')
         return with_protocol_version(error).http_response()
 

@@ -22,6 +22,7 @@ import init_mongodb  # noqa: F401  # import 時に MongoDB へ接続する (テ�
 
 from libcommon.web.session import RedisSessionInterface, Session
 from libcommon.web.flask_helpers import configure_flask_helpers
+from libcommon.web.google_oauth_helper import configure_google_oauth
 
 from sso import blueprint_sso
 from accounts import blueprint_accounts
@@ -42,6 +43,7 @@ REQUIRED_KEYS_IN_CONFIG = [
     'AVAILABLE_LANGS',
     'BASIC_AUTH_USERNAME',
     'BASIC_AUTH_PASSWORD',
+    'GOOGLE_OAUTH_CLIENT_ID',
     'REDIS_SESSION_HOST',
     'REDIS_SESSION_PORT',
     'REDIS_SESSION_DB_NUMBER',
@@ -57,6 +59,7 @@ Session.configure(
 configure_flask_helpers(
     Config.DEFAULT_LANG, Config.AVAILABLE_LANGS,
     Config.BASIC_AUTH_USERNAME, Config.BASIC_AUTH_PASSWORD)
+configure_google_oauth(Config.GOOGLE_OAUTH_CLIENT_ID)
 
 
 app = Flask(__name__, template_folder='views')

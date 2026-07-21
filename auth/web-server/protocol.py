@@ -3,58 +3,47 @@
 #
 # protocol.py
 #
-# ThinkX Auth Protocol v1 の UserInfo JSON を組み立てる唯一の場所。
-# PROTOCOL.md が仕様、このファイルがその実装。他のどこにも UserInfo を組み立てない。
+# OIDC 置換まで残る legacy v1 の UserInfo JSON を組み立てる唯一の場所。
+# 正本は auth-spec と契約テスト。退役予定の PROTOCOL.md を新実装の根拠にしない。
 #
 # このモジュールは Flask / MongoEngine / config に依存しない純粋モジュールに保つ
 # (契約テストを外部依存なしで走らせるため)。読むのはモデルの正確なフィールド名だけで、
 # 別名は読まない (一つの事実に一つの名前)。
 #
-# 互換性ルール (PROTOCOL.md §6):
+# legacy v1 の互換性ルール:
 #   v1 のフィールドは削除・改名・型変更しない。追加のみ可。
 #   破壊的変更は build_userinfo_v2 を新設して並存させる (errors_v1 と同じ思想)。
 
 PROTOCOL_VERSION = 1
 
-# Stripe の生ステータス -> billing_status 4値への丸め。
-# 丸める責任を auth のこの一箇所に置き、全サイトを Stripe の仕様から絶縁する。
-_STRIPE_TO_BILLING_STATUS = {
-    None: 'none',
-    '': 'none',
-    'trialing': 'active',
-    'active': 'active',
-    'past_due': 'past_due',
-    'unpaid': 'past_due',
-    'canceled': 'canceled',
-    'incomplete': 'none',
-    'incomplete_expired': 'none',
-    'paused': 'canceled',
-}
+_BILLING_STATUSES = frozenset({'none', 'active', 'past_due', 'canceled'})
 
 
-def billing_status_of(stripe_status):
-    """Stripe subscription status -> protocol の billing_status (4値)"""
-    return _STRIPE_TO_BILLING_STATUS.get(stripe_status, 'none')
+def billing_status_of(projected_status):
+    """Payment projection -> protocol billing_status (4 values)."""
+    if projected_status in _BILLING_STATUSES:
+        return projected_status
+    return 'none'
 
 
-def build_services(services):
-    """User.services の内部表現 -> protocol v1 の services マップ。
-
-    内部表現: { service_id: {'plan': str, 'stripe_subscription_status': str|None} }
-    ワイヤ表現: { service_id: {'plan': str, 'billing_status': 4値} }
-    """
-    services = services or {}
+def build_services(connected_services, entitlements):
+    """ConnectedService + ServiceEntitlement -> legacy services map."""
+    entitlement_by_client = {
+        entitlement.client_id: entitlement for entitlement in entitlements
+    }
     result = {}
-    for service_id, entry in services.items():
-        entry = entry or {}
-        result[str(service_id)] = {
-            'plan': entry.get('plan') or 'free',
-            'billing_status': billing_status_of(entry.get('stripe_subscription_status')),
+    for connection in connected_services:
+        entitlement = entitlement_by_client.get(connection.client_id)
+        result[str(connection.client_id)] = {
+            'plan': entitlement.plan if entitlement else 'free',
+            'billing_status': billing_status_of(
+                entitlement.billing_status if entitlement else None
+            ),
         }
     return result
 
 
-def build_userinfo(user):
+def build_userinfo(user, *, connected_services, entitlements):
     """User -> protocol v1 の UserInfo dict。
 
     NOTE: code / message は libcommon の SuccessFormat がレスポンス時に付ける。
@@ -67,13 +56,13 @@ def build_userinfo(user):
         # OIDC 準拠のワイヤ名。内部フィールドとの対応: lang -> locale (境界規則)
         'user_id': str(user.id),
         'email': user.email,
-        'email_verified': bool(user.email_verified),
+        'email_verified': bool(user.is_primary_email_verified()),
         'name': user.name or None,
         'picture_url': user.picture_url or None,
         'locale': user.lang,
 
         # ThinkX 拡張: サービスごとの課金状態。キー一覧が利用可能サービス一覧を兼ねる
-        'services': build_services(user.services),
+        'services': build_services(connected_services, entitlements),
     }
 
 

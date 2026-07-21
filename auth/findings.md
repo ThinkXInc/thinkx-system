@@ -137,3 +137,14 @@
 - `tests/test_data_models.py` / モデル制約、Argon2id、redirect 完全一致、接続一意性、billing 投影の
   冪等性・単調性、seed 冪等性を7テストで固定した。A-1 後の auth pytest は28件 collect、
   21 passed / 7 skipped / 1既存 warning。
+- A-1 レビュー追補 / email と suspended_email をまたぐ identity 一意性、Google sub 一意性、
+  ConnectedService の並行初回接続、ServiceEntitlement の並行・同時刻更新、active SigningKey 1件制約を
+  DB index と原子的 update で固定した。実 MongoDB 固有の index/atomicity は
+  `AUTH_A1_REAL_MONGO_URI` が loopback を指す場合だけ走る opt-in テストを追加した。
+- A-1 レビュー追補 / seed は `ENV` と Config.ENV の一致、非 production、`AUTH_SEED_ENABLED=1`、
+  32 byte以上の client secret、明示 `--reset` を必須にした。再実行時は auth_generation を増やし、
+  対象 test User の中央 Session・旧 code・旧 access token を失効する。
+- A-1 レビュー追補 / 旧 scaffold が pending/suspended User を認証しないよう accounts/sso を新モデルへ
+  配線し、UserInfo の課金材料を User.services から ConnectedService + ServiceEntitlement へ移した。
+  レビュー追補後の auth pytest は49件 collect、41 passed / 8 skipped / 1既存 warning。追加skip 1件は
+  loopback実MongoDBを明示した場合だけ走る A-1 integration test。
