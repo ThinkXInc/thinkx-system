@@ -891,3 +891,18 @@ staging 上で `npx babel src/js --out-dir /tmp/...` して `cmp` した結果�
 
 一般則としては「スクリプトから呼ぶ git は必ずページャを切る」。`docs/coding_guides/bash.md`
 に NG/OK として入れる価値があるが、規約の変更は人間の判断なのでここに記録する。
+
+## 確認一覧が staging と本番で揃っていなかった(2026-07-21・修正済み)
+
+本番デプロイの最後に当てる確認が3ドメインで、`truetechjapan.com` が入っていなかった。
+**今日まさに変更したドメインが確認対象から漏れていた。** staging 側には入れたのに
+本番側へ揃えるのを忘れたもの。両方を同じ4ドメインにした。
+
+```
+thinkxinc.com:8005  truetechjapan.com:8005  transformism.art:8006  kazukiotsuka.com:8007
+```
+
+同種の漏れは今日2件目(1件目は検証が素のドメイン=オンプレを見ていた件)。**確認の対象は
+配信しているものから機械的に導くべきで、手で並べる限り漏れる。** nginx conf の
+`server_name` から起こす案があるが、`nntm.thinkxinc.com` `nntmapp.com` など確認の
+要否が分かれるものもあるため、実装は要検討として残す。

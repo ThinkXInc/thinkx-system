@@ -101,7 +101,7 @@ deploy_production_from_staging() {
   # 確認は web に直接当てる。素のドメインは DNS 未切替でオンプレを指しており、
   # AWS の成否に関わらず 200 を返す(2026-07-21 実測)。
   banner "確認(AWS の web に直接)"
-  ssh -o ConnectTimeout=8 supercom-web1 'for hp in "thinkxinc.com:8005" "transformism.art:8006" "kazukiotsuka.com:8007"; do
+  ssh -o ConnectTimeout=8 supercom-web1 'for hp in "thinkxinc.com:8005" "truetechjapan.com:8005" "transformism.art:8006" "kazukiotsuka.com:8007"; do
       h="${hp%%:*}"; p="${hp##*:}"
       c="$(curl -s -o /dev/null -w "%{http_code}" -m 10 -H "Host: $h" "http://localhost:$p/" || true)"
       [ "$c" = 200 ] && printf "  \033[32m%-24s %s\033[0m\n" "$h" "$c" || printf "  \033[31m%-24s %s\033[0m\n" "$h" "$c"
