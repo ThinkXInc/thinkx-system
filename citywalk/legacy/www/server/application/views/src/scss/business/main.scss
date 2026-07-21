@@ -1,0 +1,34 @@
+// main.scss
+@use '../mixin.scss';
+
+$header-bg: #1d1d1d;
+$top-bg: #101010;
+$header-menu-on: #FFF;
+$header-menu-off: #AAA;
+$header-menu-border: #326894;
+$subheader-bottomline: #494949;
+$footer-background: #101010;
+$footer-anchor-default: #e0e0e0;
+$footer-border: #3d3d3d;
+
+$black: #000;
+$white: #FFF;
+
+$font-face {
+  font-family: 'GeosansLight';
+  src: url('/fonts/GeosansLight.ttf?-b7qzp2') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.cf:before,
+.cf:after {
+    content: " ";
+    display: table;
+}
+.cf:after {
+    clear: both;
+}
+.cf {
+    *zoom: 1;
+}

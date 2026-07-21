@@ -466,3 +466,186 @@ I-STEP2(本番カットオーバー)の開始要求を受けたが、規範(ROAD
 - Codex サマリーの「未 push 3コミット」は**既に push 済み**(origin と完全同期を実測)。追加で k00bot2 の merge はオーナーにより revert 済み(719e856)・AGENTS.md 新設・terraform_output.sh の2バグ(eips ディレクトリ判定 / map 出力)は Codex 修正済みで eip_ledger 4件の出力を実測確認
 - D-52 / D-53 は DECISIONS に原文つきで記録済み・F16 も記録済みを確認(欠落なし)
 - **polyfill.io 除去(5892559)は staging 反映済みだが prod 未反映を実測**(prod の /src/thinkx-system が 1e65aa9 で停止・テンプレートに参照残存)→ prod へ pull + restart_thinkx が必要(DNS 切替前必須)
+
+## setup_claude_code の偽緑と postinstall ブロック(2026-07-19)
+
+- 露出: npm の allowScripts 既定ブロックで Claude Code の postinstall(本体バイナリ取得)が走らず、
+  claude コマンドは存在するが起動不能。verdict が `command -v` の存在確認だけだったため**緑を出した(偽緑)**
+- 修正: install に `--allow-scripts=@anthropic-ai/claude-code` を明示 + verify を「バージョンが取れること」に変更。
+  教訓は D-48 と同型 — **存在や is-active でなく、機能する証拠で判定する**
+- 小ノイズ: ubuntu ユーザーの .bashrc に autoenv の残骸(activate.sh 不在エラー)。実害なし・掃除は任意
+
+## サーバー編集ドキュメントの整理(2026-07-19・オーナー裁定)
+
+- 正本は docs/サーバー編集ClaudeCodeセッション.md(オーナー全面書き換え)。ROLES.md と
+  旧 infra/docs/サーバー編集のエージェント化計画.md は削除(二重管理の解消)
+- 役割別応答の切替は**名乗り方式を撤回**: 会話の流れで相手が「私はエンジニアではない」等と言った時点で
+  プロファイルを切り替える(自己申告の名乗りは不要)。権限ゲートが役割と無関係な点は不変
+- `claude --rc` は `--remote-control` の短縮として実際に機能する(オーナー実測)
+- 旧計画書から引き継ぐ v2 候補(未実施のメモ): サーバー専用 Anthropic アカウント(個人 Max との分離)/
+  tmux 接続専用の制限ユーザー(ssh 共有 = sudo 共有の緩和)/ バックアップリポジトリへの push /
+  ブランチ分離(staging→本番昇格)/ staging の pull 型自動反映
+
+## filedrop はサイト内ハンドラーに変更(2026-07-19・オーナー裁定)
+
+- infra の別サービス(8008 常駐)案を撤回し、thinkx の Flask に `/filedrop` を実装
+  (「ドメインが thinkxinc.com なんだから ThinkX の配下にあるべき。サイトの1ページとして実装すればいい」)
+- production では 404(Config.ENV 判定)。入口は staging.thinkxinc.com/filedrop(LB の basic auth 配下)のみ
+- LB staging vhost に client_max_body_size 75m(web 側 nginx の既存値と一致)。着地は /src/thinkx-system/Downloads
+
+## filedrop ガードと LB verify の2バグ(2026-07-19・実測で露出)
+
+- staging の thinkx も Config.ENV=production で動いている実測 → /filedrop のガードを ENV 判定から
+  **ホスト名判定(-stg 接尾辞・D-46 準拠)**へ変更(ENV では prod/staging を区別できない)
+- restart_loadbalancer.sh の verify が `curl https://localhost/` で F13 のブラックホール(名前なし直打ち)に
+  自爆し、active なのに FAIL(偽赤)。Host つき(--resolve staging.thinkxinc.com→127.0.0.1)に修正
+
+## インスタンスサイズ実測と最適化の判断材料(2026-07-20)
+
+測定(staging web t3.small・Claude Code 起動中・ビルドなし):
+- 2GB 中 1245MB 使用・空き 459MB・**スワップ 0**(OOM 即死のリスク)
+- claude 517MB / node 系(VS Code Remote 等)~320MB / uwsgi×3 ~230MB
+- **docker + containerd が active(~150-200MB 無駄)** — staging web に docker 不要(quantz 用)
+- prod web(t3.medium)は 464MB / prod lb(t3.small)は 265MB 使用 = 大きく余っている
+
+判断:
+- ボトルネックはメモリのみ(CPU は load 0.00・2vCPU は全サイズ共通)
+- **設計反転**: 配信専用の prod は縮小可(web medium→small / lb small→micro・月約$30減)、
+  開発する staging web はむしろ余裕が要る
+- staging web 案1=t3.medium 化 + stop_staging でこまめ停止 / 案2=t3.small のまま swap 2-4GB + docker 停止
+- terraform をサイズの env 独立指定に変更が必要(現状は is_prod 連動で反転不可)。
+  instance_type 変更は stop→modify→start の短時間停止・EIP は台帳で維持・prod は承認/タイミング要
+
+## Mac ローカルブランチの別トラック混在と復旧(2026-07-20)
+
+- 受賞企業ページ4社(truetechjapan)は staging に8コミットで存在・未 push だった → staging で origin にリベースし push(6b32e0c)。競合なし・成果は無事
+- 事故: 私が claude-session 変更を Mac でコミットしたら Mac HEAD が auth 線(29c4f78)で、infra コミットが auth に乗り push 拒否 → reset --soft → mixed reset で Mac を無傷復帰(citywalk 未コミット作業も保持)。教訓は D-58(デプロイ/push は staging 経由・Mac 非依存)
+- tmux/claude はインスタンス停止で消える(全プロセス死)。ただし /home/kaz/.claude(認証)は EBS 上で永続 → 再ログイン不要。起動時自動復帰は claude-session.service(D-59)
+
+## 次の infra セッションへの是正事項(worktree 方針 D-58・2026-07-20)
+
+CLAUDE.md「worktree と deploy checkout の分離」を明文化したので、既存実装を次セッション(専用 worktree 用意後)で是正する:
+- **claude-session.service の WorkingDirectory が deploy checkout(/src/thinkx-system)を指す** → CLAUDE.md 違反。専用の編集 worktree+branch を指すよう変更。attach_claude.sh / setup_claude_code.sh も編集 worktree 起点へ。
+- **deploy.sh が origin/monorepo の暗黙 HEAD を pull** → 明示 DEPLOY_REF に変更(staging 受け入れ済みの ref を prod へ同一適用)。
+- **本セッションの infra 編集は staging deploy checkout 上で直接行い staging から push した = Mac 汚染事故の障害復旧(例外)**。通常は専用 worktree で編集し worktree から push する。
+- 対応方針: 専用 infra worktree を用意した次セッションで上記を実装。本セッションは方針に従いクローズ。
+
+## 3トラック混在履歴の組み直し(2026-07-20・交通整理)
+
+分岐点 a663f6c から、ローカルの1本の線に3トラックが積み上がっていた:
+fe82157(citywalk)→ cf14a9b/d797020/23dd576/29c4f78/2e0e1f4(auth 5件)→ 890e087(citywalk)。
+work/auth も work/citywalk もこの混在線を祖先に持つため、両方を origin/monorepo 上へ組み直す。
+
+競合の実態(機械確認済み):
+- origin 側 12 コミットが触ったのは docs/GUIDELINES.md・infra/**・thinkx/**・docs/WORKTREES.md・.codex/GUIDELINES.md
+- citywalk 2件は citywalk/** と ARCHIVE.md のみ → **origin と重なりゼロ・競合しない**
+- auth 5件は auth/** + docs/{DECISIONS,GUIDELINES,ROADMAP}.md。うち origin と重なるのは
+  **docs/GUIDELINES.md の末尾追記のみ**(origin=「重要な決定・指示はその場で記録する」/
+  auth=「結論だけを先置きせず理由を続ける」)。解決は両ブロックを残すだけ
+- 順序: auth → citywalk → infra(D-58 行)。origin/monorepo が共有トランクなので push は直列化する
+
+infra が保留している root docs/DECISIONS.md の D-58 行(auth の d797020 と追記位置が競合するため、
+auth の組み直し完了後に追記する。原文は Codex 記述):
+
+| D-58 | **monorepo の並行作業を track 別 Git worktree に分離する。** 1 セッション = 1 計画 = 1 専用 worktree = 1 writer とし、共有 worktree への複数 writer を禁止する。デプロイはローカル HEAD から行わず、origin 上の明示的な不変 `DEPLOY_REF` を staging と production へ同一参照で適用する。サーバーの deploy checkout と自動起動する Claude/Codex の編集 worktree も分離する。 | 同一 worktree を複数セッションが操作し、別トラックの HEAD・index・未コミット変更へ干渉した実事故を再発防止するため。ローカル Mac の作業状態と緊急デプロイを独立させるため。|`CLAUDE.md`、`CLAUDE_GENERAL.md`、`docs/WORKTREES.md`、`infra/CLAUDE.md`、`infra/runbooks/deploy-site.md` |
+
+なお D-58 が参照する `infra/runbooks/deploy-site.md` はまだ存在しない。deploy.sh の DEPLOY_REF 化と
+同時に新設する(未着手)。
+
+### 訂正(同日): 上の組み直し計画は実行しなかった
+
+上節の「順序: auth → citywalk → infra」「トラック別 clean branch へ cherry-pick」は**採用しなかった**。
+worktree 分離そのものが撤回された(D-49 / D-60)ため、混在チェーン7件を origin/monorepo へ
+**1回 rebase して push しただけ**で解消した(bce5d83)。競合は予告どおり docs/GUIDELINES.md の
+末尾追記1箇所のみで、origin 側「重要な決定・指示はその場で記録する」と auth 側「結論だけを
+先置きしない」を両方残して解決。2649 ファイル・トラック外への波及なしを確認済み。
+
+保留していた root docs/DECISIONS.md の D-58 行も追記しなかった。決定内容が変わったため、
+root は **D-49**(単一ディレクトリ運用の規則6項)として書き直し、infra 側は **D-60**(D-58 の
+撤回範囲)を追加した。root と infra の採番空間は独立しており、Codex が root に書こうとした
+D-58 は infra の D-58 と番号衝突していた。
+
+Mac 側の worktree はすべて解体済み(本体 + k00bot2 のみ)。work/citywalk・work/auth・work/infra・
+work/merge は削除。
+
+### 未修正: infra/CLAUDE.md が D-60 と矛盾している
+
+infra/CLAUDE.md 末尾の「worktree と deploy checkout の分離(D-58)」節のうち、Mac 側の worktree
+分離を指示している2行が D-60 と矛盾する。infra/CLAUDE.md は infra の禁止事項で書き換えが
+禁じられているため未修正のまま残した。削るべきは次の2行:
+
+- 「infra の編集は専用 worktree で行い、他トラックまたは deploy checkout と共有しない。」
+- 「サーバー起動時に Claude/Codex セッションを自動起動する場合、専用の編集 worktree と branch を
+  `WorkingDirectory` に指定する。deploy checkout 上で起動してはならない。」
+
+deploy checkout を clean に保つ・DEPLOY_REF・Mac の現 branch を暗黙のデプロイ元にしない・
+wrapper と承認ゲート・staging からの push は DR 例外、の残り6行は**維持する**(サーバー側の
+分離は撤回対象外)。オーナー判断待ち。
+
+## deploy 議論の論点(a): 編集する場所と配信元の分離(2026-07-20・未裁定)
+
+前提: clone_monorepo.sh がサイトの実体を /src/thinkx → /src/thinkx-system/thinkx の
+シンボリックリンクで作っているため、**deploy checkout がそのまま配信元**になっている。
+一方 staging の Claude Code セッションの存在意義は、スマホやブラウザからサイトを直接いじって
+その場で staging.thinkxinc.com で確認することにある。現状の構成ではこの2つが両立しない。
+
+- **案1: 編集用 checkout を配信元にする** — staging だけシンボリックリンクを編集用へ向ける。
+  編集が即座に見える。欠点: staging が「prod に出す確定 ref をリハーサルする場所」でなくなる。
+- **案2: deploy checkout のみを配信する** — 編集 → commit → push → DEPLOY_REF で反映、で初めて
+  見える。正しいが、1行直すたびにこのループを回すのはスマホ運用として重い。
+- **案3: staging に2面持つ** — staging.thinkxinc.com = deploy checkout(確定 ref のリハーサル)/
+  edit.staging.thinkxinc.com = 編集用 checkout(即時プレビュー)。役割の違うものを1つの箱に
+  押し込めているのが混乱の根本なので設計としては一番素直。欠点: vhost と uwsgi がもう1組増えて
+  メモリを食う。staging web は t3.small で空き 459MB・スワップ 0 の実測なので、D-57 の
+  medium 化とセットでないと成立しない。
+
+前セッションの推薦は案3。**オーナー裁定は未了**。deploy.sh の DEPLOY_REF 化はこの結論に従属する。
+
+論点(b): 「デプロイは Mac 非依存」をどこまで取るか。deploy.sh は Mac から ssh する Mac 起点の
+スクリプト。D-58 の趣旨を「Mac のローカル**リポジトリの状態**に依存してデプロイ内容が決まるのを
+やめる」と読むなら、DEPLOY_REF を明示した時点で目的は達せられ、Mac 起点のままでよい。
+staging から prod へ ssh させる案は staging に prod の鍵を置くことになり攻撃面が広がる。未裁定。
+
+## デプロイ手順書の新設と、D-58 参照先の変更(2026-07-21)
+
+- `infra/runbooks/deploy-site.md` は「まだ存在しない」と 07-20 に記録したが**誤り**。実在したが中身が
+  monorepo 以前(`cd /src/thinkx` を git リポジトリとして扱う・`2026refactor → v2.1.0` 前提)で陳腐化して
+  いた。**無いより悪い**(手順書として読めてしまう)
+- 全面書き換えの上、オーナー裁定により `infra/docs/デプロイ手順書.md` へ改名・移動。
+  「構築手順.md / DNS切替手順.md / 運用.md」と同じ**オーナーが実行する手順書の系列**に置く
+- **D-58 の規範文書欄が指す `infra/runbooks/deploy-site.md` は現存しない。** D-58 は Mac 側部分が
+  D-60 で撤回済みのため行そのものの扱いが未確定。参照先の是正は人間の判断待ち(DECISIONS は人間のみ変更)
+- 手順書の設計方針: サーバーへ ssh しない / `git checkout` で branch を切り替えない(単一ディレクトリを
+  複数セッションが共有しているため、branch 切替は他セッションの作業ツリーを壊す)。
+  release branch は `git branch <名前> origin/develop` で作る — checkout を伴わないので安全
+- 未実装: `develop` / `production` branch(未作成)、`gh` 認証(未実施)、pull 型 timer(本体未着手)。
+  それまでのつなぎとして手順書に「手動デプロイ」節を残している
+
+## デプロイ方式の実地投入で露出した3点(2026-07-21)
+
+- **貼り付け用コマンドは折り返す長さにしない。** `ssh host 'a && b'` を渡したところ、
+  ターミナル幅で折り返されて `git -C` の引数が次行に落ち、「fetch は成功したが checkout は失敗」
+  という半端な状態になった。原因が分かりにくい。1コマンド1ブロックに分割する
+  (zsh のインラインコメント禁止と同種の、手渡し用ブロックの制約)
+- **`git branch <名> origin/monorepo` は上流も origin/monorepo にする。** develop / production を
+  作った直後、両方が origin/monorepo を追跡していた。`git branch -u` で直す必要がある。
+  放置すると `git status` / `git pull` が別ブランチと比較して混乱する
+- **サーバー側 checkout は先に fetch が要る。** `checkout -B develop origin/develop` は
+  remote-tracking ref がローカルに無いと `'origin/develop' is not a commit` で落ちる。
+  staging web は事前の診断で fetch 済みだったため通り、lb だけ落ちて差が出た
+
+投入結果(2026-07-21):
+- staging web / lb = develop・dirty 0(get-pip.py は .gitignore で除外)
+- prod web / lb = production(40e5e96 = prod の従前の配信内容)。4サイト 200 で無影響
+- prod web は dirty 3(get-pip.py)。prod はまだ .gitignore 更新を受け取っていないため正常。
+  ただし**この状態で deploy.sh prod を叩くと DIRTY で止まる**。初回本番デプロイの前に
+  prod の get-pip.py を消しておく
+- `production` は当初 origin/monorepo から作ってしまい、prod を 7/19 から今日の先端へ
+  50コミット飛ばすところだった。prod の現在地(40e5e96)へ `git branch -f` で戻してから
+  checkout した。**新しい branch を作って既存サーバーに載せるときは、branch の起点を
+  サーバーの現在地に合わせる**(でないと checkout が無検証の一括デプロイになる)
+
+既知の粗さ(未修正):
+- `deploy_tick.sh` のサービス判定が host を見ていない。`loadbalancer/` の変更で web 側でも
+  nginx を再起動し、`nginx-web-root/` の変更で lb 側でも再起動する。動作は壊れないが無関係な
+  再起動が起きる。staging で挙動を観察してから直す

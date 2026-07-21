@@ -1,0 +1,360 @@
+/* ------------------------------------------------------------------
+   award_company.less – Truetech Japan 受賞企業ページ
+   レイアウトの典拠: views/templates/truetechjapan/sample/受賞企業ページサンプル.pdf
+   (PDF の斜線ボックスとピンク注記は配布用の記入指示。サイトには出さない)
+------------------------------------------------------------------- */
+
+@tablet-width:      1024px;
+@smartphone-width:  710px;
+
+/* 色・寸法は配布用 PDF からの実測値(300dpi サンプリング)。
+   受賞年 / 創業者ラベルと Top-Tier チップは別物である:
+   ラベル = 直角・単色・黒の太字 / チップ = 角丸・グラデーション・金茶の文字で高さ約 0.4 倍。 */
+@award-label-bg:    #f0d484;   /* 受賞年 / 創業者ラベルの地色(実測 rgb(240,212,132)) */
+@award-label-text:  #000;
+@tier-chip-text:    #b38e0c;   /* Top-Tier の文字色(実測 rgb(179,142,12)) */
+@award-mark-color:  #3c3c46;   /* 見出し先頭の角丸スクエア */
+@award-text:        #2f2f2f;
+
+div#truetech-award-company {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    div.award-company-page.main-content {
+        width: 100%;
+        max-width: 1080px;
+        padding: 90px 32px 160px;
+        box-sizing: border-box;
+        color: @award-text;
+
+        /* ---------------- 社名 / ティア / 認定シール ---------------- */
+        div.company-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 32px;
+
+            div.company-identity {
+                h1.company-name {
+                    font-size: 44px;
+                    font-weight: 600;
+                    line-height: 1.25;
+                    margin: 0;
+                    letter-spacing: .01em;
+                }
+
+                a.company-url {
+                    display: inline-block;
+                    margin-top: 14px;
+                    font-size: 17px;
+                    color: #4a4a4a;
+                    text-decoration: none;
+                    transition: color .3s;
+                    &:hover { color: #000; }
+                }
+            }
+
+            div.award-mark {
+                display: flex;
+                align-items: flex-start;
+                gap: 20px;
+                flex-shrink: 0;
+
+                div.tier {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 10px;
+                    padding-top: 8px;
+
+                    span.tier-chip {
+                        background: linear-gradient(95deg, #fdf1de 0%, #f5e4b0 55%, #efd88f 100%);
+                        color: @tier-chip-text;
+                        font-size: 14px;
+                        font-weight: 600;
+                        line-height: 1.5;
+                        padding: 2px 16px;
+                        border-radius: 6px;
+                        white-space: nowrap;
+                    }
+
+                    span.tier-note {
+                        font-size: 14px;
+                        color: #4a4a4a;
+                        white-space: nowrap;
+                    }
+                }
+
+                img.award-seal {
+                    width: 104px;
+                    height: auto;
+                }
+            }
+        }
+
+        /* ---------------- 受賞年 / 創業者 / 企業ロゴ ---------------- */
+        div.company-facts {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 48px;
+            margin-top: 56px;
+
+            dl.fact-list {
+                margin: 0;
+                flex-shrink: 0;
+
+                div.fact {
+                    display: flex;
+                    align-items: flex-start;
+                    gap: 20px;
+
+                    & + div.fact { margin-top: 18px; }
+
+                    dt.fact-label {
+                        background: @award-label-bg;
+                        color: @award-label-text;
+                        font-size: 16px;
+                        font-weight: 600;
+                        /* 高さ = line-height 24px + padding 8px = 32px。
+                           オーナー指示で従来の 40px から 20% 下げた値。 */
+                        line-height: 1.5;
+                        padding: 4px 20px;
+                        min-width: 74px;
+                        text-align: center;
+                        white-space: nowrap;
+                        flex-shrink: 0;
+                    }
+
+                    dd.fact-value {
+                        margin: 0;
+                        padding-top: 6px;
+                        font-size: 18px;
+                        line-height: 1.7;
+
+                        ul.founder-list {
+                            margin: 0;
+                            padding: 0;
+                            list-style: none;
+
+                            li.founder { white-space: nowrap; }
+                        }
+                    }
+                }
+            }
+
+            /* ロゴは枠内センター。原寸差を吸収するため最大値で抑える */
+            div.company-logo-frame {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                min-height: 180px;
+
+                &.align-center { justify-content: center; }
+                &.align-left   { justify-content: flex-start; }
+                &.align-right  { justify-content: flex-end; }
+
+                /* 白抜きしかロゴが無い企業向け。ロゴ自体は加工せず、地色を敷いて置く。
+                   パネルはロゴの寸法に沿わせる(枠いっぱいに広げない)。 */
+                &.bg-dark img.company-logo {
+                    background: #1e1e1e;
+                    padding: 22px 30px;
+                    box-sizing: content-box;
+                }
+
+                img.company-logo {
+                    max-width: 320px;
+                    max-height: 160px;
+                    width: auto;
+                    height: auto;
+                }
+            }
+        }
+
+        /* ---------------- 共通セクション ---------------- */
+        section.award-section {
+            margin-top: 72px;
+
+            h2.section-title {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                font-size: 22px;
+                font-weight: 600;
+                margin: 0 0 24px;
+
+                span.section-mark {
+                    display: inline-block;
+                    width: 26px;
+                    height: 26px;
+                    border-radius: 7px;
+                    background: @award-mark-color;
+                    flex-shrink: 0;
+                }
+            }
+
+            p.business-text {
+                margin: 0;
+                font-size: 19px;
+                line-height: 1.9;
+            }
+
+            /* 受賞理由: 淡いメッシュ状グラデーションのパネル */
+            div.award-reasons-panel {
+                background:
+                    radial-gradient(60% 90% at 12% 78%, rgba(247, 148, 60, .62) 0%, rgba(247, 148, 60, 0) 60%),
+                    radial-gradient(55% 85% at 30% 10%, rgba(120, 150, 220, .55) 0%, rgba(120, 150, 220, 0) 62%),
+                    radial-gradient(60% 90% at 72% 12%, rgba(150, 170, 225, .50) 0%, rgba(150, 170, 225, 0) 60%),
+                    radial-gradient(70% 95% at 62% 88%, rgba(250, 205, 90, .68) 0%, rgba(250, 205, 90, 0) 62%),
+                    radial-gradient(50% 80% at 92% 60%, rgba(190, 195, 230, .48) 0%, rgba(190, 195, 230, 0) 65%),
+                    #f7f3ec;
+                padding: 48px 44px;
+
+                ul.award-reason-list {
+                    margin: 0;
+                    padding: 0;
+                    list-style: none;
+
+                    li.award-reason {
+                        position: relative;
+                        padding-left: 1.1em;
+                        font-size: 19px;
+                        line-height: 1.9;
+
+                        & + li.award-reason { margin-top: 12px; }
+
+                        &::before {
+                            content: '・';
+                            position: absolute;
+                            left: 0;
+                        }
+                    }
+                }
+            }
+
+            a.interview-link {
+                font-size: 18px;
+                color: #3b57c1;
+                text-decoration: none;
+                border-bottom: 1px solid currentColor;
+                transition: opacity .3s;
+                &:hover { opacity: .7; }
+            }
+        }
+    }
+}
+
+/* ---------------------- Responsive tweaks ---------------------- */
+@media (max-width: @tablet-width) {
+    div#truetech-award-company {
+        div.award-company-page.main-content {
+            padding: 70px 24px 120px;
+
+            div.company-header {
+                h1.company-name { font-size: 34px; }
+            }
+
+            div.company-facts {
+                gap: 32px;
+
+                div.company-logo-frame img.company-logo {
+                    max-width: 240px;
+                    max-height: 130px;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: @smartphone-width) {
+    div#truetech-award-company {
+        div.award-company-page.main-content {
+            padding: 48px 20px 100px;
+
+            /* スマホでも社名とティア+シールを左右2カラムで並べる(オーナー指示)。
+               社名側が 6〜7 割。横幅が足りない社名は折り返す。
+               PC と違い、認定シールがティアラベルの「上」に来る縦積みになる。 */
+            /* 社名は左ボックス(シール + ティア)の高さの中央に合わせる(オーナー指示)。
+               ティアの無い企業は左ボックスが低くなるぶん社名の位置も上がる — 同じ規則で
+               両方を扱うため、企業ごとの分岐は持たない。 */
+            div.company-header {
+                flex-direction: row-reverse;   /* 左にシール+ティア、右に社名 */
+                align-items: center;
+                gap: 16px;
+
+                div.company-identity {
+                    flex: 1 1 auto;
+                    min-width: 0;              /* flex 子の折り返しを許す */
+
+                    h1.company-name {
+                        font-size: 24px;
+                        overflow-wrap: anywhere;
+                    }
+
+                    a.company-url {
+                        font-size: 14px;
+                        overflow-wrap: anywhere;
+                    }
+                }
+
+                div.award-mark {
+                    flex: 0 0 auto;
+                    max-width: 34%;
+                    flex-direction: column-reverse;   /* シールが上、ティアが下 */
+                    align-items: flex-start;
+                    gap: 10px;
+
+                    div.tier {
+                        align-items: flex-start;
+                        padding-top: 0;
+                        gap: 6px;
+                    }
+
+                    img.award-seal { width: 84px; }
+                }
+            }
+
+            div.company-facts {
+                flex-direction: column;
+                gap: 32px;
+                margin-top: 40px;
+
+                div.company-logo-frame {
+                    width: 100%;
+                    min-height: 0;
+                    justify-content: center;
+
+                    img.company-logo {
+                        max-width: 200px;
+                        max-height: 110px;
+                    }
+                }
+            }
+
+            section.award-section {
+                margin-top: 52px;
+
+                h2.section-title {
+                    font-size: 19px;
+                    gap: 12px;
+
+                    span.section-mark {
+                        width: 22px;
+                        height: 22px;
+                        border-radius: 6px;
+                    }
+                }
+
+                p.business-text { font-size: 16px; }
+
+                div.award-reasons-panel {
+                    padding: 28px 22px;
+
+                    ul.award-reason-list li.award-reason { font-size: 16px; }
+                }
+            }
+        }
+    }
+}

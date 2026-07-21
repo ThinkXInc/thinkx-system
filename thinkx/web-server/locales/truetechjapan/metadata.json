@@ -82,6 +82,18 @@
         "description": "ベストテクノロジースタートアップへのお問い合わせやご相談を承ります。",
         "keywords": "Best Technology Startup 100, Inquiry, お問い合わせ"
       }
+    },
+    "metadata_award_company": {
+      "en": {
+        "title": "Best Technology Startup 100",
+        "description": "",
+        "keywords": "Best Technology Startup 100, Award, Awarded Company"
+      },
+      "ja": {
+        "title": "Best Technology Startup 100",
+        "description": "",
+        "keywords": "Best Technology Startup 100, 受賞企業"
+      }
     }
 }
   

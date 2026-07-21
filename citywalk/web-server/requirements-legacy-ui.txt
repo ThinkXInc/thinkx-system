@@ -1,0 +1,19 @@
+# thinkx-system/citywalk/web-server/requirements-legacy-ui.txt
+# Minimal legacy Flask entry-point dependencies for the C-0c browser oracle.
+
+boto3==1.16.51
+Flask==0.12.2
+Flask-HTTPAuth==4.2.0
+geopy==2.4.1
+itsdangerous==1.1.0
+jaconv==0.2.4
+Jinja2==2.9.6
+MarkupSafe==1.1.1
+pycryptodome==3.11.0
+pymongo==3.11.2
+redis==3.5.3
+Werkzeug==0.16.0
+
+# Runtime substitutions required by refactor_plan.md C-0c.
+fakeredis==1.7.1
+mongomock==4.3.0

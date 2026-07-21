@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 18.1.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 80 80" enable-background="new 0 0 80 80" xml:space="preserve">
+<g id="Layer_1" display="none">
+	
+		<image display="inline" overflow="visible" width="450" height="349" xlink:href="../../new/resources/stock-photo-chess-pieces-including-king-queen-rook-pawn-knight-and-bishop-chess-icons-set-of-chess-128198918.jpg"  transform="matrix(0.7523 0 0 0.7523 -46.6667 -161.2363)">
+	</image>
+</g>
+<g id="rook" display="none">
+	<polygon display="inline" fill="#999999" points="39,3 37,3 37,13 30,13 30,3 24,3 24,18 40,18 40,3 	"/>
+	<polygon display="inline" fill="#999999" points="41,3 43,3 43,13 50,13 50,3 56,3 56,18 40,18 40,3 	"/>
+	<path display="inline" fill="#999999" d="M40,19H24c0,0-0.2,2,1.8,4H40V19z"/>
+	<path display="inline" fill="#999999" d="M40,19h16c0,0,0.2,2-1.8,4H40V19z"/>
+	<path display="inline" fill="#999999" d="M40,24h-8c0,0,1.8,3.4,1.8,10.2S32,48,25.4,58H40V24"/>
+	<path display="inline" fill="#999999" d="M39,24h8.4c0,0-1.8,3.4-1.8,10.2S47.4,48,54,58H39V24"/>
+	<path display="inline" fill="#999999" d="M40,59v5H22c0,0-0.6-1.8,2.8-4.8l15.2,0V59z"/>
+	<path display="inline" fill="#999999" d="M40,59v5h18c0,0,0.6-1.8-2.8-4.8l-15.1,0V59z"/>
+	<path display="inline" fill="#999999" d="M40,65v13H18v-9c0,0,0.5-2.5,3-3.8l19,0V65z"/>
+	<path display="inline" fill="#999999" d="M39,65v13h22v-9c0,0-0.5-2.5-3-3.8l-19,0V65z"/>
+</g>
+<g id="rook_copy">
+	<g>
+		<polygon fill="#FFFFFF" points="56,18 56,3 50,3 50,13 43,13 43,3 41,3 40,3 39,3 37,3 37,13 30,13 30,3 24,3 24,18 40,18 		"/>
+		<path fill="#FFFFFF" d="M40,23h14.2c2.1-2,1.8-4,1.8-4H40H24c0,0-0.2,2,1.8,4H40z"/>
+		<path fill="#FFFFFF" d="M39,58h1h14c-6.6-10-8.4-17.1-8.4-23.8S47.4,24,47.4,24H40h-1h-7c0,0,1.8,3.4,1.8,10.2S32,48,25.4,58H39z"
+			/>
+		<path fill="#FFFFFF" d="M40,64h18c0,0,0.6-1.8-2.8-4.8l-15.1,0l-15.2,0C21.4,62.2,22,64,22,64H40z"/>
+		<path fill="#FFFFFF" d="M58,65.2l-18,0v0l-0.5,0l-0.5,0v0l-18,0c-2.5,1.2-3,3.8-3,3.8v9h21h1h21v-9C61,69,60.5,66.5,58,65.2z"/>
+	</g>
+</g>
+</svg>

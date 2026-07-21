@@ -1,0 +1,403 @@
+{% extends "business/main.html" %}
+{% block page %}
+<script src=/js/business/view_components/textfield.js></script>
+<script src=/js/business/view_components/dropdown_button.js></script>
+<script src=/js/business/view_components/input_page_view_controller.js></script>
+<script src=/js/business/view_components/position_map.js></script>
+<script src=/js/business/view_components/page_navigation_view.js></script>
+<script src=/js/business/view_controllers/settings_view_controller.js></script>
+
+<section id=settingsView class=inputPageView>
+    {% include "business/view_components/main_header.html" %}
+
+    <p id=settingsViewBasics1Label class=inputPageViewPageDescription></p>
+    <p id=settingsViewOrganizationNameLabel class=inputPageViewPageDescription></p>
+    <div id=settingsViewOrganizationNameTextField class=textField></div>
+    <p id=settingsViewOrganizationTypeLabel class=inputPageViewPageDescription></p>
+    <div id=settingsViewOrganizationTypeDropdownButton class=dropdownButton></div>
+    <p id=settingsViewOrganizationBusinessDescriptionLabel class=inputPageViewPageDescription></p>
+    <div id=settingsViewOrganizationBusinessDescriptionTextField class=textField></div>
+    <p id=settingsViewOrganizationCountryLabel class=inputPageViewPageDescription></h2>
+    <div id=settingsViewCountryDropdownButton class=dropdownButton></div>
+    <button id=settingsViewPageBasicsSubmitButton class="nextButton ripple-button"></button>
+    <!--<button id=settingsViewPageBasicsCancelButton class="nextButton ripple-button"></button>-->
+    <div id=settingsViewPageBasicsAlertMessage class="alertMessage"></div>
+
+    <p id=settingsViewOrganizationAddressLabel class=inputPageViewPageDescription></p>
+    <div id=settingsViewZipcodeTextField class=textField></div>
+    <div id=settingsViewCityTextField class=textField></div>
+    <div id=settingsViewProvinceTextField class=textField></div>
+    <div id=settingsViewAddress1TextField class=textField></div>
+    <div id=settingsViewAddress2TextField class=textField></div>
+    <p id=settingsViewPositionMapLabel class=inputPageViewPageDescription></p>
+    <div id=settingsViewPositionMap class=positionMap></div>
+    <p id=settingsViewOrganizationTelLabel class=inputPageViewPageDescription></p>
+    <div id=settingsViewTelCountryCodeDropdownButton class=dropdownButton></div>
+    <div id=settingsViewTelTextField class=textField></div>
+    <button id=settingsViewPageOrganizationSubmitButton class="nextButton ripple-button"></button>
+    <!--<button id=settingsViewPageOrganizationCancelButton class="nextButton ripple-button"></button>-->
+    <div id=settingsViewPageOrganizationAlertMessage class="alertMessage"></div>
+
+    <p id=settingsViewMemberFirstNameLabel class=inputPageViewPageDescription></p>
+    <div id=settingsViewMemberFirstNameTextField class=textField></div>
+    <p id=settingsViewMemberLastNameLabel class=inputPageViewPageDescription></p>
+    <div id=settingsViewMemberLastNameTextField class=textField></div>
+    <p id=settingsViewMemberEmailLabel class=inputPageViewPageDescription></p>
+    <div id=settingsViewEmailTextField class=textField></div>
+    <button id=settingsViewPageOrganizationMemberSubmitButton class="nextButton ripple-button"></button>
+    <!--<button id=settingsViewPageOrganizationMemberCancelButton class="nextButton ripple-button"></button>-->
+    <div id=settingsViewPageOrganizationMemberAlertMessage class="alertMessage"></div>
+
+ 
+</section>
+<script>
+    const lang = "{{ lang }}"
+    userDefaults.language = lang;
+
+    // locale text data
+    const locale = {{ locale_json |safe }};
+    if (locale) {
+        console.log('locale_json received.')
+        if (IS_DEBUG){console.log(locale)}
+    } else {
+        console.error('locale_json not received.')
+    }
+
+    // country data (names, numerics, dials, codes) 
+    // ref. language.js
+    const countries = countriesFormData(lang);
+    if (IS_DEBUG){console.log(countries)};
+
+    const organizationLatLng = new Coordinate(
+        app.session.organization.lat,
+        app.session.organization.lng
+    )
+
+    const defaults = SettingsDataModel.fromSession(
+        app.session.organization,
+        app.session.organizationMember
+    )
+
+    let vc = new SettingsViewController(
+        'settingsView',
+        [
+            // page 0 - basics
+            [
+                new Description('settingsViewBasics1Label',
+                    locale['basics_1_label'][lang]),
+                new AlertMessage('settingsViewPageBasicsAlertMessage'),
+                new NextButton('settingsViewPageBasicsSubmitButton',
+                    locale['submit_title'][lang])
+                //new NextButton('settingsViewPageBasicsCancelButton',
+                //    locale['cancel_title'][lang]),
+            ],
+            // page 1 - organization
+            [
+                new Description('settingsViewOrganizationNameLabel',
+                    locale['organization_name_label'][lang]),
+                new TextField('settingsViewOrganizationNameTextField',
+                    TextFieldType.singleline,
+                    '',
+                    'organization_name',
+                    locale['organization_name_placeholder'][lang],
+                    20, 1,
+                    false, false),
+                new Description('settingsViewOrganizationTypeLabel',
+                    locale['organization_type_label'][lang]),
+                new DropdownButton('settingsViewOrganizationTypeDropdownButton',
+                    locale['organization_type_title'][lang],
+                    locale['organization_type_description'][lang],
+                    'organization_type',
+                    DropdownMenuType.list,
+                    DropdownMenuDisplayPositionType.bottomover,
+                    // generate pairs ('{official name}', '{ISO3166-1-numeric}')
+                    OrganizationType[`__${lang}__`].map((name, i) => {
+                        return new ListMenu(name, OrganizationType.values[i])
+                        })
+                    ),
+                new Description('settingsViewOrganizationBusinessDescriptionLabel',
+                    locale['business_description_label'][lang]),
+                new TextField('settingsViewOrganizationBusinessDescriptionTextField',
+                    TextFieldType.multiplelines,
+                    locale['business_description_title'][lang],
+                    'business_description',
+                    locale['business_description_placeholder'][lang],
+                    100, 2,
+                    true, false),
+                new Description('settingsViewOrganizationCountryLabel',
+                    locale['organization_country_label'][lang]),
+                new DropdownButton('settingsViewCountryDropdownButton',
+                    locale['country_title'][lang],
+                    locale['country_description'][lang],
+                    'country',
+                    DropdownMenuType.list,
+                    DropdownMenuDisplayPositionType.bottomover,
+                    // generate pairs ('{official name}', '{ISO3166-1-numeric}')
+                    countries.names.map((name, i) => {
+                        return new ListMenu(name, countries.codes[i])
+                        })
+                    ),
+                new Description('settingsViewOrganizationAddressLabel',
+                    locale['organization_address_label'][lang]),
+                new TextField('settingsViewZipcodeTextField',
+                    TextFieldType.singleline,
+                    locale['zipcode_title'][lang],
+                    'zipcode',
+                    locale['zipcode_placeholder'][lang],
+                    30, 1,
+                    false),
+                new Wrapper(
+                    'cityProvinceWrapper',
+                    [
+                        new TextField('settingsViewCityTextField',
+                            TextFieldType.singleline,
+                            locale['city_title'][lang],
+                            'city',
+                            locale['city_placeholder'][lang],
+                            40, 1,
+                            false),
+                        new TextField('settingsViewProvinceTextField',
+                            TextFieldType.singleline,
+                            locale['province_title'][lang],
+                            'province',
+                            locale['province_placeholder'][lang],
+                            40, 1,
+                            false),
+                    ],
+                ),
+                new TextField('settingsViewAddress1TextField',
+                    TextFieldType.singleline,
+                    locale['address1_title'][lang],
+                    'address1',
+                    locale['address1_placeholder'][lang],
+                    100, 1,
+                    false),
+                new TextField('settingsViewAddress2TextField',
+                    TextFieldType.singleline,
+                    locale['address2_title'][lang],
+                    'address2',
+                    locale['address2_placeholder'][lang],
+                    100, 0,
+                    false),
+                new Description('settingsViewPositionMapLabel',
+                    locale['positionmap_label'][lang]),
+                new PositionMap('settingsViewPositionMap',
+                    'lat',
+                    'lng',
+                    organizationLatLng,
+                    organizationLatLng,
+                    locale['positionmap_label'][lang]
+                    ),
+                new Description('settingsViewOrganizationTelLabel',
+                    locale['organization_tel_label'][lang]),
+                new DropdownButton('settingsViewTelCountryCodeDropdownButton',
+                    locale['telcountry_title'][lang],
+                    locale['telcountry_description'][lang],
+                    'tel_country_code',
+                    DropdownMenuType.list,
+                    DropdownMenuDisplayPositionType.upperover,
+                    // generate pairs ('{official name} +{dial number}', '{ISO3166-1-numeric}')
+                    countries.dials.map((dial, i) => {
+                        return new ListMenu(
+                            `${countries.names[i]} +${dial}`,
+                            dial)
+                        })
+                    ),
+                new TextField('settingsViewTelTextField',
+                    TextFieldType.singleline,
+                    locale['tel_title'][lang],
+                    'tel',
+                    locale['tel_placeholder'][lang],
+                    20, 1,
+                    false),
+                new AlertMessage('settingsViewPageOrganizationAlertMessage'),
+                new NextButton('settingsViewPageOrganizationSubmitButton',
+                    locale['submit_title'][lang])
+                //new NextButton('settingsViewPageOrganizationCancelButton',
+                //    locale['cancel_title'][lang]),
+            ],
+            // page 2 - organization member
+            [
+                new Description('settingsViewMemberFirstNameLabel',
+                    locale['firstname_label'][lang]),
+                new TextField('settingsViewMemberFirstNameTextField',
+                    TextFieldType.singleline,
+                    locale['firstname_title'][lang],
+                    'first_name',
+                    locale['firstname_placeholder'][lang],
+                    100, 1,
+                    false, false),
+                new Description('settingsViewMemberLastNameLabel',
+                    locale['lastname_label'][lang]),
+                new TextField('settingsViewMemberLastNameTextField',
+                    TextFieldType.singleline,
+                    locale['lastname_title'][lang],
+                    'last_name',
+                    locale['lastname_placeholder'][lang],
+                    100, 1,
+                    false, false),
+                new Description('settingsViewMemberEmailLabel',
+                    locale['organization_email_label'][lang]),
+                new TextField('settingsViewEmailTextField',
+                    TextFieldType.singleline,
+                    locale['email_title'][lang],
+                    'email',
+                    locale['email_placeholder'][lang],
+                    100, 1,
+                    false, false),
+                new AlertMessage('settingsViewPageOrganizationMemberAlertMessage'),
+                new NextButton('settingsViewPageOrganizationMemberSubmitButton',
+                    locale['submit_title'][lang])
+                //new NextButton('settingsViewPageOrganizationMemberCancelButton',
+                //    locale['cancel_title'][lang]),
+            ]
+        ],
+        SettingsDataModel,
+        defaults,
+        {
+            // page 0
+            'settingsViewOrganizationNameTextField': [
+                [
+                    ValidationErrorType.required,
+                    validationErrorMessages["field_required"][lang]
+                ],
+                [  
+                    ValidationErrorType.length,
+                    validationErrorMessages["length_must_be"][lang].replace('$0', 1).replace('$1', 20),
+                    [1, 20]
+                ],
+            ],
+            'settingsViewOrganizationTypeDropdownButton': [
+                [
+                    ValidationErrorType.required,
+                    validationErrorMessages["field_required"][lang]
+                ]
+            ],
+            'settingsViewOrganizationBusinessDescriptionTextField': [
+                [
+                    ValidationErrorType.required,
+                    validationErrorMessages["field_required"][lang]
+                ],
+                [  
+                    ValidationErrorType.length,
+                    validationErrorMessages["length_must_be"][lang].replace('$0', 1).replace('$1', 100),
+                    [1, 100]
+                ],
+            ],
+            'settingsViewCountryDropdownButton': [
+                [
+                    ValidationErrorType.required,
+                    validationErrorMessages["field_required"][lang]
+                ]
+            ],
+            // page 1
+            'settingsViewZipcodeTextField': [
+                [
+                    ValidationErrorType.required,
+                    validationErrorMessages["field_required"][lang]
+                ],
+                [  
+                    ValidationErrorType.format,
+                    validationErrorMessages["invalid_postalcode_format"][lang]
+                ]
+            ],
+            'settingsViewCityTextField': [
+                [
+                    ValidationErrorType.required,
+                    validationErrorMessages["field_required"][lang]
+                ],
+                [  
+                    ValidationErrorType.length,
+                    validationErrorMessages["length_must_be"][lang].replace('$0', 1).replace('$1', 40),
+                    [1, 40]
+                ],
+            ],
+            'settingsViewProvinceTextField': [
+                [
+                    ValidationErrorType.required,
+                    validationErrorMessages["field_required"][lang]
+                ],
+                [  
+                    ValidationErrorType.length,
+                    validationErrorMessages["length_must_be"][lang].replace('$0', 1).replace('$1', 40),
+                    [1, 40]
+                ],
+            ],
+            'settingsViewAddress1TextField': [
+                [
+                    ValidationErrorType.required,
+                    validationErrorMessages["field_required"][lang]
+                ],
+                [  
+                    ValidationErrorType.length,
+                    validationErrorMessages["length_must_be"][lang].replace('$0', 1).replace('$1', 40),
+                    [1, 40]
+                ],
+            ],
+            'settingsViewAddress2TextField': [
+                [  
+                    ValidationErrorType.length,
+                    validationErrorMessages["length_must_be"][lang].replace('$0', 1).replace('$1', 40),
+                    [1, 40]
+                ],
+            ],
+            'settingsViewTelCountryCodeDropdownButton': [
+                [
+                    ValidationErrorType.required,
+                    validationErrorMessages["field_required"][lang]
+                ],
+            ],
+            'settingsViewTelTextField': [
+                [
+                    ValidationErrorType.required,
+                    validationErrorMessages["field_required"][lang]
+                ],
+                [  
+                    ValidationErrorType.format,
+                    validationErrorMessages["invalid_tel_format"][lang]
+                ]
+            ],
+            // page 2
+            'settingsViewMemberFirstNameTextField': [
+                [
+                    ValidationErrorType.required,
+                    validationErrorMessages["field_required"][lang]
+                ],
+                [  
+                    ValidationErrorType.length,
+                    validationErrorMessages["length_must_be"][lang].replace('$0', 1).replace('$1', 100),
+                    [1, 100]
+                ],
+            ],
+            'settingsViewMemberLastNameTextField': [
+                [
+                    ValidationErrorType.required,
+                    validationErrorMessages["field_required"][lang]
+                ],
+                [  
+                    ValidationErrorType.length,
+                    validationErrorMessages["length_must_be"][lang].replace('$0', 1).replace('$1', 100),
+                    [1, 100]
+                ],
+            ],
+            'settingsViewEmailTextField': [
+                [
+                    ValidationErrorType.required,
+                    validationErrorMessages["field_required"][lang]
+                ],
+                [  
+                    ValidationErrorType.format,
+                    validationErrorMessages["invalid_email_format"][lang]
+                ]
+            ]
+        },
+        locale,
+        lang
+        //cookieExcludes=['password', 'password_confirm']
+    );
+
+    // initial page
+    vc.page = 1;
+
+</script>
+{% endblock %}

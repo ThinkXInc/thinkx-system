@@ -1,0 +1,223 @@
+{
+    "page_1_title": {
+        "en": "Let's get started.",
+        "ja": "はじめましょう",
+        "zh": "让我们开始吧"
+    },
+    "page_1_description": {
+        "en": "Tell us about your affiliation.",
+        "ja": "所属する組織について入力してください。",
+        "zh": "请输入你所属的组织"
+    },
+    "page_1_organization_name_title": {
+        "en": "",
+        "ja": "",
+        "zh": ""
+    },
+    "page_1_organization_name_placeholder": {
+        "en": "Business Name",
+        "ja": "ビジネス名",
+        "zh": "商业名称"
+    },
+    "page_1_organization_type_title": {
+        "en": "---",
+        "ja": "---",
+        "zh": "---"
+    },
+    "page_1_organization_type_description": {
+        "en": "Choose your organization type.",
+        "ja": "組織の種類を選んで下さい",
+        "zh": ""
+    },
+    "page_1_business_description_title": {
+        "en": "Your business description here.",
+        "ja": "ビジネス内容",
+        "zh": "业务描述"
+    },
+    "page_1_business_description_placeholder": {
+        "en": "",
+        "ja": "",
+        "zh": ""
+    },
+    "page_1_country_title": {
+        "en": "---",
+        "ja": "---",
+        "zh": ""
+    },
+    "page_1_country_description": {
+        "en": "Which country does your company locate?",
+        "ja": "どこの国の組織ですか?",
+        "zh": "哪个国家组织？"
+    },
+    "page_1_nextbutton_title": {
+        "en": "Next",
+        "ja": "次へ",
+        "zh": "下一步"
+    },
+    "page_2_backbutton_title": {
+        "en": "Back",
+        "ja": "戻る",
+        "zh": "返回"
+    },
+    "page_2_title": {
+        "en": "This is the page 2.",
+        "ja": "画面2",
+        "zh": "第二屏"
+    },
+    "page_2_zipcode_title": {
+        "en": "Postal Code",
+        "ja": "郵便番号",
+        "zh": "邮政编号"
+    },
+    "page_2_zipcode_placeholder": {
+        "en": "",
+        "ja": "",
+        "zh": ""
+    },
+    "page_2_city_title": {
+        "en": "City",
+        "ja": "市または区",
+        "zh": "城市"
+    },
+    "page_2_city_placeholder": {
+        "en": "",
+        "ja": "例) 港区",
+        "zh": ""
+    },
+    "page_2_province_title": {
+        "en": "State/Region",
+        "ja": "都道府県",
+        "zh": "州/地区"
+    },
+    "page_2_province_placeholder": {
+        "en": "",
+        "ja": "例) 東京都",
+        "zh": ""
+    },
+    "page_2_address1_title": {
+        "en": "Address line 1",
+        "ja": "住所1",
+        "zh": "地址1"
+    },
+    "page_2_address1_placeholder": {
+        "en": "",
+        "ja": "例) 六本木7-7-7",
+        "zh": ""
+    },
+    "page_2_address2_title": {
+        "en": "Address line 2 (option)",
+        "ja": "住所2 (option)",
+        "zh": "地址2 (option)"
+    },
+    "page_2_address2_placeholder": {
+        "en": "",
+        "ja": "建物名等(任意)",
+        "zh": ""
+    },
+    "page_2_positionmap_label": {
+        "en": "Your organization's location.",
+        "ja": "あなたの組織の場所",
+        "zh": ""
+    },
+    "page_2_telcountry_title": {
+        "en": "---",
+        "ja": "---",
+        "zh": ""
+   },
+    "page_2_telcountry_description": {
+        "en": "Which country did you get the phonenumber?",
+        "ja": "どこの国で取得した電話番号ですか？",
+        "zh": "该电话号码是在哪个国家获得的？"
+    },
+    "page_2_tel_title": {
+        "en": "Telephone number",
+        "ja": "電話",
+        "zh": "电话"
+    },
+    "page_2_tel_placeholder": {
+        "en": "",
+        "ja": "",
+        "zh": ""
+    },
+    "page_2_nextbutton_title": {
+        "en": "Next",
+        "ja": "次へ",
+        "zh": "下一步"
+    },
+
+    "page_3_backbutton_title": {
+        "en": "Back",
+        "ja": "戻る",
+        "zh": "返回"
+    },
+    "page_3_title": {
+        "en": "This is the page 3.",
+        "ja": "画面3",
+        "zh": "第三屏"
+    },
+    "page_3_firstname_title": {
+        "en": "Your First Name",
+        "ja": "氏",
+        "zh": "名字"
+    },
+    "page_3_firstname_placeholder": {
+        "en": "",
+        "ja": "",
+        "zh": ""
+    },
+    "page_3_lastname_title": {
+        "en": "Your Last Name",
+        "ja": "名",
+        "zh": "姓氏"
+    },
+    "page_3_lastname_placeholder": {
+        "en": "",
+        "ja": "",
+        "zh": ""
+    },
+    "page_3_email_title": {
+        "en": "Email address",
+        "ja": "メールアドレス",
+        "zh": "电子邮件地址"
+    },
+    "page_3_email_placeholder": {
+        "en": "",
+        "ja": "",
+        "zh": ""
+    },
+    "page_3_password_title": {
+        "en": "Password",
+        "ja": "パスワード",
+        "zh": "密码"
+    },
+    "page_3_password_placeholder": {
+        "en": "",
+        "ja": "",
+        "zh": ""
+    },
+    "page_3_password_confirm_title": {
+        "en": "Password Confirm",
+        "ja": "パスワード(確認)",
+        "zh": "密码（确认）"
+    },
+    "page_3_password_confirm_placeholder": {
+        "en": "",
+        "ja": "",
+        "zh": ""
+    },
+    "page_3_nextbutton_title": {
+        "en": "Submit",
+        "ja": "送信",
+        "zh": "传动"
+    },
+    "page_4_title": {
+        "en": "See you later.",
+        "ja": "また後ほど",
+        "zh": "(zh)See you later."
+    },
+    "page_4_description": {
+        "en": "A confirmation link has been sent to the email address you entered.\nPlease check your email to complete your registration.",
+        "ja": "ご入力のメールアドレス宛に本人確認リンクを送信しました。\nメールを確認し登録を完了しましょう。",
+        "zh": "(zh)A confirmation link has been sent to the email address you entered.\nPlease check your email to complete your registration."
+    }
+}

@@ -1,0 +1,7 @@
+Hi,
+
+Someone tried to sign up for an CITYWALK account
+with {{ user.email }}. If it was you,
+enter this confirmation code in the app:
+{{ confirmation_code }}
+ 

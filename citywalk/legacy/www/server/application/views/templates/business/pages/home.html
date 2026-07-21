@@ -1,0 +1,62 @@
+{% extends "business/main.html" %}
+{% block page %}
+<script src=/js/business/view_controllers/home_view_controller.js></script>
+<script src=/js/business/view_controllers/introduction_view_controller.js></script>
+<section id=homeView class=homeView>
+
+    {% include "business/view_components/main_header.html" %}
+
+    <div id=menuContainer class=menuContainer>
+        <ul id=menuList class=menuList>
+            <li id=createGuidesMenu class=menu>
+                <div class=title>
+                    Create Guides onto Map
+                </div>
+                <div class=theme>
+                    <img src=/img/parts/home/home-menubg-createguide.png srcset=/img/parts/home/home-menubg-createguide@2x.png />
+                </div>
+            </li>
+            <li id=registerItemsMenu class=menu>
+                <div class=title>
+                    Register Items for Sale
+                </div>
+                <div class=theme></div>
+            </li>
+            <li id=manageReservationsMenu class=menu>
+                <div class=title>
+                    Manage Reservations
+                </div>
+                <div class=theme></div>
+            </li>
+            <li id=salesDataMenu class=menu>
+                <div class=title>
+                    Items Sales Data
+                </div>
+                <div class=theme></div>
+            </li>
+            <li id=storeMenu class=menu>
+                <div class=title>
+                    Buy Materials in CITYWALK Online Store
+                </div>
+                <div class=theme></div>
+            </li>
+            <li id=userAnalysisMenu class=menu>
+                <div class=title>
+                    User Behavior Analysis
+                </div>
+                <div class=theme></div>
+            </li>
+            <li id=settingsMenu class=menu>
+                <div class=title>
+                    Settings
+                </div>
+                <div class=theme></div>
+            </li>
+        </ul>
+    </div>
+</section>
+<script>
+    let vc = new HomeViewController();
+</script>
+{% endblock %}
+ 

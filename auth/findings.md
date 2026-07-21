@@ -70,3 +70,70 @@
   実行経路で注入が効いていることを兼ねて確認している。
 - 環境 / `web-server/libcommon/{ruff.toml,pyrightconfig.json}` は vendored libcommon 自身の lint 設定であり auth の
   ゲートではない。auth のゲートは `python3 -m pytest -q tests`(規約ゲート test_conventions.py を含む)の1本。
+
+## OIDC 確定仕様の実装前調査で確認した事実
+
+- `docs/auth-spec/01_PROTOCOL_FLOW.md` の失効フロー例は auth 中央 Session に
+  `Session.revoke_all(user.subject_id)` を渡す。一方、同ファイルの signin は
+  `Session.start(str(user.id), browser_context_id=bctx)` で中央 Session の逆引きを ObjectId 文字列で作る。
+  オーナー裁定により、中央 Session 失効は `Session.revoke_all(str(user.id))`、サービスへの外部失効通知は
+  `subject_id` を使う。`01_PROTOCOL_FLOW.md` / `03_DATA_AND_INFRA.md` への訂正反映が必要。
+- オーナー裁定により、auth 側の接続済みサービスは
+  `ConnectedService(subject, client_id, connected_at)` として独立 collection に保存し、
+  `(subject, client_id)` に複合 unique index を置く。旧 `User.services` は使用しない。
+- `ServicePrincipal(issuer, subject, local_user_id)` は各サービス側が所有する identity mapping、
+  `ConnectedService(subject, client_id, connected_at)` は auth 側が所有する接続記録であり、別モデルである。
+  `docs/auth-spec/01_PROTOCOL_FLOW.md:18` は auth MongoDB の一覧に `ServicePrincipal` を含めるが、
+  `03_DATA_AND_INFRA.md` のモデル配置とオーナー裁定ではサービス側に置く。
+- オーナー裁定により、初版 E2E client は `auth/reference-client/` に最小実装を置く。
+  旧 quantz-web の統合は後続計画とする。
+- auth 単独の project-local venv は未整備で、system Python には pytest がなく、canonical libcommon の
+  venv には mongoengine がないため、auth の pytest は conftest 収集前に停止する。L 計画中の
+  Session 拡張は canonical libcommon 側の全テストで担保する。A 計画の最初の項目(A-0相当)で
+  auth 用 venv を作成し、requirements の依存を導入したうえで、auth pytest が収集・実行できることを
+  確認する必要がある。依存は未承認のまま system や既存 venv へ追加しない。
+
+## Auth L-4 libcommon v2.2.0 配布整合性
+
+- L-4 実行時点の `auth/**/libcommon/VERSION` は1件で、`auth/web-server/libcommon/VERSION` のみ。
+  reference-client は C 計画で作成するため、snapshot 追加直後に全snapshot照合を再実行する。
+- canonical `v2.2.0` を正規 `scripts/bake.sh` でauthと一時ディレクトリへ再bakeした。
+  VERSION保存値、VERSIONを除いたauth treeの再計算値、canonical一時bake値はすべて
+  `caf94015027a627b95abd54e8e222908f79fcded750b1d345016d60d5a10a3d6` で一致した。
+- canonical一時bakeとauth snapshotはbyte identical。auth snapshotの再bake前後にtracked差分なし。
+- canonical HEADの最終ゲートは pytest 84 passed、ruff All checks passed、pyright 0 errors
+  (既存warnings 5件)。これをもってL計画を完了する。
+
+## Auth A-0 単独テスト環境
+
+- `auth/web-server/venv` を `/opt/homebrew/bin/python3.11` 3.11.15 arm64で作成した。配置は
+  CLAUDE_GENERALのcomponent-local `venv` 規則に従い、既存 `auth/.gitignore` の `venv/` 対象内。
+- runtime直接依存の根拠は次のとおり。Flaskはmain/accounts/sso、redisはssoとlibcommon Session、
+  mongoengineはUser/init_mongodb、pymongoはvendored mongomodelのbson、pytzはUser/mongomodel、
+  pydanticはlibcommon response format、msgpackはSession serializer、google-authはGoogle token検証、
+  pycryptodomeはUserが使うCipher、requestsはauth_clientとGoogle transportがimportする。
+  PyJWTは現行scaffoldでは未importだが、確定auth-specのRS256 ID Token署名・検証に用いる唯一の
+  JWTライブラリとして `PyJWT==2.13.0` を固定した。RS256実行に必要なcryptographyも、google-authの
+  推移依存へ偶然依存しないよう `cryptography==49.0.0` を直接固定した。Authlibは導入していない。
+- test直接依存はpytest、conftestが使うmongomockとfakeredis。`pip check`はbroken requirementsなし。
+- venvからのimportでlibcommon package pathは `auth/web-server/libcommon`、Session moduleも同snapshot内。
+  別cloneやPyPIのlibcommonは参照していない。
+- auth pytestは21件をcollectし、14 passed / 7 skipped / 1 warning。skipはA-9で置換予定の旧PROTOCOL
+  v1規約テスト。warningはMongoEngineの既存uuidRepresentation既定値に関するdeprecation。
+
+## Auth A-1 データモデルと seed
+
+- `web-server/models/data/user.py` / password 保存を復号可能な Cipher から Argon2id へ変更し、
+  `subject_id`、`suspended_email`、`verified_emails`、`verified_phone_numbers`、`auth_generation`、
+  `last_auth_time`、`status` を追加した。`email_verified` / `services` / `stripe_customer_id` は
+  MongoEngine field から除去した。email 確認済み状態は `is_primary_email_verified()` で導出する。
+- `web-server/models/data/` / `AuthService`、`ConnectedService`、`ServiceEntitlement`、`SigningKey`、
+  `VerificationChallenge` を追加した。ConnectedService と ServiceEntitlement は
+  `(subject, client_id)` 複合 unique。ServiceEntitlement の payment event 適用は event id 冪等かつ
+  source timestamp 単調で、同時刻以前の更新を破棄する。
+- `web-server/seed.py` / test User、AuthService、active RS256 SigningKey を冪等に投入する seed を追加した。
+  password と client_secret は CLI 引数に載せず環境変数から読む。
+- `web-server/requirements.txt` / Argon2id 実装として `argon2-cffi==25.1.0` を直接依存へ追加した。
+- `tests/test_data_models.py` / モデル制約、Argon2id、redirect 完全一致、接続一意性、billing 投影の
+  冪等性・単調性、seed 冪等性を7テストで固定した。A-1 後の auth pytest は28件 collect、
+  21 passed / 7 skipped / 1既存 warning。

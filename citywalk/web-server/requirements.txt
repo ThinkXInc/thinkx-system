@@ -1,0 +1,5 @@
+# thinkx-system/citywalk/web-server/requirements.txt
+#
+# Runtime dependencies for the rebuilt citywalk web server.
+
+Flask==3.1.3

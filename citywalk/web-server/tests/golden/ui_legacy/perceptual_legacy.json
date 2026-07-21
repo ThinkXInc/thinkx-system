@@ -1,0 +1,417 @@
+{
+  "business_top": {
+    "buttons": [],
+    "fields": [],
+    "links": [],
+    "text": ""
+  },
+  "business_signin": {
+    "buttons": [],
+    "fields": [],
+    "links": [],
+    "text": ""
+  },
+  "business_signup": {
+    "buttons": [
+      {
+        "disabled": false,
+        "text": ""
+      },
+      {
+        "disabled": false,
+        "text": ""
+      },
+      {
+        "disabled": false,
+        "text": ""
+      },
+      {
+        "disabled": false,
+        "text": ""
+      },
+      {
+        "disabled": false,
+        "text": ""
+      }
+    ],
+    "fields": [],
+    "links": [],
+    "text": "{ const lang = \"en\" userDefaults.language = lang; // locale text data const locale = {\"page_1_title\": {\"en\": \"Let's get started.\", \"ja\": \"はじめましょう\", \"zh\": \"让我们开始吧\"}, \"page_1_description\": {\"en\": \"Tell us about your affiliation.\", \"ja\": \"所属する組織について入力してください。\", \"zh\": \"请输入你所属的组织\"}, \"page_1_organization_name_title\": {\"en\": \"\", \"ja\": \"\", \"zh\": \"\"}, \"page_1_organization_name_placeholder\": {\"en\": \"Business Name\", \"ja\": \"ビジネス名\", \"zh\": \"商业名称\"}, \"page_1_organization_type_title\": {\"en\": \"---\", \"ja\": \"---\", \"zh\": \"---\"}, \"page_1_organization_type_description\": {\"en\": \"Choose your organization type.\", \"ja\": \"組織の種類を選んで下さい\", \"zh\": \"\"}, \"page_1_business_description_title\": {\"en\": \"Your business description here.\", \"ja\": \"ビジネス内容\", \"zh\": \"业务描述\"}, \"page_1_business_description_placeholder\": {\"en\": \"\", \"ja\": \"\", \"zh\": \"\"}, \"page_1_country_title\": {\"en\": \"---\", \"ja\": \"---\", \"zh\": \"\"}, \"page_1_country_description\": {\"en\": \"Which country does your company locate?\", \"ja\": \"どこの国の組織ですか?\", \"zh\": \"哪个国家组织？\"}, \"page_1_nextbutton_title\": {\"en\": \"Next\", \"ja\": \"次へ\", \"zh\": \"下一步\"}, \"page_2_backbutton_title\": {\"en\": \"Back\", \"ja\": \"戻る\", \"zh\": \"返回\"}, \"page_2_title\": {\"en\": \"This is the page 2.\", \"ja\": \"画面2\", \"zh\": \"第二屏\"}, \"page_2_zipcode_title\": {\"en\": \"Postal Code\", \"ja\": \"郵便番号\", \"zh\": \"邮政编号\"}, \"page_2_zipcode_placeholder\": {\"en\": \"\", \"ja\": \"\", \"zh\": \"\"}, \"page_2_city_title\": {\"en\": \"City\", \"ja\": \"市または区\", \"zh\": \"城市\"}, \"page_2_city_placeholder\": {\"en\": \"\", \"ja\": \"例) 港区\", \"zh\": \"\"}, \"page_2_province_title\": {\"en\": \"State/Region\", \"ja\": \"都道府県\", \"zh\": \"州/地区\"}, \"page_2_province_placeholder\": {\"en\": \"\", \"ja\": \"例) 東京都\", \"zh\": \"\"}, \"page_2_address1_title\": {\"en\": \"Address line 1\", \"ja\": \"住所1\", \"zh\": \"地址1\"}, \"page_2_address1_placeholder\": {\"en\": \"\", \"ja\": \"例) 六本木7-7-7\", \"zh\": \"\"}, \"page_2_address2_title\": {\"en\": \"Address line 2 (option)\", \"ja\": \"住所2 (option)\", \"zh\": \"地址2 (option)\"}, \"page_2_address2_placeholder\": {\"en\": \"\", \"ja\": \"建物名等(任意)\", \"zh\": \"\"}, \"page_2_positionmap_label\": {\"en\": \"Your organization's location.\", \"ja\": \"あなたの組織の場所\", \"zh\": \"\"}, \"page_2_telcountry_title\": {\"en\": \"---\", \"ja\": \"---\", \"zh\": \"\"}, \"page_2_telcountry_description\": {\"en\": \"Which country did you get the phonenumber?\", \"ja\": \"どこの国で取得した電話番号ですか？\", \"zh\": \"该电话号码是在哪个国家获得的？\"}, \"page_2_tel_title\": {\"en\": \"Telephone number\", \"ja\": \"電話\", \"zh\": \"电话\"}, \"page_2_tel_placeholder\": {\"en\": \"\", \"ja\": \"\", \"zh\": \"\"}, \"page_2_nextbutton_title\": {\"en\": \"Next\", \"ja\": \"次へ\", \"zh\": \"下一步\"}, \"page_3_backbutton_title\": {\"en\": \"Back\", \"ja\": \"戻る\", \"zh\": \"返回\"}, \"page_3_title\": {\"en\": \"This is the page 3.\", \"ja\": \"画面3\", \"zh\": \"第三屏\"}, \"page_3_firstname_title\": {\"en\": \"Your First Name\", \"ja\": \"氏\", \"zh\": \"名字\"}, \"page_3_firstname_placeholder\": {\"en\": \"\", \"ja\": \"\", \"zh\": \"\"}, \"page_3_lastname_title\": {\"en\": \"Your Last Name\", \"ja\": \"名\", \"zh\": \"姓氏\"}, \"page_3_lastname_placeholder\": {\"en\": \"\", \"ja\": \"\", \"zh\": \"\"}, \"page_3_email_title\": {\"en\": \"Email address\", \"ja\": \"メールアドレス\", \"zh\": \"电子邮件地址\"}, \"page_3_email_placeholder\": {\"en\": \"\", \"ja\": \"\", \"zh\": \"\"}, \"page_3_password_title\": {\"en\": \"Password\", \"ja\": \"パスワード\", \"zh\": \"密码\"}, \"page_3_password_placeholder\": {\"en\": \"\", \"ja\": \"\", \"zh\": \"\"}, \"page_3_password_confirm_title\": {\"en\": \"Password Confirm\", \"ja\": \"パスワード(確認)\", \"zh\": \"密码（确认）\"}, \"page_3_password_confirm_placeholder\": {\"en\": \"\", \"ja\": \"\", \"zh\": \"\"}, \"page_3_nextbutton_title\": {\"en\": \"Submit\", \"ja\": \"送信\", \"zh\": \"传动\"}, \"page_4_title\": {\"en\": \"See you later.\", \"ja\": \"また後ほど\", \"zh\": \"(zh)See you later.\"}, \"page_4_description\": {\"en\": \"A confirmation link has been sent to the email address you entered.\\nPlease check your email to complete your registration.\", \"ja\": \"ご入力のメールアドレス宛に本人確認リンクを送信しました。\\nメールを確認し登録を完了しましょう。\", \"zh\": \"(zh)A confirmation link has been sent to the email address you entered.\\nPlease check your email to complete your registration.\"}}; if (locale) { console.log(locale) } else { console.error('locale_json not received.') } // country data (names, numerics, dials, codes) // ref. language.js const countries = countriesFormData(lang); console.log(countries); // default coordinate const lat = 46.943986; const lng = 7.426123; const defaultCoordinate = new Coordinate(lat, lng); let vc = new SignupViewController( 'signupView', [ [ new Title('signupViewPage1Title', locale['page_1_title'][lang]), new Description('signupViewPage1Description', locale['page_1_description'][lang]), new TextField('signupViewOrganizationNameTextField', TextFieldType.singleline, locale['page_1_organization_name_title'][lang], 'organization_name', locale['page_1_organization_name_placeholder'][lang], 20, 1, false, false), new DropdownButton('signupViewOrganizationTypeDropdownButton', locale['page_1_organization_type_title'][lang], locale['page_1_organization_type_description'][lang], 'organization_type', DropdownMenuType.list, DropdownMenuDisplayPositionType.bottomover, // generate pairs ('{official name}', '{ISO3166-1-numeric}') OrganizationType[`__${lang}__`].map((name, i) => { return new ListMenu(name, OrganizationType.values[i]) }) ), new TextField('signupViewOrganizationBusinessDescriptionTextField', TextFieldType.multiplelines, locale['page_1_business_description_title'][lang], 'business_description', locale['page_1_business_description_placeholder'][lang], 100, 2, true, true), new DropdownButton('signupViewCountryDropdownButton', locale['page_1_country_title'][lang], locale['page_1_country_description'][lang], 'country', DropdownMenuType.list, DropdownMenuDisplayPositionType.bottomover, // generate pairs ('{official name}', '{ISO3166-1-numeric}') countries.names.map((name, i) => { return new ListMenu(name, countries.codes[i]) }) ), new NextButton('signupViewPage1NextButton', locale['page_1_nextbutton_title'][lang]), new AlertMessage('signupViewPage1AlertMessage') ], [ new BackButton('signupViewPage2BackButton', locale['page_2_backbutton_title'][lang]), new Title('signupViewPage2Title', locale['page_2_title'][lang]), new TextField('signupViewZipcodeTextField', TextFieldType.singleline, locale['page_2_zipcode_title'][lang], 'zipcode', locale['page_2_zipcode_placeholder'][lang], 30, 1, false), new Wrapper( 'cityProvinceWrapper', [ new TextField('signupViewCityTextField', TextFieldType.singleline, locale['page_2_city_title'][lang], 'city', locale['page_2_city_placeholder'][lang], 40, 1, false), new TextField('signupViewProvinceTextField', TextFieldType.singleline, locale['page_2_province_title'][lang], 'province', locale['page_2_province_placeholder'][lang], 40, 1, false), ], ), new TextField('signupViewAddress1TextField', TextFieldType.singleline, locale['page_2_address1_title'][lang], 'address1', locale['page_2_address1_placeholder'][lang], 100, 1, false), new TextField('signupViewAddress2TextField', TextFieldType.singleline, locale['page_2_address2_title'][lang], 'address2', locale['page_2_address2_placeholder'][lang], 100, 0, false), new PositionMap('signupViewPositionMap', 'lat', 'lng', defaultCoordinate, defaultCoordinate, locale['page_2_positionmap_label'][lang] ), new DropdownButton('signupViewTelCountryCodeDropdownButton', locale['page_2_telcountry_title'][lang], locale['page_2_telcountry_description'][lang], 'tel_country_code', DropdownMenuType.list, DropdownMenuDisplayPositionType.upperover, // generate pairs ('{official name} +{dial number}', '{ISO3166-1-numeric}') countries.dials.map((dial, i) => { return new ListMenu( `${countries.names[i]} +${dial}`, dial) }) ), new TextField('signupViewTelTextField', TextFieldType.singleline, locale['page_2_tel_title'][lang], 'tel', locale['page_2_tel_placeholder'][lang], 20, 1, false), new NextButton('signupViewPage2NextButton', locale['page_2_nextbutton_title'][lang]), new AlertMessage('signupViewPage2AlertMessage') ], [ new BackButton('signupViewPage3BackButton', locale['page_3_backbutton_title'][lang]), new Title('signupViewPage3Title', locale['page_3_title'][lang]), new AlertMessage('signupViewPage3AlertMessage'), new TextField('signupViewMemberFirstNameTextField', TextFieldType.singleline, locale['page_3_firstname_title'][lang], 'first_name', locale['page_3_firstname_placeholder'][lang], 100, 1, false), new TextField('signupViewMemberLastNameTextField', TextFieldType.singleline, locale['page_3_lastname_title'][lang], 'last_name', locale['page_3_lastname_placeholder'][lang], 100, 1, false), new TextField('signupViewEmailTextField', TextFieldType.singleline, locale['page_3_email_title'][lang], 'email', locale['page_3_email_placeholder'][lang], 100, 1, false), new TextField('signupViewPasswordTextField', TextFieldType.singleline, locale['page_3_password_title'][lang], 'password', locale['page_3_password_placeholder'][lang], 100, 8, false, true, true), new TextField('signupViewPasswordConfirmTextField', TextFieldType.singleline, locale['page_3_password_confirm_title'][lang], 'password_confirm', locale['page_3_password_confirm_placeholder'][lang], 100, 8, false, true, true), new NextButton('signupViewPage3NextButton', locale['page_3_nextbutton_title'][lang] ), ], [ new Title('signupViewPage4Title', locale['page_4_title'][lang]), new Description('signupViewPage4Description', locale['page_4_description'][lang]), ] ], SignupDataModel, null, { // page 0 'signupViewOrganizationNameTextField': [ [ ValidationErrorType.required, validationErrorMessages[\"field_required\"][lang] ], [ ValidationErrorType.length, validationErrorMessages[\"length_must_be\"][lang].replace('$0', 1).replace('$1', 20), [1, 20] ], ], 'signupViewOrganizationTypeDropdownButton': [ [ ValidationErrorType.required, validationErrorMessages[\"field_required\"][lang] ] ], 'signupViewOrganizationBusinessDescriptionTextField': [ [ ValidationErrorType.required, validationErrorMessages[\"field_required\"][lang] ], [ ValidationErrorType.length, validationErrorMessages[\"length_must_be\"][lang].replace('$0', 1).replace('$1', 100), [1, 100] ], ], 'signupViewCountryDropdownButton': [ [ ValidationErrorType.required, validationErrorMessages[\"field_required\"][lang] ] ], // page 1 'signupViewZipcodeTextField': [ [ ValidationErrorType.required, validationErrorMessages[\"field_required\"][lang] ], [ ValidationErrorType.format, validationErrorMessages[\"invalid_postalcode_format\"][lang] ] ], 'signupViewCityTextField': [ [ ValidationErrorType.required, validationErrorMessages[\"field_required\"][lang] ], [ ValidationErrorType.length, validationErrorMessages[\"length_must_be\"][lang].replace('$0', 1).replace('$1', 40), [1, 40] ], ], 'signupViewProvinceTextField': [ [ ValidationErrorType.required, validationErrorMessages[\"field_required\"][lang] ], [ ValidationErrorType.length, validationErrorMessages[\"length_must_be\"][lang].replace('$0', 1).replace('$1', 40), [1, 40] ], ], 'signupViewAddress1TextField': [ [ ValidationErrorType.required, validationErrorMessages[\"field_required\"][lang] ], [ ValidationErrorType.length, validationErrorMessages[\"length_must_be\"][lang].replace('$0', 1).replace('$1', 40), [1, 40] ], ], 'signupViewAddress2TextField': [ [ ValidationErrorType.length, validationErrorMessages[\"length_must_be\"][lang].replace('$0', 1).replace('$1', 40), [1, 40] ], ], 'signupViewTelCountryCodeDropdownButton': [ [ ValidationErrorType.required, validationErrorMessages[\"field_required\"][lang] ], ], 'signupViewTelTextField': [ [ ValidationErrorType.required, validationErrorMessages[\"field_required\"][lang] ], [ ValidationErrorType.format, validationErrorMessages[\"invalid_tel_format\"][lang] ] ], // page 2 'signupViewMemberFirstNameTextField': [ [ ValidationErrorType.required, validationErrorMessages[\"field_required\"][lang] ], [ ValidationErrorType.length, validationErrorMessages[\"length_must_be\"][lang].replace('$0', 1).replace('$1', 100), [1, 100] ], ], 'signupViewMemberLastNameTextField': [ [ ValidationErrorType.required, validationErrorMessages[\"field_required\"][lang] ], [ ValidationErrorType.length, validationErrorMessages[\"length_must_be\"][lang].replace('$0', 1).replace('$1', 100), [1, 100] ], ], 'signupViewEmailTextField': [ [ ValidationErrorType.required, validationErrorMessages[\"field_required\"][lang] ], [ ValidationErrorType.format, validationErrorMessages[\"invalid_email_format\"][lang] ] ], 'signupViewPasswordTextField': [ [ ValidationErrorType.required, validationErrorMessages[\"field_required\"][lang] ], [ ValidationErrorType.format, validationErrorMessages[\"invalid_password_format\"][lang] ] ], 'signupViewPasswordConfirmTextField': [ [ ValidationErrorType.required, validationErrorMessages[\"field_required\"][lang] ], [ ValidationErrorType.format, validationErrorMessages[\"password_not_corresponding\"][lang] ] ] }, locale, lang //cookieExcludes=['password', 'password_confirm'] ); // set initial page vc.page = 0; }"
+  },
+  "business_home": {
+    "buttons": [],
+    "fields": [
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      }
+    ],
+    "links": [
+      {
+        "href": "/business/signup",
+        "text": ".st0{enable-background:new ;} .st1{fill:#666666;}"
+      }
+    ],
+    "text": "app.session.organization = Organization.load('organization'); app.session.organizationMember = OrganizationMember.load('organization_member'); console.table(app.session.organization); console.table(app.session.organizationMember); .st0{enable-background:new ;} .st1{fill:#666666;} ThinkX Inc. Gates Bill Create Guides onto Map Register Items for Sale Manage Reservations Items Sales Data Buy Materials in CITYWALK Online Store User Behavior Analysis Settings let vc = new HomeViewController();"
+  },
+  "business_createguide": {
+    "buttons": [
+      {
+        "disabled": false,
+        "text": "変更を元に戻す"
+      },
+      {
+        "disabled": false,
+        "text": "保存"
+      }
+    ],
+    "fields": [
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      }
+    ],
+    "links": [
+      {
+        "href": "#",
+        "text": "すべてを表示"
+      }
+    ],
+    "text": "app.session.organization = Organization.load('organization'); app.session.organizationMember = OrganizationMember.load('organization_member'); console.table(app.session.organization); console.table(app.session.organizationMember); .st0{enable-background:new ;} .st1{fill:#666666;} ガイドコンテンツの作成 変更を元に戻す 保存 対象ユーザー 配信するユーザー属性を設定します。 すべてを表示 半径範囲 配信エリアの大きさを設定します。 半径範囲 配信エリアの大きさを設定します。 半径範囲 配信エリアの大きさを設定します。 半径範囲 配信エリアの大きさを設定します。"
+  },
+  "business_settings": {
+    "buttons": [
+      {
+        "disabled": false,
+        "text": ""
+      },
+      {
+        "disabled": false,
+        "text": ""
+      },
+      {
+        "disabled": false,
+        "text": ""
+      }
+    ],
+    "fields": [
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      },
+      {
+        "name": "",
+        "placeholder": "",
+        "type": "hidden"
+      }
+    ],
+    "links": [
+      {
+        "href": "/business/signup",
+        "text": ".st0{enable-background:new ;} .st1{fill:#666666;}"
+      }
+    ],
+    "text": "app.session.organization = Organization.load('organization'); app.session.organizationMember = OrganizationMember.load('organization_member'); console.table(app.session.organization); console.table(app.session.organizationMember); .st0{enable-background:new ;} .st1{fill:#666666;} ThinkX Inc. Gates Bill const lang = \"en\" userDefaults.language = lang; // locale text data const locale = {\"basics_1_label\": {\"en\": \"Item 1\", \"ja\": \"項目 1\", \"zh\": \"項目 1\"}, \"organization_name_label\": {\"en\": \"Your Organization Name\", \"ja\": \"組織名称\", \"zh\": \"組織名称\"}, \"organization_name_title\": {\"en\": \"\", \"ja\": \"\", \"zh\": \"\"}, \"organization_name_placeholder\": {\"en\": \"Business Name\", \"ja\": \"ビジネス名\", \"zh\": \"商业名称\"}, \"organization_type_label\": {\"en\": \"Organization Type\", \"ja\": \"組織の種類\", \"zh\": \"組織種類\"}, \"organization_type_title\": {\"en\": \"---\", \"ja\": \"---\", \"zh\": \"---\"}, \"organization_type_description\": {\"en\": \"Choose your organization type.\", \"ja\": \"組織の種類を選んで下さい\", \"zh\": \"\"}, \"business_description_label\": {\"en\": \"Your business description here.\", \"ja\": \"ビジネス内容\", \"zh\": \"业务描述\"}, \"business_description_title\": {\"en\": \"Your business description here.\", \"ja\": \"ビジネス内容\", \"zh\": \"业务描述\"}, \"business_description_placeholder\": {\"en\": \"\", \"ja\": \"\", \"zh\": \"\"}, \"organization_country_label\": {\"en\": \"Which country does your company locate?\", \"ja\": \"どこの国の組織ですか?\", \"zh\": \"哪个国家组织？\"}, \"country_title\": {\"en\": \"---\", \"ja\": \"---\", \"zh\": \"\"}, \"country_description\": {\"en\": \"Which country does your company locate?\", \"ja\": \"どこの国の組織ですか?\", \"zh\": \"哪个国家组织？\"}, \"organization_address_label\": {\"en\": \"Address\", \"ja\": \"住所\", \"zh\": \"地址\"}, \"zipcode_title\": {\"en\": \"Postal Code\", \"ja\": \"郵便番号\", \"zh\": \"邮政编号\"}, \"zipcode_placeholder\": {\"en\": \"\", \"ja\": \"\", \"zh\": \"\"}, \"city_title\": {\"en\": \"City\", \"ja\": \"市または区\", \"zh\": \"城市\"}, \"city_placeholder\": {\"en\": \"\", \"ja\": \"例) 港区\", \"zh\": \"\"}, \"province_title\": {\"en\": \"State/Region\", \"ja\": \"都道府県\", \"zh\": \"州/地区\"}, \"province_placeholder\": {\"en\": \"\", \"ja\": \"例) 東京都\", \"zh\": \"\"}, \"address1_title\": {\"en\": \"Address line 1\", \"ja\": \"住所1\", \"zh\": \"地址1\"}, \"address1_placeholder\": {\"en\": \"\", \"ja\": \"例) 六本木7-7-7\", \"zh\": \"\"}, \"address2_title\": {\"en\": \"Address line 2 (option)\", \"ja\": \"住所2 (option)\", \"zh\": \"地址2 (option)\"}, \"address2_placeholder\": {\"en\": \"\", \"ja\": \"建物名等(任意)\", \"zh\": \"\"}, \"positionmap_label\": {\"en\": \"Your organization's location.\", \"ja\": \"あなたの組織の場所\", \"zh\": \"\"}, \"telcountry_title\": {\"en\": \"---\", \"ja\": \"---\", \"zh\": \"\"}, \"telcountry_description\": {\"en\": \"Which country did you get the phonenumber?\", \"ja\": \"どこの国で取得した電話番号ですか？\", \"zh\": \"该电话号码是在哪个国家获得的？\"}, \"organization_tel_label\": {\"en\": \"Telephone number\", \"ja\": \"電話\", \"zh\": \"电话\"}, \"tel_title\": {\"en\": \"Telephone number\", \"ja\": \"電話\", \"zh\": \"电话\"}, \"tel_placeholder\": {\"en\": \"\", \"ja\": \"\", \"zh\": \"\"}, \"firstname_label\": {\"en\": \"Your First Name\", \"ja\": \"氏\", \"zh\": \"名字\"}, \"firstname_title\": {\"en\": \"Your First Name\", \"ja\": \"氏\", \"zh\": \"名字\"}, \"firstname_placeholder\": {\"en\": \"\", \"ja\": \"\", \"zh\": \"\"}, \"lastname_label\": {\"en\": \"Your Last Name\", \"ja\": \"名\", \"zh\": \"姓氏\"}, \"lastname_title\": {\"en\": \"Your Last Name\", \"ja\": \"名\", \"zh\": \"姓氏\"}, \"lastname_placeholder\": {\"en\": \"\", \"ja\": \"\", \"zh\": \"\"}, \"organization_email_label\": {\"en\": \"Email address\", \"ja\": \"メールアドレス\", \"zh\": \"电子邮件地址\"}, \"email_title\": {\"en\": \"Email address\", \"ja\": \"メールアドレス\", \"zh\": \"电子邮件地址\"}, \"email_placeholder\": {\"en\": \"\", \"ja\": \"\", \"zh\": \"\"}, \"submit_title\": {\"en\": \"Submit\", \"ja\": \"送信\", \"zh\": \"传动\"}, \"cancel_title\": {\"en\": \"Cancel\", \"ja\": \"キャンセル\", \"zh\": \"传动\"}, \"navigation_menu_title_basics\": {\"en\": \"Basic Settings\", \"ja\": \"基本設定\", \"zh\": \"基本設定\"}, \"navigation_menu_title_organization\": {\"en\": \"Organization\", \"ja\": \"組織の設定\", \"zh\": \"組織の設定\"}, \"navigation_menu_title_organization_member\": {\"en\": \"Account\", \"ja\": \"アカウント\", \"zh\": \"垢\"}, \"page_navigation_view_home\": {\"en\": \"Home\", \"ja\": \"ホーム\", \"zh\": \"家\"}, \"page_navigation_view_settings\": {\"en\": \"Settings\", \"ja\": \"設定\", \"zh\": \"設定\"}}; if (locale) { console.log('locale_json received.') if (IS_DEBUG){console.log(locale)} } else { console.error('locale_json not received.') } // country data (names, numerics, dials, codes) // ref. language.js const countries = countriesFormData(lang); if (IS_DEBUG){console.log(countries)}; const organizationLatLng = new Coordinate( app.session.organization.lat, app.session.organization.lng ) const defaults = SettingsDataModel.fromSession( app.session.organization, app.session.organizationMember ) let vc = new SettingsViewController( 'settingsView', [ // page 0 - basics [ new Description('settingsViewBasics1Label', locale['basics_1_label'][lang]), new AlertMessage('settingsViewPageBasicsAlertMessage'), new NextButton('settingsViewPageBasicsSubmitButton', locale['submit_title'][lang]) //new NextButton('settingsViewPageBasicsCancelButton', // locale['cancel_title'][lang]), ], // page 1 - organization [ new Description('settingsViewOrganizationNameLabel', locale['organization_name_label'][lang]), new TextField('settingsViewOrganizationNameTextField', TextFieldType.singleline, '', 'organization_name', locale['organization_name_placeholder'][lang], 20, 1, false, false), new Description('settingsViewOrganizationTypeLabel', locale['organization_type_label'][lang]), new DropdownButton('settingsViewOrganizationTypeDropdownButton', locale['organization_type_title'][lang], locale['organization_type_description'][lang], 'organization_type', DropdownMenuType.list, DropdownMenuDisplayPositionType.bottomover, // generate pairs ('{official name}', '{ISO3166-1-numeric}') OrganizationType[`__${lang}__`].map((name, i) => { return new ListMenu(name, OrganizationType.values[i]) }) ), new Description('settingsViewOrganizationBusinessDescriptionLabel', locale['business_description_label'][lang]), new TextField('settingsViewOrganizationBusinessDescriptionTextField', TextFieldType.multiplelines, locale['business_description_title'][lang], 'business_description', locale['business_description_placeholder'][lang], 100, 2, true, false), new Description('settingsViewOrganizationCountryLabel', locale['organization_country_label'][lang]), new DropdownButton('settingsViewCountryDropdownButton', locale['country_title'][lang], locale['country_description'][lang], 'country', DropdownMenuType.list, DropdownMenuDisplayPositionType.bottomover, // generate pairs ('{official name}', '{ISO3166-1-numeric}') countries.names.map((name, i) => { return new ListMenu(name, countries.codes[i]) }) ), new Description('settingsViewOrganizationAddressLabel', locale['organization_address_label'][lang]), new TextField('settingsViewZipcodeTextField', TextFieldType.singleline, locale['zipcode_title'][lang], 'zipcode', locale['zipcode_placeholder'][lang], 30, 1, false), new Wrapper( 'cityProvinceWrapper', [ new TextField('settingsViewCityTextField', TextFieldType.singleline, locale['city_title'][lang], 'city', locale['city_placeholder'][lang], 40, 1, false), new TextField('settingsViewProvinceTextField', TextFieldType.singleline, locale['province_title'][lang], 'province', locale['province_placeholder'][lang], 40, 1, false), ], ), new TextField('settingsViewAddress1TextField', TextFieldType.singleline, locale['address1_title'][lang], 'address1', locale['address1_placeholder'][lang], 100, 1, false), new TextField('settingsViewAddress2TextField', TextFieldType.singleline, locale['address2_title'][lang], 'address2', locale['address2_placeholder'][lang], 100, 0, false), new Description('settingsViewPositionMapLabel', locale['positionmap_label'][lang]), new PositionMap('settingsViewPositionMap', 'lat', 'lng', organizationLatLng, organizationLatLng, locale['positionmap_label'][lang] ), new Description('settingsViewOrganizationTelLabel', locale['organization_tel_label'][lang]), new DropdownButton('settingsViewTelCountryCodeDropdownButton', locale['telcountry_title'][lang], locale['telcountry_description'][lang], 'tel_country_code', DropdownMenuType.list, DropdownMenuDisplayPositionType.upperover, // generate pairs ('{official name} +{dial number}', '{ISO3166-1-numeric}') countries.dials.map((dial, i) => { return new ListMenu( `${countries.names[i]} +${dial}`, dial) }) ), new TextField('settingsViewTelTextField', TextFieldType.singleline, locale['tel_title'][lang], 'tel', locale['tel_placeholder'][lang], 20, 1, false), new AlertMessage('settingsViewPageOrganizationAlertMessage'), new NextButton('settingsViewPageOrganizationSubmitButton', locale['submit_title'][lang]) //new NextButton('settingsViewPageOrganizationCancelButton', // locale['cancel_title'][lang]), ], // page 2 - organization member [ new Description('settingsViewMemberFirstNameLabel', locale['firstname_label'][lang]), new TextField('settingsViewMemberFirstNameTextField', TextFieldType.singleline, locale['firstname_title'][lang], 'first_name', locale['firstname_placeholder'][lang], 100, 1, false, false), new Description('settingsViewMemberLastNameLabel', locale['lastname_label'][lang]), new TextField('settingsViewMemberLastNameTextField', TextFieldType.singleline, locale['lastname_title'][lang], 'last_name', locale['lastname_placeholder'][lang], 100, 1, false, false), new Description('settingsViewMemberEmailLabel', locale['organization_email_label'][lang]), new TextField('settingsViewEmailTextField', TextFieldType.singleline, locale['email_title'][lang], 'email', locale['email_placeholder'][lang], 100, 1, false, false), new AlertMessage('settingsViewPageOrganizationMemberAlertMessage'), new NextButton('settingsViewPageOrganizationMemberSubmitButton', locale['submit_title'][lang]) //new NextButton('settingsViewPageOrganizationMemberCancelButton', // locale['cancel_title'][lang]), ] ], SettingsDataModel, defaults, { // page 0 'settingsViewOrganizationNameTextField': [ [ ValidationErrorType.required, validationErrorMessages[\"field_required\"][lang] ], [ ValidationErrorType.length, validationErrorMessages[\"length_must_be\"][lang].replace('$0', 1).replace('$1', 20), [1, 20] ], ], 'settingsViewOrganizationTypeDropdownButton': [ [ ValidationErrorType.required, validationErrorMessages[\"field_required\"][lang] ] ], 'settingsViewOrganizationBusinessDescriptionTextField': [ [ ValidationErrorType.required, validationErrorMessages[\"field_required\"][lang] ], [ ValidationErrorType.length, validationErrorMessages[\"length_must_be\"][lang].replace('$0', 1).replace('$1', 100), [1, 100] ], ], 'settingsViewCountryDropdownButton': [ [ ValidationErrorType.required, validationErrorMessages[\"field_required\"][lang] ] ], // page 1 'settingsViewZipcodeTextField': [ [ ValidationErrorType.required, validationErrorMessages[\"field_required\"][lang] ], [ ValidationErrorType.format, validationErrorMessages[\"invalid_postalcode_format\"][lang] ] ], 'settingsViewCityTextField': [ [ ValidationErrorType.required, validationErrorMessages[\"field_required\"][lang] ], [ ValidationErrorType.length, validationErrorMessages[\"length_must_be\"][lang].replace('$0', 1).replace('$1', 40), [1, 40] ], ], 'settingsViewProvinceTextField': [ [ ValidationErrorType.required, validationErrorMessages[\"field_required\"][lang] ], [ ValidationErrorType.length, validationErrorMessages[\"length_must_be\"][lang].replace('$0', 1).replace('$1', 40), [1, 40] ], ], 'settingsViewAddress1TextField': [ [ ValidationErrorType.required, validationErrorMessages[\"field_required\"][lang] ], [ ValidationErrorType.length, validationErrorMessages[\"length_must_be\"][lang].replace('$0', 1).replace('$1', 40), [1, 40] ], ], 'settingsViewAddress2TextField': [ [ ValidationErrorType.length, validationErrorMessages[\"length_must_be\"][lang].replace('$0', 1).replace('$1', 40), [1, 40] ], ], 'settingsViewTelCountryCodeDropdownButton': [ [ ValidationErrorType.required, validationErrorMessages[\"field_required\"][lang] ], ], 'settingsViewTelTextField': [ [ ValidationErrorType.required, validationErrorMessages[\"field_required\"][lang] ], [ ValidationErrorType.format, validationErrorMessages[\"invalid_tel_format\"][lang] ] ], // page 2 'settingsViewMemberFirstNameTextField': [ [ ValidationErrorType.required, validationErrorMessages[\"field_required\"][lang] ], [ ValidationErrorType.length, validationErrorMessages[\"length_must_be\"][lang].replace('$0', 1).replace('$1', 100), [1, 100] ], ], 'settingsViewMemberLastNameTextField': [ [ ValidationErrorType.required, validationErrorMessages[\"field_required\"][lang] ], [ ValidationErrorType.length, validationErrorMessages[\"length_must_be\"][lang].replace('$0', 1).replace('$1', 100), [1, 100] ], ], 'settingsViewEmailTextField': [ [ ValidationErrorType.required, validationErrorMessages[\"field_required\"][lang] ], [ ValidationErrorType.format, validationErrorMessages[\"invalid_email_format\"][lang] ] ] }, locale, lang //cookieExcludes=['password', 'password_confirm'] ); // initial page vc.page = 1;"
+  },
+  "index": {
+    "buttons": [],
+    "fields": [],
+    "links": [],
+    "text": "setup complete."
+  },
+  "error_404": {
+    "buttons": [],
+    "fields": [],
+    "links": [],
+    "text": "Page Not Found"
+  },
+  "error_500": {
+    "buttons": [],
+    "fields": [],
+    "links": [],
+    "text": "Internal Server Error"
+  }
+}

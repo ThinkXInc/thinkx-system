@@ -1,0 +1,38 @@
+{
+  "award_year_label": {
+    "ja": "受賞年",
+    "en": "Award Year"
+  },
+  "award_year_unit": {
+    "ja": "年",
+    "en": ""
+  },
+  "founders_label": {
+    "ja": "創業者",
+    "en": "Founder"
+  },
+  "business_title": {
+    "ja": "事業内容",
+    "en": "Business"
+  },
+  "award_reasons_title": {
+    "ja": "受賞理由",
+    "en": "Reasons for the Award"
+  },
+  "interview_title": {
+    "ja": "インタビュー",
+    "en": "Interview"
+  },
+  "interview_link_text": {
+    "ja": "インタビューを読む",
+    "en": "Read the interview"
+  },
+  "award_tier_note": {
+    "ja": {
+      "Top-Tier": "トップティア枠"
+    },
+    "en": {
+      "Top-Tier": "Top-Tier Category"
+    }
+  }
+}

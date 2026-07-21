@@ -1,0 +1,15 @@
+    <header class=mainHeader>
+        <a href=/business/signup>
+            {% include "business/logo/logo_business.svg" %}
+        </a>
+        <ul class=right>
+            <li id=organizationMenu class=organization>
+                <p class=name>{{ organization.name }}</p>
+                <img class=headerMenuIconClose src=/img/icons/down.png srcset=/img/icons/down@2x.png />
+            </li>
+            <li id=organizationMemberMenu class=organizationMember>
+                <p class=name>{{ organization_member.first_name }} {{ organization_member.last_name }}</p>
+                <img class=headerMenuIconClose src=/img/icons/down.png srcset=/img/icons/down@2x.png />
+            </li>
+        </ul>
+    </header>

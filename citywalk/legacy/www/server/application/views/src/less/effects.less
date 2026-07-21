@@ -1,0 +1,127 @@
+@charset "UTF-8";
+// effects.less
+// *This file corresponds to effects.js.
+
+@cubic-bezier1: cubic-bezier(.65,0,.34,1);
+
+// ripple button effect
+
+.ripple {
+    width: 10px;
+    height: 10px;
+    background-color: #fff;
+    position: fixed;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.rippleEffect {
+    animation-name: rippleEffect;
+    animation-duration: 0.4s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+    @keyframes rippleEffect {
+        to {
+            transform:scale(100);
+            opacity: 0.01;
+        }
+    }
+}
+
+.rippleEffect2 {
+  animation-name: rippleEffects;
+  animation-duration: 0.4s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  @keyframes rippleEffect2 {
+    to {
+        background: #47a7f5 radial-gradient(circle, transparent 1%, #47a7f5 1%) center/15000%;
+    }
+  }
+}
+
+// ripple circle effect
+
+/*
+.sample {
+  &::after {
+    .rippleCircles(3s, 0s, 2px, rgba(0, 0, 0, 0.25));
+  }
+  &::before {
+    .rippleCircles(3s, 0.5s, 2px, rgba(0, 0, 0, 0.25));
+  }
+}
+*/
+
+.rippleCircles(@duration, @delay, @linewidth, @color, @top: 0px, @left: 0px, @scalefrom: 0, @scaleto: 1) {
+    opacity: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: @top;
+    left: @left;
+    content: '';
+    height: 100%;
+    width: 100%;
+    border: @linewidth solid @color;
+    border-radius: 100%;
+    animation-name: ripple;
+    animation-duration: @duration;
+    animation-delay: @delay;
+    animation-iteration-count: infinite;
+    animation-timing-function: @cubic-bezier1;
+    z-index: -1;
+    @keyframes ripple {
+      from {
+        opacity: 1;
+        transform: scale3d(@scalefrom, @scalefrom, 1);
+      }
+      to {
+        opacity: 0;
+        transform: scale3d(@scaleto, @scaleto, 1);
+      }
+    }
+}
+
+// loader
+
+
+.material-loader {
+  fill: none;
+  stroke-width: 6;
+  animation: rotate 2000ms linear infinite;
+  @keyframes rotate {
+    0% {
+      transform: rotate(0deg) scale(0.75);
+    }
+    100% {
+      transform: rotate(360deg) scale(0.75);
+    }
+  }
+}
+
+.material-loader__circle {
+  stroke: @blue;
+  stroke-dasharray: 1,200;
+  stroke-dashoffset: 0;
+  animation: dash 1500ms ease-in-out infinite;
+  @keyframes dash {
+    0% {
+      stroke-dasharray: 1,200;
+      stroke-dashoffset: 0;
+    }
+    50% {
+      stroke-dasharray: 89,200;
+      stroke-dashoffset: -35;
+    }
+    100% {
+      stroke-dasharray: 89,200;
+      stroke-dashoffset: -124;
+    }
+  }
+}
+
+
+

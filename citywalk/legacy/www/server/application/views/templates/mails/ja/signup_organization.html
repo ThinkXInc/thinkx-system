@@ -1,0 +1,21 @@
+{% extends "mails/ja/base.html" %}
+{% block header %}
+<h1 class="Hi" style="font-size:1.7em; font-weight: normal;">
+{{ organization_member.first_name }} {{ organization_member.last_name }} 様,
+</h1>
+{% endblock %}
+{% block content %}
+<article class="message" style="color: #333; margin-bottom: 20px;">
+  下記のメールアドレスでのCITYWALK アカウントの作成が完了しました。</br>
+  {{ organization_member.email }}</br>
+  下記のボタンをクリックして登録を完了しましょう。</br>
+
+  <a href="{{ validation_url }}" class="button" style="padding: 9px 30px; background-color: #40a6a2; color: #FFF; font-size: 0.9em;
+  box-shadow:rgba(12, 106, 101, 0.4) 0px 0px 1px 1px inset;
+  -wekit-box-shadow:rgba(12, 106, 101, 0.4) 0px 0px 1px 1px inset;
+  -moz-box-shadow:rgba(12, 106, 101, 0.4) 0px 0px 1px 1px inset;
+  border: none; text-decoration: none;">登録を完了する</a>
+
+</article>
+
+{% endblock %}

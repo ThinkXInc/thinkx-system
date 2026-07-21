@@ -1,0 +1,232 @@
+{
+    "basics_1_label": {
+        "en": "Item 1",
+        "ja": "項目 1",
+        "zh": "項目 1"
+    },
+    "organization_name_label": {
+        "en": "Your Organization Name",
+        "ja": "組織名称",
+        "zh": "組織名称"
+    },
+    "organization_name_title": {
+        "en": "",
+        "ja": "",
+        "zh": ""
+    },
+    "organization_name_placeholder": {
+        "en": "Business Name",
+        "ja": "ビジネス名",
+        "zh": "商业名称"
+    },
+    "organization_type_label": {
+        "en": "Organization Type",
+        "ja": "組織の種類",
+        "zh": "組織種類"
+    },
+    "organization_type_title": {
+        "en": "---",
+        "ja": "---",
+        "zh": "---"
+    },
+    "organization_type_description": {
+        "en": "Choose your organization type.",
+        "ja": "組織の種類を選んで下さい",
+        "zh": ""
+    },
+    "business_description_label": {
+        "en": "Your business description here.",
+        "ja": "ビジネス内容",
+        "zh": "业务描述"
+    },
+    "business_description_title": {
+        "en": "Your business description here.",
+        "ja": "ビジネス内容",
+        "zh": "业务描述"
+    },
+    "business_description_placeholder": {
+        "en": "",
+        "ja": "",
+        "zh": ""
+    },
+    "organization_country_label": {
+        "en": "Which country does your company locate?",
+        "ja": "どこの国の組織ですか?",
+        "zh": "哪个国家组织？"
+    },
+    "country_title": {
+        "en": "---",
+        "ja": "---",
+        "zh": ""
+    },
+    "country_description": {
+        "en": "Which country does your company locate?",
+        "ja": "どこの国の組織ですか?",
+        "zh": "哪个国家组织？"
+    },
+    "organization_address_label": {
+        "en": "Address",
+        "ja": "住所",
+        "zh": "地址"
+    },
+    "zipcode_title": {
+        "en": "Postal Code",
+        "ja": "郵便番号",
+        "zh": "邮政编号"
+    },
+    "zipcode_placeholder": {
+        "en": "",
+        "ja": "",
+        "zh": ""
+    },
+    "city_title": {
+        "en": "City",
+        "ja": "市または区",
+        "zh": "城市"
+    },
+    "city_placeholder": {
+        "en": "",
+        "ja": "例) 港区",
+        "zh": ""
+    },
+    "province_title": {
+        "en": "State/Region",
+        "ja": "都道府県",
+        "zh": "州/地区"
+    },
+    "province_placeholder": {
+        "en": "",
+        "ja": "例) 東京都",
+        "zh": ""
+    },
+    "address1_title": {
+        "en": "Address line 1",
+        "ja": "住所1",
+        "zh": "地址1"
+    },
+    "address1_placeholder": {
+        "en": "",
+        "ja": "例) 六本木7-7-7",
+        "zh": ""
+    },
+    "address2_title": {
+        "en": "Address line 2 (option)",
+        "ja": "住所2 (option)",
+        "zh": "地址2 (option)"
+    },
+    "address2_placeholder": {
+        "en": "",
+        "ja": "建物名等(任意)",
+        "zh": ""
+    },
+    "positionmap_label": {
+        "en": "Your organization's location.",
+        "ja": "あなたの組織の場所",
+        "zh": ""
+    },
+    "telcountry_title": {
+        "en": "---",
+        "ja": "---",
+        "zh": ""
+    },
+    "telcountry_description": {
+        "en": "Which country did you get the phonenumber?",
+        "ja": "どこの国で取得した電話番号ですか？",
+        "zh": "该电话号码是在哪个国家获得的？"
+    },
+    "organization_tel_label": {
+        "en": "Telephone number",
+        "ja": "電話",
+        "zh": "电话"
+    },
+    "tel_title": {
+        "en": "Telephone number",
+        "ja": "電話",
+        "zh": "电话"
+    },
+    "tel_placeholder": {
+        "en": "",
+        "ja": "",
+        "zh": ""
+    },
+    "firstname_label": {
+        "en": "Your First Name",
+        "ja": "氏",
+        "zh": "名字"
+    },
+    "firstname_title": {
+        "en": "Your First Name",
+        "ja": "氏",
+        "zh": "名字"
+    },
+    "firstname_placeholder": {
+        "en": "",
+        "ja": "",
+        "zh": ""
+    },
+    "lastname_label": {
+        "en": "Your Last Name",
+        "ja": "名",
+        "zh": "姓氏"
+    },
+    "lastname_title": {
+        "en": "Your Last Name",
+        "ja": "名",
+        "zh": "姓氏"
+    },
+    "lastname_placeholder": {
+        "en": "",
+        "ja": "",
+        "zh": ""
+    },
+    "organization_email_label": {
+        "en": "Email address",
+        "ja": "メールアドレス",
+        "zh": "电子邮件地址"
+    },
+    "email_title": {
+        "en": "Email address",
+        "ja": "メールアドレス",
+        "zh": "电子邮件地址"
+    },
+    "email_placeholder": {
+        "en": "",
+        "ja": "",
+        "zh": ""
+    },
+    "submit_title": {
+        "en": "Submit",
+        "ja": "送信",
+        "zh": "传动"
+    },
+    "cancel_title": {
+        "en": "Cancel",
+        "ja": "キャンセル",
+        "zh": "传动"
+    },
+    "navigation_menu_title_basics": {
+        "en": "Basic Settings",
+        "ja": "基本設定",
+        "zh": "基本設定"
+    },
+    "navigation_menu_title_organization": {
+        "en": "Organization",
+        "ja": "組織の設定",
+        "zh": "組織の設定"
+    },
+    "navigation_menu_title_organization_member": {
+        "en": "Account",
+        "ja": "アカウント",
+        "zh": "垢"
+    },
+    "page_navigation_view_home": {
+        "en": "Home",
+        "ja": "ホーム",
+        "zh": "家"
+    },
+    "page_navigation_view_settings": {
+        "en": "Settings",
+        "ja": "設定",
+        "zh": "設定"
+    }
+}

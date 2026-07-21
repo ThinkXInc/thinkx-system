@@ -1,0 +1,33 @@
+{
+  "company_name": {
+    "ja": "株式会社レボーン",
+    "en": "REVORN Co., Ltd."
+  },
+  "url": "https://www.revorn.co.jp",
+  "tier": "Top-Tier",
+  "award_year": 2026,
+  "founders": {
+    "ja": ["松岡広明"],
+    "en": ["Matsuoka Hiroaki"]
+  },
+  "logo": {
+    "src": "/img/truetechjapan/award_companies/revorn.svg",
+    "format": "svg",
+    "alignment": "center"
+  },
+  "business": {
+    "ja": "レボーンは、人の感覚に依存してきた嗅覚領域をデジタル化し、誰もが扱える「においの民主化」を目指す嗅覚テック企業です。独自のセンシング技術とAI調香システムにより、香りの記録・伝送・再生を一気通貫で行う「香りのプラットフォーム」を構築。食品・飲料・化粧品・医療・自動車の品質管理や研究開発、エンタメ領域の空間演出等で導入が広がっています。香りのメディア化を推進し、手軽に香りを楽しめる世界を実現します。",
+    "en": "REVORN is an olfactory technology company digitizing a domain that has always depended on human perception, aiming at a \"democratization of scent\" that anyone can work with. Its proprietary sensing technology and AI blending system form a scent platform that records, transmits and reproduces aroma end to end. Adoption is spreading through quality control and R&D in food, beverages, cosmetics, medicine and automotive, as well as spatial production in entertainment. By turning scent into a medium, REVORN is building a world where aroma can be enjoyed effortlessly."
+  },
+  "award_reasons": {
+    "ja": [
+      "「におい」とは何かを解明する、人類史としても大きな問題に挑戦していること",
+      "技術系創業者による独自技術の開発、国際特許技術を有する優れた本物のテクノロジー企業であること"
+    ],
+    "en": [
+      "Taking on the question of what smell actually is — a problem of real significance in human history.",
+      "A genuine technology company of high calibre, developing proprietary technology under a technical founder and holding internationally patented technology."
+    ]
+  },
+  "interview_url": null
+}

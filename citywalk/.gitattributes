@@ -1,0 +1,11 @@
+# thinkx-system/citywalk/.gitattributes
+#
+# Git LFS routing for owner-provided UI ground-truth videos.
+
+*.mp4 filter=lfs diff=lfs merge=lfs -text
+*.mov filter=lfs diff=lfs merge=lfs -text
+*.webm filter=lfs diff=lfs merge=lfs -text
+
+# Dense ground-truth frames are derived from the LFS video but remain too large
+# for ordinary Git objects as an individual PNG sequence.
+web-server/tests/golden/ui_legacy/ground_truth/motion_reference/**/*.png filter=lfs diff=lfs merge=lfs -text

@@ -1,0 +1,4 @@
+Hi {{ organization_member.first_name }} {{ organization_member.last_name }},
+Someone tried to sign up for an CITYWALK account</br>
+with {{ organization_member.email }}.
+{{ validation_url }}

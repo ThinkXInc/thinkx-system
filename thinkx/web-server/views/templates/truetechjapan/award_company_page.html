@@ -1,0 +1,117 @@
+{% extends "truetechjapan/base.html" %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+{% include 'truetechjapan/common/header.html' %}
+<div id="truetech-award-company" class="main-container">
+
+  <div class="award-company-page main-content">
+
+    <!-- ↓↓↓↓ 社名 / ティア / 認定シール ↓↓↓↓ -->
+    <div class="company-header">
+      <div class="company-identity">
+        <h1 class="company-name">{{ company["company_name"] }}</h1>
+        <a class="company-url" href="{{ company['url'] }}" target="_blank" rel="noopener">
+          {{ company["url"] }}
+        </a>
+      </div>
+
+      <div class="award-mark">
+        {% if company["tier"] %}
+        <div class="tier">
+          <span class="tier-chip">{{ company["tier"] }}</span>
+          {% set tier_note = locale_dict["award_tier_note"][lang].get(company["tier"]) %}
+          {% if tier_note %}
+          <span class="tier-note">{{ tier_note }}</span>
+          {% endif %}
+        </div>
+        {% endif %}
+        <img class="award-seal"
+             src="/img/truetechjapan/award_companies/best-tech-100-seal.png"
+             alt="Best Tech 100 Japan">
+      </div>
+    </div>
+    <!-- ↑↑↑↑ END 社名 / ティア / 認定シール ↑↑↑↑ -->
+
+
+    <!-- ↓↓↓↓ 受賞年 / 創業者 / 企業ロゴ ↓↓↓↓ -->
+    <div class="company-facts">
+      <dl class="fact-list">
+        <div class="fact">
+          <dt class="fact-label">{{ locale_dict["award_year_label"][lang] }}</dt>
+          <dd class="fact-value">
+            {{ company["award_year"] }}{{ locale_dict["award_year_unit"][lang] }}
+          </dd>
+        </div>
+        <div class="fact">
+          <dt class="fact-label">{{ locale_dict["founders_label"][lang] }}</dt>
+          <dd class="fact-value">
+            <ul class="founder-list">
+              {% for founder in company["founders"] %}
+              <li class="founder">{{ founder }}</li>
+              {% endfor %}
+            </ul>
+          </dd>
+        </div>
+      </dl>
+
+      {# background は白抜きロゴ用。指定が無ければ地色なしで置く #}
+      <div class="company-logo-frame align-{{ company['logo']['alignment'] }}
+                  {%- if company['logo'].get('background') %} bg-{{ company['logo']['background'] }}{% endif %}">
+        <img class="company-logo" src="{{ company['logo']['src'] }}"
+             alt="{{ company['company_name'] }}">
+      </div>
+    </div>
+    <!-- ↑↑↑↑ END 受賞年 / 創業者 / 企業ロゴ ↑↑↑↑ -->
+
+
+    <!-- ↓↓↓↓ 事業内容 ↓↓↓↓ -->
+    <section class="award-section business">
+      <h2 class="section-title">
+        <span class="section-mark"></span>{{ locale_dict["business_title"][lang] }}
+      </h2>
+      <p class="business-text">{{ company["business"] }}</p>
+    </section>
+    <!-- ↑↑↑↑ END 事業内容 ↑↑↑↑ -->
+
+
+    <!-- ↓↓↓↓ 受賞理由 ↓↓↓↓ -->
+    <section class="award-section award-reasons">
+      <h2 class="section-title">
+        <span class="section-mark"></span>{{ locale_dict["award_reasons_title"][lang] }}
+      </h2>
+      <div class="award-reasons-panel">
+        <ul class="award-reason-list">
+          {% for reason in company["award_reasons"] %}
+          <li class="award-reason">{{ reason }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </section>
+    <!-- ↑↑↑↑ END 受賞理由 ↑↑↑↑ -->
+
+
+    <!-- ↓↓↓↓ インタビュー(申込企業のみ表示) ↓↓↓↓ -->
+    {% if company["interview_url"] %}
+    <section class="award-section interview">
+      <h2 class="section-title">
+        <span class="section-mark"></span>{{ locale_dict["interview_title"][lang] }}
+      </h2>
+      <a class="interview-link" href="{{ company['interview_url'] }}">
+        {{ locale_dict["interview_link_text"][lang] }}
+      </a>
+    </section>
+    {% endif %}
+    <!-- ↑↑↑↑ END インタビュー ↑↑↑↑ -->
+
+  </div>
+</div>
+{% include 'truetechjapan/common/footer.html' %}
+
+{% endblock %}
+
+{% block foot %}
+{% endblock %}

@@ -8,8 +8,12 @@ pytz==2026.2
 pydantic==2.13.4
 msgpack==1.2.1
 google-auth==2.55.1
+# auth-spec の RS256 ID Token 署名・検証に使う唯一の JWT ライブラリ。
+PyJWT==2.13.0
+cryptography==49.0.0
+argon2-cffi==25.1.0
 
-# vendored libcommon (pre-v2.0.0) が import 時/実行時に要求する推移的依存。
+# vendored libcommon v2.2.0 が import 時/実行時に要求する推移的依存。
 # requirements.txt には元々列挙されていなかったが、足場の import に必須のため追加した。
 #   pycryptodome: libcommon/cipher.py (from Crypto import ...) — models/data/user.py 経由
 #   requests:     libcommon/web/google_oauth_helper.py (google.auth.transport.requests 経由)

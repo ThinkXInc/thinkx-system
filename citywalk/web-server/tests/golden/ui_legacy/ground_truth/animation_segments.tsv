@@ -1,0 +1,25 @@
+# thinkx-system/citywalk/web-server/tests/golden/ui_legacy/ground_truth/animation_segments.tsv
+# Analysis: source 1490x856@60fps; sampled at 20fps; standard visible UI x=0..599. For S19-S21 the foreground translation panel x=410..659 is visible and only map tiles x=660..1489 are excluded. Visible crop is scaled to half width and 428px height in grayscale; metric=8-bit mean absolute luma frame difference.
+# Segmentation: YAVG>=0.15 frames seed UI activity; adjacent responses belonging to one observed operation are grouped, then boundaries are checked against source frames. Map-only S10/S14 are retained from visible motion although their masked score is below the UI seed threshold.
+segment_id	start_timestamp	end_timestamp	start_frame	end_frame	duration_seconds	animation_and_implementation	peak_diff	mean_diff	recommended_fps
+S01	0.55	0.90	33	54	0.35	create-guide initial state transition / InputPageViewController + pagecontrol.js	6.7718	1.3932	60
+S02	1.20	2.20	72	132	1.00	content-list and edit-state transition / createguide_view_controller.js	7.9154	0.8158	30
+S03	3.05	5.35	183	321	2.30	content selection and map-spot placement response / ContentTableView + MapPointer	9.0488	0.9464	60
+S04	5.60	7.20	336	432	1.60	left edit-panel open-close flow / EditContentView	8.1107	0.8468	60
+S05	7.75	10.70	465	642	2.95	repeated content-cell selection and spot response / ContentTableView + MapBalloon	8.5099	0.6279	30
+S06	12.05	13.45	723	807	1.40	content selection state replacement / createguide_view_controller.js	11.3865	0.7652	30
+S07	14.55	18.90	873	1134	4.35	edit-panel and selected-content state sequence / EditContentView + ContentTableView	8.1102	0.7191	30
+S08	20.30	25.30	1218	1518	5.00	spot selection and edit-panel state sequence / MapPointer + EditContentView	9.5786	0.8639	30
+S09	27.05	31.70	1623	1902	4.65	content replacement and panel transition sequence / createguide_view_controller.js	11.3853	0.8210	30
+S10	32.55	34.75	1953	2085	2.20	map pan-zoom flow; tiles masked / PositionMap + Google Maps	0.1754	0.0657	20
+S11	36.90	40.05	2214	2403	3.15	form select-menu open-close flow / DropdownButton + TextField	7.0121	0.5412	60
+S12	59.55	61.60	3573	3696	2.05	content-to-map navigation response / ContentTableView + PositionMap	9.1751	0.6774	30
+S13	62.45	64.05	3747	3843	1.60	edit-state replacement around map navigation / EditContentView	9.9646	1.0271	60
+S14	65.40	67.45	3924	4047	2.05	map pan-zoom-recenter flow; tiles masked / PositionMap + Google Maps	0.1636	0.0865	20
+S15	69.30	69.65	4158	4179	0.35	form dropdown opening / DropdownButton	4.7978	1.4973	60
+S16	71.65	72.35	4299	4341	0.70	form dropdown closing and selection reflection / DropdownButton	6.9505	0.9356	60
+S17	77.45	81.95	4647	4917	4.50	form text-entry discrete events / TextField; verify character appearance as layer-1-like states, not continuous motion flow	0.2988	0.0262	20
+S18	85.15	90.25	5109	5415	5.10	form text-entry and validation discrete events / TextField; verify character appearance as layer-1-like states, not continuous motion flow	0.3942	0.0294	20
+S19	92.80	99.70	5568	5982	6.90	translation-results panel expansion and list population / TranslateResultsTableView + EditContentView	0.4179	0.0390	60
+S20	102.15	110.60	6129	6636	8.45	translation-results scrolling and candidate selection / TranslateResultsTableView	0.3680	0.0524	30
+S21	118.70	119.50	7122	7170	0.80	translation-results panel close and form reflection / TranslateResultsTableView	1.6574	0.3117	60

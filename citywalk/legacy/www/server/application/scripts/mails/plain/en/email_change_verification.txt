@@ -1,0 +1,9 @@
+Hi {{ user.first_name }} {{ user.last_name }},
+
+Somebody recently asked to reset your Ilrsa password.
+http://ilrsa.com/reset_password?email={{ new_email }}&reset_code={{ reset_code }}
+
+Didn't request this change?
+If you didn't request a new password, 
+http://ilrsa.com/inquiry?email={{ new_email }}
+let us know immediately.

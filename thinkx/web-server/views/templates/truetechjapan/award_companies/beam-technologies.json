@@ -1,0 +1,34 @@
+{
+  "company_name": {
+    "ja": "株式会社BEAM Technologies",
+    "en": "BEAM Technologies"
+  },
+  "url": "https://beam-tec.co.jp",
+  "tier": "Top-Tier",
+  "award_year": 2026,
+  "founders": {
+    "ja": ["飯村 一樹"],
+    "en": ["Kazuki Iimura"]
+  },
+  "logo": {
+    "src": "/img/truetechjapan/award_companies/beam-technologies.png",
+    "format": "png",
+    "alignment": "center",
+    "background": "dark"
+  },
+  "business": {
+    "ja": "理化学研究所発のディープテックスタートアップ。宇宙空間の微小重力環境を製造の場として活用し、地上では得られない品質の化合物半導体を結晶成長させる「宇宙半導体製造プラットフォーム」を開発しています。AIデータセンター向けの高速・低消費電力な光通信デバイス、5G/6G通信基盤、EVや再生可能エネルギーの電力変換など、次世代インフラを支える領域への応用を進めています。",
+    "en": "A deep-tech startup out of RIKEN, building a space-based semiconductor manufacturing platform that uses the microgravity of orbit as a production environment to grow compound semiconductor crystals of a quality unattainable on the ground. Its work targets the infrastructure of the next generation: fast, low-power optical communication devices for AI data centers, 5G/6G communication equipment, and power conversion for EVs and renewable energy."
+  },
+  "award_reasons": {
+    "ja": [
+      "宇宙空間の微小重力環境で高品質な化合物半導体を結晶成長させる世界水準の技術で地球環境の改善を目指していること",
+      "技術系創業者による、プロプライエタリな技術を開発する優れた企業であること"
+    ],
+    "en": [
+      "Pursuing improvement of the global environment with world-class technology for growing high-quality compound semiconductor crystals in the microgravity of space.",
+      "An outstanding company developing proprietary technology under a technical founder."
+    ]
+  },
+  "interview_url": null
+}

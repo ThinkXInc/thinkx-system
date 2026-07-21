@@ -1,0 +1,16 @@
+
+{%extends "mails/en/base.html" %}
+{% block header %}
+<h1 class="Hi" style="font-size:1.7em; font-weight: normal;">Hi {{ organization_member.member_first_name }} {{ organization_member.member_last_name }},</h1>
+{% endblock %}
+{% block content %}
+<article class="message" style="color: #333; margin-bottom: 20px;">
+  Somebody recently asked to reset your Citywalk password.</br>
+  <a href="http://ilrsa.com/reset_password?email={{ new_email }}&reset_code={{ reset_code }}" style="color:#03c3bc; text-decoration: none;">Click to change your password</a>
+  </br>
+  </br>
+  Didn't request this change?</br>
+  If you didn't request a new password, 
+  <a href="http://ilrsa.com/inquiry?email={{ new_email }}" style="color:#03c3bc; text-decoration: none;">let us know immediately</a>.
+</article>
+{% endblock %} 

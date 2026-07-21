@@ -1,0 +1,14 @@
+{%extends "mails/en/base.html" %}
+{% block header %}
+<h1 class="Hi" style="font-size:1.7em; font-weight: normal;">Hi {{ user.first_name }} {{ user.last_name }},</h1>
+{% endblock %}
+{% block content %}
+<article class="message" style="color: #333; margin-bottom: 20px;">
+  Your email address has successfully been changed.</br>
+  </br>
+  </br>
+  Didn't request this change?</br>
+  If you didn't request a new password, 
+  <a href="http://ilrsa.com/inquiry?email={{ new_email }}" style="color:#03c3bc; text-decoration: none;">let us know immediately</a>.
+</article>
+{% endblock %}

@@ -1,0 +1,175 @@
+// home.less
+
+#settingsView {
+    height: 100%;
+    //background: @gradient-gray-A;
+    background: @bgcolor-semilight;
+
+    header.mainHeader {
+        width: 100%;
+    }
+
+    div.mainContainer {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: row;
+
+        div.leftContainer {
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+            padding-left: 60px;
+
+            ul.settingsViewNavigationMenu {
+                margin-top: 38px;
+
+                li.settingsViewNavigationMenuTab {
+                    cursor: pointer;
+                    display: flex;
+                    flex-direction: row;
+                    width: 100%;
+                    height: 36px;
+                    align-items: center;
+                    background-color: @white;
+                    margin-bottom: 4px;
+                    img.icon {
+                        width: 14px;
+                        margin: 0 13px 0 13px;
+                    }
+                    span.label {
+                        font-size: 0.9rem;
+                    }
+                }
+                li.settingsViewNavigationMenuTab:hover {
+                    background-color: @bgcolor-highlight;
+                }
+                li.settingsViewNavigationMenuTab.active {
+                    background-color: @bgcolor-highlight;
+                    img.icon {
+                        margin: 0 13px 0 8px;
+                    }
+                }
+                li.settingsViewNavigationMenuTab.active::before {
+                    content: "";
+                    background-color: #939393;
+                    width: 3px;
+                    height: 100%;
+                }
+            }
+        }
+
+        div.centerContainer {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            align-items: center;
+            padding-right: 300px;
+            padding-top: 40px;
+
+            div.pageNavigationView {
+                ul.breadcrumbs {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    a {
+                        margin-right: 4px;
+                        li {
+                        }
+                    }
+                    a:nth-child(n+2) {
+                        margin-left: 4px;
+                        li:nth-child(n+2) {
+                            margin-left: 4px;
+                        }
+                    }
+               }
+            }
+
+            div.inputPageViewContainer {
+                width: 69%;
+                padding: 0px 8% 0px 8%;
+                margin: 0px;
+
+                ul.inputPageViewPages {
+                    border-top: 1px solid #e2e2e2;
+                    li.inputPageViewPage {
+                        display: flex;
+                        flex-direction: column;
+                        p.inputPageViewPageDescription {
+                            font-size: 0.9rem;
+                            margin: 5px 0px 0px;
+                            color: @textcolor-on-semilight;
+                        }
+
+                        div.textField {
+                            div.inputouter {
+                                border: 1px solid @linecolor-on-semilight;
+                                background: @white;
+                                input {
+                                    color: @text-black;
+                                    font-size: 0.9rem;
+                                }
+                            }
+                       }
+                        div.dropdownButton {
+                            margin: 10px 0 10px;
+                            div.dropdownButtonClickable {
+                                border: 1px solid @linecolor-on-semilight;
+                                background: @white;
+                            }
+                            ul.listmenu {
+                                top: 10%;
+                                height: 46%;
+                                width: 17%;
+                                overflow-y: scroll;
+                            }
+                        
+                        }
+                        div.textField:hover,
+                        div.dropdownButton:hover {
+                            animation: focus 200ms @cubic-bezier1 1 forwards;
+                        }
+                        div.alertMessage {
+                            p {
+                                text-align: center;
+                                color: @alert-red;
+                            }
+                        }
+                        div.wrapper {
+                            display: flex;
+                            flex-direction: row;
+                        }
+                    }
+                    #settingsViewPage1 {
+                        div.inputouter input{
+                            margin: 4px 0 0 0;
+                        }
+                        #cityProvinceWrapper {
+                            flex-direction: row;
+                        }
+                        #settingsViewCityTextField {
+                            width: 48%;
+                            display: inline-flex;
+                            margin-right: 26px;
+                        }
+                        #settingsViewProvinceTextField {
+                            width: 48%;
+                            display: inline-flex;
+                        }
+                        #settingsViewPositionMap {
+                            #map {
+                                width: 100%;
+                                height: 200px;
+                            }
+                        }
+
+                    }
+                }
+            }
+
+        }
+    }
+
+}
+

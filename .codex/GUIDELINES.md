@@ -59,3 +59,12 @@ Rules
 > これはAPIキーの内容を読んだり変更したりせず、ファイルをそのまま移動します。
 
 この後もrevert commitの親関係、削除されるものと削除されないもの、検証、push、今回実行しないEC2操作を多数の見出しで列挙し、オーナーから「これから実行することを説明するのにしては長すぎる」と指摘された。
+
+## monorepo worktree に関するオーナー指示
+
+- Codex は Git の変更操作前に worktree の絶対パス、branch、HEAD、status を確認する。
+- 1つの worktree を別の Codex/Claude セッションと共有して書き込まない。
+- 別セッションが HEAD・index・stage 状態を変更した形跡がある場合は即停止する。
+- 外部変更後に、以前の path list を使って自動的に再 stage・commit してはならない。
+- commit は担当トラックの明示パスだけを含める。
+- deploy はローカル作業 branch ではなく、origin 上の明示的な `DEPLOY_REF` を使用する。
