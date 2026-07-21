@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 # thinkx-system/infra/run/build_and_restart.sh
 #
-# サービスを1つ、作り直して再起動し、応答を確かめる。
+# サービスを1つ、配信物をコンパイルしてから再起動し、応答を確かめる。
+#
+# 「作り直す」ではない。セットアップはやり直さない。やるのは less/js のコンパイルだけ。
 #
 #   使い方: bash infra/run/build_and_restart.sh <thinkx|transformism|kazukiotsukacom|nginx-web-root|loadbalancer>
 #
-# ビルドが要るのは配信物が生成物のサイトだけ(views/css・views/js は .gitignore)。
+# コンパイルが要るのは配信物が生成物のサイトだけ(views/css・views/js は .gitignore)。
 # ソースを配っただけでは配信に出ないため、restart の前に必ず作り直す。条件分岐で
 # 「変わったときだけ」にはしない。判定を誤ると古い配信物を出し続ける(本番で実際に起きた)。
 #
