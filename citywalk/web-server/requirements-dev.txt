@@ -1,0 +1,6 @@
+# thinkx-system/citywalk/web-server/requirements-dev.txt
+#
+# Test-only dependencies for the citywalk rebuild.
+
+Pillow==12.3.0
+pytest==8.3.4

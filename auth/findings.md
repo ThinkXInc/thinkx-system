@@ -120,3 +120,20 @@
   別cloneやPyPIのlibcommonは参照していない。
 - auth pytestは21件をcollectし、14 passed / 7 skipped / 1 warning。skipはA-9で置換予定の旧PROTOCOL
   v1規約テスト。warningはMongoEngineの既存uuidRepresentation既定値に関するdeprecation。
+
+## Auth A-1 データモデルと seed
+
+- `web-server/models/data/user.py` / password 保存を復号可能な Cipher から Argon2id へ変更し、
+  `subject_id`、`suspended_email`、`verified_emails`、`verified_phone_numbers`、`auth_generation`、
+  `last_auth_time`、`status` を追加した。`email_verified` / `services` / `stripe_customer_id` は
+  MongoEngine field から除去した。email 確認済み状態は `is_primary_email_verified()` で導出する。
+- `web-server/models/data/` / `AuthService`、`ConnectedService`、`ServiceEntitlement`、`SigningKey`、
+  `VerificationChallenge` を追加した。ConnectedService と ServiceEntitlement は
+  `(subject, client_id)` 複合 unique。ServiceEntitlement の payment event 適用は event id 冪等かつ
+  source timestamp 単調で、同時刻以前の更新を破棄する。
+- `web-server/seed.py` / test User、AuthService、active RS256 SigningKey を冪等に投入する seed を追加した。
+  password と client_secret は CLI 引数に載せず環境変数から読む。
+- `web-server/requirements.txt` / Argon2id 実装として `argon2-cffi==25.1.0` を直接依存へ追加した。
+- `tests/test_data_models.py` / モデル制約、Argon2id、redirect 完全一致、接続一意性、billing 投影の
+  冪等性・単調性、seed 冪等性を7テストで固定した。A-1 後の auth pytest は28件 collect、
+  21 passed / 7 skipped / 1既存 warning。

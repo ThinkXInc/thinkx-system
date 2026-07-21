@@ -605,3 +605,18 @@ wrapper と承認ゲート・staging からの push は DR 例外、の残り6�
 スクリプト。D-58 の趣旨を「Mac のローカル**リポジトリの状態**に依存してデプロイ内容が決まるのを
 やめる」と読むなら、DEPLOY_REF を明示した時点で目的は達せられ、Mac 起点のままでよい。
 staging から prod へ ssh させる案は staging に prod の鍵を置くことになり攻撃面が広がる。未裁定。
+
+## デプロイ手順書の新設と、D-58 参照先の変更(2026-07-21)
+
+- `infra/runbooks/deploy-site.md` は「まだ存在しない」と 07-20 に記録したが**誤り**。実在したが中身が
+  monorepo 以前(`cd /src/thinkx` を git リポジトリとして扱う・`2026refactor → v2.1.0` 前提)で陳腐化して
+  いた。**無いより悪い**(手順書として読めてしまう)
+- 全面書き換えの上、オーナー裁定により `infra/docs/デプロイ手順書.md` へ改名・移動。
+  「構築手順.md / DNS切替手順.md / 運用.md」と同じ**オーナーが実行する手順書の系列**に置く
+- **D-58 の規範文書欄が指す `infra/runbooks/deploy-site.md` は現存しない。** D-58 は Mac 側部分が
+  D-60 で撤回済みのため行そのものの扱いが未確定。参照先の是正は人間の判断待ち(DECISIONS は人間のみ変更)
+- 手順書の設計方針: サーバーへ ssh しない / `git checkout` で branch を切り替えない(単一ディレクトリを
+  複数セッションが共有しているため、branch 切替は他セッションの作業ツリーを壊す)。
+  release branch は `git branch <名前> origin/develop` で作る — checkout を伴わないので安全
+- 未実装: `develop` / `production` branch(未作成)、`gh` 認証(未実施)、pull 型 timer(本体未着手)。
+  それまでのつなぎとして手順書に「手動デプロイ」節を残している

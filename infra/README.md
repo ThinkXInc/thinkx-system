@@ -51,11 +51,14 @@ infra/
 │   └── lb-setup.sh
 ├── runbooks/             # 日常運用
 │   ├── restart-site.md
-│   ├── deploy-site.md
 │   ├── tls-renew.md
 │   ├── lb-config.md
 │   └── troubleshoot.md
 └── docs/
+    ├── デプロイ手順書.md   # 変更を staging -> 本番へ反映する手順
+    ├── 構築手順.md
+    ├── DNS切替手順.md
+    ├── 運用.md
     ├── step1-rehearsal.md
     └── raw/              # 弊社の生ドキュメント(オンプレ手順の原本)
 ```
