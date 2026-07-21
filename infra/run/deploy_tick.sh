@@ -5,6 +5,9 @@
 # 直接実行前提(source しない)。実体は setup_deploy_timer.sh が /usr/local/bin へ複製する
 # (実行中に git がスクリプト自身を書き換えると bash が壊れるため、必ず複製側を動かす)。
 #
+# root で動く。git だけ `sudo -u kaz` で実行する(リポジトリの所有者が kaz のため)。
+# kaz は sudoers に入っていないので、User=kaz では systemctl も install も動かない(実測)。
+#
 #   使い方: deploy_tick.sh <staging|prod>
 #
 #   staging -> origin/develop を追う
@@ -21,6 +24,9 @@ set -euo pipefail
 REPO=/src/thinkx-system
 WEBHOOK_FILE=/etc/thinkx/discord_webhook
 SELF_INSTALLED=/usr/local/bin/deploy_tick.sh
+
+# git は必ず kaz として実行する(root が触ると所有者が壊れる)
+g() { sudo -H -u kaz git -C "$REPO" "$@"; }
 
 notify() {
   local text="$1" url
@@ -56,7 +62,7 @@ verify_service() {
 restart_all() {
   local s
   for s in "$@"; do
-    sudo systemctl restart "$s" 2>/dev/null || sudo systemctl restart "$s.service" || true
+    systemctl restart "$s" 2>/dev/null || systemctl restart "$s.service" || true
   done
 }
 
@@ -73,37 +79,35 @@ deploy_tick() {
     *) echo "FAIL: 第1引数は staging か prod(指定: $env)" >&2; return 1 ;;
   esac
 
-  cd "$REPO"
-
   # 反映の途中で落ちても黙って死なない(通知してから終わる)
   trap 'notify ":rotating_light: **'"$host"'** deploy_tick が異常終了しました。journalctl -u deploy-timer@'"$env"' を確認してください。"' ERR
 
-  git fetch --quiet origin
+  g fetch --quiet origin
 
-  prev="$(git rev-parse HEAD)"
-  new="$(git rev-parse "origin/$branch")"
+  prev="$(g rev-parse HEAD)"
+  new="$(g rev-parse "origin/$branch")"
 
   [ "$prev" = "$new" ] && return 0
 
   # サーバー側に何か手が入っていたら、消さずに止めて人間に渡す(staging / prod 共通)
-  if [ -n "$(git status --porcelain)" ]; then
+  if [ -n "$(g status --porcelain)" ]; then
     notify ":warning: **$host** 未コミットの変更があるため反映を見送りました。消していません。commit + push してください。
 \`\`\`
-$(git status --short | head -20)
+$(g status --short | head -20)
 \`\`\`"
     return 0
   fi
 
-  ahead="$(git rev-list --count "origin/$branch..HEAD")"
+  ahead="$(g rev-list --count "origin/$branch..HEAD")"
   if [ "$ahead" != 0 ]; then
     notify ":warning: **$host** \`origin/$branch\` に無いコミットが $ahead 件あるため早送りできません。消していません。push して \`$branch\` に取り込んでください。
 \`\`\`
-$(git log --oneline "origin/$branch..HEAD" | head -20)
+$(g log --oneline "origin/$branch..HEAD" | head -20)
 \`\`\`"
     return 0
   fi
 
-  changed="$(git diff --name-only "$prev" "$new")"
+  changed="$(g diff --name-only "$prev" "$new")"
 
   while read -r path; do
     [ -n "$path" ] || continue
@@ -112,9 +116,9 @@ $(git log --oneline "origin/$branch..HEAD" | head -20)
     case " ${targets[*]-} " in *" $svc "*) ;; *) targets+=("$svc") ;; esac
   done <<< "$changed"
 
-  git merge --ff-only --quiet "$new"
+  g merge --ff-only --quiet "$new"
 
-  sudo install -m 0755 "$REPO/infra/run/deploy_tick.sh" "$SELF_INSTALLED"
+  install -m 0755 "$REPO/infra/run/deploy_tick.sh" "$SELF_INSTALLED"
 
   if [ "${#targets[@]}" -eq 0 ]; then
     notify ":page_facing_up: **$host** \`$branch\` を \`${new:0:7}\` へ更新(再起動が要るサービスの変更なし)"
@@ -128,7 +132,7 @@ $(git log --oneline "origin/$branch..HEAD" | head -20)
     if ! verify_service "$svc"; then
       # ここだけ reset --hard を使う。戻しは巻き戻しなので早送りにならない。
       # 直前に clean を確認して早送りした直後なので、消えるのは今入れた分だけ。
-      git reset --hard --quiet "$prev"
+      g reset --hard --quiet "$prev"
       restart_all "${targets[@]}"
       notify ":rotating_light: **$host** \`${new:0:7}\` の反映で **$svc** が応答しません。\`${prev:0:7}\` へ戻しました。"
       trap - ERR
@@ -138,7 +142,7 @@ $(git log --oneline "origin/$branch..HEAD" | head -20)
 
   notify ":white_check_mark: **$host** \`$branch\` を \`${new:0:7}\` へ反映しました。
 再起動: ${targets[*]}
-$(git log --oneline -1 "$new")"
+$(g log --oneline -1 "$new")"
 
   trap - ERR
 }
