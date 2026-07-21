@@ -5,6 +5,14 @@
 
 # OS / editor
 .DS_Store
+*.swp
+*~
+
+# ツールが置いていく残骸
+# サーバーの deploy ガードは untracked を「人が置いた見覚えのないファイル」と見なして
+# 反映を止める。既知のゴミはここで名指しして無視する(--untracked-files=no のような
+# 一括の目つぶしにはしない。列挙外の新規ファイルは今まで通り検出させる)。
+get-pip.py
 
 # Python
 __pycache__/
