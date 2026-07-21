@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
-# thinkx-system/infra/scripts/deploy_staging_from_develop.sh
+# thinkx-system/infra/scripts/deploy_staging.sh
 #
 # staging の web と LB を、いま origin/develop にあるものに合わせる。
 #
-#   使い方: bash infra/scripts/deploy_staging_from_develop.sh
+#   使い方: bash infra/scripts/deploy_staging.sh
 #
-# 引数は取らない。出すものは常に origin/develop であって、手元の branch がどこに
-# 居るかとは関係が無い(「ローカルの Git 履歴とは独立してデプロイできる」・D-58)。
-# 手元の作業を staging に出したいなら、先に pr_and_merge_to_develop.sh で develop に
-# 入れる。develop に入っているものが staging に出る、それだけである。
+# 引数は取らない。staging へ出す経路は1本しかなく、出るものは常に origin/develop で
+# ある。**手元の作業ツリーや branch からは出さない**(D-58「ローカルの Git 履歴とは
+# 独立してデプロイできる」)。手元の作業を staging に出したいなら、先に
+# pr_and_merge_to_develop.sh <branch> で develop に入れる。
 #
 # ここでやるのはサーバーへの反映だけである。git には触らない。
 #
@@ -19,7 +19,7 @@ set -euo pipefail
 
 . "$(dirname "${BASH_SOURCE[0]:-$0}")/lib/banner.sh"
 
-deploy_staging_from_develop() {
+deploy_staging() {
   local G=$'\033[32m' R=$'\033[31m' Y=$'\033[33m' Z=$'\033[0m'
   local host fail=0
 
@@ -56,4 +56,4 @@ deploy_staging_from_develop() {
   echo "bash infra/scripts/deploy_production_from_staging.sh"
 }
 
-deploy_staging_from_develop "$@"
+deploy_staging "$@"
