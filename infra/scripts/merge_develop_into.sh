@@ -15,6 +15,8 @@
 
 set -euo pipefail
 
+. "$(dirname "${BASH_SOURCE[0]:-$0}")/lib/banner.sh"
+
 merge_develop_into() {
   local G=$'\033[32m' R=$'\033[31m' Y=$'\033[33m' Z=$'\033[0m'
   local dst cur back ans
@@ -38,24 +40,26 @@ merge_develop_into() {
 
   git fetch --quiet origin
 
-  back="$(git rev-list --count "HEAD..origin/develop")"
-  if [ "$back" = 0 ]; then
+  # 取り込むかどうかの判定は merge commit も含めて行う(それも取り込む対象だから)。
+  # 表示だけ merge commit を除く(PR の履歴が並ぶと実際の中身が読めなくなる)。
+  if git merge-base --is-ancestor origin/develop HEAD 2>/dev/null; then
     printf '%b\n' "${G}$dst は既に develop の内容を含んでいます。やることはありません${Z}"
     return 0
   fi
 
-  echo "== develop にあって $dst に無いコミット($back 件)=="
-  git log --oneline "HEAD..origin/develop"
+  back="$(git rev-list --count --no-merges "HEAD..origin/develop")"
+  banner "develop -> $dst に入るコミット($back 件)"
+  git --no-pager log --oneline --no-merges "HEAD..origin/develop"
   echo
 
-  printf '%b' "${Y}これを $dst に取り込みます。よければ yes と入力: ${Z}"
+  printf '%b' "${Y}continue? (yes/no): ${Z}"
   read -r ans
   [ "$ans" = yes ] || { printf '%b\n' "${Y}中止しました(何も変更していません)${Z}"; return 0; }
 
   git merge --no-edit origin/develop
   git push origin "$dst"
 
-  printf '%b\n' "${G}OK: $dst に取り込んで push しました${Z}"
+  printf '%b\n' "${G}OK: merged to $dst and pushed${Z}"
 }
 
 merge_develop_into "$@"

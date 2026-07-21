@@ -14,6 +14,8 @@
 
 set -euo pipefail
 
+. "$(dirname "${BASH_SOURCE[0]:-$0}")/lib/banner.sh"
+
 deploy_production_from_staging() {
   local G=$'\033[32m' R=$'\033[31m' Y=$'\033[33m' Z=$'\033[0m'
   local sha day br n svc ans host fail=0
@@ -44,17 +46,16 @@ deploy_production_from_staging() {
       case " ${targets[*]-} " in *" $svc "*) ;; *) targets+=("$svc") ;; esac
     done <<< "$(git diff --name-only "origin/production...$sha")"
 
+    banner "develop -> production(本番に出す内容)"
+    git --no-pager log --oneline origin/production.."$sha"
     echo
-    echo "== 本番に出す内容 =="
-    git log --oneline origin/production.."$sha"
-    echo
-    echo "== 承認対象 =="
-    echo "  $sha"
-    echo "== 再起動されるもの =="
+    echo "承認対象: $sha"
+
+    banner "再起動(変更)されるサービス"
     if [ "${#targets[@]}" -eq 0 ]; then echo "  なし(配信物の変更なし)"; else printf '  %s\n' "${targets[@]}"; fi
     echo
 
-    printf '%b' "${Y}この内容を本番に反映します。よければ yes と入力: ${Z}"
+    printf '%b' "${Y}continue? (yes/no): ${Z}"
     read -r ans
     [ "$ans" = yes ] || { printf '%b\n' "${Y}中止しました(何も変更していません)${Z}"; return 0; }
 
@@ -62,12 +63,14 @@ deploy_production_from_staging() {
     br="release/$day"; n=2
     while git rev-parse --verify --quiet "origin/$br" >/dev/null; do br="release/$day-$n"; n=$((n+1)); done
 
-    echo "== $br を切る(承認の凍結)=="
+    echo
+    echo "cutting release branch $br (承認の凍結)..."
     git branch "$br" "$sha"
     git push --quiet origin "$br"
 
-    echo "== $br を production へ =="
+    echo "creating PullRequest ($br->production)..."
     gh pr create --base production --head "$br" --title "$br" --body "承認 SHA: $sha" >/dev/null
+    echo "merging ($br->production)..."
     gh pr merge "$br" --merge --delete-branch=false >/dev/null
     git fetch --quiet origin
   fi
@@ -81,8 +84,7 @@ deploy_production_from_staging() {
   # 渡すのは Mac の作業ツリーではなく「いま production にあるもの」なので、サーバーが
   # このあと自分で持つことになるものと同一である。
   for host in supercom-web1 supercom-lb1; do
-    echo
-    echo "== $host を production に合わせる =="
+    banner "$host -> production に合わせる"
     git show "origin/production:infra/run/sync_from_origin.sh" \
       | ssh -o ConnectTimeout=8 "$host" 'sudo bash -s prod' || fail=$((fail+1))
   done
@@ -98,16 +100,15 @@ deploy_production_from_staging() {
 
   # 確認は web に直接当てる。素のドメインは DNS 未切替でオンプレを指しており、
   # AWS の成否に関わらず 200 を返す(2026-07-21 実測)。
-  echo
-  echo "== 確認(AWS の web に直接) =="
-  ssh -o ConnectTimeout=8 supercom-web1 'for hp in "thinkxinc.com:8005" "transformism.art:8006" "kazukiotsuka.com:8007"; do
+  banner "確認(AWS の web に直接)"
+  ssh -o ConnectTimeout=8 supercom-web1 'for hp in "thinkxinc.com:8005" "truetechjapan.com:8005" "transformism.art:8006" "kazukiotsuka.com:8007"; do
       h="${hp%%:*}"; p="${hp##*:}"
       c="$(curl -s -o /dev/null -w "%{http_code}" -m 10 -H "Host: $h" "http://localhost:$p/" || true)"
       [ "$c" = 200 ] && printf "  \033[32m%-24s %s\033[0m\n" "$h" "$c" || printf "  \033[31m%-24s %s\033[0m\n" "$h" "$c"
     done'
   printf '%b\n' "${Y}  公開ドメインはまだオンプレを指しています(DNS 未切替)${Z}"
 
-  printf '%b\n' "${G}OK: 本番へ反映しました${Z}"
+  printf '%b\n' "${G}OK: deployed to production${Z}"
 }
 
 deploy_production_from_staging "$@"

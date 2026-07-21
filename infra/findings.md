@@ -874,3 +874,90 @@ staging 上で `npx babel src/js --out-dir /tmp/...` して `cmp` した結果�
 - **ファイル名にハッシュを入れる**(`main.<hash>.css`)。`no-cache` は毎回の再検証で回避しているが、
   根本策ではない。テンプレート側の参照を書き換える必要があるためサイト側の仕事
 - **`bash.md` との食い違い**(冒頭の分類宣言)。規約を変えるかは人間の判断(既出)
+
+## スクリプトから呼ぶ git がページャを開いて止まった(2026-07-21)
+
+`deploy_production_from_staging.sh` が本番に出す内容を表示したところ、`git log` が
+ページャ(less)を開いて `(END)` で待ち、オーナーがそこから進めなくなった。
+
+```
+(END)  ← ここで止まる。q を押すまで先に進まない
+```
+
+`git log` は出力先が端末のとき既定でページャを開く。コマンド置換 `$(git log ...)` の
+中では端末でないので開かず、**画面に直接出す1行だけが該当する**ため、開発中は気づきにくい。
+
+対処: 端末へ直接出す git は `git --no-pager log ...` にした(4本すべて)。
+
+一般則としては「スクリプトから呼ぶ git は必ずページャを切る」。`docs/coding_guides/bash.md`
+に NG/OK として入れる価値があるが、規約の変更は人間の判断なのでここに記録する。
+
+## 確認一覧が staging と本番で揃っていなかった(2026-07-21・修正済み)
+
+本番デプロイの最後に当てる確認が3ドメインで、`truetechjapan.com` が入っていなかった。
+**今日まさに変更したドメインが確認対象から漏れていた。** staging 側には入れたのに
+本番側へ揃えるのを忘れたもの。両方を同じ4ドメインにした。
+
+```
+thinkxinc.com:8005  truetechjapan.com:8005  transformism.art:8006  kazukiotsuka.com:8007
+```
+
+同種の漏れは今日2件目(1件目は検証が素のドメイン=オンプレを見ていた件)。**確認の対象は
+配信しているものから機械的に導くべきで、手で並べる限り漏れる。** nginx conf の
+`server_name` から起こす案があるが、`nntm.thinkxinc.com` `nntmapp.com` など確認の
+要否が分かれるものもあるため、実装は要検討として残す。
+
+## 同期が途中で死ぬと、その回の再起動は二度と拾われない(2026-07-21・構造上の穴・未修正)
+
+`sync_from_origin.sh` は「前回の HEAD と今回の HEAD の差分」から再起動するサービスを決める。
+そのため **merge が済んだあとに再起動の手前で落ちると、次回以降の差分にはもう現れない**。
+設定はサーバーに届いているのに、それを読み込むプロセスが永久に再起動されない状態になる。
+
+実際に起きた。staging web で古い `deploy_tick.sh` が merge だけして自己更新で落ちており、
+`nginx.conf` の gzip / Cache-Control が届いていたのに nginx が古い設定のまま動き続けていた。
+
+```
+staging web の checkout : d34cdec(最新)
+staging web の配信ヘッダ : Content-Length のみ(gzip も Cache-Control も無い)
+本番 web の配信ヘッダ   : Content-Encoding: gzip / Cache-Control: no-cache
+```
+
+**本番のほうが staging より新しい設定で動く、という逆転が起きた。** staging で確認してから
+本番に出す、という前提が崩れる種類の不整合である。
+
+直すなら「再起動まで終わって初めて反映済みとする」形(HEAD とは別に反映済みマーカーを持ち、
+マーカーと HEAD が食い違っていたら再起動からやり直す)。設計変更になるため今日は入れていない。
+
+暫定の対処は手で再起動する:
+
+```
+ssh supercom-web1-stg 'sudo bash /src/thinkx-system/infra/run/build_and_restart.sh nginx-web-root'
+```
+
+## 2回目の本番デプロイが新フローで完走(2026-07-21)
+
+`deploy_production_from_staging.sh` → release/2026-07-21-2 の凍結 → production 取り込み →
+4台反映 → 確認。**今日書き換えた経路がすべて実地で通った。**
+
+```
+HEAD    3b886dc Merge pull request #10 from ThinkXInc/release/2026-07-21-2
+dirty   0
+Cache-Control: no-cache          新規に効いた
+Content-Encoding: gzip           新規に効いた(Content-Length が消える = チャンク転送)
+受賞企業ページ  200 / 17543B
+/usr/local/bin/sync_from_origin.sh  09:09 に配置(初回ブートストラップが動いた証拠)
+```
+
+初回ブートストラップ(`git show origin/production:infra/run/sync_from_origin.sh | ssh ... 'sudo bash -s prod'`)
+はこの回がはじめての実行だった。本番 web にはこのファイルが無かったので、これが無ければ
+ここで止まっていた。
+
+箱ごとの担当判定も実地で正しく働いた。lb1 では `skip: この箱(lb1)の nginx は nginx-web-root の
+設定で動いていない` `skip: thinkx はこの箱(lb1)で動いていない` が出て、lb で thinkx を
+起動する事故は起きなかった。
+
+## 一度も発火していない経路(2026-07-21 時点)
+
+**戻し(rollback)。** `build_and_restart.sh` が非ゼロを返したときに `reset --hard` で直前へ戻し、
+再度ビルドして通知する経路が、実装以来まだ一度も動いていない。意図的に staging を壊して
+確認する必要がある。ここが今いちばん検証されていない。
