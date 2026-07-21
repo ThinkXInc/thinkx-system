@@ -7,7 +7,7 @@
 #   例:     bash infra/scripts/pr_and_merge_to_develop.sh monorepo
 #
 # ここでやるのは git だけである。サーバーには触らない。
-# staging のサーバーに出すのは deploy_staging_from.sh <branch>。
+# staging のサーバーに出すのは deploy_staging_from_develop.sh。
 #
 # branch は必ず指定する。既定値を置かない。手元の作業 branch が何かは、そのときの
 # 作業によって変わる(monorepo とは限らない)。
@@ -43,7 +43,7 @@ pr_and_merge_to_develop() {
     printf '%b\n' "${G}develop は既に $src の内容を含んでいます。やることはありません${Z}"
     echo
     echo "If you deploy, run:"
-    echo "bash infra/scripts/deploy_staging_from.sh $src"
+    echo "bash infra/scripts/deploy_staging_from_develop.sh"
     return 0
   fi
 
@@ -97,7 +97,7 @@ pr_and_merge_to_develop() {
   printf '%b\n' "${G}OK: merged to develop${Z}"
   echo
   echo "If you deploy, run:"
-  echo "bash infra/scripts/deploy_staging_from.sh $src"
+  echo "bash infra/scripts/deploy_staging_from_develop.sh"
 }
 
 pr_and_merge_to_develop "$@"

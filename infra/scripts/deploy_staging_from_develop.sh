@@ -1,17 +1,16 @@
 #!/usr/bin/env bash
-# thinkx-system/infra/scripts/deploy_staging_from.sh
+# thinkx-system/infra/scripts/deploy_staging_from_develop.sh
 #
-# staging の web と LB を develop に合わせる。
+# staging の web と LB を、いま origin/develop にあるものに合わせる。
 #
-#   使い方: bash infra/scripts/deploy_staging_from.sh <branch>
-#   例:     bash infra/scripts/deploy_staging_from.sh monorepo
+#   使い方: bash infra/scripts/deploy_staging_from_develop.sh
 #
-# 引数の branch は「出したいのはこの branch の内容だ」という指定である。develop が
-# その内容を含んでいることを先に確かめ、含んでいなければ止める(まだ merge して
-# いないのに「出した」と思い込むのを防ぐ)。
+# 引数は取らない。出すものは常に origin/develop であって、手元の branch がどこに
+# 居るかとは関係が無い(「ローカルの Git 履歴とは独立してデプロイできる」・D-58)。
+# 手元の作業を staging に出したいなら、先に pr_and_merge_to_develop.sh で develop に
+# 入れる。develop に入っているものが staging に出る、それだけである。
 #
 # ここでやるのはサーバーへの反映だけである。git には触らない。
-# develop に取り込むのは pr_and_merge_to_develop.sh <branch>。
 #
 # timer が入っていれば60秒以内に勝手に追いつくが、ここで実行して結果をその場で見せる。
 # timer が先に引いていれば「既に一致」で即座に何もせず返るので、二重に走っても衝突しない。
@@ -20,34 +19,13 @@ set -euo pipefail
 
 . "$(dirname "${BASH_SOURCE[0]:-$0}")/lib/banner.sh"
 
-deploy_staging_from() {
+deploy_staging_from_develop() {
   local G=$'\033[32m' R=$'\033[31m' Y=$'\033[33m' Z=$'\033[0m'
-  local src host fail=0
-
-  if [ "$#" -eq 0 ]; then
-    printf '%b\n' "${Y}branch を指定してください。${Z}"
-    echo "  使い方: bash infra/scripts/deploy_staging_from.sh <branch>"
-    echo "  例:     bash infra/scripts/deploy_staging_from.sh monorepo"
-    return 1
-  fi
-  src="$1"
+  local host fail=0
 
   [ -f infra/run/sync_from_origin.sh ] || { printf '%b\n' "${R}FAIL: リポジトリ直下で実行する${Z}"; return 1; }
 
   git fetch --quiet origin
-  git rev-parse --verify --quiet "origin/$src" >/dev/null ||
-    { printf '%b\n' "${R}FAIL: origin/$src が無い${Z}"; return 1; }
-
-  if ! git merge-base --is-ancestor "origin/$src" origin/develop 2>/dev/null; then
-    printf '%b\n' "${R}FAIL: develop はまだ $src の内容を含んでいません${Z}"
-    banner "develop に入っていない $src のコミット"
-    git log --oneline "origin/develop..origin/$src"
-    echo
-    echo "Run this first:"
-    echo "bash infra/scripts/pr_and_merge_to_develop.sh $src"
-    return 1
-  fi
-
   # 実行する本体は origin/develop から取り出して ssh の標準入力で渡す。サーバーの
   # checkout にあるファイルを使うと、そのファイル自体をこれから配る回に「まだ無い」で止まる
   # (実際に本番と staging LB の両方で無かった。2026-07-21 実測)。
@@ -78,4 +56,4 @@ deploy_staging_from() {
   echo "bash infra/scripts/deploy_production_from_staging.sh"
 }
 
-deploy_staging_from "$@"
+deploy_staging_from_develop "$@"

@@ -89,14 +89,14 @@ local src="${1:-monorepo}"
 ```bash
 # 操作ごとに1本。branch は必ず引数で指定する
 bash pr_and_merge_to_develop.sh monorepo
-bash deploy_staging_from.sh monorepo
+bash deploy_staging_from_develop.sh
 ```
 
 ```bash
 # まとめたいときは、上の2本を呼ぶだけの薄い1本にする
 deploy_staging_from_monorepo() {
   bash infra/scripts/pr_and_merge_to_develop.sh monorepo || return 1
-  bash infra/scripts/deploy_staging_from.sh monorepo || return 1
+  bash infra/scripts/deploy_staging_from_develop.sh || return 1
 }
 ```
 
@@ -104,8 +104,8 @@ deploy_staging_from_monorepo() {
 # 引数が無ければ何もせず、指定を促す
 if [ "$#" -eq 0 ]; then
   printf '%b\n' "${Y}branch を指定してください。${Z}"
-  echo "  使い方: bash infra/scripts/deploy_staging_from.sh <branch>"
-  echo "  例:     bash infra/scripts/deploy_staging_from.sh monorepo"
+  echo "  使い方: bash infra/scripts/merge_develop_into.sh <branch>"
+  echo "  例:     bash infra/scripts/merge_develop_into.sh monorepo"
   return 1
 fi
 ```
