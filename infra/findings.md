@@ -1096,3 +1096,13 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
 - 他は全 green(check_request_path 全ホップ・3ドメイン end-to-end https 200・kazuki 4/4・transformism 2/2)。
 - 対応方針(TODO): 本番向け acceptance golden から /filedrop を除外するか、環境で期待値を分ける
   (staging=200 / prod=404)。DNS 切替のブロッカーにはしない。
+
+## 2026-07-22 DNS切替の確認対象漏れ: truetechjapan / nntmapp / jessicas.online
+
+- DNS切替手順.md と acceptance-sweep.sh はいずれも **3ドメイン(thinkxinc / kazukiotsuka /
+  transformism)決め打ち**。LB の server_name には他に **truetechjapan.com・nntmapp.com・
+  jessicas.online(いずれも +www)・nntm.thinkxinc.com・quantz.thinkxinc.com** がある。
+  「確認対象を手で並べると漏れる」の再発(handoff 未解決事項)。オーナーが切替時に気づいた。
+- 根治方針(TODO): acceptance-sweep / DNS確認の対象ドメインを **loadbalancer の server_name から
+  自動生成**する(bare apex + www を抽出、staging.*/prod.*/internal を除外)。決め打ちリストを廃す。
+- 切替そのものはオーナーが全 A を差し替え済み。要・全ドメイン実地確認(dig + https)。
