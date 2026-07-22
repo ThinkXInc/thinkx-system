@@ -86,3 +86,5 @@ Security exception(D-22)はここに書かず即停止・人間へ報告。
 - `web-server/tests/ui/ui_legacy.test.js:1` / 旧 ECMA 47本の Babel build、実 Maps の load/center/zoom 検証、desktop の可視地図領域限定マスクを通した実ブラウザ試験が green / C-0c
 - `web-server/tests/golden/ui_legacy/business_createguide_{desktop,mobile}.png:1` / 修正後の静止画でコンテンツ4件と左UIを保持し、desktop は右側の可変地図領域のみマスク、mobile はマスクなし / C-0c
 - `web-server/tests/golden/ui_legacy/motion_contract.json:1` / 旧実装から content選択、edit panel閉鎖、translation panel閉鎖の順序・duration・stagger・軌跡を機械可読化 / C-0c
+- `web-server/tests/ui/capture_legacy_motion.js:1` / 1490×856実Chromeで content選択、edit panel閉鎖、地図pan/zoomを操作し、目視用WebMとrequestAnimationFrame座標列を `motion/` へ出力する収録ハーネスを追加 / C-0c
+- `web-server/tests/golden/ui_legacy/motion/README.md:1` / translation panelの実サービス依存部分は未収録であり、挙動を捏造せず残件として明記 / C-0c
