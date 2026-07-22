@@ -5,9 +5,9 @@
   <!-- ─────────── TOP ─────────── -->
   <url>
     <loc>https://truetechjapan.com</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://truetechjapan"/>
-    <xhtml:link rel="alternate" hreflang="ja"        href="https://truetechjapan/ja"/>
-    <xhtml:link rel="alternate" hreflang="en"        href="https://truetechjapan/en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://truetechjapan.com"/>
+    <xhtml:link rel="alternate" hreflang="ja"        href="https://truetechjapan.com/ja"/>
+    <xhtml:link rel="alternate" hreflang="en"        href="https://truetechjapan.com/en"/>
     <lastmod>2025-07-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
