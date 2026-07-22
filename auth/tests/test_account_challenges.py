@@ -10,6 +10,7 @@ import pytz
 import accounts
 from main import app
 from models.data.user import User, password_hasher
+from models.data.security_audit_event import SecurityAuditEvent
 from models.data.verification_challenge import VerificationChallenge
 from oidc.endpoints import redis_client
 
@@ -18,11 +19,17 @@ from oidc.endpoints import redis_client
 def clear_state(monkeypatch):
     User.drop_collection()
     VerificationChallenge.drop_collection()
+    SecurityAuditEvent.drop_collection()
     redis_client.flushdb()
     delivered = []
     monkeypatch.setattr(
         accounts,
         'deliver_challenge_email',
+        lambda **message: delivered.append(message),
+    )
+    monkeypatch.setattr(
+        accounts,
+        'deliver_security_notification',
         lambda **message: delivered.append(message),
     )
     return delivered
@@ -142,3 +149,14 @@ def test_password_reset_changes_hash_generation_and_revokes_sessions(
     assert not reset_user.check_password('OldPassword1')
     assert reset_user.auth_generation == generation + 1
     assert revoked == [str(user.id)]
+    assert clear_state[-1] == {
+        'destination': 'verified@example.com',
+        'event': 'password_reset_completed',
+    }
+    audit_event = SecurityAuditEvent.objects.get(
+        event_type='password_reset_completed'
+    )
+    assert audit_event.subject == user.subject_id
+    audit_event.event_type = 'changed'
+    with pytest.raises(RuntimeError, match='append-only'):
+        audit_event.save()

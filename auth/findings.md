@@ -267,3 +267,15 @@
 - ID Token verifierのwrong iss/aud/nonce/azp、UserInfo sub照合、ServicePrincipal並行作成、失効webhook受信側の
   冪等性、token HTTP client timeout/信頼済みURLはサービス所有のC計画で実装する。auth server所有のnegative
   caseだけをA-9へ置き、所有境界を越えて参照client実装を先取りしていない。
+
+## Auth A 最終仕様監査の補正
+
+- `03_DATA_AND_INFRA.md`のpassword reset終端に対して不足していた完了通知と監査記録を追加した。
+  `SecurityAuditEvent`はevent type・公開subject・時刻だけを持ち、password/codeを保存しない。保存済みrecordの
+  再saveを拒否するappend-onlyモデルとし、password更新→共通失効→監査記録→完了通知の順をテストで固定した。
+- challenge codeを含む確認メールと、codeを一切含まないsecurity notificationを別関数へ分けた。SMTP資格情報は
+  従来どおりConfigからだけ読み、response・log・監査recordへ流さない。
+- OIDC authorization request/code/access tokenのRedis接続を旧v1用`SSO_REDIS_DB_NUMBER`から中央Sessionと同じ
+  `REDIS_SESSION_DB_NUMBER`へ変更した。各recordは既存の専用prefixで分離され、Redis DB番号を論理分離境界に
+  しないauth-specの設計へ一致した。旧v1 blueprint用DB設定は互換経路が登録中のため変更していない。
+- 補正後もauth pytestは91件collect、90 passed / 1 opt-in skipped / 1既存warning。compileallとpip checkも成功。

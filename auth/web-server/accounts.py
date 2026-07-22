@@ -39,7 +39,8 @@ from models.data.user import (
 from models.data.connected_service import ConnectedService
 from models.data.service_entitlement import ServiceEntitlement
 from account_challenges import consume_email_challenge, issue_email_challenge
-from challenge_email import deliver_challenge_email
+from challenge_email import deliver_challenge_email, deliver_security_notification
+from models.data.security_audit_event import SecurityAuditEvent
 from oidc.signin import clear_signin_csrf, valid_signin_csrf
 from protocol import build_userinfo, with_protocol_version
 from revocation import revoke_user
@@ -235,6 +236,12 @@ def password_reset_complete(lang, lang_name):
     user.updated_at = datetime.now(pytz.utc)
     user.save()
     revoke_user(user, reason='password_reset')
+    SecurityAuditEvent.record(
+        event_type='password_reset_completed', subject=user.subject_id
+    )
+    deliver_security_notification(
+        destination=user.email, event='password_reset_completed'
+    )
     return SuccessFormat(
         data={},
         code=SuccessCode.OK,

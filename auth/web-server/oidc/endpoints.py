@@ -27,7 +27,7 @@ REQUIRED_KEYS_IN_CONFIG = [
     'OIDC_AUTHORIZATION_REQUEST_TTL_SEC',
     'REDIS_SESSION_HOST',
     'REDIS_SESSION_PORT',
-    'SSO_REDIS_DB_NUMBER',
+    'REDIS_SESSION_DB_NUMBER',
     'SSO_CODE_TTL_SEC',
     'SSO_ACCESS_TOKEN_TTL_SEC',
 ]
@@ -37,7 +37,7 @@ blueprint_oidc = Blueprint('oidc', __name__)
 redis_client = StrictRedis(
     host=Config.REDIS_SESSION_HOST,
     port=Config.REDIS_SESSION_PORT,
-    db=Config.SSO_REDIS_DB_NUMBER,
+    db=Config.REDIS_SESSION_DB_NUMBER,
 )
 authorization_requests = AuthorizationRequestStore(
     redis_client, Config.OIDC_AUTHORIZATION_REQUEST_TTL_SEC

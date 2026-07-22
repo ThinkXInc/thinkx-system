@@ -9,6 +9,16 @@ from config import Config
 
 
 def deliver_challenge_email(*, destination, code, purpose):
+    content = f'Purpose: {purpose}\nVerification code: {code}\n'
+    deliver_email(destination=destination, content=content)
+
+
+def deliver_security_notification(*, destination, event):
+    content = f'Security notification: {event}\n'
+    deliver_email(destination=destination, content=content)
+
+
+def deliver_email(*, destination, content):
     if not Config.AUTH_SMTP_HOST:
         if Config.ENV in ('development', 'test'):
             return
@@ -17,8 +27,8 @@ def deliver_challenge_email(*, destination, code, purpose):
     message = EmailMessage()
     message['From'] = Config.AUTH_EMAIL_SENDER
     message['To'] = destination
-    message['Subject'] = 'ThinkX account verification'
-    message.set_content(f'Purpose: {purpose}\nVerification code: {code}\n')
+    message['Subject'] = 'ThinkX account security'
+    message.set_content(content)
     with smtplib.SMTP(Config.AUTH_SMTP_HOST, Config.AUTH_SMTP_PORT) as smtp:
         if Config.AUTH_SMTP_STARTTLS:
             smtp.starttls()
