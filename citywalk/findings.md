@@ -88,3 +88,4 @@ Security exception(D-22)はここに書かず即停止・人間へ報告。
 - `web-server/tests/golden/ui_legacy/motion_contract.json:1` / 旧実装から content選択、edit panel閉鎖、translation panel閉鎖の順序・duration・stagger・軌跡を機械可読化 / C-0c
 - `web-server/tests/ui/capture_legacy_motion.js:1` / 1490×856実Chromeで content選択、edit panel閉鎖、地図pan/zoomを操作し、目視用WebMとrequestAnimationFrame座標列を `motion/` へ出力する収録ハーネスを追加 / C-0c
 - `web-server/tests/golden/ui_legacy/motion/README.md:1` / translation panelの実サービス依存部分は未収録であり、挙動を捏造せず残件として明記 / C-0c
+- `web-server/tests/build_motion_review.sh:1` / ground truthを左、ローカル実ブラウザ収録を右へ745×428ずつ配置した1490×428 H.264並列目視出力を決定的に生成 / C-0c

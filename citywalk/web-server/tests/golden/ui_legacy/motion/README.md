@@ -13,3 +13,8 @@ the local translation service is not replaced with invented behavior.
 
 The browser key is accepted only through `CITYWALK_GOOGLE_MAPS_API_KEY`. Its
 value is neither written to these outputs nor included in diagnostics.
+
+After capture, `npm run build:motion-review` places the production ground truth
+on the left and the local reproduction on the right in
+`ground_truth_vs_local.mp4`. Map tile pixels remain outside the acceptance
+decision; flow order, timing, trajectories, and non-map UI are reviewed.
