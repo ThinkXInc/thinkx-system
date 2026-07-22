@@ -7,6 +7,7 @@ from __future__ import annotations
 import collections
 import collections.abc
 import os
+import re
 import sys
 import types
 from pathlib import Path
@@ -17,9 +18,12 @@ LEGACY_APPLICATION = CITYWALK_ROOT / "legacy/www/server/application"
 LEGACY_SCRIPTS = LEGACY_APPLICATION / "scripts"
 LEGACY_VIEWS = LEGACY_APPLICATION / "views"
 TEMPLATE_ROOT = LEGACY_VIEWS / "templates"
-ECMA_ROOT = LEGACY_VIEWS / "src/ECMA"
 IMAGE_ROOT = LEGACY_VIEWS / "img"
 CSS_ROOT = CITYWALK_ROOT / "web-server/tests/.build/css"
+JAVASCRIPT_ROOT = CITYWALK_ROOT / "web-server/tests/.build/js"
+GOOGLE_MAPS_SCRIPT_PATTERN = re.compile(
+    rb"(https://maps\.googleapis\.com/maps/api/js\?[^\"']*?\bkey=)[^&\"']+"
+)
 
 
 def install_python_310_compatibility() -> None:
@@ -43,18 +47,102 @@ def configure_legacy_runtime() -> None:
     sys.path.insert(0, str(LEGACY_SCRIPTS))
 
 
+def demo_contents() -> list[dict]:
+    shared = {
+        "media_type": "audio",
+        "language": "en",
+        "organization_id": None,
+        "created_member_id": "000000000000000000000001",
+        "latest_edit_member_id": "000000000000000000000001",
+        "deleted": False,
+    }
+    return [
+        {
+            **shared,
+            "_id": "000000000000000000000101",
+            "index": 1,
+            "lat": 46.953976,
+            "lon": 7.456123,
+            "label": "Giza Pyramid",
+            "title": "The secret of Giza Pyramid",
+            "text": "The Great Pyramid of Giza is the oldest pyramids in the Giza pyramid complex",
+            "target": 0,
+            "radius": 5,
+        },
+        {
+            **shared,
+            "_id": "000000000000000000000102",
+            "index": 2,
+            "lat": 46.933176,
+            "lon": 7.440143,
+            "label": "Mona Lisa",
+            "title": "Mona Lisa Title and subject",
+            "text": (
+                "The title of the painting, which is known in English as Mona Lisa, "
+                "comes from a description by Renaissance art historian Giorgio Vasari, "
+                "who wrote Leonardo undertook to paint the portrait of Mona Lisa."
+            ),
+        },
+        {
+            **shared,
+            "_id": "000000000000000000000103",
+            "index": 3,
+            "lat": 46.943956,
+            "lon": 7.426124,
+            "label": "Renaissance",
+            "title": "Social and political structures in Italy",
+            "text": (
+                "The unique political structures of late Middle Ages Italy have led some to theorize "
+                "that its unusual social climate allowed the emergence of a rare cultural efflorescence."
+            ),
+            "target": 0,
+            "radius": 5,
+        },
+        {
+            **shared,
+            "_id": "000000000000000000000104",
+            "index": 4,
+            "lat": 46.943416,
+            "lon": 7.439110,
+            "label": "ルネサンス",
+            "title": "構成的な明暗法",
+            "text": (
+                "暗い物体が、単一でしばしば目に見えない光源から放たれる一条の光によって劇的に照らされるという、"
+                "この構成的な明暗法を発展させた。とくにカラヴァッジオは、劇的な明暗法が支配的な技法となる"
+                "テネブリズムの発達に重大な貢献をした。"
+            ),
+        },
+    ]
+
+
 def create_app():
     install_python_310_compatibility()
     configure_legacy_runtime()
 
-    from flask import Flask, send_from_directory
+    from flask import Flask, jsonify, send_from_directory
+    from libcommon.enumlocale import EnumLocale
     from views.business import blueprint_business
+
+    # The pinned legacy snapshot omitted this decorator; restore its documented API.
+    EnumLocale.is_valid_value = classmethod(EnumLocale.is_valid_value)
 
     app = Flask(__name__, template_folder=str(TEMPLATE_ROOT), static_folder=None)
     app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
     app.config["TEMPLATES_AUTO_RELOAD"] = True
     app.secret_key = "citywalk-c0c-test-only"
     app.register_blueprint(blueprint_business)
+
+    @app.after_request
+    def inject_google_maps_browser_key(response):
+        browser_key = os.environ.get("CITYWALK_GOOGLE_MAPS_API_KEY")
+        if browser_key and response.content_type.startswith("text/html"):
+            response.set_data(
+                GOOGLE_MAPS_SCRIPT_PATTERN.sub(
+                    lambda match: match.group(1) + browser_key.encode(),
+                    response.get_data(),
+                )
+            )
+        return response
 
     @app.route("/healthcheck")
     def healthcheck() -> str:
@@ -72,7 +160,26 @@ def create_app():
 
     @app.route("/js/<path:asset_path>")
     def javascript(asset_path: str):
-        return send_from_directory(ECMA_ROOT, asset_path)
+        response = send_from_directory(JAVASCRIPT_ROOT, asset_path)
+        if asset_path == "business/appconfig.js":
+            response.direct_passthrough = False
+            response.set_data(
+                response.get_data().replace(
+                    b"http://citywalkservers.localhost:8000",
+                    b"http://127.0.0.1:4173",
+                )
+            )
+        return response
+
+    @app.route("/demo/1/contents/guide/list")
+    def contents_guide_list_demo_1():
+        return jsonify(
+            {
+                "saved_data": None,
+                "contents": demo_contents(),
+                "success": {"code": 200, "message": "contents successfully fetched."},
+            }
+        )
 
     @app.route("/img/<path:asset_path>")
     def image(asset_path: str):

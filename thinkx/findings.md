@@ -249,3 +249,50 @@
 - **再発防止**: 編集前に `git check-ignore <path>` を打つ(ignore = 生成物を疑う)。
   文書側の配線(役割別必読の新設・3サイト CLAUDE.md へのビルド節・SITE_REQUIREMENTS への
   コマンド明記・受賞企業ページの作り方 §2-4 への babel 追記)は提案済み・オーナー承認待ち。
+
+### F-E15(要判断): `GeosansLight` が指定されているのに読み込まれていない
+
+- **実測(2026-07-21)**: ビルド済み `views/css/main.css` と本番 `truetechjapan.com/css/main.css`
+  の双方で **`@font-face` が0件**。Typekit の kit(`bez6hty` / `qbw6sek`)はどちらも収録が
+  `yu-gothic-pr6n` のみで `GeosansLight` を含まない。ローカルの `@font-face` は
+  `src/less/main.less:23-29` でコメントアウトされている。**供給源がどこにも無い。**
+- **指定箇所**: `src/less/top.less:162,519,528` / `apply_page.less:8` /
+  `article_page.less:11` / `ir_page.less:8` の計6箇所。うち top.less の3箇所は
+  thinkxinc.com トップに**実在・表示中**の要素に当たっている。
+
+  | 箇所 | 実際のテキスト |
+  |---|---|
+  | `top.less:162` | `<div class="message">The fusion of science and art</div>` |
+  | `top.less:519` | `<h2 class="title">Quantification of the Sixths Sense</h2>` |
+  | `top.less:528` | `<h3 class="subtitle">The Fusion of Science and Art</h3>` |
+
+  `apply_page` / `article_page` / `ir_page` は該当ページの現役性を未確認。なお top.less は
+  `'GeosansLight', "yu-gothic-pr6n", sans-serif` とフォールバックを持つが、他3つは
+  `font-family: "GeosansLight";` 単独で代替指定が無い。
+- **含意**: **現在見えている見た目が既にフォールバック後の姿。** `@font-face` を復活させると
+  今の見た目が変わるため、これはバグ修正ではなく設計判断。オーナー要件「指定したフォントが
+  表示されていなければならない」には現状違反している。
+- **判断の選択肢**: (a) 今の見た目が正なら CSS から `GeosansLight` の指定を消す(宣言と実態が
+  一致する) (b) 本来当てたかったなら `@font-face` を復活させる。フォントファイルは
+  `views/fonts/GeosansLight.ttf`(60,072 B)が本番で 200 を返す状態で生きている。
+  復活させる場合、TTF のままより woff2 変換の方が軽い(要ライセンス確認)。
+
+### F-E16(実測): トップページの動画資産
+
+- **背景動画**(`index.html:48` / `autoplay muted loop` / `z-index:-1` の全面背景):
+  `Sitetop2025_7.mp4` は 1920x1080・43.8秒・**9.96 Mbps**・54.4MB・音声トラック有り。
+  HTML で `muted` 指定なのに音声を配っていた。装飾用途に対して5倍前後の過剰品質。
+  → `Sitetop2025_7_13noaudio.mp4`(2.46 Mbps / 13.5MB / 音声無)へ差し替え(**−75%**)。
+- **Learn More**(`index.html:55` / クリック時のみ): `VNMachineCloudIntro1.1.mp4` 148.0MB
+  → `VNMachineCloudIntro1.1_21MB.mp4` 21.0MB(**−86%**)。尺・解像度は原本と一致。
+- **不採用**: `Sitetop2025_7_com16.mp4` は `moov` アトムが末尾で faststart が効かず、
+  16.7MB を全部落とすまで再生が始まらないため却下。**mp4 は配置前に moov 位置を確認すること。**
+- **製品動画4本は無実だった**: `preload` 未指定時の既定は `auto` ではなく `metadata` で、
+  `moov` は各 10KB 程度・4本合計で約350KB しか取らない。当初「78MB を先読みしている」と
+  報告したのは誤りで、ファイルサイズからの決めつけだった。`preload="none"` は先頭フレームの
+  表示と再生の即応性を失う交換になり、割に合わないため**適用しない**。
+- **`views/video/` は本番へ運ぶ経路を持たない**: gitignore 対象(`thinkx/.gitignore:36`)かつ
+  infra のデプロイスクリプトに `video` の記述が一つも無い。staging へは filedrop
+  (`main.py:787` / hostname が `-stg` の時のみ)で入れられるが本番では 404 になる。
+  CSS/JS はビルドで再生成できるため `31664de` の配線で解決したが、動画は生成できないため
+  同じ手が使えない。→ `docs/TODO.md` #6。
