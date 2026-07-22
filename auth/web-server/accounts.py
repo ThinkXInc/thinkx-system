@@ -34,10 +34,12 @@ from libcommon.web.google_oauth_helper import (
 
 from models.data.user import (
     UnauthorizedAccessError, User, UserNotFoundError,
-    UserAlreadyExistsError, UserSaveError,
+    UserAlreadyExistsError, UserSaveError, VerifiedEmail, password_hasher,
 )
 from models.data.connected_service import ConnectedService
 from models.data.service_entitlement import ServiceEntitlement
+from account_challenges import consume_email_challenge, issue_email_challenge
+from challenge_email import deliver_challenge_email
 from oidc.signin import clear_signin_csrf, valid_signin_csrf
 from protocol import build_userinfo, with_protocol_version
 
@@ -55,6 +57,8 @@ locale = Locale('accounts.json')
 from config import Config, check_config
 REQUIRED_KEYS_IN_CONFIG = [
     'DEFAULT_LANG',
+    'SIGNUP_CHALLENGE_TTL_SEC',
+    'PASSWORD_RESET_EXPIRATION_SECONDS',
 ]
 check_config(Config, REQUIRED_KEYS_IN_CONFIG)
 
@@ -124,6 +128,13 @@ def users_create(lang, lang_name):
         error = UnexpectedAPIErrorFormat(lang=lang)
         return with_protocol_version(error).http_response()
 
+    issue_email_challenge(
+        purpose='signup',
+        destination=email,
+        lifetime_seconds=Config.SIGNUP_CHALLENGE_TTL_SEC,
+        deliver=deliver_challenge_email,
+    )
+
     # NOTE: 確認コードメールの送信 (libcommon.sendmail) はここに入る。
     # email_verified は verify_code 完了時に True にする (quantz の verify_code と同型)。
 
@@ -131,6 +142,104 @@ def users_create(lang, lang_name):
     # implemented by the challenge flow; until then this endpoint fails closed
     # by returning without issuing a central Session.
     return _signup_pending(user, lang)
+
+
+@blueprint_accounts.route('/v1/users/verify', methods=['POST'])
+@blueprint_accounts.route('/v1/<lang>/users/verify', methods=['POST'])
+@language_wrapper
+@content_type_check_json
+@required_fields_check(['email', 'code'])
+def users_verify(lang, lang_name):
+    validation_error = validate_request(lang, locale)
+    if validation_error:
+        return validation_error.http_response()
+    email = request.json.get('email')
+    code = request.json.get('code')
+    if not consume_email_challenge(
+        purpose='signup', destination=email, code=code
+    ):
+        error = ForbiddenAPIErrorFormat(lang=lang, field_name='code')
+        return with_protocol_version(error).http_response()
+    try:
+        user = User.find_user_by_email(email)
+    except UserNotFoundError:
+        error = ForbiddenAPIErrorFormat(lang=lang, field_name='code')
+        return with_protocol_version(error).http_response()
+    user.email = email
+    user.suspended_email = None
+    user.verified_emails.append(VerifiedEmail(
+        email=email,
+        method='email_code',
+        verified_at=datetime.now(pytz.utc),
+    ))
+    user.save()
+    return SuccessFormat(
+        data={'email': email},
+        code=SuccessCode.OK,
+        message=locale.get('email_verified', lang),
+    ).http_response()
+
+
+@blueprint_accounts.route('/v1/password-reset/request', methods=['POST'])
+@blueprint_accounts.route('/v1/<lang>/password-reset/request', methods=['POST'])
+@language_wrapper
+@content_type_check_json
+@required_fields_check(['email'])
+def password_reset_request(lang, lang_name):
+    validation_error = validate_request(lang, locale)
+    if validation_error:
+        return validation_error.http_response()
+    email = request.json.get('email')
+    try:
+        user = User.find_user_by_email(email)
+    except UserNotFoundError:
+        user = None
+    if user and user.email == email and user.is_primary_email_verified():
+        issue_email_challenge(
+            purpose='password_reset',
+            destination=email,
+            lifetime_seconds=Config.PASSWORD_RESET_EXPIRATION_SECONDS,
+            deliver=deliver_challenge_email,
+        )
+    return SuccessFormat(
+        data={},
+        code=SuccessCode.ACCEPTED,
+        message=locale.get('password_reset_requested', lang),
+    ).http_response()
+
+
+@blueprint_accounts.route('/v1/password-reset/complete', methods=['POST'])
+@blueprint_accounts.route('/v1/<lang>/password-reset/complete', methods=['POST'])
+@language_wrapper
+@content_type_check_json
+@required_fields_check(['email', 'code', 'password'])
+@regex_check('password', PASSWORD_AT_LEAST_ONE_UPPER_AND_NUMERIC_REGEX, 'invalid_password_format')
+def password_reset_complete(lang, lang_name):
+    validation_error = validate_request(lang, locale)
+    if validation_error:
+        return validation_error.http_response()
+    email = request.json.get('email')
+    code = request.json.get('code')
+    if not consume_email_challenge(
+        purpose='password_reset', destination=email, code=code
+    ):
+        error = ForbiddenAPIErrorFormat(lang=lang, field_name='code')
+        return with_protocol_version(error).http_response()
+    try:
+        user = User.find_user_by_email(email)
+    except UserNotFoundError:
+        error = ForbiddenAPIErrorFormat(lang=lang, field_name='code')
+        return with_protocol_version(error).http_response()
+    user.password = password_hasher.hash(request.json.get('password'))
+    user.auth_generation += 1
+    user.updated_at = datetime.now(pytz.utc)
+    user.save()
+    Session.revoke_all(str(user.id))
+    return SuccessFormat(
+        data={},
+        code=SuccessCode.OK,
+        message=locale.get('password_reset_complete', lang),
+    ).http_response()
 
 
 # ----------------------------------------------------------------------

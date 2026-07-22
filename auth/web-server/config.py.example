@@ -10,6 +10,14 @@ class Config:
     )
     OIDC_ID_TOKEN_TTL_SEC = 600
     OIDC_AUTHORIZATION_REQUEST_TTL_SEC = 600
+    SIGNUP_CHALLENGE_TTL_SEC = 3600
+    PASSWORD_RESET_EXPIRATION_SECONDS = 3600
+    AUTH_SMTP_HOST = os.environ.get('AUTH_SMTP_HOST')
+    AUTH_SMTP_PORT = int(os.environ.get('AUTH_SMTP_PORT', '587'))
+    AUTH_SMTP_STARTTLS = os.environ.get('AUTH_SMTP_STARTTLS', '1') == '1'
+    AUTH_SMTP_USERNAME = os.environ.get('AUTH_SMTP_USERNAME')
+    AUTH_SMTP_PASSWORD = os.environ.get('AUTH_SMTP_PASSWORD')
+    AUTH_EMAIL_SENDER = os.environ.get('AUTH_EMAIL_SENDER', 'account@thinkx.jp')
 
     # --- 言語 (libcommon/web/flask_helpers.py の要求キー) ---
     DEFAULT_LANG = 'en'

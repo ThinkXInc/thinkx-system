@@ -191,3 +191,19 @@
 - `tests/test_oidc_userinfo.py` / GET/POST、email scope、openid-only、generation失効、suspended User、
   Bearer形式異常を8テストで固定した。A-4後のauth pytestは67件collect、59 passed / 8 skipped /
   1既存warning。
+
+## Auth A-5 signup verification / password reset
+
+- `web-server/account_challenges.py` / signup・password_resetのemail challengeを専用collectionへ保存する。
+  raw codeは32-byte相当の乱数で、DBにはSHA-256 hashだけを保存する。用途+宛先ごとに最新1件、TTL index、
+  誤入力5回上限、正解時はfind_one_and_deleteで一回だけ消費する。
+- `web-server/challenge_email.py` / 標準ライブラリsmtplibの小さいadapterを追加した。codeをHTTP応答・URL・
+  logへ出さない。production系でSMTP host未設定ならfail loudly、development/testは外部送信しない。
+  import時に実メール送信とprintを行う既存libcommon/sendmail.pyは使用していない。
+- `POST /v1/users/verify` / suspended_emailのsignup challenge成功時だけemailを確認済みへ昇格し、
+  VerifiedEmailへmethod/verified_atを保存する。codeは再利用不可。
+- `POST /v1/password-reset/request` / 登録済み・未登録emailでstatus/bodyを同一にして列挙を防ぐ。
+  `POST /v1/password-reset/complete` / code成功時にArgon2id再hash、auth_generation増加、
+  `Session.revoke_all(str(user.id))`で中央Sessionを全失効する。
+- `tests/test_account_challenges.py` / code非露出・一回消費・試行上限・列挙耐性・password/generation/session
+  失効を4テストで固定した。A-5後のauth pytestは71件collect、63 passed / 8 skipped / 1既存warning。

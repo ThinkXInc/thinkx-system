@@ -7,6 +7,18 @@
         "en": "Check your email to complete registration.",
         "ja": "登録を完了するため、メールを確認してください。"
     },
+    "email_verified": {
+        "en": "Email verified.",
+        "ja": "メールアドレスを確認しました。"
+    },
+    "password_reset_requested": {
+        "en": "If the account exists, a reset code has been sent.",
+        "ja": "アカウントが存在する場合、リセットコードを送信しました。"
+    },
+    "password_reset_complete": {
+        "en": "Password reset completed.",
+        "ja": "パスワードを再設定しました。"
+    },
     "user_already_exists": {
         "en": "An account already exists for {0}.",
         "ja": "{0} のアカウントは既に存在します。"

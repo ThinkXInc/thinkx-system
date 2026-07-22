@@ -11,7 +11,10 @@ from libcommon.mongomodel import MongoModel
 
 
 class VerificationChallenge(MongoModel):
-    meta = {'collection': 'verification_challenges'}
+    meta = {
+        'collection': 'verification_challenges',
+        'indexes': [{'fields': ['expires_at'], 'expireAfterSeconds': 0}],
+    }
 
     purpose = StringField(
         required=True,
