@@ -102,3 +102,4 @@ Security exception(D-22)はここに書かず即停止・人間へ報告。
 - `git:10f21ce` / translation panel導入commitから確定snapshotまでcell clickは`onselected` state設定のみでobserverなし。S21実フレームはtranslation選択・closeではなく対象ユーザーdropdownのため欠落observerを補わない / D-21
 - `web-server/tests/golden/ui_legacy/ground_truth/{animation_segments.tsv,REVIEW.md}:S20-S21` / 中間を含む実フレーム再確認によりS20を本文延長+翻訳置換、S21を対象ユーザーdropdown選択へ訂正。旧heuristicのscroll/translation close分類を撤回 / C-0c
 - `web-server/tests/golden/ui_legacy/static/:1` / C-0c層1の試験対象6画面×mobile/desktop計12枚を計画所定の`static/`へ正規化 / C-0c
+- `web-server/tests/CHECKSUMS:1` / C-0c ground truth動画・台帳・motion契約・層1静止画12枚のsha256を記録。未生成のlocal motion/並列reviewは未記録 / C-0c
