@@ -42,6 +42,22 @@ function validateMotionTrace(contract, trace) {
   assert.ok(map.length > 1, 'map-pan-zoom: map state was not sampled');
   assert.equal(map.at(-1).zoom - map[0].zoom, 1, 'map-pan-zoom: zoom delta differs');
   assert.notDeepEqual(map.at(-1).center, map[0].center, 'map-pan-zoom: center did not change');
+
+  const population = flowById(trace, 'translation-panel-populate').samples;
+  assert.ok(
+    population.some((sample) => sample.translation?.count < 11),
+    'translation-panel-populate: no pre-completion state was sampled',
+  );
+  assert.equal(population.at(-1).translation?.count, 11);
+  assert.notEqual(population.at(-1).elements['#translateResultsTableView'].display, 'none');
+
+  const scroll = flowById(trace, 'translation-panel-scroll').samples;
+  assert.equal(scroll[0].translation?.count, 11);
+  assert.equal(scroll.at(-1).translation?.count, 11);
+  assert.ok(
+    scroll.at(-1).translation.scroll_top > scroll[0].translation.scroll_top,
+    'translation-panel-scroll: scrollTop did not increase',
+  );
 }
 
 function main() {

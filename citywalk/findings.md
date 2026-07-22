@@ -95,3 +95,8 @@ Security exception(D-22)はここに書かず即停止・人間へ報告。
 - `web-server/tests/build_motion_review.sh:1` / local flowを対応する代表ground truth S02/S04/S10と個別に並列化し、無関係な135秒全体比較を回避 / C-0c
 - `legacy/www/server/application/views/src/ECMA/business/helpers/translate.js:1` / オーナー裁定により廃止済みbrowser-side DeepL endpoint・認証値・外部fetchを除去し、外部送信しないfail-closed互換面へ置換 / C-0c
 - `web-server/tests/ui/motion_contract.test.js:1` / legacy translation helperへのDeepL endpoint・認証parameter・fetch再混入を拒否 / C-0c
+- `web-server/tests/fixtures/legacy_translation.js:1` / production demo S19の11言語・表示順を根拠に、外部通信なしのtest-only translation completion fixtureを固定 / C-0c
+- `web-server/tests/legacy_ui_server.py:1` / legacy sourceの廃止済み翻訳面はfail-closedのまま維持し、C-0c実ブラウザだけfixtureを配信 / C-0c
+- `legacy/www/server/application/views/src/ECMA/business/view_controllers/createguide_view_controller.js:149` / 選択contentを表示用へ設定する一方editable clone設定が欠落し、入力時に`isEmpty`を呼べない。ground truthと同ファイル内`_startEditContent`を根拠に試験runtimeだけ復元 / D-21
+- `web-server/tests/ui/capture_legacy_motion.js:1` / demo由来入力と11言語fixtureでS19 population、S20 smooth scrollのPNG列・rAF traceを収録対象へ追加 / C-0c
+- `legacy/www/server/application/views/src/ECMA/business/view_components/translate_results_table_view.js:365` / cell clickは`onselected` state設定のみで、S21の選択反映・closeを行うobserverが確定source内に存在しないため当該flowはblockedを維持 / D-21

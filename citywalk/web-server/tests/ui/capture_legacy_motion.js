@@ -48,10 +48,16 @@ async function startSampling(page, flowId, selectors) {
         }];
       }));
       const center = window.map?.getCenter?.();
+      const translationList = document.querySelector('#translateResultsTableView .listContainer');
       samples.push({
         elapsed_ms: Number((timestamp - startedAt).toFixed(3)),
         elements,
         map: center ? {center: center.toJSON(), zoom: window.map.getZoom()} : null,
+        translation: translationList ? {
+          count: translationList.children.length,
+          scroll_height: translationList.scrollHeight,
+          scroll_top: translationList.scrollTop,
+        } : null,
       });
       if (!window.__citywalkMotion[id].done) requestAnimationFrame(sample);
     }
@@ -159,6 +165,36 @@ async function main() {
         window.map.setZoom(window.map.getZoom() + 1);
       }),
       1500,
+    ));
+    await page.click('#contentTableView_0');
+    await page.waitForFunction(() => getComputedStyle(document.querySelector('#editContentView')).display !== 'none');
+    flows.push(await captureFlow(
+      page,
+      cdp,
+      'translation-panel-populate',
+      ['#translateResultsTableView', '#translateResultsTableView .listContainer', '#editContentView'],
+      async () => {
+        await page.fill('#labelField input', 'CERN');
+        await page.fill('#titleField textarea', '世界最大の素粒子物理学研究所');
+        await page.fill('#textField textarea', 'この地下にフランスとの国境地帯にまたがり円形に位置するぜん');
+        await page.waitForFunction(
+          () => document.querySelectorAll('#translateResultsTableView .listContainer > li').length === 11,
+          null,
+          {timeout: 7000},
+        );
+      },
+      800,
+    ));
+    flows.push(await captureFlow(
+      page,
+      cdp,
+      'translation-panel-scroll',
+      ['#translateResultsTableView', '#translateResultsTableView .listContainer'],
+      () => page.evaluate(() => {
+        const list = document.querySelector('#translateResultsTableView .listContainer');
+        list.scrollTo({top: list.scrollHeight, behavior: 'smooth'});
+      }),
+      1200,
     ));
 
     fs.writeFileSync(

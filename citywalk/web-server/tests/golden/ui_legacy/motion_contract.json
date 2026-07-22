@@ -8,7 +8,9 @@
   "capture_required_flows": [
     "content-selection",
     "edit-panel-close",
-    "map-pan-zoom"
+    "map-pan-zoom",
+    "translation-panel-populate",
+    "translation-panel-scroll"
   ],
   "flows": [
     {
@@ -69,6 +71,31 @@
         "pan_x_px": 160,
         "pan_y_px": 80,
         "zoom_delta": 1
+      }
+    },
+    {
+      "id": "translation-panel-populate",
+      "trigger": "edit demo-derived label, title, and body; wait for test-only completion fixture",
+      "order": [
+        "valid form change is observed",
+        "eleven completed translations arrive in the production-demo order",
+        "translation footer becomes visible"
+      ],
+      "numeric": {
+        "result_count": 11,
+        "fixture_stagger_ms": 120
+      }
+    },
+    {
+      "id": "translation-panel-scroll",
+      "trigger": "smooth-scroll translation result list to its end",
+      "order": [
+        "scroll starts at the current list position",
+        "scrollTop increases",
+        "result count remains eleven"
+      ],
+      "numeric": {
+        "result_count": 11
       }
     }
   ],

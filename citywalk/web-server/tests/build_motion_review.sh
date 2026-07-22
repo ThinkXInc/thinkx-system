@@ -33,7 +33,9 @@ build_review() {
   printf '%s\n' "$output"
 }
 
-# Canonical first match from motion/alignment.tsv: S02, S04, and S10.
+# Canonical first match from motion/alignment.tsv.
 build_review content-selection 1.20 1.00 30
 build_review edit-panel-close 5.60 1.60 60
 build_review map-pan-zoom 32.55 2.20 20
+build_review translation-panel-populate 92.80 6.90 60
+build_review translation-panel-scroll 102.15 8.45 30

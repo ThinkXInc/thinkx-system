@@ -5,7 +5,13 @@ const visible = (overrides = {}) => ({display: 'block', opacity: 1, transform: '
 const contract = {
   schema: 1,
   viewport: {width: 1490, height: 856},
-  capture_required_flows: ['content-selection', 'edit-panel-close', 'map-pan-zoom'],
+  capture_required_flows: [
+    'content-selection',
+    'edit-panel-close',
+    'map-pan-zoom',
+    'translation-panel-populate',
+    'translation-panel-scroll',
+  ],
 };
 const trace = {
   schema: 1,
@@ -22,6 +28,14 @@ const trace = {
     {id: 'map-pan-zoom', samples: [
       {elapsed_ms: 1, elements: {}, map: {center: {lat: 46.9, lng: 7.4}, zoom: 14}},
       {elapsed_ms: 17, elements: {}, map: {center: {lat: 46.8, lng: 7.5}, zoom: 15}},
+    ]},
+    {id: 'translation-panel-populate', samples: [
+      {elapsed_ms: 1, elements: {'#translateResultsTableView': visible()}, translation: {count: 0, scroll_top: 0}},
+      {elapsed_ms: 17, elements: {'#translateResultsTableView': visible()}, translation: {count: 11, scroll_top: 0}},
+    ]},
+    {id: 'translation-panel-scroll', samples: [
+      {elapsed_ms: 1, elements: {}, translation: {count: 11, scroll_top: 0}},
+      {elapsed_ms: 17, elements: {}, translation: {count: 11, scroll_top: 400}},
     ]},
   ],
 };
