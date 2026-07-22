@@ -66,13 +66,42 @@ async function finishSampling(page, flowId) {
   }, flowId);
 }
 
-async function captureFlow(page, flowId, selectors, action, settleMs) {
+async function startScreencast(cdp, flowId) {
+  const frameRoot = path.join(outputRoot, flowId);
+  fs.mkdirSync(frameRoot, {recursive: true});
+  const frames = [];
+  let frameNumber = 0;
+  const onFrame = async (event) => {
+    const filename = `frame-${String(frameNumber).padStart(5, '0')}.png`;
+    fs.writeFileSync(path.join(frameRoot, filename), Buffer.from(event.data, 'base64'));
+    frames.push({filename, timestamp: event.metadata.timestamp});
+    frameNumber += 1;
+    await cdp.send('Page.screencastFrameAck', {sessionId: event.sessionId});
+  };
+  cdp.on('Page.screencastFrame', onFrame);
+  await cdp.send('Page.startScreencast', {
+    format: 'png',
+    everyNthFrame: 1,
+    maxHeight: 856,
+    maxWidth: 1490,
+  });
+  return async () => {
+    await cdp.send('Page.stopScreencast');
+    cdp.off('Page.screencastFrame', onFrame);
+    assert.ok(frames.length > 1, `${flowId}: fewer than two screencast frames captured`);
+    return frames;
+  };
+}
+
+async function captureFlow(page, cdp, flowId, selectors, action, settleMs) {
+  const finishScreencast = await startScreencast(cdp, flowId);
   await startSampling(page, flowId, selectors);
   await action();
   await page.waitForTimeout(settleMs);
   const samples = await finishSampling(page, flowId);
+  const frames = await finishScreencast();
   assert.ok(samples.length > 1, `${flowId}: no animation samples captured`);
-  return {id: flowId, samples};
+  return {id: flowId, frames, samples};
 }
 
 async function main() {
@@ -97,6 +126,7 @@ async function main() {
       viewport: {width: 1490, height: 856},
     });
     const page = await context.newPage();
+    const cdp = await context.newCDPSession(page);
     const video = page.video();
     await page.goto(`${origin}/business/createguide`, {waitUntil: 'networkidle'});
     await page.waitForFunction(() => document.querySelectorAll('#contentTableView > li').length === 4);
@@ -105,6 +135,7 @@ async function main() {
     const flows = [];
     flows.push(await captureFlow(
       page,
+      cdp,
       'content-selection',
       ['#contentTableView', '#contentTableView_0', '#pageNavigationView .backbutton', '#editContentView'],
       () => page.click('#contentTableView_0'),
@@ -112,6 +143,7 @@ async function main() {
     ));
     flows.push(await captureFlow(
       page,
+      cdp,
       'edit-panel-close',
       ['#contentTableView', '#pageNavigationView .backbutton', '#editContentView'],
       () => page.click('#pageNavigationView .backbutton'),
@@ -119,6 +151,7 @@ async function main() {
     ));
     flows.push(await captureFlow(
       page,
+      cdp,
       'map-pan-zoom',
       ['#leftwindow', '#map'],
       () => page.evaluate(() => {
