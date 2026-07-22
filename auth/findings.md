@@ -137,3 +137,145 @@
 - `tests/test_data_models.py` / モデル制約、Argon2id、redirect 完全一致、接続一意性、billing 投影の
   冪等性・単調性、seed 冪等性を7テストで固定した。A-1 後の auth pytest は28件 collect、
   21 passed / 7 skipped / 1既存 warning。
+- A-1 レビュー追補 / email と suspended_email をまたぐ identity 一意性、Google sub 一意性、
+  ConnectedService の並行初回接続、ServiceEntitlement の並行・同時刻更新、active SigningKey 1件制約を
+  DB index と原子的 update で固定した。実 MongoDB 固有の index/atomicity は
+  `AUTH_A1_REAL_MONGO_URI` が loopback を指す場合だけ走る opt-in テストを追加した。
+- A-1 レビュー追補 / seed は `ENV` と Config.ENV の一致、非 production、`AUTH_SEED_ENABLED=1`、
+  32 byte以上の client secret、明示 `--reset` を必須にした。再実行時は auth_generation を増やし、
+  対象 test User の中央 Session・旧 code・旧 access token を失効する。
+- A-1 レビュー追補 / 旧 scaffold が pending/suspended User を認証しないよう accounts/sso を新モデルへ
+  配線し、UserInfo の課金材料を User.services から ConnectedService + ServiceEntitlement へ移した。
+  レビュー追補後の auth pytest は49件 collect、41 passed / 8 skipped / 1既存 warning。追加skip 1件は
+  loopback実MongoDBを明示した場合だけ走る A-1 integration test。
+
+## Auth A-2 署名鍵・JWKS・OpenID Provider metadata
+
+- `web-server/oidc/id_token.py` / active SigningKey を使う RS256 ID Token issuer を追加した。
+  ID Token は `kid` header と iss/sub/aud/exp/iat/nonce/auth_time の認証claimだけを持つ。
+- `GET /oauth/jwks` / retired 以外の SigningKey を RSA public JWK(kty/use/alg/kid/n/e)として公開し、
+  private keyを応答へ含めない。`Cache-Control: public, max-age=300`を付与した。
+- `GET /.well-known/openid-configuration` / 固定 `AUTH_PUBLIC_BASE_URL` をissuerとして、authorize/token/
+  userinfo/jwks/logout、code response、public subject、RS256、client_secret_basic、PKCE S256を公開する。
+- `tests/test_oidc_discovery.py` / metadata、retired鍵除外、必須claimとactive kid、公開JWKによる実検証を
+  4テストで固定した。A-2後のauth pytestは53件collect、45 passed / 8 skipped / 1既存warning。
+
+## Auth A-3 OIDC authorize / signin resume / token happy path
+
+- `web-server/oidc/stores.py` / authorization request、authorization code、opaque access tokenを
+  auth所有Redisの専用prefixへ保存するStoreを追加した。raw code/token/handleはkeyにせずSHA-256 digestを使う。
+  codeはclient_id・redirect_uri・PKCE S256を検証してから、WATCH/MULTIでcode削除とaccess token作成を行う。
+- `GET /oauth/authorize` / 重複・欠落、client status、redirect完全一致、response_type、scope、
+  state/nonce、PKCE S256を検証する。未登録redirectへはredirectせず、登録済みredirectへの標準errorには
+  stateとissを付ける。未ログイン要求はbrowser_context digestにbindした専用Storeへ退避する。
+- `GET /signin` と `POST /v1/users/signin` / request_handleを使うOIDC signin再開を追加した。
+  認証前SessionのCSRF token、Origin、Fetch Metadataを検証し、Session.start時はbrowser_context_idを引き継ぐ。
+- `POST /oauth/token` / application/x-www-form-urlencoded、HTTP Basic、authorization_code grant、
+  redirect、43–128文字code_verifier、PKCE、User status、auth_generationを検証する。成功時だけcodeを消費し、
+  RS256 ID Tokenとopaque access tokenをno-store応答で返す。
+- コーディング規約照合 / 長いhandlerを検証・client認証・Store・CSRF・署名の小関数/モジュールへ分割し、
+  `digest`/`decode`等の曖昧名を`sha256_hex`/`decode_json_record`等へ改名した。標準endpointだけは
+  auth/CLAUDE.mdの例外どおりlibcommon response wrapperと言語二重routeを適用していない。
+- `tests/test_oidc_authorization.py` / ログイン済みhappy path、signin再開、code一回消費、wrong verifier後の
+  再試行、CSRF/Origin、重複param、未登録redirect、登録済みredirectへのerrorを6テストで固定した。
+  A-3後のauth pytestは59件collect、51 passed / 8 skipped / 1既存warning。
+
+## Auth A-4 OIDC UserInfo
+
+- `GET|POST /oauth/userinfo` / Authorization Bearerのopaque access tokenをSHA-256 digest keyから解決し、
+  Userの存在、active状態、token発行時と現在のauth_generation一致を利用時ごとに検証する。
+- UserInfoは常にsubを返し、token scopeにemailがある場合だけemailと
+  `is_primary_email_verified()` の導出値を返す。ID Token、legacy protocol_version、billingは混在させない。
+- invalid/missing Bearer tokenは401 `invalid_token` と `WWW-Authenticate: Bearer error="invalid_token"`、
+  成功応答はno-storeとした。
+- `tests/test_oidc_userinfo.py` / GET/POST、email scope、openid-only、generation失効、suspended User、
+  Bearer形式異常を8テストで固定した。A-4後のauth pytestは67件collect、59 passed / 8 skipped /
+  1既存warning。
+
+## Auth A-5 signup verification / password reset
+
+- `web-server/account_challenges.py` / signup・password_resetのemail challengeを専用collectionへ保存する。
+  raw codeは32-byte相当の乱数で、DBにはSHA-256 hashだけを保存する。用途+宛先ごとに最新1件、TTL index、
+  誤入力5回上限、正解時はfind_one_and_deleteで一回だけ消費する。
+- `web-server/challenge_email.py` / 標準ライブラリsmtplibの小さいadapterを追加した。codeをHTTP応答・URL・
+  logへ出さない。production系でSMTP host未設定ならfail loudly、development/testは外部送信しない。
+  import時に実メール送信とprintを行う既存libcommon/sendmail.pyは使用していない。
+- `POST /v1/users/verify` / suspended_emailのsignup challenge成功時だけemailを確認済みへ昇格し、
+  VerifiedEmailへmethod/verified_atを保存する。codeは再利用不可。
+- `POST /v1/password-reset/request` / 登録済み・未登録emailでstatus/bodyを同一にして列挙を防ぐ。
+  `POST /v1/password-reset/complete` / code成功時にArgon2id再hash、auth_generation増加、
+  `Session.revoke_all(str(user.id))`で中央Sessionを全失効する。
+- `tests/test_account_challenges.py` / code非露出・一回消費・試行上限・列挙耐性・password/generation/session
+  失効を4テストで固定した。A-5後のauth pytestは71件collect、63 passed / 8 skipped / 1既存warning。
+
+## Auth A-6 revocation outbox / logout
+
+- `web-server/revocation.py` / password resetとglobal logoutを`revoke_user`へ統合した。1回の処理で
+  auth_generation増加、`Session.revoke_all(str(user.id))`、ConnectedServiceごとのMongoDB outbox作成を行う。
+- revocation payloadはissuer/subject/auth_generation/reason/revocation_id/issued_at。client_secretや
+  ID Token署名鍵を流用せず、AuthServiceのrevoke_webhook_secretでcanonical method/path/bodyをHMAC-SHA256署名する。
+- 配送はtimeout=(3,10)、TLS検証既定、redirect拒否。2xxだけ成功とし、失敗時はsecretや応答本文を保存せず
+  例外型だけをlast_errorへ保存する。outboxはpending→processingを原子的claimし、worker停止で残ったprocessingは
+  5分後に再claimする。`process_revocations.py`を決定論的retry worker入口として追加した。
+- `POST /oauth/logout` / Originを検証し、既定globalは共通失効処理、`logout_type=auth`は
+  `Session.clear_current()`だけを実行する。未知のlogout typeとcross-originを拒否する。
+- `tests/test_revocation.py` / generation・中央Session・outbox、HMAC、配送成功/timeout/3xx、stale claim、
+  auth-only/global/cross-origin logoutを7テストで固定した。A-6後のauth pytestは78件collect、
+  70 passed / 8 skipped / 1既存warning。
+
+## Auth A-7 payment billing projection push
+
+- `POST /v1[/<lang>]/internal/service-entitlements` / 通常account API規約の二重言語route、
+  language_wrapper、JSON/required field decorators、libcommon response wrapperで実装した。
+- payment専用の32byte以上HMAC secretでcanonical method/path/bodyをSHA-256署名し、未署名・改ざんを401拒否する。
+  production系は環境変数`PAYMENT_PROJECTION_WEBHOOK_SECRET`が無ければ起動時にfail loudlyする。
+- 署名後もsubject Userの存在、active AuthService、timezone-aware source timestamp、billing status schemaを検証する。
+  auth自身から状態遷移を作る経路はなく、保存は`ServiceEntitlement.apply_projection()`だけを通す。
+- 同一payment_event_idは同内容なら冪等、内容衝突なら400、古いsource timestampは200 applied=falseで破棄し、
+  新しい投影を上書きしない。entitlement不在時のアクセス可否はこのendpointでは判断しない。
+- `tests/test_entitlements_endpoint.py` / 正常適用・再送・署名なし/改ざん・古いevent・event ID衝突・
+  naive timestamp・unknown subject/client・invalid statusを5テストで固定した。A-7後のauth pytestは
+  83件collect、75 passed / 8 skipped / 1既存warning。
+
+## Auth A-8 signing key rotation
+
+- `web-server/rotate_keys.py` / `prepare`、`activate`、`retire` の3 phaseを持つ決定論的コマンドを追加した。
+  prepareでnext鍵をJWKSへ先行公開し、設定済みoverlap後にactiveを切替、さらにoverlap後に旧鍵をretiredへ
+  移してJWKSから除外する。各phaseは再実行可能で、待機不足は`RotationNotReadyError`として明示的に停止する。
+- RSA鍵生成を`oidc/keys.py`へ分離し、seedとrotationで同じ実装を共有した。署名は常にactive鍵だけ、JWKSは
+  active/next/retiringを公開する既存責務を維持している。
+- SigningKeyへ`status_changed_at`を追加した。既存documentにはfieldが無いためdefaultで読込時刻を補わず、
+  `created_at`へfallbackする。これにより既存鍵の公開済み時間を誤ってリセットしない。
+- activeに加えてnextもpartial unique indexで1件に制約し、重複スケジューラ実行時の`NotUniqueError`を既存nextの
+  取得へ回収する。プロセス内の先行確認だけに依存せず、prepareを並行実行してもnext鍵を増殖させない。
+- `tests/test_key_rotation.py` / prepare冪等性と先行公開、overlap前の切替拒否、active署名鍵切替、2回目overlap前の
+  retire拒否とJWKS除外、切替途中からの再開、旧document互換を5テストで固定した。A-8後のauth pytestは
+  88件collect、80 passed / 8 skipped / 1既存warning。compileallとpip checkも成功した。
+
+## Auth A-9 auth-spec contract / negative tests
+
+- `tests/test_conventions.py` / 旧PROTOCOL v1を強制していた7件のskipを削除し、OIDC標準endpointの単一路線、
+  account JSON APIの共通decorator積層、token endpointのform contract、標準wire名とerror shape、ID Tokenと
+  UserInfoのclaim責務分離、refresh token不採用を静的に固定する7件へ置換した。
+- `tests/test_oidc_authorization.py` / 必須parameter欠落、許可外scope、同一browser contextでの2 transaction、
+  別browser contextからのresume拒否時にtransactionを消さないこと、auth_generation変更後の旧code拒否、
+  同一codeの並行交換で成功が1件だけになることを追加した。
+- `tests/test_key_rotation.py` / overlap中は旧鍵tokenと新鍵tokenの署名を両方検証でき、retire後は旧kidがJWKSから
+  消えることまで固定した。A-9後のauth pytestは91件collect、90 passed / 1 skipped / 1既存warning。
+  残るskipは`AUTH_A1_REAL_MONGO_URI`でloopback実Mongoを明示した場合だけ走るintegration testであり、旧仕様の
+  保留テストは残っていない。compileallとpip checkも成功した。
+- ID Token verifierのwrong iss/aud/nonce/azp、UserInfo sub照合、ServicePrincipal並行作成、失効webhook受信側の
+  冪等性、token HTTP client timeout/信頼済みURLはサービス所有のC計画で実装する。auth server所有のnegative
+  caseだけをA-9へ置き、所有境界を越えて参照client実装を先取りしていない。
+
+## Auth A 最終仕様監査の補正
+
+- `03_DATA_AND_INFRA.md`のpassword reset終端に対して不足していた完了通知と監査記録を追加した。
+  `SecurityAuditEvent`はevent type・公開subject・時刻だけを持ち、password/codeを保存しない。保存済みrecordの
+  再saveを拒否するappend-onlyモデルとし、password更新→共通失効→監査記録→完了通知の順をテストで固定した。
+- challenge codeを含む確認メールと、codeを一切含まないsecurity notificationを別関数へ分けた。SMTP資格情報は
+  従来どおりConfigからだけ読み、response・log・監査recordへ流さない。
+- OIDC authorization request/code/access tokenのRedis接続を旧v1用`SSO_REDIS_DB_NUMBER`から中央Sessionと同じ
+  `REDIS_SESSION_DB_NUMBER`へ変更した。各recordは既存の専用prefixで分離され、Redis DB番号を論理分離境界に
+  しないauth-specの設計へ一致した。旧v1 blueprint用DB設定は互換経路が登録中のため変更していない。
+- 補正後もauth pytestは91件collect、90 passed / 1 opt-in skipped / 1既存warning。compileallとpip checkも成功。

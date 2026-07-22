@@ -961,3 +961,128 @@ Content-Encoding: gzip           新規に効いた(Content-Length が消える 
 **戻し(rollback)。** `build_and_restart.sh` が非ゼロを返したときに `reset --hard` で直前へ戻し、
 再度ビルドして通知する経路が、実装以来まだ一度も動いていない。意図的に staging を壊して
 確認する必要がある。ここが今いちばん検証されていない。
+
+## git 管理外の実アセット(動画)を本番へ運ぶ経路が実質欠けていた(2026-07-21・修正済み)
+
+staging に置いた動画が本番へ運べない、として露出した。調べると経路そのものは D-40 で
+決まっており `infra/etc/push_assets.sh` が存在したが、**送るだけで展開しない**作りだった。
+
+```
+push_assets.sh  ->  host:/tmp/<site>-video.tgz  で終わり
+展開は setup_<site>.sh の役目(D-40)
+```
+
+新規構築ではこれで成立するが、**既に動いている箱に対しては「送ったのに反映されない」で
+終わる**。動画を差し替えるたびに setup を流し直すのは現実的でない。展開と chown まで
+push_assets.sh が行うようにした。`/tmp` の tgz は setup_<site>.sh が期待する形なので残す。
+
+危険なのは順序である。動画は `.gitignore` の対象なので git では運ばれない。**HTML の
+参照だけが先に本番へ行くと、存在しないファイルを指して 404 になり背景動画が消える。**
+動画を差し替えたときは、デプロイの前に push_assets.sh を実行する。
+
+改善余地: 転送量が views/video 全体になる(thinkx で 347MB)。mp4 は圧縮が効かないので
+実サイズがそのまま流れる。差分だけ送る形(rsync)にできる。
+
+## 編集した箱では、その変更が「差分」に現れない(2026-07-21・構造上の性質)
+
+staging web の上で編集して commit した場合、その箱の HEAD には既にその変更が入っている。
+次の同期では `prev..new` の差分に現れないため、**編集した箱だけがコンパイルと再起動を
+行わない**。他の箱は差分に現れるので正しく処理される。
+
+実際に `deploy_staging.sh` の出力で、web1-stg は何も出ず、lb1-stg だけが
+`skip: thinkx はこの箱で動いていない` を出す、という非対称が観測された。
+
+今回は担当セッションが手で再起動していたため実害は出ていない。「同期が途中で死ぬと
+再起動が二度と拾われない」と同じ根(差分を反応の起点にしていること)であり、
+反映済みマーカーを持つ設計に変えれば両方が同時に解ける。
+
+## アセット配布をデプロイに組み込んだ(2026-07-21・オーナー指示)
+
+**原文**: 「このETCプッシュアセットというものはかなり忘れそうなので、デプロイの手順と
+一体化されているべきだと思うが。つまり、ローカルで何かアセットが変更されていたら、
+それを検出して、このプッシュアセットをデプロイのプロセスのどこかで実行するという」
+
+`deploy_staging.sh` と `deploy_production_from_staging.sh` の**サーバー同期の手前**で
+`push_assets.sh` を呼ぶようにした。手前に置くのが要点で、HTML の参照だけが先に行くと
+存在しないファイルを指して 404 になる。
+
+置き場所も `infra/etc/` から `infra/scripts/` へ移した。`etc/` の他の中身
+(`push_env` `push_secrets` `push_rw_key` `push_discord_webhook` `push_ref`)は
+**セットアップ時に一度配れば済む秘密や鍵**だが、アセットは**デプロイのたびに走る**。
+性質が違うので線を引いた。
+
+### 順序の等価性で嵌った(実測)
+
+一致判定を「ファイル名とサイズの一覧の突き合わせ」で作ったところ、**中身が同じなのに
+毎回 347MB を送り直す**状態になった。macOS と Linux で `sort` の照合順序が違い、
+並びだけがずれていた。
+
+```
+箱のみ   ./VNMachineCloudIntro1.1.mp4 148026838
+手元のみ ./VNMachineCloudIntro1.1.mp4 148026838   ← 同じものが両側に出る
+```
+
+`LC_ALL=C sort` で両側を同じ規則に揃えて解決。**突き合わせに使う一覧は、必ず両側で
+同じ規則で並べる。** 修正後は一致判定が 0.5 秒で返るようになった。
+
+一般則として、環境をまたいで比較するものは照合順序・タイムゾーン・改行コードを
+明示的に固定する。ここは macOS(Mac)と Linux(EC2)をまたぐので特に効く。
+
+## 3回目の本番デプロイ — アセット配布込みで完走(2026-07-21)
+
+動画を差し替えた回。アセット配布をデプロイに組み込んだ直後の実走で、**組み込みが
+無ければ HTML だけが本番へ行って 404 になっていた**ケースそのものだった。
+
+```
+アセット(views/video)を確かめる
+  thinkx: アセットが supercom-web1 と違うので配ります
+  thinkx-video.tgz  100%  343MB  46.6MB/s  00:07
+  OK: thinkx の video を supercom-web1 へ配って展開した
+
+supercom-web1 -> production に合わせる
+  skip: この箱(web)の nginx は loadbalancer の設定で動いていない
+  == compile thinkx ==  Successfully compiled 3 files with Babel (374ms)
+  == restart thinkx (uwsgi_thinkx) ==  OK: thinkx -> 200
+
+supercom-lb1 -> production に合わせる
+  == restart loadbalancer (nginx) ==  OK: loadbalancer -> 200
+  skip: thinkx はこの箱(lb1)で動いていない
+```
+
+反映後の実測:
+
+```
+/src/thinkx/web-server/views/video/
+  Sitetop2025_7_13noaudio.mp4       13M  kaz:serveradmins
+  VNMachineCloudIntro1.1_21MB.mp4   20M  kaz:serveradmins
+配信 206 / 206
+HTML が指す先と実ファイルが一致(404 なし)
+```
+
+箱ごとの担当判定が本番の両方で正しく働いた。web は loadbalancer を飛ばし、lb は
+thinkx を飛ばし、それぞれ自分の担当だけを再起動している。
+
+### 通知文の読みにくさが1つ残った
+
+`skip: この箱(web)の nginx は loadbalancer の設定で動いていない` は**正しい判定**だが、
+「web の nginx が壊れている」と読めてしまう。意味は「今チェックしているのは loadbalancer
+というサービスで、この箱の nginx はその設定では動いていないので担当外」である。
+`skip: loadbalancer はこの箱(web)の担当ではない(nginx は nginx-web-root の設定で動作中)`
+のように、主語を揃えたほうがよい。次のセッションで直す。
+
+## 本番の3サイト構成(2026-07-21 時点・実測)
+
+```
+supercom-web1  nginx = nginx-web-root の設定    uwsgi_thinkx active
+supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニットのみ存在)
+```
+
+## 2026-07-22 develop→monorepo 戻しをリモートPR方式へ(D-68)+ bash.md の陳腐化参照
+
+- 共有チェックアウトでローカル `git merge origin/develop` を実行したところ、並行 citywalk
+  セッションが `git add` していた WIP を merge commit(42a11bf)が丸ごと拾った(オーナー裁定で
+  そのまま維持・未 push)。対策として develop→monorepo をリモート PR + ローカル ff に変更(D-68)。
+- 実装: `pr_develop_and_merge_to_monorepo.sh` を新設、旧 `merge_develop_into.sh` を廃止。
+- **規範への影響(自分では直せない)**: `docs/coding_guides/bash.md:118-119` が使い方メッセージの
+  例として旧 `merge_develop_into.sh` を引いている。coding_guides は規範=人間のみ改変可のため
+  未変更。人間が例を `pr_develop_and_merge_to_monorepo.sh` 等へ差し替えるか判断されたい。

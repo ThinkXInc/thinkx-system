@@ -75,6 +75,17 @@ deploy_production_from_staging() {
     git fetch --quiet origin
   fi
 
+  # 動画などの git 管理外アセットを先に配る。HTML の参照だけが先に行くと、存在しない
+  # ファイルを指して 404 になる(2026-07-21 に背景動画の差し替えで実際に問題になった)。
+  # 変更が無ければ何も送らないので、毎回呼んで差し支えない。
+  banner "アセット(views/video)を確かめる"
+  if ! bash infra/scripts/push_assets.sh supercom-web1 thinkx transformism kazukiotsukacom; then
+    printf '%b\n' "${R}FAIL: アセットの配布に失敗しました${Z}"
+    printf '%b\n' "${Y}  release の凍結と production への取り込みは終わっています。${Z}"
+    printf '%b\n' "${Y}  サーバーにはまだ触れていません。原因を直して同じコマンドをもう一度実行してください。${Z}"
+    return 1
+  fi
+
   # サーバーを production に合わせる。実装はサーバー側の sync_from_origin.sh 1つだけで、
   # systemd timer が呼ぶのも同じもの。手動と自動で挙動が食い違わない。
   #
