@@ -18,3 +18,7 @@ After capture, `npm run build:motion-review` places the production ground truth
 on the left and the local reproduction on the right in
 `ground_truth_vs_local.mp4`. Map tile pixels remain outside the acceptance
 decision; flow order, timing, trajectories, and non-map UI are reviewed.
+
+`npm run validate:motion-trace` rejects missing flows, non-monotonic sampling,
+missing content-cell motion, an incomplete edit-panel close, or a map center and
+zoom response that differs from the frozen contract.

@@ -7,6 +7,8 @@
     "capture:legacy-motion": "npm run build:legacy-ui:js && node web-server/tests/ui/capture_legacy_motion.js",
     "build:motion-review": "sh web-server/tests/build_motion_review.sh",
     "test:motion-contract": "node --test web-server/tests/ui/motion_contract.test.js",
+    "test:motion-trace": "node --test web-server/tests/ui/validate_motion_trace.test.js",
+    "validate:motion-trace": "node web-server/tests/ui/validate_motion_trace.js",
     "test:ui": "npm run build:legacy-ui:js && node --test web-server/tests/ui/ui_legacy.test.js"
   },
   "devDependencies": {

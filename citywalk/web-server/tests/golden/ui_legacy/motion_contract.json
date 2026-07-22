@@ -5,6 +5,11 @@
     "width": 1490,
     "height": 856
   },
+  "capture_required_flows": [
+    "content-selection",
+    "edit-panel-close",
+    "map-pan-zoom"
+  ],
   "flows": [
     {
       "id": "content-selection",
@@ -51,6 +56,19 @@
         "cell_stagger_ms": 50,
         "panel_opacity_ms": "50 * result_cell_count",
         "panel_easing": "easeInSine"
+      }
+    },
+    {
+      "id": "map-pan-zoom",
+      "trigger": "map.panBy(160, 80); map.setZoom(map.getZoom() + 1)",
+      "order": [
+        "map center changes",
+        "map zoom increases by exactly one"
+      ],
+      "numeric": {
+        "pan_x_px": 160,
+        "pan_y_px": 80,
+        "zoom_delta": 1
       }
     }
   ],
