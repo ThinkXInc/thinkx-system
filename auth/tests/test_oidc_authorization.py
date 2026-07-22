@@ -3,6 +3,7 @@
 # A-3 HTTP contract tests for authorize, signin resumption, and token exchange.
 
 import base64
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 import re
 from urllib.parse import parse_qs, urlparse
@@ -263,3 +264,101 @@ def test_authorize_error_uses_registered_redirect_with_state_and_issuer(client):
         'state': ['state-value-with-enough-entropy'],
         'iss': ['http://127.0.0.1:8020'],
     }
+
+
+def test_authorize_rejects_missing_parameter_and_disallowed_scope(client):
+    missing_query = authorization_query()
+    del missing_query['nonce']
+    missing = client.get('/oauth/authorize', query_string=missing_query)
+    disallowed = client.get(
+        '/oauth/authorize',
+        query_string={**authorization_query(), 'scope': 'openid profile'},
+    )
+
+    assert missing.status_code == 400
+    assert missing.get_json() == {'error': 'invalid_request'}
+    assert parse_qs(urlparse(disallowed.headers['Location']).query) == {
+        'error': ['invalid_scope'],
+        'state': ['state-value-with-enough-entropy'],
+        'iss': ['http://127.0.0.1:8020'],
+    }
+
+
+def test_two_browser_bound_requests_survive_wrong_browser_and_each_resume(
+    client, monkeypatch
+):
+    user = create_verified_user()
+    browser_context = {'value': 'browser-one'}
+    current_user_id = {'value': None}
+    monkeypatch.setattr(
+        'oidc.endpoints.Session.browser_context_id',
+        lambda: browser_context['value'],
+    )
+    monkeypatch.setattr(
+        'oidc.endpoints.Session.user_id', lambda: current_user_id['value']
+    )
+    first = client.get('/oauth/authorize', query_string=authorization_query())
+    second_query = {
+        **authorization_query(),
+        'state': 'second-state-with-enough-entropy',
+        'nonce': 'second-nonce-with-enough-entropy',
+    }
+    second = client.get('/oauth/authorize', query_string=second_query)
+    first_handle = parse_qs(urlparse(first.headers['Location']).query)[
+        'request_handle'
+    ][0]
+    second_handle = parse_qs(urlparse(second.headers['Location']).query)[
+        'request_handle'
+    ][0]
+
+    browser_context['value'] = 'browser-two'
+    rejected = client.get(
+        '/oauth/authorize', query_string={'request_handle': first_handle}
+    )
+    browser_context['value'] = 'browser-one'
+    current_user_id['value'] = str(user.id)
+    first_resume = client.get(
+        '/oauth/authorize', query_string={'request_handle': first_handle}
+    )
+    second_resume = client.get(
+        '/oauth/authorize', query_string={'request_handle': second_handle}
+    )
+
+    assert rejected.status_code == 400
+    assert first_resume.status_code == 302
+    assert second_resume.status_code == 302
+    assert parse_qs(urlparse(first_resume.headers['Location']).query)['state'] == [
+        'state-value-with-enough-entropy'
+    ]
+    assert parse_qs(urlparse(second_resume.headers['Location']).query)['state'] == [
+        'second-state-with-enough-entropy'
+    ]
+
+
+def test_generation_change_rejects_previously_issued_code(client, monkeypatch):
+    user = create_verified_user()
+    monkeypatch.setattr('oidc.endpoints.Session.user_id', lambda: str(user.id))
+    authorization = client.get('/oauth/authorize', query_string=authorization_query())
+    code = parse_qs(urlparse(authorization.headers['Location']).query)['code'][0]
+    User.objects(id=user.id).update_one(inc__auth_generation=1)
+
+    response = exchange_code(client, code)
+
+    assert response.status_code == 400
+    assert response.get_json() == {'error': 'invalid_grant'}
+
+
+def test_concurrent_code_exchange_has_exactly_one_success(client, monkeypatch):
+    user = create_verified_user()
+    monkeypatch.setattr('oidc.endpoints.Session.user_id', lambda: str(user.id))
+    authorization = client.get('/oauth/authorize', query_string=authorization_query())
+    code = parse_qs(urlparse(authorization.headers['Location']).query)['code'][0]
+
+    def exchange_once():
+        with app.test_client() as concurrent_client:
+            return exchange_code(concurrent_client, code).status_code
+
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        statuses = list(executor.map(lambda _index: exchange_once(), range(2)))
+
+    assert sorted(statuses) == [200, 400]

@@ -83,9 +83,29 @@ def test_activation_requires_overlap_and_switches_signing_key():
 def test_retire_waits_second_overlap_and_removes_old_jwk():
     now = datetime.now(pytz.utc)
     old_key = create_active_key(now)
+    issuer = IDTokenIssuer(issuer='https://auth.example', lifetime_seconds=7200)
+    old_token = issuer.issue(
+        subject='subject-1', audience='reference', nonce='old-nonce',
+        auth_time=now, now=now,
+    )
     next_key, _created = prepare_rotation(now=now)
     activation_time = now + timedelta(seconds=OVERLAP_SECONDS)
     activate_rotation(overlap_seconds=OVERLAP_SECONDS, now=activation_time)
+    new_token = issuer.issue(
+        subject='subject-1', audience='reference', nonce='new-nonce',
+        auth_time=now, now=activation_time,
+    )
+
+    assert jwt.decode(
+        old_token, old_key.public_key, algorithms=['RS256'],
+        audience='reference', issuer='https://auth.example',
+        options={'verify_exp': False, 'verify_iat': False},
+    )['nonce'] == 'old-nonce'
+    assert jwt.decode(
+        new_token, next_key.public_key, algorithms=['RS256'],
+        audience='reference', issuer='https://auth.example',
+        options={'verify_exp': False, 'verify_iat': False},
+    )['nonce'] == 'new-nonce'
 
     with pytest.raises(RotationNotReadyError):
         retire_old_keys(overlap_seconds=OVERLAP_SECONDS, now=activation_time)
@@ -95,7 +115,11 @@ def test_retire_waits_second_overlap_and_removes_old_jwk():
     )
 
     assert [key.id for key in retired] == [old_key.id]
-    assert {key['kid'] for key in public_jwks()['keys']} == {next_key.kid}
+    published_keys = {
+        key['kid']: key for key in public_jwks()['keys']
+    }
+    assert set(published_keys) == {next_key.kid}
+    assert jwt.get_unverified_header(old_token)['kid'] not in published_keys
 
 
 def test_activate_recovers_when_old_active_was_already_marked_retiring():

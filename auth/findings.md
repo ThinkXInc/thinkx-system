@@ -251,3 +251,19 @@
 - `tests/test_key_rotation.py` / prepare冪等性と先行公開、overlap前の切替拒否、active署名鍵切替、2回目overlap前の
   retire拒否とJWKS除外、切替途中からの再開、旧document互換を5テストで固定した。A-8後のauth pytestは
   88件collect、80 passed / 8 skipped / 1既存warning。compileallとpip checkも成功した。
+
+## Auth A-9 auth-spec contract / negative tests
+
+- `tests/test_conventions.py` / 旧PROTOCOL v1を強制していた7件のskipを削除し、OIDC標準endpointの単一路線、
+  account JSON APIの共通decorator積層、token endpointのform contract、標準wire名とerror shape、ID Tokenと
+  UserInfoのclaim責務分離、refresh token不採用を静的に固定する7件へ置換した。
+- `tests/test_oidc_authorization.py` / 必須parameter欠落、許可外scope、同一browser contextでの2 transaction、
+  別browser contextからのresume拒否時にtransactionを消さないこと、auth_generation変更後の旧code拒否、
+  同一codeの並行交換で成功が1件だけになることを追加した。
+- `tests/test_key_rotation.py` / overlap中は旧鍵tokenと新鍵tokenの署名を両方検証でき、retire後は旧kidがJWKSから
+  消えることまで固定した。A-9後のauth pytestは91件collect、90 passed / 1 skipped / 1既存warning。
+  残るskipは`AUTH_A1_REAL_MONGO_URI`でloopback実Mongoを明示した場合だけ走るintegration testであり、旧仕様の
+  保留テストは残っていない。compileallとpip checkも成功した。
+- ID Token verifierのwrong iss/aud/nonce/azp、UserInfo sub照合、ServicePrincipal並行作成、失効webhook受信側の
+  冪等性、token HTTP client timeout/信頼済みURLはサービス所有のC計画で実装する。auth server所有のnegative
+  caseだけをA-9へ置き、所有境界を越えて参照client実装を先取りしていない。
