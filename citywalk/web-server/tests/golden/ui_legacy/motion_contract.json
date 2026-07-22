@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "source": "legacy Create Guide runtime",
+  "viewport": {
+    "width": 1490,
+    "height": 856
+  },
+  "flows": [
+    {
+      "id": "content-selection",
+      "trigger": "click #contentTableView_0",
+      "order": [
+        "four content cells fade and translate left with 50 ms stagger",
+        "content table reaches onclosecomplete",
+        "page back control appears",
+        "edit content view appears"
+      ],
+      "numeric": {
+        "cell_count": 4,
+        "cell_stagger_ms": 50,
+        "cell_animation_ms": 400,
+        "cell_translate_x_px": -20,
+        "table_opacity_ms": 200,
+        "back_control_animation_ms": 400,
+        "back_control_easing": "cubic-bezier(.65,0,.34,1)"
+      }
+    },
+    {
+      "id": "edit-panel-close",
+      "trigger": "click #pageNavigationView .backbutton",
+      "order": [
+        "edit content view emits onclosestart",
+        "edit content view fades out",
+        "content list is reconstructed and shown",
+        "page navigation returns to top state"
+      ],
+      "numeric": {
+        "panel_opacity_ms": 100,
+        "panel_easing": "easeInSine"
+      }
+    },
+    {
+      "id": "translation-panel-close",
+      "trigger": "TranslateResultsTableViewState.onclosestart",
+      "order": [
+        "translation result cells close with 50 ms stagger",
+        "translation panel opacity reaches zero",
+        "panel emits onclosecomplete and is hidden"
+      ],
+      "numeric": {
+        "cell_stagger_ms": 50,
+        "panel_opacity_ms": "50 * result_cell_count",
+        "panel_easing": "easeInSine"
+      }
+    }
+  ],
+  "comparison": {
+    "required": [
+      "event order",
+      "held-state order",
+      "duration and stagger",
+      "element trajectory"
+    ],
+    "map_tiles": "masked; map API center, zoom, and pointer state remain live assertions"
+  }
+}
