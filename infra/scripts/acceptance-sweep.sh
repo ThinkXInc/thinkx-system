@@ -22,6 +22,12 @@ acceptance_sweep() {
   local total_fail=0 site host golden line path expect got mark fail count
   local G=$'\033[32m' R=$'\033[31m' Z=$'\033[0m'
 
+  # 受け入れ試験の対象外ルート(site:path)。公開 Host での sweep では意味を持たないもの。
+  # golden(サイト単体テストが正)には残す。増えたらここに1行足すだけ。
+  local -a exclude=(
+    "thinkx:/filedrop"   # main.py:787: -stg ホスト時のみ有効。公開 Host では常に 404
+  )
+
   for site_host in "thinkx:thinkxinc.com" "kazukiotsukacom:kazukiotsuka.com" "transformism:transformism.art"; do
     site="${site_host%%:*}"; host="${site_host##*:}"
     golden="$ws/$site/web-server/tests/golden/route_sweep.json"
@@ -30,10 +36,9 @@ acceptance_sweep() {
     echo "===== $site (Host: $host -> $lb_ip) ====="
     fail=0; count=0
     while IFS=$'\t' read -r path expect; do
-      # staging のホスト名(-stg)でのみ有効なルートは、公開 Host での sweep では常に 404 になる。
-      # golden(サイト単体テストが正)には残し、この受け入れ試験では対象外にする。増えたらここに足す。
-      case "$site:$path" in
-        thinkx:/filedrop) printf 'skip  %s (staging ホスト専用・受け入れ対象外)\n' "$path"; continue ;;
+      # 対象外リスト(exclude)に含まれるルートは飛ばす。黙って落とさず skip 行を出す。
+      case " ${exclude[*]} " in
+        *" $site:$path "*) printf 'skip  %s (受け入れ対象外)\n' "$path"; continue ;;
       esac
       count=$((count+1))
       got=$(curl -sk --max-time 20 --resolve "$host:443:$lb_ip" \
