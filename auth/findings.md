@@ -179,3 +179,15 @@
 - `tests/test_oidc_authorization.py` / ログイン済みhappy path、signin再開、code一回消費、wrong verifier後の
   再試行、CSRF/Origin、重複param、未登録redirect、登録済みredirectへのerrorを6テストで固定した。
   A-3後のauth pytestは59件collect、51 passed / 8 skipped / 1既存warning。
+
+## Auth A-4 OIDC UserInfo
+
+- `GET|POST /oauth/userinfo` / Authorization Bearerのopaque access tokenをSHA-256 digest keyから解決し、
+  Userの存在、active状態、token発行時と現在のauth_generation一致を利用時ごとに検証する。
+- UserInfoは常にsubを返し、token scopeにemailがある場合だけemailと
+  `is_primary_email_verified()` の導出値を返す。ID Token、legacy protocol_version、billingは混在させない。
+- invalid/missing Bearer tokenは401 `invalid_token` と `WWW-Authenticate: Bearer error="invalid_token"`、
+  成功応答はno-storeとした。
+- `tests/test_oidc_userinfo.py` / GET/POST、email scope、openid-only、generation失効、suspended User、
+  Bearer形式異常を8テストで固定した。A-4後のauth pytestは67件collect、59 passed / 8 skipped /
+  1既存warning。

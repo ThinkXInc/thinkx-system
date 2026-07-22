@@ -65,6 +65,12 @@ def oauth_error(error, status=400):
     return response
 
 
+def invalid_token_error():
+    response = oauth_error('invalid_token', 401)
+    response.headers['WWW-Authenticate'] = 'Bearer error="invalid_token"'
+    return response
+
+
 def single_query_parameters(names):
     values = {}
     for name in names:
@@ -271,6 +277,42 @@ def token():
         'expires_in': Config.SSO_ACCESS_TOKEN_TTL_SEC,
         'id_token': id_token,
     })
+    response.headers['Cache-Control'] = 'no-store'
+    response.headers['Pragma'] = 'no-cache'
+    return response
+
+
+def bearer_access_token():
+    authorization = request.headers.get('Authorization', '')
+    scheme, separator, access_token = authorization.partition(' ')
+    if separator != ' ' or scheme.lower() != 'bearer' or not access_token:
+        return None
+    if ' ' in access_token:
+        return None
+    return access_token
+
+
+@blueprint_oidc.route('/oauth/userinfo', methods=['GET', 'POST'])
+def userinfo():
+    access_token = bearer_access_token()
+    if not access_token:
+        return invalid_token_error()
+    token_record = sso_store.resolve_access_token(access_token)
+    if not token_record:
+        return invalid_token_error()
+    user = User.objects(subject_id=token_record['subject']).first()
+    if (
+        not user
+        or not user.is_active()
+        or user.auth_generation != token_record['auth_generation']
+    ):
+        return invalid_token_error()
+
+    claims = {'sub': user.subject_id}
+    if 'email' in token_record['scope'].split():
+        claims['email'] = user.email
+        claims['email_verified'] = user.is_primary_email_verified()
+    response = jsonify(claims)
     response.headers['Cache-Control'] = 'no-store'
     response.headers['Pragma'] = 'no-cache'
     return response

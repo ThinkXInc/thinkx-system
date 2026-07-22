@@ -114,3 +114,8 @@ class SSOStore:
                 continue
             finally:
                 pipeline.reset()
+
+    def resolve_access_token(self, access_token):
+        return decode_json_record(
+            self.redis.get(self.TOKEN_PREFIX + sha256_hex(access_token))
+        )
