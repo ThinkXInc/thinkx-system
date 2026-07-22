@@ -1082,7 +1082,7 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
 - 共有チェックアウトでローカル `git merge origin/develop` を実行したところ、並行 citywalk
   セッションが `git add` していた WIP を merge commit(42a11bf)が丸ごと拾った(オーナー裁定で
   そのまま維持・未 push)。対策として develop→monorepo をリモート PR + ローカル ff に変更(D-68)。
-- 実装: `pr_and_merge_to_monorepo.sh` を新設、旧 `merge_develop_into.sh` を廃止。
+- 実装: `pr_develop_and_merge_to_monorepo.sh` を新設、旧 `merge_develop_into.sh` を廃止。
 - **規範への影響(自分では直せない)**: `docs/coding_guides/bash.md:118-119` が使い方メッセージの
   例として旧 `merge_develop_into.sh` を引いている。coding_guides は規範=人間のみ改変可のため
-  未変更。人間が例を `pr_and_merge_to_monorepo.sh` 等へ差し替えるか判断されたい。
+  未変更。人間が例を `pr_develop_and_merge_to_monorepo.sh` 等へ差し替えるか判断されたい。

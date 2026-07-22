@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# thinkx-system/infra/scripts/pr_and_merge_to_monorepo.sh
+# thinkx-system/infra/scripts/pr_develop_and_merge_to_monorepo.sh
 #
 # develop から monorepo への PR を作り、merge し、手元の monorepo を ff で追従させる。
 # pr_and_merge_to_develop.sh(monorepo -> develop)の対照。
 #
-#   使い方: bash infra/scripts/pr_and_merge_to_monorepo.sh
+#   使い方: bash infra/scripts/pr_develop_and_merge_to_monorepo.sh
 #
 # staging の上で直接編集したものは develop に入る(D-61)。それを monorepo に戻すのがこれ。
 # 実体の merge は GitHub 側(リモート)で行うので、手元の作業ツリーには触れない。手元は ff で
@@ -34,7 +34,7 @@ ff_follow() {
   fi
 }
 
-pr_and_merge_to_monorepo() {
+pr_develop_and_merge_to_monorepo() {
   local G=$'\033[32m' R=$'\033[31m' Y=$'\033[33m' Z=$'\033[0m'
   local sha back ans
 
@@ -77,4 +77,4 @@ pr_and_merge_to_monorepo() {
   ff_follow
 }
 
-pr_and_merge_to_monorepo "$@"
+pr_develop_and_merge_to_monorepo "$@"
