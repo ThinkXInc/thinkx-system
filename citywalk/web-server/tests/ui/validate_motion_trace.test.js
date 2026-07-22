@@ -10,7 +10,8 @@ const contract = {
     'edit-panel-close',
     'map-pan-zoom',
     'translation-panel-populate',
-    'translation-panel-scroll',
+    'translation-panel-update',
+    'target-user-dropdown',
   ],
 };
 const trace = {
@@ -33,9 +34,13 @@ const trace = {
       {elapsed_ms: 1, elements: {'#translateResultsTableView': visible()}, translation: {count: 0, scroll_top: 0}},
       {elapsed_ms: 17, elements: {'#translateResultsTableView': visible()}, translation: {count: 11, scroll_top: 0}},
     ]},
-    {id: 'translation-panel-scroll', samples: [
-      {elapsed_ms: 1, elements: {}, translation: {count: 11, scroll_top: 0}},
-      {elapsed_ms: 17, elements: {}, translation: {count: 11, scroll_top: 400}},
+    {id: 'translation-panel-update', samples: [
+      {elapsed_ms: 1, elements: {'#translateResultsTableView': visible({text: 'short'})}, translation: {count: 11}},
+      {elapsed_ms: 17, elements: {'#translateResultsTableView': visible({text: 'Embedded in this basement is the 27km-long Large Hadron Collider'})}, translation: {count: 11}},
+    ]},
+    {id: 'target-user-dropdown', samples: [
+      {elapsed_ms: 1, elements: {'#targetUserSelectButton': visible({text: '対象ユーザー'}), '#targetUserSelectButton .listmenu': visible()}},
+      {elapsed_ms: 17, elements: {'#targetUserSelectButton': visible({text: '高リテラシー'}), '#targetUserSelectButton .listmenu': visible({display: 'none'})}},
     ]},
   ],
 };

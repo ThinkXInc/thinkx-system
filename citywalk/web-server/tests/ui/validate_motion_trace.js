@@ -51,13 +51,21 @@ function validateMotionTrace(contract, trace) {
   assert.equal(population.at(-1).translation?.count, 11);
   assert.notEqual(population.at(-1).elements['#translateResultsTableView'].display, 'none');
 
-  const scroll = flowById(trace, 'translation-panel-scroll').samples;
-  assert.equal(scroll[0].translation?.count, 11);
-  assert.equal(scroll.at(-1).translation?.count, 11);
+  const update = flowById(trace, 'translation-panel-update').samples;
+  assert.equal(update[0].translation?.count, 11);
+  assert.equal(update.at(-1).translation?.count, 11);
   assert.ok(
-    scroll.at(-1).translation.scroll_top > scroll[0].translation.scroll_top,
-    'translation-panel-scroll: scrollTop did not increase',
+    update.at(-1).elements['#translateResultsTableView'].text.includes('27km-long Large Hadron Collider'),
+    'translation-panel-update: completed long-form translation is missing',
   );
+
+  const dropdown = flowById(trace, 'target-user-dropdown').samples;
+  assert.ok(
+    dropdown.some((sample) => sample.elements['#targetUserSelectButton .listmenu']?.display !== 'none'),
+    'target-user-dropdown: open menu state was not sampled',
+  );
+  assert.equal(dropdown.at(-1).elements['#targetUserSelectButton .listmenu'].display, 'none');
+  assert.match(dropdown.at(-1).elements['#targetUserSelectButton'].text, /高リテラシー/);
 }
 
 function main() {

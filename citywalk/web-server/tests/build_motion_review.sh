@@ -38,4 +38,5 @@ build_review content-selection 1.20 1.00 30
 build_review edit-panel-close 5.60 1.60 60
 build_review map-pan-zoom 32.55 2.20 20
 build_review translation-panel-populate 92.80 6.90 60
-build_review translation-panel-scroll 102.15 8.45 30
+build_review translation-panel-update 102.15 8.45 30
+build_review target-user-dropdown 118.70 0.80 60

@@ -21,5 +21,5 @@ S16	71.65	72.35	4299	4341	0.70	form dropdown closing and selection reflection / 
 S17	77.45	81.95	4647	4917	4.50	form text-entry discrete events / TextField; verify character appearance as layer-1-like states, not continuous motion flow	0.2988	0.0262	20
 S18	85.15	90.25	5109	5415	5.10	form text-entry and validation discrete events / TextField; verify character appearance as layer-1-like states, not continuous motion flow	0.3942	0.0294	20
 S19	92.80	99.70	5568	5982	6.90	translation-results panel expansion and list population / TranslateResultsTableView + EditContentView	0.4179	0.0390	60
-S20	102.15	110.60	6129	6636	8.45	translation-results scrolling and candidate selection / TranslateResultsTableView	0.3680	0.0524	30
-S21	118.70	119.50	7122	7170	0.80	translation-results panel close and form reflection / TranslateResultsTableView	1.6574	0.3117	60
+S20	102.15	110.60	6129	6636	8.45	form body extension and eleven translation-result replacements / TextField + TranslateResultsTableView	0.3680	0.0524	30
+S21	118.70	119.50	7122	7170	0.80	target-user dropdown open, high-literacy selection, close, and title reflection / DropdownButton	1.6574	0.3117	60

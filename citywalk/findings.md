@@ -42,7 +42,7 @@ Security exception(D-22)はここに書かず即停止・人間へ報告。
 - `web-server/tests/golden/ui_legacy/ground_truth/createguideviewdemo.mov:12.0-30.0秒` / 地図スポット選択とコンテンツ編集状態、左編集パネル開閉の反復を確認 / C-0c
 - `web-server/tests/golden/ui_legacy/ground_truth/createguideviewdemo.mov:32.0-38.0秒` / 地図パン・ズームとフォーム選択メニューの開閉を確認 / C-0c
 - `web-server/tests/golden/ui_legacy/ground_truth/createguideviewdemo.mov:59.0-68.0秒` / 地図のパン・ズーム・再中心化とフォーム編集状態への遷移を確認 / C-0c
-- `web-server/tests/golden/ui_legacy/ground_truth/createguideviewdemo.mov:78.0-130.0秒` / 翻訳候補パネルのスライド展開・スクロール・候補選択・閉鎖と翻訳済みフォーム反映を確認 / C-0c
+- `web-server/tests/golden/ui_legacy/ground_truth/createguideviewdemo.mov:78.0-130.0秒` / 本文入力、翻訳結果11件のpopulation・置換、対象ユーザーdropdown開閉・高リテラシー選択反映を確認。翻訳panelは閉じない / C-0c
 
 ## 計画作成時の発見(2026-07-07。計画 §1.5 から転記)
 
@@ -99,4 +99,5 @@ Security exception(D-22)はここに書かず即停止・人間へ報告。
 - `web-server/tests/legacy_ui_server.py:1` / legacy sourceの廃止済み翻訳面はfail-closedのまま維持し、C-0c実ブラウザだけfixtureを配信 / C-0c
 - `legacy/www/server/application/views/src/ECMA/business/view_controllers/createguide_view_controller.js:149` / 選択contentを表示用へ設定する一方editable clone設定が欠落し、入力時に`isEmpty`を呼べない。ground truthと同ファイル内`_startEditContent`を根拠に試験runtimeだけ復元 / D-21
 - `web-server/tests/ui/capture_legacy_motion.js:1` / demo由来入力と11言語fixtureでS19 population、S20 smooth scrollのPNG列・rAF traceを収録対象へ追加 / C-0c
-- `legacy/www/server/application/views/src/ECMA/business/view_components/translate_results_table_view.js:365` / cell clickは`onselected` state設定のみで、S21の選択反映・closeを行うobserverが確定source内に存在しないため当該flowはblockedを維持 / D-21
+- `git:10f21ce` / translation panel導入commitから確定snapshotまでcell clickは`onselected` state設定のみでobserverなし。S21実フレームはtranslation選択・closeではなく対象ユーザーdropdownのため欠落observerを補わない / D-21
+- `web-server/tests/golden/ui_legacy/ground_truth/{animation_segments.tsv,REVIEW.md}:S20-S21` / 中間を含む実フレーム再確認によりS20を本文延長+翻訳置換、S21を対象ユーザーdropdown選択へ訂正。旧heuristicのscroll/translation close分類を撤回 / C-0c

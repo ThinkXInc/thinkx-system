@@ -18,8 +18,10 @@ Review sequence:
 3. Confirm left edit-panel open/close motion and content edit-state changes.
 4. Confirm map pan, zoom, and re-centering flow; tile pixels themselves may vary.
 5. Confirm form select-menu open/close and text-entry responses.
-6. Confirm translation panel slide-in, scrolling, selection, slide-out, and form
-   update order.
+6. Confirm translation-result population and replacement after the short and
+   extended body inputs.
+7. Confirm the target-user menu opens, selects high-literacy, closes, and
+   reflects the selected title while the translation panel remains visible.
 
 The original business blueprint now runs in a real browser, and the layer-1
 screenshot oracle is available under the parent `ui_legacy/` directory. The
@@ -54,8 +56,8 @@ listed source frames use the video's nominal 60 fps timeline.
 - 01:25.15–01:30.25 — text-entry/validation discrete events (20 fps; verify
   character appearance as layer-1-like states, not continuous motion flow)
 - 01:32.80–01:39.70 — translation panel expansion/population (60 fps)
-- 01:42.15–01:50.60 — translation list scroll/selection (30 fps)
-- 01:58.70–01:59.50 — translation panel close/form reflection (60 fps)
+- 01:42.15–01:50.60 — body extension and translation-result replacement (30 fps)
+- 01:58.70–01:59.50 — target-user dropdown selection/reflection (60 fps)
 
 Dense reference frames have been extracted under `motion_reference/<segment>/`
 at the approved rates. `motion_reference/manifest.tsv` records exact counts,
@@ -66,4 +68,6 @@ area is never masked; only the map tiles behind/right of it (`x=660..1489`) are
 excluded during comparison. Re-evaluation changed peak/mean luma differences to
 S19 `0.4179/0.0390`, S20 `0.3680/0.0524`, and S21 `1.6574/0.3117`. The observed
 changes are short updates separated by held states, so the approved 60/30/60 fps
-sampling remains appropriate.
+sampling remains appropriate. Direct inspection of S20 and S21 at their first,
+middle, and last frames supersedes the earlier heuristic labels: there is no
+translation-list scroll or translation-panel close in those segments.

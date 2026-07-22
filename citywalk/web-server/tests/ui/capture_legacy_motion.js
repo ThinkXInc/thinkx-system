@@ -45,6 +45,7 @@ async function startSampling(page, flowId, selectors) {
           y: rect.y,
           width: rect.width,
           height: rect.height,
+          text: element.textContent.replace(/\s+/g, ' ').trim(),
         }];
       }));
       const center = window.map?.getCenter?.();
@@ -188,13 +189,31 @@ async function main() {
     flows.push(await captureFlow(
       page,
       cdp,
-      'translation-panel-scroll',
-      ['#translateResultsTableView', '#translateResultsTableView .listContainer'],
-      () => page.evaluate(() => {
-        const list = document.querySelector('#translateResultsTableView .listContainer');
-        list.scrollTo({top: list.scrollHeight, behavior: 'smooth'});
-      }),
-      1200,
+      'translation-panel-update',
+      ['#translateResultsTableView', '#translateResultsTableView .listContainer', '#textField'],
+      async () => {
+        await page.fill(
+          '#textField textarea',
+          'この地下にフランスとの国境地帯にまたがり円形に位置する全長27kmの大型ハドロン衝突型加速器が埋め込まれている。',
+        );
+        await page.waitForFunction(() => (
+          document.querySelector('#translateResultsTableView .listContainer')
+            ?.textContent.includes('Embedded in this basement is the 27km-long Large Hadron Collider')
+        ), null, {timeout: 7000});
+      },
+      800,
+    ));
+    flows.push(await captureFlow(
+      page,
+      cdp,
+      'target-user-dropdown',
+      ['#targetUserSelectButton', '#targetUserSelectButton .listmenu'],
+      async () => {
+        await page.click('#targetUserSelectButton .dropdownButtonClickable');
+        await page.waitForTimeout(350);
+        await page.click('#targetUserSelectButton .listitem[data-value="2"]');
+      },
+      500,
     ));
 
     fs.writeFileSync(

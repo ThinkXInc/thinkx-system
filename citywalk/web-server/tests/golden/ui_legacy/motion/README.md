@@ -11,10 +11,10 @@ Chrome at the production-demo viewport (1490×856). It writes:
   timestamp; comparison never relies on unlisted stale files.
 
 The automated sequence covers content selection, edit-panel close, map
-pan/zoom, and test-only translation-panel population and scrolling derived from
-the production demo. Translation selection, close, and form reflection remain
-blocked because the imported legacy source has no observer for its
-`onselected` state; the harness does not invent that missing behavior.
+pan/zoom, test-only translation-panel population and replacement, and the
+target-user dropdown flow derived from the production demo. Direct inspection
+of S21 corrected the earlier ledger description: the panel remains visible;
+S21 is dropdown open, selection, close, and title reflection.
 
 The browser key is accepted only through `CITYWALK_GOOGLE_MAPS_API_KEY`. Its
 value is neither written to these outputs nor included in diagnostics.
@@ -24,9 +24,9 @@ segment on the left and the matching local flow on the right. It produces one
 file per automated flow: `review_content-selection.mp4`,
 `review_edit-panel-close.mp4`, `review_map-pan-zoom.mp4`,
 `review_translation-panel-populate.mp4`, and
-`review_translation-panel-scroll.mp4`. Map tile pixels remain outside the
-acceptance decision; flow order, timing, trajectories, and non-map UI are
-reviewed.
+`review_translation-panel-update.mp4`, plus
+`review_target-user-dropdown.mp4`. Map tile pixels remain outside the acceptance
+decision; flow order, timing, trajectories, and non-map UI are reviewed.
 
 `npm run validate:motion-trace` rejects missing flows, non-monotonic sampling,
 missing content-cell motion, an incomplete edit-panel close, or a map center and

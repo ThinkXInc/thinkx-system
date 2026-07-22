@@ -10,7 +10,8 @@
     "edit-panel-close",
     "map-pan-zoom",
     "translation-panel-populate",
-    "translation-panel-scroll"
+    "translation-panel-update",
+    "target-user-dropdown"
   ],
   "flows": [
     {
@@ -87,15 +88,29 @@
       }
     },
     {
-      "id": "translation-panel-scroll",
-      "trigger": "smooth-scroll translation result list to its end",
+      "id": "translation-panel-update",
+      "trigger": "extend the demo-derived body with its 27km collider clause",
       "order": [
-        "scroll starts at the current list position",
-        "scrollTop increases",
+        "body text is extended",
+        "existing translations are replaced as fixture completions arrive",
         "result count remains eleven"
       ],
       "numeric": {
-        "result_count": 11
+        "result_count": 11,
+        "fixture_stagger_ms": 120
+      }
+    },
+    {
+      "id": "target-user-dropdown",
+      "trigger": "open target-user dropdown and select data-value 2",
+      "order": [
+        "four-item menu opens above the control",
+        "high-literacy item is selected",
+        "menu closes and selected title is reflected"
+      ],
+      "numeric": {
+        "item_count": 4,
+        "selected_value": 2
       }
     }
   ],
