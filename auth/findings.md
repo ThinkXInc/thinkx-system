@@ -207,3 +207,18 @@
   `Session.revoke_all(str(user.id))`で中央Sessionを全失効する。
 - `tests/test_account_challenges.py` / code非露出・一回消費・試行上限・列挙耐性・password/generation/session
   失効を4テストで固定した。A-5後のauth pytestは71件collect、63 passed / 8 skipped / 1既存warning。
+
+## Auth A-6 revocation outbox / logout
+
+- `web-server/revocation.py` / password resetとglobal logoutを`revoke_user`へ統合した。1回の処理で
+  auth_generation増加、`Session.revoke_all(str(user.id))`、ConnectedServiceごとのMongoDB outbox作成を行う。
+- revocation payloadはissuer/subject/auth_generation/reason/revocation_id/issued_at。client_secretや
+  ID Token署名鍵を流用せず、AuthServiceのrevoke_webhook_secretでcanonical method/path/bodyをHMAC-SHA256署名する。
+- 配送はtimeout=(3,10)、TLS検証既定、redirect拒否。2xxだけ成功とし、失敗時はsecretや応答本文を保存せず
+  例外型だけをlast_errorへ保存する。outboxはpending→processingを原子的claimし、worker停止で残ったprocessingは
+  5分後に再claimする。`process_revocations.py`を決定論的retry worker入口として追加した。
+- `POST /oauth/logout` / Originを検証し、既定globalは共通失効処理、`logout_type=auth`は
+  `Session.clear_current()`だけを実行する。未知のlogout typeとcross-originを拒否する。
+- `tests/test_revocation.py` / generation・中央Session・outbox、HMAC、配送成功/timeout/3xx、stale claim、
+  auth-only/global/cross-origin logoutを7テストで固定した。A-6後のauth pytestは78件collect、
+  70 passed / 8 skipped / 1既存warning。

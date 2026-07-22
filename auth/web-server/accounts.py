@@ -42,6 +42,7 @@ from account_challenges import consume_email_challenge, issue_email_challenge
 from challenge_email import deliver_challenge_email
 from oidc.signin import clear_signin_csrf, valid_signin_csrf
 from protocol import build_userinfo, with_protocol_version
+from revocation import revoke_user
 
 # Logger
 from libcommon.logger import Logger
@@ -231,10 +232,9 @@ def password_reset_complete(lang, lang_name):
         error = ForbiddenAPIErrorFormat(lang=lang, field_name='code')
         return with_protocol_version(error).http_response()
     user.password = password_hasher.hash(request.json.get('password'))
-    user.auth_generation += 1
     user.updated_at = datetime.now(pytz.utc)
     user.save()
-    Session.revoke_all(str(user.id))
+    revoke_user(user, reason='password_reset')
     return SuccessFormat(
         data={},
         code=SuccessCode.OK,

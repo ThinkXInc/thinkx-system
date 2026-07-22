@@ -18,6 +18,7 @@ from oidc.id_token import public_jwks
 from oidc.id_token import IDTokenIssuer
 from oidc.signin import issue_signin_csrf_token
 from oidc.stores import AuthorizationRequestStore, SSOStore, sha256_hex
+from revocation import revoke_user
 
 
 REQUIRED_KEYS_IN_CONFIG = [
@@ -316,6 +317,24 @@ def userinfo():
     response.headers['Cache-Control'] = 'no-store'
     response.headers['Pragma'] = 'no-cache'
     return response
+
+
+@blueprint_oidc.post('/oauth/logout')
+def logout():
+    if request.headers.get('Origin') != Config.AUTH_PUBLIC_BASE_URL.rstrip('/'):
+        return oauth_error('invalid_request')
+    logout_type = request.form.get('logout_type', 'global')
+    if logout_type == 'auth':
+        Session.clear_current()
+        return '', 204
+    if logout_type != 'global':
+        return oauth_error('invalid_request')
+    user = current_active_user()
+    if user:
+        revoke_user(user, reason='global_logout')
+    else:
+        Session.clear_current()
+    return '', 204
 
 
 @blueprint_oidc.get('/.well-known/openid-configuration')
