@@ -22,9 +22,12 @@ import init_mongodb  # noqa: F401  # import 時に MongoDB へ接続する (テ�
 
 from libcommon.web.session import RedisSessionInterface, Session
 from libcommon.web.flask_helpers import configure_flask_helpers
+from libcommon.web.google_oauth_helper import configure_google_oauth
 
 from sso import blueprint_sso
 from accounts import blueprint_accounts
+from oidc.endpoints import blueprint_oidc
+from entitlements import blueprint_entitlements
 
 # Logger
 from libcommon.logger import Logger
@@ -42,10 +45,13 @@ REQUIRED_KEYS_IN_CONFIG = [
     'AVAILABLE_LANGS',
     'BASIC_AUTH_USERNAME',
     'BASIC_AUTH_PASSWORD',
+    'GOOGLE_OAUTH_CLIENT_ID',
     'REDIS_SESSION_HOST',
     'REDIS_SESSION_PORT',
     'REDIS_SESSION_DB_NUMBER',
     'REDIS_SESSION_EXPIRATION_TIME_SEC',
+    'AUTH_PUBLIC_BASE_URL',
+    'OIDC_ID_TOKEN_TTL_SEC',
 ]
 check_config(Config, REQUIRED_KEYS_IN_CONFIG)
 
@@ -57,6 +63,7 @@ Session.configure(
 configure_flask_helpers(
     Config.DEFAULT_LANG, Config.AVAILABLE_LANGS,
     Config.BASIC_AUTH_USERNAME, Config.BASIC_AUTH_PASSWORD)
+configure_google_oauth(Config.GOOGLE_OAUTH_CLIENT_ID)
 
 
 app = Flask(__name__, template_folder='views')
@@ -71,6 +78,8 @@ app.session_interface = RedisSessionInterface(
 
 app.register_blueprint(blueprint_sso)
 app.register_blueprint(blueprint_accounts)
+app.register_blueprint(blueprint_oidc)
+app.register_blueprint(blueprint_entitlements)
 
 logger.info(green('auth service initialized.'))
 

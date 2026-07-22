@@ -21,9 +21,11 @@ Review sequence:
 6. Confirm translation panel slide-in, scrolling, selection, slide-out, and form
    update order.
 
-The required local-reproduction sequence and side-by-side output are not yet
-available. C-0c is not approvable until the D-21 runtime blockers in
-`citywalk/findings.md` are resolved and `static/` plus `motion/` are produced.
+The original business blueprint now runs in a real browser, and the layer-1
+screenshot oracle is available under the parent `ui_legacy/` directory. The
+required layer-2 local-reproduction sequence and layer-3 side-by-side output are
+not yet available. C-0c remains unapprovable until those outputs are produced,
+compared with this ground truth, and reviewed by the owner.
 
 ## Animation segments
 

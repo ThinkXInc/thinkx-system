@@ -77,3 +77,11 @@ Security exception(D-22)はここに書かず即停止・人間へ報告。
 - `web-server/tests/golden/ui_legacy/ground_truth/animation_segments.tsv:S19-S21` / 翻訳パネル実座標 `x=410..659` を可視領域とし、当該区間の地図マスク開始を `x=660` へ変更して差分を再計測 / C-0c
 - `web-server/tests/golden/ui_legacy/ground_truth/motion_reference/:1` / 21区間を裁定fpsで計2,240枚・745×428 PNGへ抽出、PNG自体は無マスク、比較マスクは manifest に分離 / C-0c
 - `.gitattributes:11` / 高密度PNG 582MBを通常Git blob化しないため `motion_reference/**/*.png` のみ Git LFS管理 / C-0c
+- `git:981db15e36ee61f079eef76676202a6edf881f55` / `docs(infra)` commit が当時未追跡だった citywalk C-0c 試験資産を同時に追跡し、その後 release に含まれた / D-49
+- `legacy/www/server/application/scripts/libcommon/enumlocale.py:144` / `is_valid_value` に `@classmethod` が無く signup/settings handler が TypeError になるため、試験ランタイム内で documented API を復元 / D-21
+- `legacy/www/server/application/scripts/views/business.py:99` / `/business/signin` が参照する `templates/business/signin.html` は確定取り込み元に存在せず 500 になるため、空画面 fixture を UI 基準にしない / C-0c
+- `legacy/www/server/application/views/templates/business/pages/{signup,createguide}.html:1` / 実ブラウザ起動時に Google Maps JavaScript API が `ExpiredKeyMapError` を返し、地図中心・パン・ズーム・配置 motion を生成できない / C-0c
+- `web-server/tests/legacy_ui_server.py:1` / 旧 business blueprint を Python 3.10 互換 shim と旧 libcommon snapshot 上で実起動し、fixture の Jinja 直レンダリングを廃止 / C-0c
+- `web-server/tests/legacy_ui_server.py:1` / `CITYWALK_GOOGLE_MAPS_API_KEY` を実行時注入し、旧固定キーの `ExpiredKeyMapError` を解消。キー値は成果物・診断へ保存しない / C-0c
+- `web-server/tests/ui/ui_legacy.test.js:1` / 旧 ECMA 47本の Babel build、実 Maps の load/center/zoom 検証、desktop の可視地図領域限定マスクを通した実ブラウザ試験が green / C-0c
+- `web-server/tests/golden/ui_legacy/business_createguide_{desktop,mobile}.png:1` / 修正後の静止画でコンテンツ4件と左UIを保持し、desktop は右側の可変地図領域のみマスク、mobile はマスクなし / C-0c

@@ -1,8 +1,30 @@
-# config.py.example (auth)
+# auth/web-server/config.py
 # 実際の config.py は各環境で作成 (既存アプリと同じ流儀)。secret はコミットしない。
 
+import os
+
 class Config:
-    ENV = 'development'
+    ENV = os.environ.get('ENV', 'development')
+    AUTH_PUBLIC_BASE_URL = os.environ.get(
+        'AUTH_PUBLIC_BASE_URL', 'http://127.0.0.1:8020'
+    )
+    OIDC_ID_TOKEN_TTL_SEC = 600
+    SIGNING_KEY_OVERLAP_SECONDS = 3600
+    OIDC_AUTHORIZATION_REQUEST_TTL_SEC = 600
+    SIGNUP_CHALLENGE_TTL_SEC = 3600
+    PASSWORD_RESET_EXPIRATION_SECONDS = 3600
+    AUTH_SMTP_HOST = os.environ.get('AUTH_SMTP_HOST')
+    AUTH_SMTP_PORT = int(os.environ.get('AUTH_SMTP_PORT', '587'))
+    AUTH_SMTP_STARTTLS = os.environ.get('AUTH_SMTP_STARTTLS', '1') == '1'
+    AUTH_SMTP_USERNAME = os.environ.get('AUTH_SMTP_USERNAME')
+    AUTH_SMTP_PASSWORD = os.environ.get('AUTH_SMTP_PASSWORD')
+    AUTH_EMAIL_SENDER = os.environ.get('AUTH_EMAIL_SENDER', 'account@thinkx.jp')
+    PAYMENT_PROJECTION_WEBHOOK_SECRET = os.environ.get(
+        'PAYMENT_PROJECTION_WEBHOOK_SECRET'
+    ) or (
+        'development-payment-projection-secret'
+        if ENV in ('development', 'test') else None
+    )
 
     # --- 言語 (libcommon/web/flask_helpers.py の要求キー) ---
     DEFAULT_LANG = 'en'

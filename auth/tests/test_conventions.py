@@ -17,20 +17,14 @@
 import re
 from pathlib import Path
 
-import pytest
-
 ROOT = Path(__file__).resolve().parents[1]
 SSO = (ROOT / 'web-server' / 'sso.py').read_text()
 ACCOUNTS = (ROOT / 'web-server' / 'accounts.py').read_text()
 MAIN = (ROOT / 'web-server' / 'main.py').read_text()
 CLIENT = (ROOT / 'libcommon_addition' / 'auth_client.py').read_text()
+OIDC = (ROOT / 'web-server' / 'oidc' / 'endpoints.py').read_text()
+ID_TOKEN = (ROOT / 'web-server' / 'oidc' / 'id_token.py').read_text()
 ALL_APP = SSO + ACCOUNTS
-
-# 旧 v1 強制テストに付す共通の skip 理由。
-_V1_SKIP = (
-    'DECISIONS D-39 / auth-spec: 旧 PROTOCOL v1 前提の規約。OIDC(/oauth/*)ハンドラと衝突するため '
-    'skip。auth-spec 準拠の契約テストを A-9(tests/contract, tests/logic)で全面実装して置換する。'
-)
 
 
 def _handlers(source):
@@ -65,86 +59,69 @@ def test_l1_injection_apis_are_wired_in_main():
 
 
 # ---------------------------------------------------------------------------
-# 旧 PROTOCOL v1 を強制するテスト。OIDC 確定仕様と衝突するため skip。
-# A-9 で auth-spec 準拠の契約テストへ置換する。
+# auth-spec / OIDC の正本契約。旧 PROTOCOL v1 の7 skipをA-9で置換した。
 # ---------------------------------------------------------------------------
 
-@pytest.mark.skip(reason=_V1_SKIP)
-def test_every_route_handler_uses_language_wrapper():
-    # /oauth/* 標準 endpoint は language_wrapper を持たない(標準 request/response)。
-    for decorators, func_name in _handlers(ALL_APP):
-        assert '@language_wrapper' in decorators, \
-            f'{func_name} lacks @language_wrapper (CLAUDE.md: デコレータ積層)'
+def test_oidc_routes_are_single_standard_paths_without_language_wrapper():
+    expected_routes = (
+        "get('/oauth/authorize')",
+        "post('/oauth/token')",
+        "route('/oauth/userinfo', methods=['GET', 'POST'])",
+        "post('/oauth/logout')",
+        "get('/.well-known/openid-configuration')",
+        "get('/oauth/jwks')",
+    )
+    for route in expected_routes:
+        assert route in OIDC
+    assert '/<lang>/oauth/' not in OIDC
+    assert '@language_wrapper' not in OIDC
 
 
-@pytest.mark.skip(reason=_V1_SKIP)
-def test_every_route_is_registered_with_dual_lang_paths():
-    # /oauth/* は言語二重ルートを持たない。
-    for decorators, func_name in _handlers(ALL_APP):
-        assert decorators.count('.route(') == 2, \
-            f'{func_name} must register both /path and /<lang>/path'
+def test_account_json_post_handlers_keep_common_decorator_stack():
+    for decorators, func_name in _handlers(ACCOUNTS):
+        if "methods=['POST']" not in decorators:
+            continue
+        assert '@language_wrapper' in decorators, func_name
+        assert decorators.count('.route(') == 2, func_name
+        assert '@content_type_check_json' in decorators, func_name
+        assert '@required_fields_check' in decorators, func_name
 
 
-@pytest.mark.skip(reason=_V1_SKIP)
-def test_post_json_handlers_use_content_type_and_required_fields_decorators():
-    # /oauth/token は form-encoded(application/x-www-form-urlencoded)で、JSON 前提の
-    # デコレータ積層に乗らない。
-    for decorators, func_name in _handlers(ALL_APP):
-        if "methods=['POST']" in decorators:
-            assert '@content_type_check_json' in decorators, func_name
-            assert '@required_fields_check' in decorators, func_name
+def test_token_endpoint_uses_standard_form_contract():
+    assert "request.mimetype != 'application/x-www-form-urlencoded'" in OIDC
+    for name in ('grant_type', 'code', 'redirect_uri', 'code_verifier'):
+        assert repr(name) in OIDC
+    assert 'request.get_json' not in OIDC
 
 
-@pytest.mark.skip(reason=_V1_SKIP)
-def test_single_names_no_aliases():
-    # exchange_code/exchange_auth_code の別名検査は旧 client 前提。新 client は
-    # /oauth/token(code 引き換え)を使う。
-    assert "get('secret')" not in ALL_APP
-    assert 'X-ThinkX-' not in ALL_APP + CLIENT
-    assert 'exchange_code(' not in CLIENT.replace('exchange_auth_code(', '')
+def test_oidc_uses_canonical_names_without_private_aliases():
+    for required in ("'client_id'", "'sub'", "'code'", "'access_token'"):
+        assert required in OIDC
+    assert 'X-ThinkX-' not in OIDC
+    assert "'protocol_version'" not in OIDC
+    assert "'auth_code'" not in OIDC
+    assert "'service_id'" not in OIDC
 
 
-@pytest.mark.skip(reason=_V1_SKIP)
-def test_protocol_v1_names_are_used_and_old_names_are_absent():
-    # 旧 v1 の wire 名(auth_code/service_id/service_secret)を必須とし、標準名
-    # (client_id/sub/code)を禁止していた。auth-spec では真逆(標準名を使う)。
-    for required in ["'auth_code'", "'service_id'", "'service_secret'"]:
-        assert required in SSO and required in CLIENT
-    assert 'with_protocol_version(' in SSO
-    assert "'protocol_version'" in CLIENT
-    for banned in ["'sub'", "'client_id'", "'available_services'",
-                   "'picture'\\b", "request.json.get('code')"]:
-        assert not re.search(banned, SSO), f'old/banned name in sso.py: {banned}'
+def test_oauth_errors_use_standard_error_shape_without_legacy_wrapper():
+    assert "jsonify({'error': error})" in OIDC
+    assert 'with_protocol_version' not in OIDC
+    assert 'APIErrorFormat' not in OIDC
 
 
-@pytest.mark.skip(reason=_V1_SKIP)
-def test_single_error_responses_carry_protocol_version():
-    # /oauth/* の標準エラーは protocol_version を持たない。
-    for source, fname in [(SSO, 'sso.py'), (ACCOUNTS, 'accounts.py')]:
-        for match in re.finditer(r'(\w+APIErrorFormat|\w+ErrorFormat)\(', source):
-            name = match.group(1)
-            if name in ('APIErrorFormat', 'ValidationErrorFormat'):
-                continue
-            line_start = source.rfind('\n', 0, match.start())
-            region = source[max(0, line_start - 120):match.start()]
-            assert ('with_protocol_version' in region
-                    or 'error = ' in source[line_start:match.start()]), \
-                f'{fname}: {name} must go through with_protocol_version'
+def test_id_token_and_userinfo_claim_responsibilities_are_separate():
+    for claim in ("'iss'", "'sub'", "'aud'", "'exp'", "'iat'", "'nonce'"):
+        assert claim in ID_TOKEN
+    assert "'email'" not in ID_TOKEN
+    assert "'email_verified'" not in ID_TOKEN
+    assert "claims['email']" in OIDC
+    assert "claims['email_verified']" in OIDC
+    assert 'billing_status' not in OIDC + ID_TOKEN
 
 
-@pytest.mark.skip(reason=_V1_SKIP)
-def test_userinfo_is_built_only_in_protocol_py():
-    # email_verified は /oauth/userinfo で導出値として返るため、app 層での出現禁止は
-    # 新仕様と衝突しうる。UserInfo/ID Token 分離の検査は A-9 で作り直す。
-    assert "'email_verified':" not in ALL_APP
-    assert "'billing_status':" not in ALL_APP
-
-
-# 旧 JWT/JWKS/refresh_token 禁止は解除済み(banned=[])。auth は OIDC を実装する。
-# refresh_token は auth-spec が採用しないため、その不在検査は A-9 の新契約テストで扱う。
-def test_no_jwt_or_refresh_token_before_protocol_v2():
+def test_refresh_token_is_not_part_of_initial_oidc_contract():
     code_only = '\n'.join(
-        line for line in ALL_APP.splitlines()
-        if not line.strip().startswith('#'))
-    for banned in []:
-        assert banned not in code_only, banned
+        line for line in (OIDC + ID_TOKEN).splitlines()
+        if not line.strip().startswith('#')
+    )
+    assert 'refresh_token' not in code_only

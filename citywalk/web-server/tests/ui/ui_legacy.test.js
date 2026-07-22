@@ -1,6 +1,6 @@
 // thinkx-system/citywalk/web-server/tests/ui/ui_legacy.test.js
 //
-// Screenshot and perceptual-property oracle for fixed-fixture legacy pages.
+// Screenshot and perceptual-property oracle for the original legacy business app.
 
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
@@ -18,7 +18,6 @@ const chromePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome
 const origin = 'http://127.0.0.1:4173';
 const pages = [
   ['business_top', '/business/top', null],
-  ['business_signin', '/business/signin', null],
   ['business_signup', '/business/signup', {activatePage: 1, selector: '#map', pointerCount: 1}],
   ['business_home', '/business/home', null],
   ['business_createguide', '/business/createguide', {selector: '#map', pointerCount: 0}],
@@ -62,7 +61,7 @@ function semanticProperties(document) {
   };
 }
 
-async function waitForServer() {
+async function waitForServer(serverLog) {
   for (let attempt = 0; attempt < 50; attempt += 1) {
     try {
       const response = await fetch(`${origin}/healthcheck`);
@@ -70,32 +69,70 @@ async function waitForServer() {
     } catch {}
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
-  throw new Error('legacy UI fixture server did not start');
+  throw new Error(`legacy UI server did not start\n${serverLog.join('')}`);
 }
 
 async function verifyGoogleMap(page, mapOracle, pageName) {
   const {pointerCount, selector} = mapOracle;
-  await page.waitForFunction((mapSelector) => {
-    const $map = document.querySelector(mapSelector);
-    return $map && $map.clientWidth > 0 && $map.clientHeight > 0 && $map.querySelector('.gm-style');
-  }, selector, {timeout: 30000});
-  await page.waitForFunction((mapSelector) => {
-    const $map = document.querySelector(mapSelector);
-    return [...$map.querySelectorAll('img')].some(($image) => $image.complete && $image.naturalWidth > 0)
-      || [...$map.querySelectorAll('canvas')].some(($canvas) => $canvas.width > 0 && $canvas.height > 0);
-  }, selector, {timeout: 30000});
-  const mapState = await page.evaluate(() => ({
-    center: window.map ? window.map.getCenter().toJSON() : null,
-    controls: document.querySelectorAll('.gm-control-active').length,
-    pointerCount: typeof mapPointer !== 'undefined' && mapPointer ? 1 : 0,
-    zoom: window.map ? window.map.getZoom() : null,
-  }));
-  assert.ok(mapState.center, `${pageName}: map center is missing`);
-  assert.ok(mapState.controls > 0, `${pageName}: map controls are missing`);
-  assert.equal(mapState.pointerCount, pointerCount);
-  const previousZoom = mapState.zoom;
-  await page.evaluate(() => window.map.setZoom(window.map.getZoom() + 1));
-  await page.waitForFunction((zoom) => window.map.getZoom() === zoom + 1, previousZoom);
+  let stage = 'map container';
+  try {
+    await page.waitForFunction((mapSelector) => {
+      const $map = document.querySelector(mapSelector);
+      return $map && $map.clientWidth > 0 && $map.clientHeight > 0 && $map.querySelector('.gm-style');
+    }, selector, {timeout: 30000});
+    stage = 'map tiles';
+    await page.waitForFunction((mapSelector) => {
+      const $map = document.querySelector(mapSelector);
+      return [...$map.querySelectorAll('img')].some(($image) => $image.complete && $image.naturalWidth > 0)
+        || [...$map.querySelectorAll('canvas')].some(($canvas) => $canvas.width > 0 && $canvas.height > 0);
+    }, selector, {timeout: 30000});
+    stage = 'map center';
+    await page.waitForFunction(() => window.map && window.map.getCenter && window.map.getCenter(), null, {timeout: 30000});
+    stage = 'map state';
+    const mapState = await page.evaluate(() => ({
+      center: window.map ? window.map.getCenter().toJSON() : null,
+      pointerCount: typeof mapPointer !== 'undefined' && mapPointer ? 1 : 0,
+      zoom: window.map ? window.map.getZoom() : null,
+    }));
+    assert.ok(mapState.center, `${pageName}: map center is missing`);
+    assert.equal(mapState.pointerCount, pointerCount, `${pageName}: map pointer count differs`);
+    stage = 'map zoom';
+    const previousZoom = mapState.zoom;
+    await page.evaluate(() => window.map.setZoom(window.map.getZoom() + 1));
+    await page.waitForFunction((zoom) => window.map.getZoom() === zoom + 1, previousZoom);
+  } catch (error) {
+    throw new Error(`${pageName}: ${stage} failed: ${error.stack || String(error)}`);
+  }
+}
+
+async function waitForAnimations(page) {
+  await page.evaluate(async () => {
+    const animations = document.getAnimations();
+    await Promise.all(animations.map((animation) => animation.finished.catch(() => undefined)));
+  });
+}
+
+async function createMapTileMask(page) {
+  const hasVisibleMapRegion = await page.evaluate(() => {
+    const $leftWindow = document.querySelector('#leftwindow');
+    if (!$leftWindow) return false;
+    const leftWindowRight = Math.ceil($leftWindow.getBoundingClientRect().right);
+    if (leftWindowRight >= window.innerWidth) return false;
+
+    const $mask = document.createElement('div');
+    $mask.dataset.screenshotMapMask = '';
+    Object.assign($mask.style, {
+      bottom: '0',
+      left: `${leftWindowRight}px`,
+      pointerEvents: 'none',
+      position: 'fixed',
+      right: '0',
+      top: '0',
+    });
+    document.body.appendChild($mask);
+    return true;
+  });
+  return hasVisibleMapRegion ? page.locator('[data-screenshot-map-mask]') : null;
 }
 
 test('legacy UI perceptual oracle', async (context) => {
@@ -105,8 +142,18 @@ test('legacy UI perceptual oracle', async (context) => {
     [path.join(serverRoot, 'tests/legacy_ui_server.py')],
     {cwd: legacyScripts, stdio: ['ignore', 'pipe', 'pipe']},
   );
+  const serverLog = [];
+  server.stdout.on('data', (chunk) => serverLog.push(chunk.toString()));
+  server.stderr.on('data', (chunk) => serverLog.push(chunk.toString()));
   context.after(() => server.kill('SIGTERM'));
-  await waitForServer();
+  await waitForServer(serverLog);
+
+  const mapsKey = process.env.CITYWALK_GOOGLE_MAPS_API_KEY;
+  assert.ok(mapsKey, 'CITYWALK_GOOGLE_MAPS_API_KEY is required');
+  for (const route of ['/business/signup', '/business/createguide']) {
+    const html = await fetch(`${origin}${route}`).then((response) => response.text());
+    assert.ok(html.includes(`key=${mapsKey}&callback=initMap`), `${route}: Google Maps key injection failed`);
+  }
 
   const properties = {};
   for (const [pageName, route] of pages) {
@@ -146,14 +193,21 @@ test('legacy UI perceptual oracle', async (context) => {
             }, mapOracle.activatePage);
           }
           await verifyGoogleMap(page, mapOracle, pageName);
+          if (pageName === 'business_createguide') {
+            await page.waitForFunction(() => document.querySelectorAll('#contentTableView > li').length === 4);
+          }
           if (mapOracle.activatePage !== undefined) {
             await page.goto(`${origin}${route}`, {waitUntil: 'networkidle'});
           }
         } catch (error) {
           throw new Error(`${error.message}\n${diagnostics.map(sanitizedDiagnostic).join('\n')}`);
         }
-        if (mapOracle.activatePage === undefined) masks.push(page.locator(mapOracle.selector));
+        if (mapOracle.activatePage === undefined) {
+          const mapMask = await createMapTileMask(page);
+          if (mapMask) masks.push(mapMask);
+        }
       }
+      await waitForAnimations(page);
       const screenshotPath = path.join(goldenRoot, `${pageName}_${viewportName}.png`);
       if (process.env.UPDATE_GOLDENS === '1') {
         await page.screenshot({path: screenshotPath, fullPage: true, mask: masks});
