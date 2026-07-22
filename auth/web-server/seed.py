@@ -29,7 +29,7 @@ from oidc.keys import generate_signing_key_pair
 
 
 SEED_ENVIRONMENTS = frozenset({'development', 'test', 'staging'})
-AUTH_SESSION_BODY_PREFIX = 'auth_session:'
+AUTH_SESSION_BODY_PREFIX = Config.REDIS_SESSION_KEY_PREFIX
 LEGACY_CODE_PREFIX = 'sso:auth_code:'
 LEGACY_TOKEN_PREFIX = 'sso:access_token:'
 

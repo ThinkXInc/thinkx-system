@@ -1086,3 +1086,43 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
 - **規範への影響(自分では直せない)**: `docs/coding_guides/bash.md:118-119` が使い方メッセージの
   例として旧 `merge_develop_into.sh` を引いている。coding_guides は規範=人間のみ改変可のため
   未変更。人間が例を `pr_develop_and_merge_to_monorepo.sh` 等へ差し替えるか判断されたい。
+
+## 2026-07-22 DNS切替 step1: acceptance の /filedrop が本番で偽 NG
+
+- `acceptance-sweep.sh 52.197.179.70`(本番 LB 直)で `NG expect=200 got=404 /filedrop`(thinkx 1/59)。
+- 原因: filedrop は `thinkx/web-server/main.py:787` で **hostname が `-stg` のときだけ有効**な
+  staging 専用機能。本番(supercom-web1・-stg なし)では 404 が正。golden が staging 専用ルートを
+  200 期待に含んでいる。**本番の障害ではない。**
+- 他は全 green(check_request_path 全ホップ・3ドメイン end-to-end https 200・kazuki 4/4・transformism 2/2)。
+- 対応方針(TODO): 本番向け acceptance golden から /filedrop を除外するか、環境で期待値を分ける
+  (staging=200 / prod=404)。DNS 切替のブロッカーにはしない。
+
+## 2026-07-22 DNS切替の確認対象漏れ: truetechjapan / nntmapp / jessicas.online
+
+- DNS切替手順.md と acceptance-sweep.sh はいずれも **3ドメイン(thinkxinc / kazukiotsuka /
+  transformism)決め打ち**。LB の server_name には他に **truetechjapan.com・nntmapp.com・
+  jessicas.online(いずれも +www)・nntm.thinkxinc.com・quantz.thinkxinc.com** がある。
+  「確認対象を手で並べると漏れる」の再発(handoff 未解決事項)。オーナーが切替時に気づいた。
+- 根治方針(TODO): acceptance-sweep / DNS確認の対象ドメインを **loadbalancer の server_name から
+  自動生成**する(bare apex + www を抽出、staging.*/prod.*/internal を除外)。決め打ちリストを廃す。
+- 切替そのものはオーナーが全 A を差し替え済み。要・全ドメイン実地確認(dig + https)。
+
+## 2026-07-22 DNS本番切替 完了(apex 5 + nntm)/ quantz は据え置き / www 見送り
+
+- 切替完了(全て 52.197.179.70・https 200): thinkxinc.com / truetechjapan.com / nntmapp.com /
+  transformism.art / kazukiotsuka.com / nntm.thinkxinc.com。オンプレ(123.226.234.127)から AWS LB へ。
+- **quantz.thinkxinc.com = AWS で 500。ただし切替前もオンプレで 500(回帰ではない)。**
+  原因: AWS 本番は uwsgi 3つ(thinkx/kazukiotsukacom/transformism)のみで quantz app 未搭載なのに
+  LB が quantz.thinkxinc.com を quantz upstream へ流している。判断(別トラック): quantz を載せる /
+  server_name を外して畳む / 放置(元から 500 でユーザー影響不変)。
+- **www.*(thinkxinc/truetechjapan/nntmapp)= A レコード無し。据え置き(オーナー判断 2026-07-22)。**
+  apex 専用で索引がきれい。必要時に A(52.197.179.70)追加 + www→apex 301 確認で対応。
+- 戻し口: Route53 で各 A を 123.226.234.127 に戻す(オンプレ温存・DNS切替手順 §5)。
+
+## 2026-07-22 filedrop 偽NG 解消(acceptance-sweep 側で対象外に)
+
+- 原因の正確な所在: acceptance-sweep は Host を常に公開名(thinkxinc.com)で当てるが、filedrop は
+  main.py:787 で hostname が -stg のときだけ有効。よって env に関係なく sweep では常に 404。
+- 対応(実施): golden(サイト単体テストが正)は触らず、acceptance-sweep.sh で `thinkx:/filedrop` を
+  受け入れ対象外にし skip 行を出す(黙って落とさない)。実測: thinkx 58/58・ACCEPTANCE 全 green。
+- 波及ルールが増えたら acceptance-sweep.sh の case に足す。

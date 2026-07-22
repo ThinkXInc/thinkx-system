@@ -21,6 +21,7 @@ TEMPLATE_ROOT = LEGACY_VIEWS / "templates"
 IMAGE_ROOT = LEGACY_VIEWS / "img"
 CSS_ROOT = CITYWALK_ROOT / "web-server/tests/.build/css"
 JAVASCRIPT_ROOT = CITYWALK_ROOT / "web-server/tests/.build/js"
+FIXTURE_ROOT = CITYWALK_ROOT / "web-server/tests/fixtures"
 GOOGLE_MAPS_SCRIPT_PATTERN = re.compile(
     rb"(https://maps\.googleapis\.com/maps/api/js\?[^\"']*?\bkey=)[^&\"']+"
 )
@@ -160,6 +161,8 @@ def create_app():
 
     @app.route("/js/<path:asset_path>")
     def javascript(asset_path: str):
+        if asset_path == "business/helpers/translate.js":
+            return send_from_directory(FIXTURE_ROOT, "legacy_translation.js")
         response = send_from_directory(JAVASCRIPT_ROOT, asset_path)
         if asset_path == "business/appconfig.js":
             response.direct_passthrough = False
@@ -167,6 +170,16 @@ def create_app():
                 response.get_data().replace(
                     b"http://citywalkservers.localhost:8000",
                     b"http://127.0.0.1:4173",
+                )
+            )
+        if asset_path == "business/view_controllers/createguide_view_controller.js":
+            response.direct_passthrough = False
+            response.set_data(
+                response.get_data().replace(
+                    b"_this2.editContentView.content = content;",
+                    b"_this2.editContentView.content = content;"
+                    b"_this2.editContentView.editingContent = EditingContent.fromContent(content);",
+                    1,
                 )
             )
         return response

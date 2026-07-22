@@ -2,6 +2,8 @@
 #
 # Screenshot mask and live Google Maps verification ledger for the legacy UI oracle.
 
+Layer-1 screenshots are stored under `static/`.
+
 Pixel comparison threshold: 0 differing bytes outside the declared masks.
 
 Masked regions:

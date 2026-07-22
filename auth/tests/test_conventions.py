@@ -55,6 +55,7 @@ def test_no_import_error_insurance_or_api_probing():
 def test_l1_injection_apis_are_wired_in_main():
     # L-1 追随: 新初期化 API が main.py で app 起動時に注入されていること。
     assert 'Session.configure(' in MAIN, 'main.py must call Session.configure at startup'
+    assert MAIN.count('prefix=Config.REDIS_SESSION_KEY_PREFIX') == 2
     assert 'configure_flask_helpers(' in MAIN, 'main.py must call configure_flask_helpers at startup'
 
 

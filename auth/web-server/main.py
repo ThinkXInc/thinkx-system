@@ -50,6 +50,7 @@ REQUIRED_KEYS_IN_CONFIG = [
     'REDIS_SESSION_PORT',
     'REDIS_SESSION_DB_NUMBER',
     'REDIS_SESSION_EXPIRATION_TIME_SEC',
+    'REDIS_SESSION_KEY_PREFIX',
     'AUTH_PUBLIC_BASE_URL',
     'OIDC_ID_TOKEN_TTL_SEC',
 ]
@@ -59,7 +60,11 @@ check_config(Config, REQUIRED_KEYS_IN_CONFIG)
 # pre-v2.0.0 では flask_helpers.py が `from config import Config` / `from models.data.user import ...`
 # でホストへ逆依存していた。v2.0.0 はこれらを注入 API に置き換えた。app 起動時に config 値を注入する。
 Session.configure(
-    Config.REDIS_SESSION_HOST, Config.REDIS_SESSION_PORT, Config.REDIS_SESSION_DB_NUMBER)
+    Config.REDIS_SESSION_HOST,
+    Config.REDIS_SESSION_PORT,
+    Config.REDIS_SESSION_DB_NUMBER,
+    prefix=Config.REDIS_SESSION_KEY_PREFIX,
+)
 configure_flask_helpers(
     Config.DEFAULT_LANG, Config.AVAILABLE_LANGS,
     Config.BASIC_AUTH_USERNAME, Config.BASIC_AUTH_PASSWORD)
@@ -74,7 +79,7 @@ app.config['SESSION_COOKIE_SECURE'] = Config.ENV != 'development'
 app.session_interface = RedisSessionInterface(
     Config.REDIS_SESSION_HOST, Config.REDIS_SESSION_PORT,
     Config.REDIS_SESSION_DB_NUMBER, Config.REDIS_SESSION_EXPIRATION_TIME_SEC,
-    prefix='auth_session:')
+    prefix=Config.REDIS_SESSION_KEY_PREFIX)
 
 app.register_blueprint(blueprint_sso)
 app.register_blueprint(blueprint_accounts)

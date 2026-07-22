@@ -42,7 +42,7 @@ Security exception(D-22)はここに書かず即停止・人間へ報告。
 - `web-server/tests/golden/ui_legacy/ground_truth/createguideviewdemo.mov:12.0-30.0秒` / 地図スポット選択とコンテンツ編集状態、左編集パネル開閉の反復を確認 / C-0c
 - `web-server/tests/golden/ui_legacy/ground_truth/createguideviewdemo.mov:32.0-38.0秒` / 地図パン・ズームとフォーム選択メニューの開閉を確認 / C-0c
 - `web-server/tests/golden/ui_legacy/ground_truth/createguideviewdemo.mov:59.0-68.0秒` / 地図のパン・ズーム・再中心化とフォーム編集状態への遷移を確認 / C-0c
-- `web-server/tests/golden/ui_legacy/ground_truth/createguideviewdemo.mov:78.0-130.0秒` / 翻訳候補パネルのスライド展開・スクロール・候補選択・閉鎖と翻訳済みフォーム反映を確認 / C-0c
+- `web-server/tests/golden/ui_legacy/ground_truth/createguideviewdemo.mov:78.0-130.0秒` / 本文入力、翻訳結果11件のpopulation・置換、対象ユーザーdropdown開閉・高リテラシー選択反映を確認。翻訳panelは閉じない / C-0c
 
 ## 計画作成時の発見(2026-07-07。計画 §1.5 から転記)
 
@@ -85,3 +85,23 @@ Security exception(D-22)はここに書かず即停止・人間へ報告。
 - `web-server/tests/legacy_ui_server.py:1` / `CITYWALK_GOOGLE_MAPS_API_KEY` を実行時注入し、旧固定キーの `ExpiredKeyMapError` を解消。キー値は成果物・診断へ保存しない / C-0c
 - `web-server/tests/ui/ui_legacy.test.js:1` / 旧 ECMA 47本の Babel build、実 Maps の load/center/zoom 検証、desktop の可視地図領域限定マスクを通した実ブラウザ試験が green / C-0c
 - `web-server/tests/golden/ui_legacy/business_createguide_{desktop,mobile}.png:1` / 修正後の静止画でコンテンツ4件と左UIを保持し、desktop は右側の可変地図領域のみマスク、mobile はマスクなし / C-0c
+- `web-server/tests/golden/ui_legacy/motion_contract.json:1` / 旧実装から content選択、edit panel閉鎖、translation panel閉鎖の順序・duration・stagger・軌跡を機械可読化 / C-0c
+- `web-server/tests/ui/capture_legacy_motion.js:1` / 1490×856実Chromeで content選択、edit panel閉鎖、地図pan/zoomを操作し、目視用WebMとrequestAnimationFrame座標列を `motion/` へ出力する収録ハーネスを追加 / C-0c
+- `web-server/tests/golden/ui_legacy/motion/README.md:1` / translation panelの実サービス依存部分は未収録であり、挙動を捏造せず残件として明記 / C-0c
+- `web-server/tests/build_motion_review.sh:1` / ground truthを左、ローカル実ブラウザ収録を右へ745×428ずつ配置した1490×428 H.264並列目視出力を決定的に生成 / C-0c
+- `web-server/tests/ui/validate_motion_trace.js:1` / 収録traceの必須3 flow、時刻単調増加、cell軌跡、edit panel閉鎖、map center変化・zoom +1を契約照合 / C-0c
+- `web-server/tests/golden/ui_legacy/motion/alignment.tsv:1` / local 3 flowをground truth S02–S14へ対応付け、S19–S21はtranslation service未再現として別途blockedを保持 / C-0c
+- `web-server/tests/ui/capture_legacy_motion.js:1` / 各local flowの操作中だけCDP PNG screencastを収録し、使用フレーム名とbrowser timestampをtraceへ固定 / C-0c
+- `web-server/tests/build_motion_review.sh:1` / local flowを対応する代表ground truth S02/S04/S10と個別に並列化し、無関係な135秒全体比較を回避 / C-0c
+- `legacy/www/server/application/views/src/ECMA/business/helpers/translate.js:1` / オーナー裁定により廃止済みbrowser-side DeepL endpoint・認証値・外部fetchを除去し、外部送信しないfail-closed互換面へ置換 / C-0c
+- `web-server/tests/ui/motion_contract.test.js:1` / legacy translation helperへのDeepL endpoint・認証parameter・fetch再混入を拒否 / C-0c
+- `web-server/tests/fixtures/legacy_translation.js:1` / production demo S19の11言語・表示順を根拠に、外部通信なしのtest-only translation completion fixtureを固定 / C-0c
+- `web-server/tests/legacy_ui_server.py:1` / legacy sourceの廃止済み翻訳面はfail-closedのまま維持し、C-0c実ブラウザだけfixtureを配信 / C-0c
+- `legacy/www/server/application/views/src/ECMA/business/view_controllers/createguide_view_controller.js:149` / 選択contentを表示用へ設定する一方editable clone設定が欠落し、入力時に`isEmpty`を呼べない。ground truthと同ファイル内`_startEditContent`を根拠に試験runtimeだけ復元 / D-21
+- `web-server/tests/ui/capture_legacy_motion.js:1` / demo由来入力と11言語fixtureでS19 population、S20 smooth scrollのPNG列・rAF traceを収録対象へ追加 / C-0c
+- `git:10f21ce` / translation panel導入commitから確定snapshotまでcell clickは`onselected` state設定のみでobserverなし。S21実フレームはtranslation選択・closeではなく対象ユーザーdropdownのため欠落observerを補わない / D-21
+- `web-server/tests/golden/ui_legacy/ground_truth/{animation_segments.tsv,REVIEW.md}:S20-S21` / 中間を含む実フレーム再確認によりS20を本文延長+翻訳置換、S21を対象ユーザーdropdown選択へ訂正。旧heuristicのscroll/translation close分類を撤回 / C-0c
+- `web-server/tests/golden/ui_legacy/static/:1` / C-0c層1の試験対象6画面×mobile/desktop計12枚を計画所定の`static/`へ正規化 / C-0c
+- `web-server/tests/CHECKSUMS:1` / C-0c ground truth動画・台帳・motion契約・層1静止画12枚のsha256を記録。未生成のlocal motion/並列reviewは未記録 / C-0c
+- `web-server/tests/golden/ui_legacy/business_signin_mobile.png:1` / 確定legacyに存在しないsignin templateを旧fixtureで描いた誤goldenを削除。層1対象12枚は`static/`のみ / C-0c
+- `web-server/tests/ui/capture_legacy_motion.test.js:1` / 実Chromeの500ms移動をCDP screencastし、複数PNGのsignatureを検証するキー不要smokeを追加 / C-0c
