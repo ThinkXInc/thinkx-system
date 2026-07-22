@@ -676,6 +676,19 @@ def truetechjapan_award_company(locale, company_key, lang=None, lang_name=None):
     metadata = dict(locale.dict()["metadata_award_company"][lang])
     metadata["title"] = f'{company["company_name"]} | {metadata["title"]}'
 
+    # SNS シェア用 OGP を企業ごとに設定する。base.html は og_* が無ければサイト
+    # 共通値へフォールバックするので、この上書きを受けるのは award ページだけ。
+    public_base = "https://truetechjapan.com"
+    summary = company["business"]
+    if len(summary) > 110:
+        summary = summary[:110].rstrip() + "…"
+    metadata["description"] = summary
+    metadata["og_title"] = metadata["title"]
+    metadata["og_description"] = summary
+    metadata["og_url"] = f'{public_base}/{lang}/award/{company_key}'
+    metadata["og_image"] = f'{public_base}/img/truetechjapan/award_companies/ogp/{company_key}.png'
+    metadata["twitter_card"] = "summary_large_image"
+
     return render_template(
         '/truetechjapan/award_company_page.html',
         lang=lang,

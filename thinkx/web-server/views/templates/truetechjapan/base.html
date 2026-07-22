@@ -51,17 +51,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   gtag('config', 'G-5VLMKV56N4');
 </script>
 
-	<meta name="twitter:card" content="summary">
+	<meta name="twitter:card" content="{{ metadata.get('twitter_card') or 'summary' }}">
 	<meta name="twitter:site" content="">
-	<meta name="twitter:title" content="">
-	<meta name="twitter:description" content="{{ metadata['description'] }}">
-	<meta name="twitter:url" content="https://truetechjapan.com">
+	<meta name="twitter:title" content="{{ metadata.get('og_title') or metadata['title'] }}">
+	<meta name="twitter:description" content="{{ metadata.get('og_description') or metadata['description'] }}">
+	<meta name="twitter:url" content="{{ metadata.get('og_url') or 'https://truetechjapan.com' }}">
+	<meta name="twitter:image" content="{{ metadata.get('og_image') or 'https://truetechjapan.com/img/truetechjapan/site-image.png' }}">
 
-  <meta property="og:type" content="website"> 
-  <meta property="og:title" content="Best Technology Startup 100">
-  <meta property="og:description" content="{{ metadata['description'] }}">
-  <meta property="og:url" content="https://truetechjapan.com">
-  <meta property="og:image" content="https://truetechjapan.com/img/truetechjapan/site-image.png">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{ metadata.get('og_title') or 'Best Technology Startup 100' }}">
+  <meta property="og:description" content="{{ metadata.get('og_description') or metadata['description'] }}">
+  <meta property="og:url" content="{{ metadata.get('og_url') or 'https://truetechjapan.com' }}">
+  <meta property="og:image" content="{{ metadata.get('og_image') or 'https://truetechjapan.com/img/truetechjapan/site-image.png' }}">
 
   <link rel="stylesheet" href="/css/main.css">
   <script>
