@@ -101,3 +101,4 @@ Security exception(D-22)はここに書かず即停止・人間へ報告。
 - `web-server/tests/ui/capture_legacy_motion.js:1` / demo由来入力と11言語fixtureでS19 population、S20 smooth scrollのPNG列・rAF traceを収録対象へ追加 / C-0c
 - `git:10f21ce` / translation panel導入commitから確定snapshotまでcell clickは`onselected` state設定のみでobserverなし。S21実フレームはtranslation選択・closeではなく対象ユーザーdropdownのため欠落observerを補わない / D-21
 - `web-server/tests/golden/ui_legacy/ground_truth/{animation_segments.tsv,REVIEW.md}:S20-S21` / 中間を含む実フレーム再確認によりS20を本文延長+翻訳置換、S21を対象ユーザーdropdown選択へ訂正。旧heuristicのscroll/translation close分類を撤回 / C-0c
+- `web-server/tests/golden/ui_legacy/static/:1` / C-0c層1の試験対象6画面×mobile/desktop計12枚を計画所定の`static/`へ正規化 / C-0c
