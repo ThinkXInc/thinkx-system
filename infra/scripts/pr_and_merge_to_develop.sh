@@ -57,7 +57,7 @@ pr_and_merge_to_develop() {
     echo
     printf '%b\n' "${Y}  staging の上で直接編集されたものが手元に戻っていない可能性があります。${Z}"
     echo "To bring them back, run:"
-    echo "bash infra/scripts/merge_develop_into.sh $src"
+    echo "bash infra/scripts/pr_and_merge_to_monorepo.sh"
     echo
   fi
 
