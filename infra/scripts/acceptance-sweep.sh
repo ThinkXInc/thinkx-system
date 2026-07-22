@@ -30,6 +30,11 @@ acceptance_sweep() {
     echo "===== $site (Host: $host -> $lb_ip) ====="
     fail=0; count=0
     while IFS=$'\t' read -r path expect; do
+      # staging のホスト名(-stg)でのみ有効なルートは、公開 Host での sweep では常に 404 になる。
+      # golden(サイト単体テストが正)には残し、この受け入れ試験では対象外にする。増えたらここに足す。
+      case "$site:$path" in
+        thinkx:/filedrop) printf 'skip  %s (staging ホスト専用・受け入れ対象外)\n' "$path"; continue ;;
+      esac
       count=$((count+1))
       got=$(curl -sk --max-time 20 --resolve "$host:443:$lb_ip" \
               -o /dev/null -w '%{http_code}' "https://$host$path")

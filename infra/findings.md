@@ -1118,3 +1118,11 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
 - **www.*(thinkxinc/truetechjapan/nntmapp)= A レコード無し。据え置き(オーナー判断 2026-07-22)。**
   apex 専用で索引がきれい。必要時に A(52.197.179.70)追加 + www→apex 301 確認で対応。
 - 戻し口: Route53 で各 A を 123.226.234.127 に戻す(オンプレ温存・DNS切替手順 §5)。
+
+## 2026-07-22 filedrop 偽NG 解消(acceptance-sweep 側で対象外に)
+
+- 原因の正確な所在: acceptance-sweep は Host を常に公開名(thinkxinc.com)で当てるが、filedrop は
+  main.py:787 で hostname が -stg のときだけ有効。よって env に関係なく sweep では常に 404。
+- 対応(実施): golden(サイト単体テストが正)は触らず、acceptance-sweep.sh で `thinkx:/filedrop` を
+  受け入れ対象外にし skip 行を出す(黙って落とさない)。実測: thinkx 58/58・ACCEPTANCE 全 green。
+- 波及ルールが増えたら acceptance-sweep.sh の case に足す。
