@@ -96,7 +96,7 @@ def test_verified_active_password_signin_starts_session_and_returns_projection(
     monkeypatch.setattr(
         accounts.Session,
         'start',
-        lambda user_id: started_users.append(user_id),
+        lambda user_id, **_kwargs: started_users.append(user_id),
     )
     verified_at = datetime.now(pytz.utc)
     user = User(
@@ -137,7 +137,7 @@ def test_google_signin_resolves_stable_subject_before_changed_email(
     monkeypatch.setattr(
         accounts.Session,
         'start',
-        lambda user_id: started_users.append(user_id),
+        lambda user_id, **_kwargs: started_users.append(user_id),
     )
     monkeypatch.setattr(
         accounts,

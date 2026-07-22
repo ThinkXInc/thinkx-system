@@ -8,7 +8,10 @@
 # 成功すると auth の中央セッションを開始する。サイト側のローカルセッションは、
 # その後 /v1/token/exchange の結果を受けた各サイトが自分で開始する。
 
+from datetime import datetime
+
 from flask import Blueprint, request
+import pytz
 
 from libcommon.web.session import Session
 from libcommon.web.flask_helpers import (
@@ -35,6 +38,7 @@ from models.data.user import (
 )
 from models.data.connected_service import ConnectedService
 from models.data.service_entitlement import ServiceEntitlement
+from oidc.signin import clear_signin_csrf, valid_signin_csrf
 from protocol import build_userinfo, with_protocol_version
 
 # Logger
@@ -67,9 +71,17 @@ def _build_userinfo(user):
 
 def _signin_success(user, lang):
     """中央セッションを開始して UserInfo を返す (signin/signup 共通の終端)。"""
-    Session.start(str(user.id))
+    browser_context_id = Session.browser_context_id()
+    user.last_auth_time = datetime.now(pytz.utc)
+    user.save()
+    Session.start(str(user.id), browser_context_id=browser_context_id)
+    data = _build_userinfo(user)
+    request_handle = request.json.get('request_handle') if request.is_json else None
+    if request_handle:
+        clear_signin_csrf()
+        data['next'] = f'/oauth/authorize?request_handle={request_handle}'
     return SuccessFormat(
-        data=_build_userinfo(user),
+        data=data,
         code=SuccessCode.OK,
         message=locale.get('signin_success', lang),
     ).http_response()
@@ -133,6 +145,10 @@ def users_signin(lang, lang_name):
     validation_error = validate_request(lang, locale)
     if validation_error:
         return validation_error.http_response()
+
+    if request.json.get('request_handle') and not valid_signin_csrf(request.json):
+        error = ForbiddenAPIErrorFormat(lang=lang, field_name='csrf_token')
+        return with_protocol_version(error).http_response()
 
     email = request.json.get('email')
     password = request.json.get('password')

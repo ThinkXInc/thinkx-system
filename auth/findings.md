@@ -159,3 +159,23 @@
   userinfo/jwks/logout、code response、public subject、RS256、client_secret_basic、PKCE S256を公開する。
 - `tests/test_oidc_discovery.py` / metadata、retired鍵除外、必須claimとactive kid、公開JWKによる実検証を
   4テストで固定した。A-2後のauth pytestは53件collect、45 passed / 8 skipped / 1既存warning。
+
+## Auth A-3 OIDC authorize / signin resume / token happy path
+
+- `web-server/oidc/stores.py` / authorization request、authorization code、opaque access tokenを
+  auth所有Redisの専用prefixへ保存するStoreを追加した。raw code/token/handleはkeyにせずSHA-256 digestを使う。
+  codeはclient_id・redirect_uri・PKCE S256を検証してから、WATCH/MULTIでcode削除とaccess token作成を行う。
+- `GET /oauth/authorize` / 重複・欠落、client status、redirect完全一致、response_type、scope、
+  state/nonce、PKCE S256を検証する。未登録redirectへはredirectせず、登録済みredirectへの標準errorには
+  stateとissを付ける。未ログイン要求はbrowser_context digestにbindした専用Storeへ退避する。
+- `GET /signin` と `POST /v1/users/signin` / request_handleを使うOIDC signin再開を追加した。
+  認証前SessionのCSRF token、Origin、Fetch Metadataを検証し、Session.start時はbrowser_context_idを引き継ぐ。
+- `POST /oauth/token` / application/x-www-form-urlencoded、HTTP Basic、authorization_code grant、
+  redirect、43–128文字code_verifier、PKCE、User status、auth_generationを検証する。成功時だけcodeを消費し、
+  RS256 ID Tokenとopaque access tokenをno-store応答で返す。
+- コーディング規約照合 / 長いhandlerを検証・client認証・Store・CSRF・署名の小関数/モジュールへ分割し、
+  `digest`/`decode`等の曖昧名を`sha256_hex`/`decode_json_record`等へ改名した。標準endpointだけは
+  auth/CLAUDE.mdの例外どおりlibcommon response wrapperと言語二重routeを適用していない。
+- `tests/test_oidc_authorization.py` / ログイン済みhappy path、signin再開、code一回消費、wrong verifier後の
+  再試行、CSRF/Origin、重複param、未登録redirect、登録済みredirectへのerrorを6テストで固定した。
+  A-3後のauth pytestは59件collect、51 passed / 8 skipped / 1既存warning。
