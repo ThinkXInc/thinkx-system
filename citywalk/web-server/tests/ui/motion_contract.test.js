@@ -43,4 +43,9 @@ test('legacy motion contract remains tied to original implementation', () => {
 
   const createGuide = source('src/less/business/createguide.less');
   assert.match(createGuide, /\.fadeInToBottom\(0\.4s, 0s, 1\);/);
+
+  const translationHelper = source('src/ECMA/business/helpers/translate.js');
+  assert.doesNotMatch(translationHelper, /api-free\.deepl\.com|auth_key|fetch\s*\(/);
+  assert.match(translationHelper, /Legacy external translation integration was removed/);
+  assert.match(translationHelper, /onfailed\(error\)/);
 });

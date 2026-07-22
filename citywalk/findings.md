@@ -93,3 +93,5 @@ Security exception(D-22)はここに書かず即停止・人間へ報告。
 - `web-server/tests/golden/ui_legacy/motion/alignment.tsv:1` / local 3 flowをground truth S02–S14へ対応付け、S19–S21はtranslation service未再現として別途blockedを保持 / C-0c
 - `web-server/tests/ui/capture_legacy_motion.js:1` / 各local flowの操作中だけCDP PNG screencastを収録し、使用フレーム名とbrowser timestampをtraceへ固定 / C-0c
 - `web-server/tests/build_motion_review.sh:1` / local flowを対応する代表ground truth S02/S04/S10と個別に並列化し、無関係な135秒全体比較を回避 / C-0c
+- `legacy/www/server/application/views/src/ECMA/business/helpers/translate.js:1` / オーナー裁定により廃止済みbrowser-side DeepL endpoint・認証値・外部fetchを除去し、外部送信しないfail-closed互換面へ置換 / C-0c
+- `web-server/tests/ui/motion_contract.test.js:1` / legacy translation helperへのDeepL endpoint・認証parameter・fetch再混入を拒否 / C-0c
