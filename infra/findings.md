@@ -1106,3 +1106,15 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
 - 根治方針(TODO): acceptance-sweep / DNS確認の対象ドメインを **loadbalancer の server_name から
   自動生成**する(bare apex + www を抽出、staging.*/prod.*/internal を除外)。決め打ちリストを廃す。
 - 切替そのものはオーナーが全 A を差し替え済み。要・全ドメイン実地確認(dig + https)。
+
+## 2026-07-22 DNS本番切替 完了(apex 5 + nntm)/ quantz は据え置き / www 見送り
+
+- 切替完了(全て 52.197.179.70・https 200): thinkxinc.com / truetechjapan.com / nntmapp.com /
+  transformism.art / kazukiotsuka.com / nntm.thinkxinc.com。オンプレ(123.226.234.127)から AWS LB へ。
+- **quantz.thinkxinc.com = AWS で 500。ただし切替前もオンプレで 500(回帰ではない)。**
+  原因: AWS 本番は uwsgi 3つ(thinkx/kazukiotsukacom/transformism)のみで quantz app 未搭載なのに
+  LB が quantz.thinkxinc.com を quantz upstream へ流している。判断(別トラック): quantz を載せる /
+  server_name を外して畳む / 放置(元から 500 でユーザー影響不変)。
+- **www.*(thinkxinc/truetechjapan/nntmapp)= A レコード無し。据え置き(オーナー判断 2026-07-22)。**
+  apex 専用で索引がきれい。必要時に A(52.197.179.70)追加 + www→apex 301 確認で対応。
+- 戻し口: Route53 で各 A を 123.226.234.127 に戻す(オンプレ温存・DNS切替手順 §5)。
