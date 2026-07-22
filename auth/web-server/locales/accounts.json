@@ -19,6 +19,10 @@
         "en": "Password reset completed.",
         "ja": "パスワードを再設定しました。"
     },
+    "entitlement_updated": {
+        "en": "Service entitlement updated.",
+        "ja": "サービス権限を更新しました。"
+    },
     "user_already_exists": {
         "en": "An account already exists for {0}.",
         "ja": "{0} のアカウントは既に存在します。"

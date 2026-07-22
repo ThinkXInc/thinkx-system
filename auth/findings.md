@@ -222,3 +222,17 @@
 - `tests/test_revocation.py` / generation・中央Session・outbox、HMAC、配送成功/timeout/3xx、stale claim、
   auth-only/global/cross-origin logoutを7テストで固定した。A-6後のauth pytestは78件collect、
   70 passed / 8 skipped / 1既存warning。
+
+## Auth A-7 payment billing projection push
+
+- `POST /v1[/<lang>]/internal/service-entitlements` / 通常account API規約の二重言語route、
+  language_wrapper、JSON/required field decorators、libcommon response wrapperで実装した。
+- payment専用の32byte以上HMAC secretでcanonical method/path/bodyをSHA-256署名し、未署名・改ざんを401拒否する。
+  production系は環境変数`PAYMENT_PROJECTION_WEBHOOK_SECRET`が無ければ起動時にfail loudlyする。
+- 署名後もsubject Userの存在、active AuthService、timezone-aware source timestamp、billing status schemaを検証する。
+  auth自身から状態遷移を作る経路はなく、保存は`ServiceEntitlement.apply_projection()`だけを通す。
+- 同一payment_event_idは同内容なら冪等、内容衝突なら400、古いsource timestampは200 applied=falseで破棄し、
+  新しい投影を上書きしない。entitlement不在時のアクセス可否はこのendpointでは判断しない。
+- `tests/test_entitlements_endpoint.py` / 正常適用・再送・署名なし/改ざん・古いevent・event ID衝突・
+  naive timestamp・unknown subject/client・invalid statusを5テストで固定した。A-7後のauth pytestは
+  83件collect、75 passed / 8 skipped / 1既存warning。

@@ -18,6 +18,12 @@ class Config:
     AUTH_SMTP_USERNAME = os.environ.get('AUTH_SMTP_USERNAME')
     AUTH_SMTP_PASSWORD = os.environ.get('AUTH_SMTP_PASSWORD')
     AUTH_EMAIL_SENDER = os.environ.get('AUTH_EMAIL_SENDER', 'account@thinkx.jp')
+    PAYMENT_PROJECTION_WEBHOOK_SECRET = os.environ.get(
+        'PAYMENT_PROJECTION_WEBHOOK_SECRET'
+    ) or (
+        'development-payment-projection-secret'
+        if ENV in ('development', 'test') else None
+    )
 
     # --- 言語 (libcommon/web/flask_helpers.py の要求キー) ---
     DEFAULT_LANG = 'en'

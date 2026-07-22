@@ -27,6 +27,7 @@ from libcommon.web.google_oauth_helper import configure_google_oauth
 from sso import blueprint_sso
 from accounts import blueprint_accounts
 from oidc.endpoints import blueprint_oidc
+from entitlements import blueprint_entitlements
 
 # Logger
 from libcommon.logger import Logger
@@ -78,6 +79,7 @@ app.session_interface = RedisSessionInterface(
 app.register_blueprint(blueprint_sso)
 app.register_blueprint(blueprint_accounts)
 app.register_blueprint(blueprint_oidc)
+app.register_blueprint(blueprint_entitlements)
 
 logger.info(green('auth service initialized.'))
 

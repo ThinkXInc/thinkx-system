@@ -13,6 +13,7 @@ def test_core_blueprints_are_registered():
     assert 'sso' in app.blueprints
     assert 'accounts' in app.blueprints
     assert 'oidc' in app.blueprints
+    assert 'entitlements' in app.blueprints
 
 
 def test_google_oauth_client_id_is_injected_at_startup():
