@@ -8,8 +8,6 @@ import json
 import os
 import secrets
 
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import rsa
 import pytz
 from mongoengine import NotUniqueError
 from redis import StrictRedis
@@ -27,26 +25,13 @@ from models.data.user import (
     VerifiedEmail,
     password_hasher,
 )
+from oidc.keys import generate_signing_key_pair
 
 
 SEED_ENVIRONMENTS = frozenset({'development', 'test', 'staging'})
 AUTH_SESSION_BODY_PREFIX = 'auth_session:'
 LEGACY_CODE_PREFIX = 'sso:auth_code:'
 LEGACY_TOKEN_PREFIX = 'sso:access_token:'
-
-
-def generate_signing_key():
-    private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
-    private_pem = private_key.private_bytes(
-        encoding=serialization.Encoding.PEM,
-        format=serialization.PrivateFormat.PKCS8,
-        encryption_algorithm=serialization.NoEncryption(),
-    ).decode('ascii')
-    public_pem = private_key.public_key().public_bytes(
-        encoding=serialization.Encoding.PEM,
-        format=serialization.PublicFormat.SubjectPublicKeyInfo,
-    ).decode('ascii')
-    return private_pem, public_pem
 
 
 def _decode(value):
@@ -165,7 +150,7 @@ def seed_auth(*, email, password, client_id, client_secret, redirect_uri):
     try:
         signing_key = SigningKey.get_active()
     except ActiveSigningKeyNotFoundError:
-        private_key, public_key = generate_signing_key()
+        private_key, public_key = generate_signing_key_pair()
         signing_key = SigningKey.ensure_active(
             kid=secrets.token_urlsafe(16),
             public_key=public_key,

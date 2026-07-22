@@ -27,11 +27,19 @@ class ActiveSigningKeyInvariantError(RuntimeError):
 class SigningKey(MongoModel):
     meta = {
         'collection': 'signing_keys',
-        'indexes': [{
-            'fields': ['status'],
-            'unique': True,
-            'partialFilterExpression': {'status': 'active'},
-        }],
+        'indexes': [
+            {
+                'fields': ['status'],
+                'unique': True,
+                'partialFilterExpression': {'status': 'active'},
+            },
+            {
+                'fields': ['status'],
+                'name': 'signing_key_next_status_unique',
+                'unique': True,
+                'partialFilterExpression': {'status': 'next'},
+            },
+        ],
     }
 
     kid = StringField(required=True, unique=True)
@@ -42,6 +50,7 @@ class SigningKey(MongoModel):
         choices=('active', 'next', 'retiring', 'retired'),
     )
     created_at = DateTimeField(default=lambda: datetime.now(pytz.utc))
+    status_changed_at = DateTimeField()
 
     @classmethod
     def get_active(cls):

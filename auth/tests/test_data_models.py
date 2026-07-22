@@ -336,7 +336,7 @@ def test_concurrent_duplicate_entitlement_event_is_applied_once():
     assert ServiceEntitlement.objects.count() == 1
 
 
-def test_only_one_signing_key_can_be_active():
+def test_only_one_signing_key_can_be_active_or_next():
     with pytest.raises(ActiveSigningKeyNotFoundError):
         SigningKey.get_active()
 
@@ -361,12 +361,13 @@ def test_only_one_signing_key_can_be_active():
         private_key='private-next-one',
         status='next',
     ).save()
-    SigningKey(
-        kid='next-two',
-        public_key='public-next-two',
-        private_key='private-next-two',
-        status='next',
-    ).save()
+    with pytest.raises(NotUniqueError):
+        SigningKey(
+            kid='next-two',
+            public_key='public-next-two',
+            private_key='private-next-two',
+            status='next',
+        ).save()
 
 
 def test_verification_challenge_rejects_invalid_shape():

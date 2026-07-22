@@ -236,3 +236,18 @@
 - `tests/test_entitlements_endpoint.py` / 正常適用・再送・署名なし/改ざん・古いevent・event ID衝突・
   naive timestamp・unknown subject/client・invalid statusを5テストで固定した。A-7後のauth pytestは
   83件collect、75 passed / 8 skipped / 1既存warning。
+
+## Auth A-8 signing key rotation
+
+- `web-server/rotate_keys.py` / `prepare`、`activate`、`retire` の3 phaseを持つ決定論的コマンドを追加した。
+  prepareでnext鍵をJWKSへ先行公開し、設定済みoverlap後にactiveを切替、さらにoverlap後に旧鍵をretiredへ
+  移してJWKSから除外する。各phaseは再実行可能で、待機不足は`RotationNotReadyError`として明示的に停止する。
+- RSA鍵生成を`oidc/keys.py`へ分離し、seedとrotationで同じ実装を共有した。署名は常にactive鍵だけ、JWKSは
+  active/next/retiringを公開する既存責務を維持している。
+- SigningKeyへ`status_changed_at`を追加した。既存documentにはfieldが無いためdefaultで読込時刻を補わず、
+  `created_at`へfallbackする。これにより既存鍵の公開済み時間を誤ってリセットしない。
+- activeに加えてnextもpartial unique indexで1件に制約し、重複スケジューラ実行時の`NotUniqueError`を既存nextの
+  取得へ回収する。プロセス内の先行確認だけに依存せず、prepareを並行実行してもnext鍵を増殖させない。
+- `tests/test_key_rotation.py` / prepare冪等性と先行公開、overlap前の切替拒否、active署名鍵切替、2回目overlap前の
+  retire拒否とJWKS除外、切替途中からの再開、旧document互換を5テストで固定した。A-8後のauth pytestは
+  88件collect、80 passed / 8 skipped / 1既存warning。compileallとpip checkも成功した。
