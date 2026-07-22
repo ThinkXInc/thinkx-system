@@ -14,6 +14,7 @@ const citywalkRoot = path.resolve(__dirname, '../../..');
 const serverRoot = path.join(citywalkRoot, 'web-server');
 const legacyScripts = path.join(citywalkRoot, 'legacy/www/server/application/scripts');
 const goldenRoot = path.join(serverRoot, 'tests/golden/ui_legacy');
+const staticRoot = path.join(goldenRoot, 'static');
 const chromePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const origin = 'http://127.0.0.1:4173';
 const pages = [
@@ -137,6 +138,7 @@ async function createMapTileMask(page) {
 
 test('legacy UI perceptual oracle', async (context) => {
   fs.mkdirSync(goldenRoot, {recursive: true});
+  fs.mkdirSync(staticRoot, {recursive: true});
   const server = spawn(
     path.join(serverRoot, 'venv-legacy/bin/python'),
     [path.join(serverRoot, 'tests/legacy_ui_server.py')],
@@ -208,7 +210,7 @@ test('legacy UI perceptual oracle', async (context) => {
         }
       }
       await waitForAnimations(page);
-      const screenshotPath = path.join(goldenRoot, `${pageName}_${viewportName}.png`);
+      const screenshotPath = path.join(staticRoot, `${pageName}_${viewportName}.png`);
       if (process.env.UPDATE_GOLDENS === '1') {
         await page.screenshot({path: screenshotPath, fullPage: true, mask: masks});
       } else {

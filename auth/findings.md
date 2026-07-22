@@ -279,3 +279,27 @@
   `REDIS_SESSION_DB_NUMBER`へ変更した。各recordは既存の専用prefixで分離され、Redis DB番号を論理分離境界に
   しないauth-specの設計へ一致した。旧v1 blueprint用DB設定は互換経路が登録中のため変更していない。
 - 補正後もauth pytestは91件collect、90 passed / 1 opt-in skipped / 1既存warning。compileallとpip checkも成功。
+
+## Auth L/A Session security hotfix v2.2.1
+
+- v2.2.0 は `RedisSessionInterface(prefix='auth_session:')` が認証済み Session 本体を
+  `auth_session:{sid}` へ保存する一方、`Session.revoke_all()` が固定 `session:{sid}` を削除していた。
+  実 Cookie を持つ2 client で global logout 後も別 client が認可を継続することを Red として固定した。
+- canonical libcommon v2.2.1 は `Session.configure(..., prefix=...)` と Interface の prefix を一致させ、
+  不一致時は起動を拒否する。Redis mutation 失敗は `start/clear_current/revoke_all` から再送出し、
+  Cookie の name/path/domain/Secure/HttpOnly/SameSite を Flask config から Set-Cookie と削除 Cookie へ反映する。
+- auth は `Config.REDIS_SESSION_KEY_PREFIX = 'auth_session:'` を唯一の設定源とし、main.py の両 Session API と
+  seed reset が同じ値を使う。静的規約テストでも main.py の2箇所への注入を固定した。
+- 正規 `scripts/bake.sh` の一時 bake と `auth/web-server/libcommon` は byte identical。VERSION 保存値と
+  VERSION 除外後の実 tree hash はともに
+  `c49c15a98ef29865f3aaa6eb7663831228df68c78997c73b528d0fda2ef69b89`。
+- `tests/test_session_security.py` は実 signin の Set-Cookie 属性と、2 client の認証済み状態 → global logout →
+  第2 client が signin へ戻る HTTP round trip を固定した。auth 全ゲートは92 passed / 1 opt-in skipped /
+  1既存warning、compileall成功、pip checkはbroken requirementsなし。
+
+## Security follow-up: revoke と signin の同時実行
+
+- Security exception 該当。現行 `Session.start()` と `revoke_all()` は複数 Redis command で構成されるため、
+  revoke が sid 集合を読んだ後に signin が追加される競合は逐次2 client hotfixとは別に残る。
+  解消には Session registry の原子化だけでなく、password reset/global logout と signin の
+  `auth_generation` 協調を含む L/A 境界の設計が必要。C 計画には持ち込まず、別の security 判断対象とする。

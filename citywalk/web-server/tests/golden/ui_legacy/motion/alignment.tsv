@@ -1,0 +1,7 @@
+local_flow_id	ground_truth_segments	comparison_surface	acceptance	status
+content-selection	S02,S03,S05,S06,S09	left UI x=0..599; map tiles excluded	event order; four-cell 50ms stagger; -20px cell trajectory; edit-state arrival	pending_local_capture
+edit-panel-close	S04,S07,S13	left UI x=0..599; map tiles excluded	panel close before content-list reconstruction; 100ms opacity flow; navigation state order	pending_local_capture
+map-pan-zoom	S10,S14	map API trace plus non-tile overlays	center changes; zoom delta +1; pan then zoom order; tile pixels ignored	pending_local_capture
+translation-panel-populate	S19	foreground x=0..659; map tiles x=660..1489 excluded	expansion; eleven-result population; production-demo language order	pending_local_capture
+translation-panel-update	S20	foreground x=0..659; map tiles x=660..1489 excluded	body extension; eleven-result replacement; language order held	pending_local_capture
+target-user-dropdown	S21	foreground x=0..659; map tiles x=660..1489 excluded	four-item open; high-literacy selection; close; title reflection	pending_local_capture
