@@ -1086,3 +1086,13 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
 - **規範への影響(自分では直せない)**: `docs/coding_guides/bash.md:118-119` が使い方メッセージの
   例として旧 `merge_develop_into.sh` を引いている。coding_guides は規範=人間のみ改変可のため
   未変更。人間が例を `pr_develop_and_merge_to_monorepo.sh` 等へ差し替えるか判断されたい。
+
+## 2026-07-22 DNS切替 step1: acceptance の /filedrop が本番で偽 NG
+
+- `acceptance-sweep.sh 52.197.179.70`(本番 LB 直)で `NG expect=200 got=404 /filedrop`(thinkx 1/59)。
+- 原因: filedrop は `thinkx/web-server/main.py:787` で **hostname が `-stg` のときだけ有効**な
+  staging 専用機能。本番(supercom-web1・-stg なし)では 404 が正。golden が staging 専用ルートを
+  200 期待に含んでいる。**本番の障害ではない。**
+- 他は全 green(check_request_path 全ホップ・3ドメイン end-to-end https 200・kazuki 4/4・transformism 2/2)。
+- 対応方針(TODO): 本番向け acceptance golden から /filedrop を除外するか、環境で期待値を分ける
+  (staging=200 / prod=404)。DNS 切替のブロッカーにはしない。
