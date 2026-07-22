@@ -103,3 +103,4 @@ Security exception(D-22)はここに書かず即停止・人間へ報告。
 - `web-server/tests/golden/ui_legacy/ground_truth/{animation_segments.tsv,REVIEW.md}:S20-S21` / 中間を含む実フレーム再確認によりS20を本文延長+翻訳置換、S21を対象ユーザーdropdown選択へ訂正。旧heuristicのscroll/translation close分類を撤回 / C-0c
 - `web-server/tests/golden/ui_legacy/static/:1` / C-0c層1の試験対象6画面×mobile/desktop計12枚を計画所定の`static/`へ正規化 / C-0c
 - `web-server/tests/CHECKSUMS:1` / C-0c ground truth動画・台帳・motion契約・層1静止画12枚のsha256を記録。未生成のlocal motion/並列reviewは未記録 / C-0c
+- `web-server/tests/golden/ui_legacy/business_signin_mobile.png:1` / 確定legacyに存在しないsignin templateを旧fixtureで描いた誤goldenを削除。層1対象12枚は`static/`のみ / C-0c
