@@ -42,6 +42,7 @@ class Config:
     REDIS_SESSION_PORT = 6379
     REDIS_SESSION_DB_NUMBER = 3                   # 各サイトのセッション DB と衝突しない番号
     REDIS_SESSION_EXPIRATION_TIME_SEC = 60 * 60 * 24 * 30
+    REDIS_SESSION_KEY_PREFIX = 'auth_session:'
 
     # --- sso ---
     SSO_REDIS_DB_NUMBER = 4                       # auth_code / access_token 置き場

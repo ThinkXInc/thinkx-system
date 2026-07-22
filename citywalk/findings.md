@@ -90,3 +90,4 @@ Security exception(D-22)はここに書かず即停止・人間へ報告。
 - `web-server/tests/golden/ui_legacy/motion/README.md:1` / translation panelの実サービス依存部分は未収録であり、挙動を捏造せず残件として明記 / C-0c
 - `web-server/tests/build_motion_review.sh:1` / ground truthを左、ローカル実ブラウザ収録を右へ745×428ずつ配置した1490×428 H.264並列目視出力を決定的に生成 / C-0c
 - `web-server/tests/ui/validate_motion_trace.js:1` / 収録traceの必須3 flow、時刻単調増加、cell軌跡、edit panel閉鎖、map center変化・zoom +1を契約照合 / C-0c
+- `web-server/tests/golden/ui_legacy/motion/alignment.tsv:1` / local 3 flowをground truth S02–S14へ対応付け、S19–S21はtranslation service未再現として別途blockedを保持 / C-0c

@@ -22,3 +22,7 @@ decision; flow order, timing, trajectories, and non-map UI are reviewed.
 `npm run validate:motion-trace` rejects missing flows, non-monotonic sampling,
 missing content-cell motion, an incomplete edit-panel close, or a map center and
 zoom response that differs from the frozen contract.
+
+`alignment.tsv` maps each local flow to the exact ground-truth S-segments,
+comparison surface, and acceptance criteria. Its status remains pending until
+the generated trace and video have passed automated and owner review.
