@@ -17,11 +17,16 @@ const {startScreencast} = require('./capture_legacy_motion');
 const chromePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 
 test('captures animated Chrome frames as PNG', async (context) => {
-  context.after(() => fs.rmSync(outputRoot, {recursive: true, force: true}));
-  const browser = await chromium.launch({executablePath: chromePath, headless: true});
-  context.after(() => browser.close());
-  const browserContext = await browser.newContext({viewport: {width: 320, height: 240}});
-  context.after(() => browserContext.close());
+  let browser;
+  let browserContext;
+  context.after(async () => {
+    if (browserContext) await browserContext.close();
+    if (browser) await browser.close();
+    fs.rmSync(outputRoot, {recursive: true, force: true});
+  });
+  await assert.rejects(startScreencast({}, '../outside'), /invalid flow ID/);
+  browser = await chromium.launch({executablePath: chromePath, headless: true});
+  browserContext = await browser.newContext({viewport: {width: 320, height: 240}});
   const page = await browserContext.newPage();
   await page.setContent('<div id="target" style="width:40px;height:40px;background:#000"></div>');
   const cdp = await browserContext.newCDPSession(page);
@@ -42,4 +47,8 @@ test('captures animated Chrome frames as PNG', async (context) => {
     frameHashes.add(crypto.createHash('sha256').update(bytes).digest('hex'));
   }
   assert.ok(frameHashes.size > 1, 'screencast contains no visible frame change');
+  const concat = fs.readFileSync(path.join(outputRoot, 'smoke', 'frames.ffconcat'), 'utf8');
+  assert.match(concat, /^ffconcat version 1\.0\n/);
+  assert.equal((concat.match(/^duration /gm) || []).length, frames.length);
+  assert.equal((concat.match(/^file /gm) || []).length, frames.length + 1);
 });
