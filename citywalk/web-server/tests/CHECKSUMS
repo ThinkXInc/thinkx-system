@@ -10,6 +10,8 @@
 6fac53edd16d3ba0cea7a6866b5c7e21d9fef0edc97c85c4e2161af30f5aad8e  citywalk/web-server/tests/inventory/img_legacy.txt
 
 # C-0c ground truth, contracts, and layer-1 goldens (sha256)
+# Owner review: 2026-07-23 layer-1 static 12 PNGs approved, including the
+# legacy non-responsive mobile layouts. Motion review remains unapproved.
 dfc955bb6120e634f8d7e0a4cb9a5278e0ebe5c64e7adcbc21d6b645b3b83c4b  citywalk/web-server/tests/golden/ui_legacy/perceptual_legacy.json
 7a12134de702118cd8633f08911946e988b54effa18809b76ebe0f4a2efb1fa1  citywalk/web-server/tests/golden/ui_legacy/MASKS.md
 564bbc38246e63d11e8c5696a5e9d4f43b6d6933dcc466a07c7f9639269785a6  citywalk/web-server/tests/golden/ui_legacy/motion_contract.json

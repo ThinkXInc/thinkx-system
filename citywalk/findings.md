@@ -107,3 +107,4 @@ Security exception(D-22)はここに書かず即停止・人間へ報告。
 - `web-server/tests/ui/capture_legacy_motion.test.js:1` / 実Chromeの500ms移動をCDP screencastし、複数PNGのsignatureを検証するキー不要smokeを追加 / C-0c
 - `package.json:freeze:legacy-motion` / 実収録→trace契約検証→ground truth並列動画生成をfail-fastの単一pipelineへ固定 / C-0c
 - `web-server/tests/ui/capture_legacy_motion.js:startScreencast` / CDP frame timestampからflow別FFconcat時間表を生成し、ground truth推奨fpsをlocal収録へ誤適用する時間伸縮を排除 / C-0c
+- `web-server/tests/golden/ui_legacy/static/:1` / 2026-07-23 オーナーが層1静止画12枚を承認。モバイル未対応による崩れも旧UIの保存基準として許容。アニメーションは未確認・未承認 / C-0c
