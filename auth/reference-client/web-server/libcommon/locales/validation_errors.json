@@ -1,0 +1,191 @@
+{
+    "validation_error": {
+        "en": "Invalid input format.",
+        "ja": "不正な入力形式です。",
+        "zh": "输入格式无效。",
+        "fr": "Format d'entrée invalide.",
+        "es": "Formato de entrada inválido.",
+        "ar": "تنسيق الإدخال غير صالح.",
+        "ru": "Неверный формат ввода."
+    },
+    "required": {
+        "en": "This field is required.",
+        "ja": "このフィールドは必須です。",
+        "zh": "此字段为必填项。",
+        "fr": "Ce champ est requis.",
+        "es": "Este campo es requerido.",
+        "ar": "هذا الحقل مطلوب.",
+        "ru": "Это поле обязательно к заполнению."
+    },
+    "max_length": {
+        "en": "The input must be no more than $0 characters in length.",
+        "ja": "入力は $0 文字以下でなければなりません。",
+        "zh": "输入必须不超过 $0 个字符。",
+        "fr": "La saisie ne doit pas dépasser $0 caractères.",
+        "es": "La entrada no debe tener más de $0 caracteres.",
+        "ar": "يجب ألا يزيد الإدخال عن $0 حرفًا.",
+        "ru": "Ввод должен быть не более $0 символов."
+    },
+    "invalid_format": {
+        "en": "The input format is invalid.",
+        "ja": "入力値のデータ型が正しくありません。",
+        "zh": "输入格式无效。",
+        "fr": "Le format de saisie est invalide.",
+        "es": "El formato de entrada es inválido.",
+        "ar": "تنسيق الإدخال غير صالح.",
+        "ru": "Формат ввода недействителен."
+    },
+    "email_format": {
+        "en": "Use the standard email format. e.g. name@domain.com.",
+        "ja": "正しいメールアドレス形式で入力してください。 (例) name@domain.com.",
+        "zh": "请使用标准的电子邮件格式。例如：name@domain.com。",
+        "fr": "Utilisez le format d'email standard. Par exemple : nom@domaine.com.",
+        "es": "Use el formato estándar de correo electrónico. Ejemplo: nombre@dominio.com.",
+        "ar": "استخدم تنسيق البريد الإلكتروني القياسي. مثال: name@domain.com.",
+        "ru": "Используйте стандартный формат электронной почты. Например: name@domain.com."
+    },
+    "password_at_least_one_alphabet_format": {
+        "en": "Password must contain at least one alphabetic character.",
+        "ja": "パスワードは少なくとも1つのアルファベットを含む必要があります。",
+        "zh": "密码必须至少包含一个字母字符。",
+        "fr": "Le mot de passe doit contenir au moins un caractère alphabétique.",
+        "es": "La contraseña debe contener al menos un carácter alfabético.",
+        "ar": "يجب أن تحتوي كلمة المرور على حرف أبجدي واحد على الأقل.",
+        "ru": "Пароль должен содержать хотя бы один алфавитный символ."
+    },
+    "password_at_least_one_numeric_format": {
+        "en": "Password must contain at least one numeric character.",
+        "ja": "パスワードには少なくとも1つの数字が含まれている必要があります。",
+        "zh": "密码必须至少包含一个数字字符。",
+        "fr": "Le mot de passe doit contenir au moins un caractère numérique.",
+        "es": "La contraseña debe contener al menos un carácter numérico.",
+        "ar": "يجب أن تحتوي كلمة المرور على رقم واحد على الأقل.",
+        "ru": "Пароль должен содержать хотя бы один цифровой символ."
+    },
+    "invalid_password_format": {
+        "en": "Password must contain at least one lowercase letter, one uppercase letter, one number, and be at least 8 characters long.",
+        "ja": "パスワードは、少なくとも1つの小文字、1つの大文字、1つの数字を含む、長さが8文字以上でなければなりません。",
+        "zh": "密码必须包含至少一个小写字母、一个大写字母、一个数字，并且长度至少为8个字符。",
+        "fr": "Le mot de passe doit contenir au moins une lettre minuscule, une lettre majuscule, un chiffre, et comporter au moins 8 caractères.",
+        "es": "La contraseña debe contener al menos una letra minúscula, una letra mayúscula, un número y tener al menos 8 caracteres de longitud.",
+        "ar": "يجب أن تحتوي كلمة المرور على حرف صغير واحد على الأقل، وحرف كبير واحد، ورقم واحد، وأن تكون بطول 8 أحرف على الأقل.",
+        "ru": "Пароль должен содержать хотя бы одну строчную букву, одну заглавную букву, одну цифру и быть не менее 8 символов в длину."
+    },
+    "password_not_corresponding": {
+        "en": "Passwords do not match.",
+        "ja": "パスワードが一致しません。",
+        "zh": "密码不匹配。",
+        "fr": "Les mots de passe ne correspondent pas.",
+        "es": "Las contraseñas no coinciden.",
+        "ar": "كلمات المرور غير متطابقة.",
+        "ru": "Пароли не совпадают."
+    },
+    "not_corresponding": {
+        "en": "The input values do not match.",
+        "ja": "入力内容が一致しません。",
+        "zh": "输入值不匹配。",
+        "fr": "Les valeurs entrées ne correspondent pas.",
+        "es": "Los valores introducidos no coinciden.",
+        "ar": "القيم المدخلة لا تتطابق.",
+        "ru": "Введенные значения не совпадают."
+    },
+    "positive_integer_format": {
+        "en": "Please enter a number between $0 and $1.",
+        "ja": "$0~$1までの数を入力してください。",
+        "zh": "请输入一个介于$0和$1之间的数字。",
+        "fr": "Veuillez entrer un nombre entre $0 et $1.",
+        "es": "Por favor, introduzca un número entre $0 y $1.",
+        "ar": "الرجاء إدخال رقم بين $0 و$1.",
+        "ru": "Пожалуйста, введите число между $0 и $1."
+    },
+    "positive_float_format": {
+        "en": "Please enter a number between $0 and $1.",
+        "ja": "$0~$1までの数を入力してください。",
+        "zh": "请输入一个介于$0和$1之间的数字。",
+        "fr": "Veuillez entrer un nombre entre $0 et $1.",
+        "es": "Por favor, introduzca un número entre $0 y $1.",
+        "ar": "الرجاء إدخال رقم بين $0 و$1.",
+        "ru": "Пожалуйста, введите число между $0 и $1."
+    },
+    "tel_format": {
+        "en": "Telephone number must be in the correct format. For example: 080-1234-5678 or (800)123-4567.",
+        "ja": "正しい電話番号の形式で入力してください。 (例) 080-1234-5678",
+        "zh": "电话号码必须使用正确的格式。例如：080-1234-5678或(800)123-4567。",
+        "fr": "Le numéro de téléphone doit être dans le format correct. Par exemple : 080-1234-5678 ou (800)123-4567.",
+        "es": "El número de teléfono debe tener el formato correcto. Por ejemplo: 080-1234-5678 o (800)123-4567.",
+        "ar": "يجب أن يكون رقم الهاتف بالتنسيق الصحيح. على سبيل المثال: 080-1234-5678 أو (800)123-4567.",
+        "ru": "Номер телефона должен быть в правильном формате. Например: 080-1234-5678 или (800)123-4567."
+    },
+    "postal_code_format": {
+        "en": "Postal code must be in the correct format. e.g. A1A 1A1 or 12345.",
+        "ja": "正しい郵便番号の形式で入力してください。 (例) 123-4567 or 12345",
+        "zh": "邮政编码必须使用正确的格式。例如：12345 或 A1A 1A1。",
+        "fr": "Le code postal doit être dans le format correct. Par exemple : A1A 1A1 ou 12345.",
+        "es": "El código postal debe tener el formato correcto. Por ejemplo: A1A 1A1 o 12345.",
+        "ar": "يجب أن يكون الرمز البريدي بالتنسيق الصحيح. مثال: A1A 1A1 أو 12345.",
+        "ru": "Почтовый индекс должен быть в правильном формате. Например: A1A 1A1 или 12345."
+    },
+    "postal_code_nohyphen_format": {
+        "en": "Postal code must be in the correct format without hyphens.",
+        "ja": "郵便番号はハイフンなしの正しい形式である必要があります。",
+        "zh": "邮政编码必须是无连字符的正确格式。",
+        "fr": "Le code postal doit être dans le format correct sans tirets.",
+        "es": "El código postal debe tener el formato correcto sin guiones.",
+        "ar": "يجب أن يكون الرمز البريدي في التنسيق الصحيح دون شرطات.",
+        "ru": "Почтовый индекс должен быть в правильном формате без дефисов."
+    },
+    "yyyy_mm_dd_format": {
+        "en": "Date must be in YYYY-MM-DD format.",
+        "ja": "日付はYYYY-MM-DD形式でなければなりません。",
+        "zh": "日期必须是YYYY-MM-DD格式。",
+        "fr": "La date doit être au format AAAA-MM-JJ.",
+        "es": "La fecha debe estar en el formato AAAA-MM-DD.",
+        "ar": "يجب أن يكون التاريخ بتنسيق YYYY-MM-DD.",
+        "ru": "Дата должна быть в формате ГГГГ-ММ-ДД."
+    },
+    "yyyy_mm_format": {
+        "en": "Date must be in YYYY-MM format.",
+        "ja": "日付はYYYY-MM形式でなければなりません。",
+        "zh": "日期必须是YYYY-MM格式。",
+        "fr": "La date doit être au format AAAA-MM.",
+        "es": "La fecha debe estar en el formato AAAA-MM.",
+        "ar": "يجب أن يكون التاريخ بتنسيق YYYY-MM.",
+        "ru": "Дата должна быть в формате ГГГГ-ММ."
+    },
+    "hh_mm_format": {
+        "en": "Time must be in HH:MM format.",
+        "ja": "時間はHH:MM形式でなければなりません。",
+        "zh": "时间必须是HH:MM格式。",
+        "fr": "L'heure doit être au format HH:MM.",
+        "es": "La hora debe estar en el formato HH:MM.",
+        "ar": "يجب أن يكون الوقت بتنسيق HH:MM.",
+        "ru": "Время должно быть в формате ЧЧ:ММ."
+    },
+    "hh_mm_30min_format": {
+        "en": "Time must be in HH:MM format with 30-minute intervals.",
+        "ja": "時間は30分間隔のHH:MM形式でなければなりません。",
+        "zh": "时间必须是HH:MM格式，且为30分钟间隔。",
+        "fr": "L'heure doit être au format HH:MM avec des intervalles de 30 minutes.",
+        "es": "La hora debe estar en el formato HH:MM con intervalos de 30 minutos.",
+        "ar": "يجب أن يكون الوقت بتنسيق HH:MM مع فترات 30 دقيقة.",
+        "ru": "Время должно быть в формате ЧЧ:ММ с интервалами в 30 минут."
+    },
+    "domain_format": {
+        "en": "Please enter the domain in the correct format. For example, xxx.com or xxx.com/page.",
+        "ja": "ドメインを正しい形式で入力してください。例) xxx.com, xxx.com/page",
+        "zh": "请以正确的格式输入域名。例如：xxx.com 或 xxx.com/page。",
+        "fr": "Veuillez saisir le domaine dans le format correct. Par exemple, xxx.com ou xxx.com/page.",
+        "es": "Por favor, introduzca el dominio en el formato correcto. Por ejemplo, xxx.com o xxx.com/page.",
+        "ar": "يرجى إدخال النطاق بالتنسيق الصحيح. على سبيل المثال، xxx.com أو xxx.com/page.",
+        "ru": "Пожалуйста, введите домен в правильном формате. Например, xxx.com или xxx.com/page."
+    },
+    "regex_not_match": {
+        "en": "The input format is incorrect.",
+        "ja": "入力形式が正しくありません。",
+        "zh": "输入格式不正确。",
+        "fr": "Le format d'entrée est incorrect.",
+        "es": "El formato de entrada es incorrecto.",
+        "ar": "تنسيق الإدخال غير صحيح.",
+        "ru": "Формат ввода неверен."
+    }
+}

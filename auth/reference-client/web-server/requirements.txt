@@ -1,0 +1,13 @@
+# auth/reference-client/web-server/requirements.txt
+#
+# Exact-pinned runtime dependencies for the OIDC reference client.
+
+Flask==3.1.3
+redis==5.2.1
+mongoengine==0.29.3
+pymongo==4.17.0
+pytz==2026.2
+msgpack==1.2.1
+requests==2.34.2
+PyJWT==2.13.0
+cryptography==49.0.0
