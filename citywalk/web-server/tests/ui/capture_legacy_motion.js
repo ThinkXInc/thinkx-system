@@ -75,6 +75,7 @@ async function finishSampling(page, flowId) {
 
 async function startScreencast(cdp, flowId) {
   const frameRoot = path.join(outputRoot, flowId);
+  fs.rmSync(frameRoot, {recursive: true, force: true});
   fs.mkdirSync(frameRoot, {recursive: true});
   const frames = [];
   let frameNumber = 0;
@@ -231,7 +232,11 @@ async function main() {
   }
 }
 
-main().catch((error) => {
-  console.error(error.stack || error);
-  process.exitCode = 1;
-});
+if (require.main === module) {
+  main().catch((error) => {
+    console.error(error.stack || error);
+    process.exitCode = 1;
+  });
+}
+
+module.exports = {startScreencast};
