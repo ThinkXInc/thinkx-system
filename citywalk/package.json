@@ -6,6 +6,7 @@
     "build:legacy-ui:js": "babel legacy/www/server/application/views/src/ECMA --out-dir web-server/tests/.build/js --presets @babel/preset-env",
     "capture:legacy-motion": "npm run build:legacy-ui:js && node web-server/tests/ui/capture_legacy_motion.js",
     "build:motion-review": "sh web-server/tests/build_motion_review.sh",
+    "freeze:legacy-motion": "npm run capture:legacy-motion && npm run validate:motion-trace && npm run build:motion-review",
     "test:legacy-server": "web-server/venv-legacy/bin/python -m unittest discover -s web-server/tests -p 'test_legacy_ui_server.py'",
     "test:motion-contract": "node --test web-server/tests/ui/motion_contract.test.js",
     "test:motion-screencast": "node --test web-server/tests/ui/capture_legacy_motion.test.js",

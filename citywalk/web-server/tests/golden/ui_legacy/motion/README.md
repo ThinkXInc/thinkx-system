@@ -35,3 +35,8 @@ zoom response that differs from the frozen contract.
 `alignment.tsv` maps each local flow to the exact ground-truth S-segments,
 comparison surface, and acceptance criteria. Its status remains pending until
 the generated trace and video have passed automated and owner review.
+
+`npm run freeze:legacy-motion` is the atomic production command. It captures
+the original runtime, rejects an invalid trace, and only then builds the six
+side-by-side review videos. A failed capture or validation prevents later
+outputs from being presented as review-ready.

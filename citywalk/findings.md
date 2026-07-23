@@ -105,3 +105,4 @@ Security exception(D-22)はここに書かず即停止・人間へ報告。
 - `web-server/tests/CHECKSUMS:1` / C-0c ground truth動画・台帳・motion契約・層1静止画12枚のsha256を記録。未生成のlocal motion/並列reviewは未記録 / C-0c
 - `web-server/tests/golden/ui_legacy/business_signin_mobile.png:1` / 確定legacyに存在しないsignin templateを旧fixtureで描いた誤goldenを削除。層1対象12枚は`static/`のみ / C-0c
 - `web-server/tests/ui/capture_legacy_motion.test.js:1` / 実Chromeの500ms移動をCDP screencastし、複数PNGのsignatureを検証するキー不要smokeを追加 / C-0c
+- `package.json:freeze:legacy-motion` / 実収録→trace契約検証→ground truth並列動画生成をfail-fastの単一pipelineへ固定 / C-0c
