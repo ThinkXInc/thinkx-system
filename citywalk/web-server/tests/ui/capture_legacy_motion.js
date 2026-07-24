@@ -74,14 +74,21 @@ async function finishSampling(page, flowId) {
 }
 
 async function startScreencast(cdp, flowId) {
+  assert.match(flowId, /^[a-z0-9]+(?:-[a-z0-9]+)*$/, `${flowId}: invalid flow ID`);
   const frameRoot = path.join(outputRoot, flowId);
+  fs.rmSync(frameRoot, {recursive: true, force: true});
   fs.mkdirSync(frameRoot, {recursive: true});
   const frames = [];
   let frameNumber = 0;
+  let resolveFirstFrame;
+  const firstFrame = new Promise((resolve) => {
+    resolveFirstFrame = resolve;
+  });
   const onFrame = async (event) => {
     const filename = `frame-${String(frameNumber).padStart(5, '0')}.png`;
     fs.writeFileSync(path.join(frameRoot, filename), Buffer.from(event.data, 'base64'));
     frames.push({filename, timestamp: event.metadata.timestamp});
+    if (frames.length === 1) resolveFirstFrame();
     frameNumber += 1;
     await cdp.send('Page.screencastFrameAck', {sessionId: event.sessionId});
   };
@@ -92,10 +99,37 @@ async function startScreencast(cdp, flowId) {
     maxHeight: 856,
     maxWidth: 1490,
   });
+  let firstFrameTimeout;
+  try {
+    await Promise.race([
+      firstFrame,
+      new Promise((resolve, reject) => {
+        firstFrameTimeout = setTimeout(
+          () => reject(new Error(`${flowId}: no initial screencast frame captured`)),
+          5000,
+        );
+      }),
+    ]);
+  } catch (error) {
+    await cdp.send('Page.stopScreencast');
+    cdp.off('Page.screencastFrame', onFrame);
+    throw error;
+  } finally {
+    clearTimeout(firstFrameTimeout);
+  }
   return async () => {
     await cdp.send('Page.stopScreencast');
     cdp.off('Page.screencastFrame', onFrame);
     assert.ok(frames.length > 1, `${flowId}: fewer than two screencast frames captured`);
+    const durations = frames.slice(1).map((frame, index) => frame.timestamp - frames[index].timestamp);
+    assert.ok(durations.every((duration) => duration > 0), `${flowId}: screencast timestamps are not increasing`);
+    const concatLines = ['ffconcat version 1.0'];
+    frames.forEach((frame, index) => {
+      concatLines.push(`file '${frame.filename}'`);
+      concatLines.push(`duration ${index < durations.length ? durations[index] : durations.at(-1)}`);
+    });
+    concatLines.push(`file '${frames.at(-1).filename}'`);
+    fs.writeFileSync(path.join(frameRoot, 'frames.ffconcat'), `${concatLines.join('\n')}\n`);
     return frames;
   };
 }
@@ -231,7 +265,11 @@ async function main() {
   }
 }
 
-main().catch((error) => {
-  console.error(error.stack || error);
-  process.exitCode = 1;
-});
+if (require.main === module) {
+  main().catch((error) => {
+    console.error(error.stack || error);
+    process.exitCode = 1;
+  });
+}
+
+module.exports = {startScreencast};

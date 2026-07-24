@@ -1,0 +1,9 @@
+# auth/reference-client/web-server/requirements-dev.txt
+#
+# Exact-pinned development dependencies for the OIDC reference client.
+
+-r requirements.txt
+
+pytest==8.3.4
+mongomock==4.3.0
+fakeredis==2.26.2
