@@ -303,3 +303,18 @@
   revoke が sid 集合を読んだ後に signin が追加される競合は逐次2 client hotfixとは別に残る。
   解消には Session registry の原子化だけでなく、password reset/global logout と signin の
   `auth_generation` 協調を含む L/A 境界の設計が必要。C 計画には持ち込まず、別の security 判断対象とする。
+
+## Auth C reference-client core checkpoint
+
+- `auth/reference-client/` を auth server と依存を共有しない component として作成し、canonical
+  libcommon v2.2.1 を正規 bake した。`VERSION` の tree hash は
+  `c49c15a98ef29865f3aaa6eb7663831228df68c78997c73b528d0fda2ef69b89` で、
+  `auth/web-server/libcommon` と byte identical。
+- C の最初の完結単位として、digest key + TTL + atomic claim ownership を持つ
+  `ClientTransactionStore`、信頼済み endpoint 以外へ送信しない bounded `AuthClient`、RS256/kid/JWKS と
+  required claims/nonce/azp を検証する `IDTokenVerifier`、ServicePrincipal/LocalUser/RevocationReceipt の
+  durable model 基盤を追加した。focused test は47件、ruff/compileall/model smokeを通過した。
+- route 統合、実 Cookie callback、失効 webhook receiver、HTTP E2E はこの checkpoint には含めず、C の
+  次の単位とする。現行 A の `/oauth/logout` は client origin から中央 cookie を使って到達できず、固定
+  `issued_at` の outbox 再送は receiver の timestamp window と両立しないため、C route 接続時に auth 内の
+  最小互換修正と契約テストが必要。

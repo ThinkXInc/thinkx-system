@@ -9,6 +9,9 @@ Chrome at the production-demo viewport (1490×856). It writes:
 - `<flow-id>/frame-NNNNN.png`: Chrome DevTools screencast frames captured only
   during that operation. `motion_trace.json` records each filename and browser
   timestamp; comparison never relies on unlisted stale files.
+- `<flow-id>/frames.ffconcat`: playback timeline derived from Chrome frame
+  timestamps. Review generation uses this variable-rate timeline and never
+  assigns the ground-truth sampling fps to the local capture.
 
 The automated sequence covers content selection, edit-panel close, map
 pan/zoom, test-only translation-panel population and replacement, and the
@@ -35,3 +38,8 @@ zoom response that differs from the frozen contract.
 `alignment.tsv` maps each local flow to the exact ground-truth S-segments,
 comparison surface, and acceptance criteria. Its status remains pending until
 the generated trace and video have passed automated and owner review.
+
+`npm run freeze:legacy-motion` is the atomic production command. It captures
+the original runtime, rejects an invalid trace, and only then builds the six
+side-by-side review videos. A failed capture or validation prevents later
+outputs from being presented as review-ready.
