@@ -79,11 +79,48 @@
     <priority>0.8</priority>
   </url>
 
-  <!-- 受賞企業ページ(award)は意図的に sitemap から除外している。まだ書き出し段階で
-       ごく一部の企業しか揃っておらず、sitemap で Google に能動的にクロールさせると
-       「これだけしかない」ことが検索結果に露出するため(オーナー判断 2026-07-23)。
-       ページ自体は生きており、各社が自らリンクすれば辿れる・表示される(noindex は
-       付けない)。企業がある程度揃った時点で award エントリを一括で戻す。
-       個別ページの生成手順は docs/受賞企業ページの作り方.md 2-4/2-5 を参照。 -->
+  <!-- ─────────── AWARD: augmented-communications ─────────── -->
+  <url>
+    <loc>https://truetechjapan.com/ja/award/augmented-communications</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://truetechjapan.com/ja/award/augmented-communications"/>
+    <xhtml:link rel="alternate" hreflang="ja"        href="https://truetechjapan.com/ja/award/augmented-communications"/>
+    <xhtml:link rel="alternate" hreflang="en"        href="https://truetechjapan.com/en/award/augmented-communications"/>
+    <lastmod>2026-07-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- ─────────── AWARD: beam-technologies ─────────── -->
+  <url>
+    <loc>https://truetechjapan.com/ja/award/beam-technologies</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://truetechjapan.com/ja/award/beam-technologies"/>
+    <xhtml:link rel="alternate" hreflang="ja"        href="https://truetechjapan.com/ja/award/beam-technologies"/>
+    <xhtml:link rel="alternate" hreflang="en"        href="https://truetechjapan.com/en/award/beam-technologies"/>
+    <lastmod>2026-07-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- ─────────── AWARD: revorn ─────────── -->
+  <url>
+    <loc>https://truetechjapan.com/ja/award/revorn</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://truetechjapan.com/ja/award/revorn"/>
+    <xhtml:link rel="alternate" hreflang="ja"        href="https://truetechjapan.com/ja/award/revorn"/>
+    <xhtml:link rel="alternate" hreflang="en"        href="https://truetechjapan.com/en/award/revorn"/>
+    <lastmod>2026-07-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- ─────────── AWARD: thinkx ─────────── -->
+  <url>
+    <loc>https://truetechjapan.com/ja/award/thinkx</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://truetechjapan.com/ja/award/thinkx"/>
+    <xhtml:link rel="alternate" hreflang="ja"        href="https://truetechjapan.com/ja/award/thinkx"/>
+    <xhtml:link rel="alternate" hreflang="en"        href="https://truetechjapan.com/en/award/thinkx"/>
+    <lastmod>2026-07-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
 
 </urlset>
