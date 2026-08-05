@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+{# サイト共通の base.html / header / footer / main.css には依存しない独立ページ(オーナー指示 2026-08-05)。 #}
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>哲学とAI─システムに全てが回収される時代にどう豊かに生きるか | ThinkX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="2026年9月10日（木）19：30〜22:00、赤坂区民ホールにて開催。第一部 講演「哲学とAI─システムに全てが回収される時代にどう豊かに生きるか」、第二部 懇親会（生ピアノ演奏によるBGMあり）。">
+  <meta name="keywords" content="ThinkX, 哲学, AI, イベント, セミナー, 大塚一輝, Deep Society Club">
+  <meta name="format-detection" content="telephone=no">
+
+  <link rel="shortcut icon" href="/favicon.ico">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="哲学とAI─システムに全てが回収される時代にどう豊かに生きるか | ThinkX">
+  <meta property="og:description" content="2026年9月10日（木）19：30〜22:00、赤坂区民ホールにて開催。第一部 講演「哲学とAI─システムに全てが回収される時代にどう豊かに生きるか」、第二部 懇親会（生ピアノ演奏によるBGMあり）。">
+  <meta property="og:url" content="https://thinkxinc.com/event/deepsocietyclub3.html">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="哲学とAI─システムに全てが回収される時代にどう豊かに生きるか | ThinkX">
+  <meta name="twitter:description" content="2026年9月10日（木）19：30〜22:00、赤坂区民ホールにて開催。第一部 講演「哲学とAI─システムに全てが回収される時代にどう豊かに生きるか」、第二部 懇親会（生ピアノ演奏によるBGMあり）。">
+
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-PDC3NKT');</script>
+  <!-- End Google Tag Manager -->
+
+  <style>
+    :root {
+      --paper: #faf8f4;
+      --ink: #1c1a17;
+      --ink-soft: #55504a;
+      --gold: #8a6d3b;
+      --line: #d8d2c6;
+      --placeholder-bg: #e6e2da;
+      --placeholder-text: #9a938a;
+      --serif: "Hiragino Mincho ProN", "Yu Mincho", "YuMincho", "Noto Serif JP", serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { background-color: var(--paper); }
+
+    body {
+      font-family: var(--serif);
+      color: var(--ink);
+      line-height: 2;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---- ヘッダーバナー(画像差し替えまでのグレー仮置き) ---- */
+    .hero-banner {
+      width: 100%;
+      aspect-ratio: 3 / 1;
+      background-color: var(--placeholder-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-banner-note {
+      color: var(--placeholder-text);
+      font-size: 14px;
+      letter-spacing: .2em;
+    }
+
+    .page {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 28px 110px 28px;
+    }
+
+    /* ---- タイトル ---- */
+    .event-title {
+      margin-top: 90px;
+      text-align: center;
+      font-size: 40px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      line-height: 1.6;
+    }
+    .event-title-sub {
+      display: block;
+      margin-top: 18px;
+      font-size: 21px;
+      font-weight: 500;
+      letter-spacing: .14em;
+      color: var(--ink-soft);
+    }
+    .title-rule {
+      width: 56px;
+      height: 1px;
+      background-color: var(--gold);
+      border: none;
+      margin: 44px auto 0 auto;
+    }
+
+    /* ---- 見どころ ---- */
+    .highlight-list {
+      list-style: none;
+      margin-top: 70px;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+    .highlight {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+    }
+    .highlight-tag {
+      flex-shrink: 0;
+      min-width: 100px;
+      padding: 5px 14px;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-size: 13px;
+      letter-spacing: .18em;
+      text-align: center;
+      white-space: nowrap;
+    }
+    .highlight-text {
+      margin-top: 3px;
+      text-align: left;
+    }
+
+    /* ---- セクション共通 ---- */
+    .event-section { margin-top: 110px; }
+    .section-label {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: .3em;
+      color: var(--gold);
+    }
+    .section-rule {
+      height: 1px;
+      background-color: var(--line);
+      border: none;
+      margin-top: 14px;
+    }
+
+    /* ---- メインプロフィール ---- */
+    .speaker-name {
+      margin-top: 34px;
+      font-size: 30px;
+      font-weight: 600;
+      letter-spacing: .16em;
+    }
+    .name-reading {
+      margin-left: 14px;
+      font-size: 15px;
+      font-weight: 400;
+      letter-spacing: .12em;
+      color: var(--ink-soft);
+    }
+    .profile-lead {
+      margin-top: 26px;
+      font-weight: 600;
+    }
+    .career-list {
+      list-style: none;
+      margin-top: 22px;
+    }
+    .profile-text { margin-top: 22px; }
+
+    /* ---- 共演者 ---- */
+    .performer { margin-top: 34px; }
+    .performer + .performer { margin-top: 44px; }
+    .performer-role {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: .24em;
+      color: var(--ink-soft);
+    }
+    .performer-name {
+      margin-top: 8px;
+      font-size: 23px;
+      font-weight: 600;
+      letter-spacing: .14em;
+    }
+    .performer-bio { margin-top: 14px; }
+    .bio-placeholder {
+      padding: 22px;
+      background-color: var(--placeholder-bg);
+      color: var(--placeholder-text);
+      font-size: 14px;
+      letter-spacing: .06em;
+    }
+
+    /* ---- 開催概要 ---- */
+    .overview-list { margin-top: 34px; }
+    .overview-item {
+      display: flex;
+      align-items: flex-start;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .overview-item:first-child { border-top: 1px solid var(--line); }
+    .overview-item dt {
+      width: 150px;
+      flex-shrink: 0;
+      font-weight: 600;
+      letter-spacing: .1em;
+    }
+    .overview-item dd p { margin: 0; }
+
+    /* ---- 参加フォーム ---- */
+    .entry {
+      margin-top: 100px;
+      display: flex;
+      justify-content: center;
+    }
+    .entry-button {
+      display: inline-block;
+      padding: 20px 90px;
+      background-color: var(--ink);
+      color: var(--paper);
+      font-family: var(--serif);
+      font-size: 18px;
+      letter-spacing: .3em;
+      text-indent: .3em; /* letter-spacing の右余りを打ち消して視覚中央に */
+      text-decoration: none;
+      transition: background-color .25s;
+    }
+    .entry-button:hover { background-color: var(--gold); }
+
+    /* ---- フッター ---- */
+    .page-foot {
+      margin-top: 110px;
+      text-align: center;
+      font-size: 12px;
+      letter-spacing: .2em;
+      color: var(--ink-soft);
+    }
+
+    @media (max-width: 600px) {
+      .hero-banner { aspect-ratio: 2 / 1; }
+      .page { padding: 0 22px 80px 22px; }
+      .event-title { margin-top: 56px; font-size: 27px; }
+      .event-title-sub { font-size: 16px; }
+      .highlight-list { margin-top: 50px; gap: 24px; }
+      .highlight { flex-direction: column; gap: 10px; }
+      .event-section { margin-top: 80px; }
+      .speaker-name { font-size: 24px; }
+      .name-reading { display: block; margin: 8px 0 0 0; }
+      .overview-item { flex-direction: column; }
+      .overview-item dt { width: auto; }
+      .overview-item dd { margin-top: 2px; }
+      .entry { margin-top: 70px; }
+      .entry-button { width: 100%; padding: 18px 0; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PDC3NKT"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+  <!-- ↓↓↓↓ ヘッダーバナー(画像は後日差し替え) ↓↓↓↓ -->
+  <div class="hero-banner">
+    <span class="hero-banner-note">ヘッダーイメージ(準備中)</span>
+  </div>
+  <!-- ↑↑↑↑ END ヘッダーバナー ↑↑↑↑ -->
+
+  <div class="page">
+
+    <h1 class="event-title">哲学とAI<span class="event-title-sub">─システムに全てが回収される時代にどう豊かに生きるか</span></h1>
+    <hr class="title-rule">
+
+    <!-- ↓↓↓↓ 見どころ ↓↓↓↓ -->
+    <ul class="highlight-list">
+      <li class="highlight">
+        <span class="highlight-tag">ビジネス</span>
+        <p class="highlight-text">ゲームのルールは完全に変わった。思考を切り替えられていますか？</p>
+      </li>
+      <li class="highlight">
+        <span class="highlight-tag">思想</span>
+        <p class="highlight-text">本当の哲学はヒューマニティーと別にある。理論哲学で異例の一万フォロワー(読者)に到達、彷徨える時代への指針とは</p>
+      </li>
+      <li class="highlight">
+        <span class="highlight-tag">プロのAI</span>
+        <p class="highlight-text">ClaudeCodeは第一線でどう使われているか。プロが教える生産性12倍の世界。</p>
+      </li>
+    </ul>
+    <!-- ↑↑↑↑ END 見どころ ↑↑↑↑ -->
+
+    <!-- ↓↓↓↓ メインプロフィール ↓↓↓↓ -->
+    <section class="event-section profile">
+      <span class="section-label">SPEAKER</span>
+      <hr class="section-rule">
+
+      <h2 class="speaker-name">大塚一輝<span class="name-reading">(おおつか・かずき)</span></h2>
+
+      <p class="profile-lead">「本当の哲学を教える」という触れ込みで執筆するSNSアカウントが学術水準の理論哲学で異例の1万フォロワーに到達。</p>
+
+      <ul class="career-list">
+        <li>2021年東京大学大学院情報学環客員研究員。</li>
+        <li>2022年未来工学研究所(TTCSP科学技術系シンクタンクグローバルインデックス世界3位)客員研究員。</li>
+        <li>2026年NTTドコモビジネス新規事業アドバイザー。</li>
+      </ul>
+
+      <p class="profile-text">大学卒業とともに独立、現在主流のクロール型ニュースリーダーを日本で初めて普及、半年で5万ダウンロード、スーツケース一つで世界を放浪、サンフランシスコでハッカーハウス運営、世界初の本格的な業務用不動産投資分析システムGate.を企画開発(2025年にM&amp;A)、独自の言語意味解析機械学習アルゴリズムや音声アルゴリズムで複数の特許を保持。</p>
+
+      <p class="profile-text">代数学、計算理論、量子物理学、生命科学、哲学、美学、を横断する知識進化に関する学問を16歳から構築し続け、EUと世界の奨学Erusmus Mundusプログラム正規派遣生に選出されパリ外のフランス最上位大学Grenoble Alpes大学に留学、パリ音響音楽研究所IRCAM Forum会員として荻生徂徠以降も謎とされる東洋和声合竹の数理構造を研究、例年合衆国ハワイ州マウイ島で録音した生物歌研究から導かれた「言語の普遍的数理構造」の研究成果に基づく普遍的言語学習法を小学生から大人まで可能にした『ファーブラー・メソッド』を2027年1月にクロスメディア・ランゲージ社より出版予定。</p>
+    </section>
+    <!-- ↑↑↑↑ END メインプロフィール ↑↑↑↑ -->
+
+    <!-- ↓↓↓↓ 共演者 ↓↓↓↓ -->
+    <section class="event-section performers">
+      <span class="section-label">GUESTS</span>
+      <hr class="section-rule">
+
+      <div class="performer">
+        <p class="performer-role">講師</p>
+        <p class="performer-name">永井　照明</p>
+        <p class="performer-bio bio-placeholder">講師略歴(200字程度・後日掲載)</p>
+      </div>
+
+      <div class="performer">
+        <p class="performer-role">ピアノ演奏</p>
+        <p class="performer-name">Jonathan Katz</p>
+      </div>
+
+      {# パネラー段落は設けるか未定(原稿の指示)。設ける場合は以下を有効化する。
+      <div class="performer">
+        <p class="performer-role">パネラー</p>
+        <p class="performer-name"></p>
+      </div>
+      #}
+    </section>
+    <!-- ↑↑↑↑ END 共演者 ↑↑↑↑ -->
+
+    <!-- ↓↓↓↓ 開催概要 ↓↓↓↓ -->
+    <section class="event-section overview">
+      <span class="section-label">INFORMATION</span>
+      <hr class="section-rule">
+
+      <dl class="overview-list">
+        <div class="overview-item">
+          <dt>日時</dt>
+          <dd>2026年9月10日（木）19：30〜22:00</dd>
+        </div>
+        <div class="overview-item">
+          <dt>プログラム</dt>
+          <dd>
+            <p>第一部 「哲学とAI─システムに全てが回収される時代にどう豊かに生きるか」</p>
+            <p>第二部 懇親会（生ピアノ演奏によるBGMあり）</p>
+          </dd>
+        </div>
+        <div class="overview-item">
+          <dt>場所</dt>
+          <dd>赤坂区民ホール</dd>
+        </div>
+        <div class="overview-item">
+          <dt>ドレスコード</dt>
+          <dd>セミフォーマル</dd>
+        </div>
+      </dl>
+    </section>
+    <!-- ↑↑↑↑ END 開催概要 ↑↑↑↑ -->
+
+    <!-- ↓↓↓↓ 参加フォーム ↓↓↓↓ -->
+    <div class="entry">
+      {# TODO: href を Google フォームの URL に差し替える #}
+      <a class="entry-button" href="#" target="_blank" rel="noopener">参加フォーム</a>
+    </div>
+    <!-- ↑↑↑↑ END 参加フォーム ↑↑↑↑ -->
+
+    <p class="page-foot">© ThinkX Inc.</p>
+
+  </div>
+</body>
+</html>
