@@ -1138,3 +1138,12 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   サービス起動完了はブート通知より数十秒遅れるため、体感差が出る。
 - 対応(実施): ConnectTimeout=3 + sleep 2(1周≦5秒 × 24 = ちょうど120秒)に短縮。
   検知遅延は最大10秒→5秒に。次回の staging 起動が実流し検証を兼ねる。
+
+## 2026-08-06 push_assets が .DS_Store を配布対象に含める / staging 箱は動画ゼロだった
+
+- staging への初回 assets 配布で判明: 箱(supercom-web1-stg)には views/video が
+  1本も無く、11本・計約384MB の全量転送になる(scp は進捗表示なしで数分無言。
+  「止まっている」ように見えるが転送中)。
+- 手元のみ一覧に `.DS_Store`(6148B)が含まれ、そのまま配布される。実害は小さいが
+  ゴミの同期は不要。push_assets.sh の対象列挙に除外(-name .DS_Store の類)を
+  足すべき(未実施・要修正)。
