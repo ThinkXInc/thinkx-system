@@ -261,14 +261,7 @@
       font-weight: 600;
       letter-spacing: .14em;
     }
-    .performer-bio { margin-top: 14px; }
-    .bio-placeholder {
-      padding: 22px;
-      background-color: var(--placeholder-bg);
-      color: var(--placeholder-text);
-      font-size: 14px;
-      letter-spacing: .06em;
-    }
+    .performer-name.preparing { color: var(--placeholder-text); font-weight: 400; font-size: 19px; }
 
     /* ---- 開催概要 ---- */
     .overview-list { margin-top: 34px; }
@@ -426,15 +419,15 @@
       <span class="section-label">GUESTS</span>
       <hr class="section-rule">
 
+      {# 出演者確定まで「準備中」表示。確定後に氏名(永井　照明 / Jonathan Katz)へ戻す #}
       <div class="performer">
         <p class="performer-role">講師</p>
-        <p class="performer-name">永井　照明</p>
-        <p class="performer-bio bio-placeholder">講師略歴(200字程度・後日掲載)</p>
+        <p class="performer-name preparing">準備中</p>
       </div>
 
       <div class="performer">
         <p class="performer-role">ピアノ演奏</p>
-        <p class="performer-name">Jonathan Katz</p>
+        <p class="performer-name preparing">準備中</p>
       </div>
 
       {# パネラー段落は設けるか未定(原稿の指示)。設ける場合は以下を有効化する。
