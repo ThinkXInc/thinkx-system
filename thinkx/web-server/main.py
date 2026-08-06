@@ -345,10 +345,10 @@ def ir_investor_handler(lang, lang_name):
     )
 
 # event page(独立ページ: 共通テンプレート・locale・多言語ルートに依存しない)
-@app.route('/event/deepsocietyclub3.html')
-def event_deepsocietyclub3_handler():
-    logger.info(magenta(f'=> /event/deepsocietyclub3.html [{request.method}]'))
-    return render_template('/event/deepsocietyclub3.html')
+@app.route('/event/philsemi2609.html')
+def event_philsemi2609_handler():
+    logger.info(magenta(f'=> /event/philsemi2609.html [{request.method}]'))
+    return render_template('/event/philsemi2609.html')
 
 # inquiry
 def _submit_handler(lang, source):
