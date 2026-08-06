@@ -296,3 +296,21 @@
   (`main.py:787` / hostname が `-stg` の時のみ)で入れられるが本番では 404 になる。
   CSS/JS はビルドで再生成できるため `31664de` の配線で解決したが、動画は生成できないため
   同じ手が使えない。→ `docs/TODO.md` #6。
+
+### F-E17(実測): route_sweep ゴールデンの `/filedrop: 200` は staging ホスト依存
+
+- イベントページ追加(2026-08-05)の検証でローカル Mac から `pytest tests/` を実行したところ、
+  唯一の赤が `/filedrop`(golden 200 / actual 404)。filedrop はホスト名 `-stg` 判定
+  (`855f736` の修正)なので、**staging 以外のマシンでは sweep がこの1件で必ず赤になる**。
+  今回の変更(イベント2ルート追加)は golden 通りに 200 で緑。ゴールデンは触っていない。
+- 対処の選択肢は (a) 現状維持(staging で回すのが正) (b) テスト側で hostname を
+  スタブして環境非依存にする。規範化は人間の判断。
+
+### F-E18(既存の穴): `AVAILABLE_LANGS` の ko/de に page_metadata が無く既存ページは /ko/* で 500
+
+- `config.py:94` は 9言語(ko/de を含む)を許すが、`locales/page_metadata.json` の既存
+  `metadata_*` エントリは 7言語のみ。`/ko/about` 等は language_wrapper を通過した後
+  `metadata_*[lang]` の KeyError で 500 になる(既存挙動・全ページ共通)。
+- 新設のイベントページ(`/event/deepsocietyclub3.html`)は独立ページ方針(オーナー指示
+  2026-08-05)で locale・language_wrapper を使わないためこの穴の影響を受けない。
+  既存ページの扱いは要判断。
