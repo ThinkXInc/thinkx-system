@@ -1139,11 +1139,14 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
 - 対応(実施): ConnectTimeout=3 + sleep 2(1周≦5秒 × 24 = ちょうど120秒)に短縮。
   検知遅延は最大10秒→5秒に。次回の staging 起動が実流し検証を兼ねる。
 
-## 2026-08-06 push_assets が .DS_Store を配布対象に含める / staging 箱は動画ゼロだった
+## 2026-08-06 push_assets: ssh 不達だと「箱が空」に見える / .DS_Store 混入
 
-- staging への初回 assets 配布で判明: 箱(supercom-web1-stg)には views/video が
-  1本も無く、11本・計約384MB の全量転送になる(scp は進捗表示なしで数分無言。
-  「止まっている」ように見えるが転送中)。
-- 手元のみ一覧に `.DS_Store`(6148B)が含まれ、そのまま配布される。実害は小さいが
-  ゴミの同期は不要。push_assets.sh の対象列挙に除外(-name .DS_Store の類)を
-  足すべき(未実施・要修正)。
+- 事象: staging デプロイで assets 確認の diff が「箱のみ」空・「手元のみ」11本
+  (計約384MB)と出た直後、scp が `port 22: Operation timed out` で FAIL。
+  真因は SG の接続元 IP 許可リスト(手元 IP の変化)で、箱側一覧の取得(ssh)も
+  同じ理由で失敗して空扱いになっていた。**「箱が空」と「ssh 不達」が同じ見た目**
+  になるのは誤診を誘う — push_assets.sh は一覧取得の ssh 失敗を transfer 失敗と
+  区別して報告すべき(未実施・要修正)。
+- 手元のみ一覧に `.DS_Store`(6148B)が含まれ配布対象になる。実害は小さいが
+  ゴミの同期は不要。除外(-name .DS_Store の類)を足すべき(未実施・要修正)。
+- 対処ルーチン: `add_current_office_ip.sh` で現 IP を許可 → deploy_staging.sh 再実行。
