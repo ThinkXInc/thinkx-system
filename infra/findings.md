@@ -1126,3 +1126,15 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
 - 対応(実施): golden(サイト単体テストが正)は触らず、acceptance-sweep.sh で `thinkx:/filedrop` を
   受け入れ対象外にし skip 行を出す(黙って落とさない)。実測: thinkx 58/58・ACCEPTANCE 全 green。
 - 波及ルールが増えたら acceptance-sweep.sh の case に足す。
+
+## 2026-08-06 start_staging.sh の待ち時間が表示(最大120秒)より長い
+
+- 事象: staging 起動時、Discord の起動通知が来ているのにスクリプトは
+  「ssh 到達と主要サービスを確認中(最大 120 秒)...」のまま待ち続けた。
+- 原因1(表示と実態の乖離): ループが ssh ConnectTimeout=5 + sleep 5 × 24周で、
+  ssh が沈黙する間は1周最大10秒 → 実際は最大約4分待ち得た。
+- 原因2(観測対象の違い): Discord 通知はブート初期(ネットワーク up)に飛ぶが、
+  スクリプトの OK 条件は「ssh 到達 + nginx と uwsgi_thinkx が active」。
+  サービス起動完了はブート通知より数十秒遅れるため、体感差が出る。
+- 対応(実施): ConnectTimeout=3 + sleep 2(1周≦5秒 × 24 = ちょうど120秒)に短縮。
+  検知遅延は最大10秒→5秒に。次回の staging 起動が実流し検証を兼ねる。
