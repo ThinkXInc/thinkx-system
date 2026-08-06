@@ -1150,3 +1150,38 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
 - 手元のみ一覧に `.DS_Store`(6148B)が含まれ配布対象になる。実害は小さいが
   ゴミの同期は不要。除外(-name .DS_Store の類)を足すべき(未実施・要修正)。
 - 対処ルーチン: `add_current_office_ip.sh` で現 IP を許可 → deploy_staging.sh 再実行。
+
+## 2026-08-06 【事故】add_current_office_ip.sh の auto-approve apply が prod/staging 全4台を破壊再作成
+
+- 経緯: SSH 締め出し(手元 IP 変化)の解消に add_current_office_ip.sh を実行。
+  同スクリプトは terraform apply を **-auto-approve** で prod/staging の両 env に
+  実行する実装だった(ヘッダーコメントは「承認プロンプトで yes」と記載しており
+  実装と乖離)。apply には IP 追加と無関係の **AMI 追従差分**(data.aws_ami
+  most_recent が新 Ubuntu AMI を検出 → ami 変更は ForceNew)が同乗しており、
+  **web/lb × prod/staging の4台が破壊→新規作成**された。EIP は台帳(D-53)により
+  保持=IP・DNS 不変。旧ルート EBS はインスタンスと共に削除。
+- 症状: 全公開サイト connection refused(新品 Ubuntu に nginx 無し)。ssh は
+  「REMOTE HOST IDENTIFICATION HAS CHANGED」(同一 IP に別マシン=入替の証拠)。
+  Discord への異常通知は無し(外形監視が存在しない)。
+- 復旧: 構築手順.md により prod → staging の順で再構築(箱=terraform は事故 apply
+  で新規作成済みのため手順4以降)。known_hosts は ssh-keygen -R で旧鍵を掃除。
+- 恒久対処(実施済み・本コミット):
+  1) add_current_office_ip.sh: -auto-approve を廃止し、apply を
+     -target=aws_security_group.{web,lb} に限定。IP 追加が SG 以外の差分を
+     巻き込む経路を構造的に遮断。
+  2) instances.tf: aws_instance {lb,web} に lifecycle ignore_changes = [ami]。
+     新 AMI 公開のたびに「要再作成」差分が潜伏する地雷を除去(新 AMI は意図した
+     建て直しのときだけ拾う)。terraform fmt/validate 済み。apply は次回の
+     承認付き実行で反映(コード変更のみでは挙動に影響しない)。
+- 教訓: 「スクリプトのヘッダー記述」と「実装」の乖離は致命傷になる。terraform apply
+  を含むスクリプトは (a) 承認プロンプト必須 (b) 目的リソースへの -target 限定
+  (c) 事前 plan の要約提示、を規約化すべき(規範化は人間判断・要 D-xx 起票)。
+
+## 2026-08-06 TODO: 外形監視+Discord 通知が無い(本番ダウンに気づけない)
+
+- 今回の全損時、Discord には何の通知も出なかった(ダウン検知の仕組み自体が無い)。
+- 最小構成案: 常時稼働の k00bot2 EC2 の cron で5分毎に全サイト
+  (thinkxinc/truetechjapan/transformism/kazukiotsuka/nntm/staging)へ curl し、
+  非 200 が続いたら Discord webhook へ通知。復旧通知も出す。
+- オーナー指示(2026-08-06 原文):「ダウンしたら知らせる仕組みがないので、
+  これはTODOにしておかなければいけない」

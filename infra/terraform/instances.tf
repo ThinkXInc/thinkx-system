@@ -33,6 +33,14 @@ resource "aws_instance" "lb" {
   key_name               = var.key_name
   iam_instance_profile   = aws_iam_instance_profile.lb.name # certbot --dns-route53 用(iam.tf)
 
+  # AMI 差分での破壊再作成を禁止(2026-08-06 の全損事故の再発防止)。
+  # data.aws_ami が新しい Ubuntu AMI を拾うたび「要再作成」差分が常に潜伏し、
+  # 無関係な apply に巻き込まれて中身ごと消える。新 AMI は意図した建て直し
+  # (taint / destroy)のときだけ拾う。
+  lifecycle {
+    ignore_changes = [ami]
+  }
+
   root_block_device {
     volume_size = 20
     volume_type = "gp3"
@@ -51,6 +59,11 @@ resource "aws_instance" "web" {
   private_ip             = local.web_ip
   vpc_security_group_ids = [aws_security_group.web.id]
   key_name               = var.key_name
+
+  # AMI 差分での破壊再作成を禁止(理由は lb 側の同名ブロック参照)
+  lifecycle {
+    ignore_changes = [ami]
+  }
 
   root_block_device {
     volume_size = local.web_disk_gb
