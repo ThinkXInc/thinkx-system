@@ -72,7 +72,23 @@
       object-fit: cover;
       display: block;
     }
-    .hero-collage img.collage-otsuka { object-position: 42% 28%; }
+    .hero-portrait {
+      position: absolute;
+      right: 6%;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1;
+    }
+    .hero-portrait img {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: 48% 30%;
+      display: block;
+      border: 1px solid var(--gold-bright);
+      box-shadow: 0 0 0 7px rgba(16, 12, 8, .4);
+    }
     .hero::after {
       content: "";
       position: absolute;
@@ -239,6 +255,8 @@
     @media (max-width: 600px) {
       .hero-collage { aspect-ratio: 2 / 1; }
       .hero-badge { font-size: 14px; padding: 6px 22px; }
+      .hero-portrait { right: 4%; }
+      .hero-portrait img { width: 104px; height: 104px; box-shadow: 0 0 0 4px rgba(16, 12, 8, .4); }
       .page { padding: 0 22px 80px 22px; }
       .event-title { margin-top: 56px; font-size: 27px; }
       .event-title-sub { font-size: 16px; }
@@ -263,11 +281,14 @@
   <!-- ↓↓↓↓ ヘッダー(会場・懇親会のコラージュ + 出版記念。本文テキストは別途差し込み予定) ↓↓↓↓ -->
   <header class="hero">
     <div class="hero-collage">
-      <img class="collage-otsuka" src="/img/event/otsuka.jpg" alt="大塚一輝">
+      <img src="/img/event/hero_hall.jpg" alt="会場(客席)">
       <img src="/img/event/akasaka_civic_hall2.jpg" alt="赤坂区民ホール">
       <img src="/img/event/pianobar_w.jpg" alt="懇親会イメージ">
     </div>
     <div class="hero-word"><span class="hero-badge">出版記念</span></div>
+    <figure class="hero-portrait">
+      <img src="/img/event/otsuka.jpg" alt="大塚一輝">
+    </figure>
   </header>
   <!-- ↑↑↑↑ END ヘッダー ↑↑↑↑ -->
 
