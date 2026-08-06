@@ -1185,3 +1185,18 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   非 200 が続いたら Discord webhook へ通知。復旧通知も出す。
 - オーナー指示(2026-08-06 原文):「ダウンしたら知らせる仕組みがないので、
   これはTODOにしておかなければいけない」
+
+## 2026-08-06 復旧進捗メモ(全損事故からの再構築・prod)
+
+- 完了: web 基盤(setup_user/setup_webserver: python3.9/node/nginx/mongod 揃い)、
+  deploy key 検証(3鍵)、monorepo clone(web/LB とも・checkout は monorepo)、
+  .env 配布(thinkx/kazukiotsukacom/transformism/loadbalancer)、
+  動画アセット11本配布、setup_nginx-web-root(8005 応答)、
+  setup_thinkx(8005->200)、setup_kazukiotsukacom(8007->200)、
+  setup_loadbalancer(exit 0・詳細ログ未精査)。
+- 未了: setup_transformism(実行直前にオーナー中断→再開時にネット断で不達)、
+  LB ログ精査、check_request_path、acceptance-sweep、
+  本番 checkout の production ブランチ同期(sync_from_origin prod)、staging 再構築一式。
+- 備考: 2度の setup_webserver FAIL の原因は (1)二重実行の apt ロック衝突
+  (2)新品初回ブートの unattended-upgrades のロック。3回目は単独実行+ロック解放
+  待ちで成功。setup 冒頭に apt ロック解放待ちを入れる改修を提案(要承認)。
