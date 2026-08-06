@@ -154,6 +154,17 @@
       background: rgba(16, 12, 8, .45);
       text-shadow: 0 1px 10px rgba(0, 0, 0, .65);
     }
+    .hero-title {
+      color: #f2ede3;
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      line-height: 1.8;
+      max-width: 900px;
+      padding: 6px 22px;
+      background: rgba(16, 12, 8, .45);
+      text-shadow: 0 1px 14px rgba(0, 0, 0, .65);
+    }
 
     /* ---- 本文 ---- */
     .page {
@@ -296,17 +307,30 @@
     }
 
     @media (max-width: 600px) {
-      /* スマホ: アイコンは右上、中央テキストはやや下へずらして重なりを避ける */
-      .hero-collage { aspect-ratio: 4 / 3; }
-      .hero-word { padding-top: 105px; gap: 12px; }
-      .hero-badge { font-size: 15px; padding: 6px 22px; }
-      .hero-event-type { font-size: 14px; padding: 3px 14px; }
-      .hero-date { font-size: 12px; }
-      .hero-portrait { top: 6%; left: 0%; right: auto; transform: none; width: 150px; }
-      .hero-portrait img { width: 84px; height: 84px; box-shadow: 0 0 0 4px rgba(16, 12, 8, .4); }
-      .hero-portrait figcaption { margin-top: 6px; }
+      /* スマホ: アイコン+名前を左上の1行に流し、その下に帯/文言/タイトル/日付。
+         コラージュは背景。ヘッダー全体は 4:3 を基準に、収まらない場合だけ伸びる */
+      .hero { display: flex; flex-direction: column; aspect-ratio: 4 / 3; }
+      .hero-collage { position: absolute; inset: 0; aspect-ratio: auto; height: 100%; }
+      .hero-portrait {
+        position: relative;
+        inset: auto;
+        transform: none;
+        order: -1;
+        width: auto;
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+        margin: 14px 0 0 14px;
+      }
+      .hero-portrait img { width: 72px; height: 72px; box-shadow: 0 0 0 4px rgba(16, 12, 8, .4); }
+      .hero-portrait figcaption { margin-top: 0; text-align: left; }
       .portrait-titles { font-size: 9px; }
-      .portrait-name { font-size: 12px; margin-top: 2px; }
+      .portrait-name { font-size: 13px; margin-top: 2px; }
+      .hero-word { position: relative; inset: auto; flex: 1; padding: 8px 14px 16px 14px; gap: 9px; }
+      .hero-badge { font-size: 14px; padding: 5px 20px; }
+      .hero-event-type { font-size: 11px; padding: 3px 12px; }
+      .hero-title { font-size: 13px; padding: 4px 12px; margin: 0; }
+      .hero-date { font-size: 10px; padding: 3px 12px; }
       .page { padding: 0 22px 80px 22px; }
       .event-title { margin-top: 56px; font-size: 27px; }
       .event-title-sub { font-size: 16px; }
@@ -337,8 +361,9 @@
     </div>
     <div class="hero-word">
       <span class="hero-badge">出版記念</span>
-      <p class="hero-event-type">シンポジウムと懇談会(ピアノ生演奏付)</p>
-      <p class="hero-date">2026年9月10日（木）19：30〜22:00</p>
+      <p class="hero-event-type">シンポジウムと懇談会（立席形式　生ピアノ演奏付）</p>
+      <p class="hero-title">「哲学とAI─システムに全てが回収される時代にどう豊かに生きるか」</p>
+      <p class="hero-date">2026年9月10日（木）19：30〜22:00 赤坂区民ホール</p>
     </div>
     <figure class="hero-portrait">
       <img src="/img/event/otsuka.jpg" alt="大塚一輝">
