@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {# サイト共通の base.html / header / footer / main.css には依存しない独立ページ(オーナー指示 2026-08-05)。 #}
+{# 画像は views/img/event/ の Web 用縮小版(hero_hall.jpg 等)を使う。原本(8MB 級)は参照しない。 #}
 <html lang="ja">
 <head>
   <meta charset="utf-8">
@@ -16,9 +17,11 @@
   <meta property="og:title" content="哲学とAI─システムに全てが回収される時代にどう豊かに生きるか | ThinkX">
   <meta property="og:description" content="2026年9月10日（木）19：30〜22:00、赤坂区民ホールにて開催。第一部 講演「哲学とAI─システムに全てが回収される時代にどう豊かに生きるか」、第二部 懇親会（生ピアノ演奏によるBGMあり）。">
   <meta property="og:url" content="https://thinkxinc.com/event/deepsocietyclub3.html">
-  <meta name="twitter:card" content="summary">
+  <meta property="og:image" content="https://thinkxinc.com/img/event/hero_hall.jpg">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="哲学とAI─システムに全てが回収される時代にどう豊かに生きるか | ThinkX">
   <meta name="twitter:description" content="2026年9月10日（木）19：30〜22:00、赤坂区民ホールにて開催。第一部 講演「哲学とAI─システムに全てが回収される時代にどう豊かに生きるか」、第二部 懇親会（生ピアノ演奏によるBGMあり）。">
+  <meta name="twitter:image" content="https://thinkxinc.com/img/event/hero_hall.jpg">
 
   <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -34,9 +37,13 @@
       --ink: #1c1a17;
       --ink-soft: #55504a;
       --gold: #8a6d3b;
+      --gold-bright: #c2a35c;
       --line: #d8d2c6;
       --placeholder-bg: #e6e2da;
       --placeholder-text: #9a938a;
+      --hero-ink: #0f0c09;
+      --hero-text: #f2ede3;
+      --hero-dim: #cbc3b2;
       --serif: "Hiragino Mincho ProN", "Yu Mincho", "YuMincho", "Noto Serif JP", serif;
     }
 
@@ -51,65 +58,117 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ---- ヘッダーバナー(画像差し替えまでのグレー仮置き) ---- */
-    .hero-banner {
-      width: 100%;
-      aspect-ratio: 3 / 1;
-      background-color: var(--placeholder-bg);
+    /* ---- ヒーロー(会場写真 + タイトル + 人物) ---- */
+    .hero {
+      position: relative;
+      background-color: var(--hero-ink);
+      background-image: url('/img/event/hero_hall.jpg');
+      background-size: cover;
+      background-position: center 62%;
+      color: var(--hero-text);
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(100deg,
+        rgba(15, 12, 9, .92) 0%,
+        rgba(15, 12, 9, .78) 46%,
+        rgba(15, 12, 9, .5) 100%);
+    }
+    .hero-inner {
+      position: relative;
+      max-width: 1060px;
+      margin: 0 auto;
+      padding: 46px 48px 56px 48px;
+    }
+    .hero-club {
+      font-size: 13px;
+      letter-spacing: .5em;
+      color: var(--gold-bright);
+    }
+    .hero-main {
+      margin-top: 54px;
       display: flex;
       align-items: center;
-      justify-content: center;
+      gap: 60px;
     }
-    .hero-banner-note {
-      color: var(--placeholder-text);
-      font-size: 14px;
-      letter-spacing: .2em;
+    .hero-text { flex: 1; min-width: 0; }
+    .event-title {
+      font-size: 42px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      line-height: 1.55;
     }
+    .event-title-sub {
+      display: block;
+      margin-top: 16px;
+      font-size: 20px;
+      font-weight: 500;
+      letter-spacing: .12em;
+      color: var(--hero-dim);
+    }
+    .hero-meta {
+      margin-top: 44px;
+      padding-top: 22px;
+      border-top: 1px solid rgba(194, 163, 92, .45);
+      font-size: 15px;
+      letter-spacing: .14em;
+      color: var(--hero-text);
+    }
+    .hero-meta .venue { color: var(--hero-dim); }
 
+    .hero-people {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+    }
+    .hero-person {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .hero-person img {
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid rgba(194, 163, 92, .55);
+    }
+    .hero-person.speaker img { width: 188px; height: 188px; object-position: 48% 32%; }
+    .hero-person.pianist img { width: 112px; height: 112px; object-position: 30% 18%; }
+    .hero-person figcaption { margin-top: 14px; line-height: 1.7; }
+    .hero-person .role {
+      display: block;
+      font-size: 11px;
+      letter-spacing: .3em;
+      text-indent: .3em;
+      color: var(--gold-bright);
+    }
+    .hero-person .person-name {
+      display: block;
+      margin-top: 4px;
+      font-size: 17px;
+      letter-spacing: .16em;
+    }
+    .hero-person.pianist .person-name { font-size: 14px; letter-spacing: .1em; }
+
+    /* ---- 本文 ---- */
     .page {
       max-width: 720px;
       margin: 0 auto;
       padding: 0 28px 110px 28px;
     }
 
-    /* ---- タイトル ---- */
-    .event-title {
-      margin-top: 90px;
-      text-align: center;
-      font-size: 40px;
-      font-weight: 600;
-      letter-spacing: .12em;
-      line-height: 1.6;
-    }
-    .event-title-sub {
-      display: block;
-      margin-top: 18px;
-      font-size: 21px;
-      font-weight: 500;
-      letter-spacing: .14em;
-      color: var(--ink-soft);
-    }
-    .title-rule {
-      width: 56px;
-      height: 1px;
-      background-color: var(--gold);
-      border: none;
-      margin: 44px auto 0 auto;
-    }
-
-    /* ---- 見どころ ---- */
     .highlight-list {
       list-style: none;
-      margin-top: 70px;
+      margin-top: 80px;
       display: flex;
       flex-direction: column;
       gap: 30px;
     }
-    .highlight {
-      display: flex;
-      align-items: flex-start;
-      gap: 20px;
-    }
+    .highlight { display: flex; align-items: flex-start; gap: 20px; }
     .highlight-tag {
       flex-shrink: 0;
       min-width: 100px;
@@ -121,12 +180,8 @@
       text-align: center;
       white-space: nowrap;
     }
-    .highlight-text {
-      margin-top: 3px;
-      text-align: left;
-    }
+    .highlight-text { margin-top: 3px; }
 
-    /* ---- セクション共通 ---- */
     .event-section { margin-top: 110px; }
     .section-label {
       font-size: 13px;
@@ -134,12 +189,7 @@
       letter-spacing: .3em;
       color: var(--gold);
     }
-    .section-rule {
-      height: 1px;
-      background-color: var(--line);
-      border: none;
-      margin-top: 14px;
-    }
+    .section-rule { height: 1px; background-color: var(--line); border: none; margin-top: 14px; }
 
     /* ---- メインプロフィール ---- */
     .speaker-name {
@@ -155,14 +205,8 @@
       letter-spacing: .12em;
       color: var(--ink-soft);
     }
-    .profile-lead {
-      margin-top: 26px;
-      font-weight: 600;
-    }
-    .career-list {
-      list-style: none;
-      margin-top: 22px;
-    }
+    .profile-lead { margin-top: 26px; font-weight: 600; }
+    .career-list { list-style: none; margin-top: 22px; }
     .profile-text { margin-top: 22px; }
 
     /* ---- 共演者 ---- */
@@ -188,6 +232,14 @@
       font-size: 14px;
       letter-spacing: .06em;
     }
+    .performer-photo { margin-top: 18px; }
+    .performer-photo img { width: 100%; max-width: 420px; display: block; }
+    .performer-photo figcaption {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--placeholder-text);
+      letter-spacing: .06em;
+    }
 
     /* ---- 開催概要 ---- */
     .overview-list { margin-top: 34px; }
@@ -198,20 +250,26 @@
       border-bottom: 1px solid var(--line);
     }
     .overview-item:first-child { border-top: 1px solid var(--line); }
-    .overview-item dt {
-      width: 150px;
-      flex-shrink: 0;
-      font-weight: 600;
-      letter-spacing: .1em;
-    }
+    .overview-item dt { width: 150px; flex-shrink: 0; font-weight: 600; letter-spacing: .1em; }
     .overview-item dd p { margin: 0; }
 
-    /* ---- 参加フォーム ---- */
-    .entry {
-      margin-top: 100px;
-      display: flex;
-      justify-content: center;
+    .info-photos {
+      margin-top: 44px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
     }
+    .info-photos img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; }
+    .info-photos figcaption {
+      margin-top: 10px;
+      font-size: 13px;
+      line-height: 1.8;
+      color: var(--ink-soft);
+      letter-spacing: .06em;
+    }
+
+    /* ---- 参加フォーム ---- */
+    .entry { margin-top: 100px; display: flex; justify-content: center; }
     .entry-button {
       display: inline-block;
       padding: 20px 90px;
@@ -226,7 +284,6 @@
     }
     .entry-button:hover { background-color: var(--gold); }
 
-    /* ---- フッター ---- */
     .page-foot {
       margin-top: 110px;
       text-align: center;
@@ -235,19 +292,25 @@
       color: var(--ink-soft);
     }
 
-    @media (max-width: 600px) {
-      .hero-banner { aspect-ratio: 2 / 1; }
-      .page { padding: 0 22px 80px 22px; }
-      .event-title { margin-top: 56px; font-size: 27px; }
+    @media (max-width: 700px) {
+      .hero-inner { padding: 30px 24px 44px 24px; }
+      .hero-club { font-size: 11px; letter-spacing: .4em; }
+      .hero-main { margin-top: 36px; flex-direction: column; align-items: flex-start; gap: 40px; }
+      .event-title { font-size: 27px; }
       .event-title-sub { font-size: 16px; }
-      .highlight-list { margin-top: 50px; gap: 24px; }
+      .hero-meta { margin-top: 30px; font-size: 14px; }
+      .hero-people { flex-direction: row; align-items: flex-start; gap: 28px; margin: 0 auto; }
+      .hero-person.speaker img { width: 140px; height: 140px; }
+      .hero-person.pianist img { width: 96px; height: 96px; }
+      .page { padding: 0 22px 80px 22px; }
+      .highlight-list { margin-top: 56px; gap: 24px; }
       .highlight { flex-direction: column; gap: 10px; }
       .event-section { margin-top: 80px; }
       .speaker-name { font-size: 24px; }
       .name-reading { display: block; margin: 8px 0 0 0; }
       .overview-item { flex-direction: column; }
       .overview-item dt { width: auto; }
-      .overview-item dd { margin-top: 2px; }
+      .info-photos { grid-template-columns: 1fr; }
       .entry { margin-top: 70px; }
       .entry-button { width: 100%; padding: 18px 0; text-align: center; }
     }
@@ -259,16 +322,32 @@
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 
-  <!-- ↓↓↓↓ ヘッダーバナー(画像は後日差し替え) ↓↓↓↓ -->
-  <div class="hero-banner">
-    <span class="hero-banner-note">ヘッダーイメージ(準備中)</span>
-  </div>
-  <!-- ↑↑↑↑ END ヘッダーバナー ↑↑↑↑ -->
+  <!-- ↓↓↓↓ ヒーロー(会場写真 + タイトル + 人物) ↓↓↓↓ -->
+  <header class="hero">
+    <div class="hero-inner">
+      <p class="hero-club">DEEP SOCIETY CLUB</p>
+      <div class="hero-main">
+        <div class="hero-text">
+          <h1 class="event-title">哲学とAI<span class="event-title-sub">─システムに全てが回収される時代にどう豊かに生きるか</span></h1>
+          <p class="hero-meta">2026年9月10日（木）19：30〜22:00<br><span class="venue">赤坂区民ホール ｜ ドレスコード セミフォーマル</span></p>
+        </div>
+        <div class="hero-people">
+          <figure class="hero-person speaker">
+            <img src="/img/event/otsuka.jpg" alt="大塚一輝">
+            <figcaption><span class="role">スピーカー</span><span class="person-name">大塚一輝</span></figcaption>
+          </figure>
+          <figure class="hero-person pianist">
+            {# 仮画像: ピアニスト確定後に差し替え #}
+            <img src="/img/event/pianist.jpg" alt="Jonathan Katz">
+            <figcaption><span class="role">ピアノ</span><span class="person-name">Jonathan Katz</span></figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </header>
+  <!-- ↑↑↑↑ END ヒーロー ↑↑↑↑ -->
 
   <div class="page">
-
-    <h1 class="event-title">哲学とAI<span class="event-title-sub">─システムに全てが回収される時代にどう豊かに生きるか</span></h1>
-    <hr class="title-rule">
 
     <!-- ↓↓↓↓ 見どころ ↓↓↓↓ -->
     <ul class="highlight-list">
@@ -322,6 +401,11 @@
       <div class="performer">
         <p class="performer-role">ピアノ演奏</p>
         <p class="performer-name">Jonathan Katz</p>
+        <figure class="performer-photo">
+          {# 仮画像: ピアニスト確定後に差し替え #}
+          <img src="/img/event/pianist.jpg" alt="ピアノ演奏">
+          <figcaption>※写真は仮のイメージです(出演者確定後に差し替え)</figcaption>
+        </figure>
       </div>
 
       {# パネラー段落は設けるか未定(原稿の指示)。設ける場合は以下を有効化する。
@@ -359,6 +443,17 @@
           <dd>セミフォーマル</dd>
         </div>
       </dl>
+
+      <div class="info-photos">
+        <figure>
+          <img src="/img/event/pianobar_w.jpg" alt="懇親会イメージ">
+          <figcaption>第二部 懇親会 ─ 生ピアノ演奏のBGMとともに(立席自由形式)</figcaption>
+        </figure>
+        <figure>
+          <img src="/img/event/akasaka_civic_hall2.jpg" alt="赤坂区民ホール">
+          <figcaption>会場 ─ 赤坂区民ホール</figcaption>
+        </figure>
+      </div>
     </section>
     <!-- ↑↑↑↑ END 開催概要 ↑↑↑↑ -->
 
