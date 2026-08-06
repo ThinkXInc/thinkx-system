@@ -296,18 +296,17 @@
     }
 
     @media (max-width: 600px) {
-      /* スマホはオーバーレイをやめて縦積み(帯/文言/日付/アイコン+肩書き+名前)。
-         コラージュは背景として全面に敷く */
-      .hero-collage { position: absolute; inset: 0; aspect-ratio: auto; height: 100%; }
-      .hero-word { position: relative; inset: auto; padding: 34px 20px 8px 20px; gap: 12px; }
+      /* スマホ: アイコンは右上、中央テキストはやや下へずらして重なりを避ける */
+      .hero-collage { aspect-ratio: 1 / 1; }
+      .hero-word { padding-top: 170px; gap: 12px; }
       .hero-badge { font-size: 15px; padding: 6px 22px; }
       .hero-event-type { font-size: 14px; padding: 3px 14px; }
       .hero-date { font-size: 12px; }
-      .hero-portrait { position: relative; inset: auto; transform: none; margin: 10px auto 0 auto; padding-bottom: 30px; width: auto; }
-      .hero-portrait img { width: 96px; height: 96px; box-shadow: 0 0 0 4px rgba(16, 12, 8, .4); }
-      .hero-portrait figcaption { margin-top: 8px; }
-      .portrait-titles { font-size: 10px; }
-      .portrait-name { font-size: 14px; }
+      .hero-portrait { top: 4%; right: 4%; transform: none; width: 150px; }
+      .hero-portrait img { width: 84px; height: 84px; box-shadow: 0 0 0 4px rgba(16, 12, 8, .4); }
+      .hero-portrait figcaption { margin-top: 6px; }
+      .portrait-titles { font-size: 9px; }
+      .portrait-name { font-size: 12px; margin-top: 2px; }
       .page { padding: 0 22px 80px 22px; }
       .event-title { margin-top: 56px; font-size: 27px; }
       .event-title-sub { font-size: 16px; }
