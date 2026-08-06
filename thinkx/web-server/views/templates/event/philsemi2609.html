@@ -130,13 +130,22 @@
       text-align: center;
     }
     .hero-badge {
-      padding: 8px 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 30px;
       border: 1px solid var(--gold-bright);
       background: rgba(16, 12, 8, .45);
       color: #f2ede3;
       font-size: 22px;
       letter-spacing: .42em;
       text-indent: .42em;
+    }
+    .hero-badge-sub {
+      font-size: 13px;
+      letter-spacing: .2em;
+      text-indent: .2em;
     }
     .hero-event-type {
       color: #f2ede3;
@@ -153,17 +162,6 @@
       padding: 3px 16px;
       background: rgba(16, 12, 8, .45);
       text-shadow: 0 1px 10px rgba(0, 0, 0, .65);
-    }
-    .hero-title {
-      color: #f2ede3;
-      font-size: 24px;
-      font-weight: 600;
-      letter-spacing: .1em;
-      line-height: 1.8;
-      max-width: 960px;
-      padding: 6px 22px;
-      background: rgba(16, 12, 8, .45);
-      text-shadow: 0 1px 14px rgba(0, 0, 0, .65);
     }
 
     /* ---- 本文 ---- */
@@ -320,9 +318,9 @@
       .portrait-titles { font-size: 9px; }
       .portrait-name { font-size: 13px; margin-top: 2px; }
       .hero-word { position: relative; inset: auto; flex: 1; padding: 8px 14px 16px 14px; gap: 9px; }
-      .hero-badge { font-size: 14px; padding: 5px 20px; }
+      .hero-badge { font-size: 14px; padding: 6px 20px; gap: 4px; }
+      .hero-badge-sub { font-size: 10px; }
       .hero-event-type { font-size: 11px; padding: 3px 12px; }
-      .hero-title { font-size: 13px; padding: 4px 12px; margin: 0; }
       .hero-date { font-size: 10px; padding: 3px 12px; }
       .page { padding: 0 22px 80px 22px; }
       .event-title { margin-top: 56px; font-size: 27px; }
@@ -353,9 +351,8 @@
       <img src="/img/event/pianobar_w.jpg" alt="懇親会イメージ">
     </div>
     <div class="hero-word">
-      <span class="hero-badge">出版記念</span>
+      <span class="hero-badge"><span class="hero-badge-sub">「ファーブラー・メソッド」</span>出版決定記念</span>
       <p class="hero-event-type">シンポジウムと懇談会（立席形式　生ピアノ演奏付）</p>
-      <p class="hero-title">「哲学とAI─システムに全てが回収される時代にどう豊かに生きるか」</p>
       <p class="hero-date">2026年9月10日（木）19：30〜22:00 赤坂区民ホール</p>
     </div>
     <figure class="hero-portrait">
