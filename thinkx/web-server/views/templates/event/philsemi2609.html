@@ -163,6 +163,17 @@
       background: rgba(16, 12, 8, .45);
       text-shadow: 0 1px 10px rgba(0, 0, 0, .65);
     }
+    .hero-title {
+      color: #f2ede3;
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      line-height: 1.8;
+      max-width: 960px;
+      padding: 6px 22px;
+      background: rgba(16, 12, 8, .45);
+      text-shadow: 0 1px 14px rgba(0, 0, 0, .65);
+    }
 
     /* ---- 本文 ---- */
     .page {
@@ -321,6 +332,7 @@
       .hero-badge { font-size: 14px; padding: 6px 20px; gap: 4px; }
       .hero-badge-sub { font-size: 10px; }
       .hero-event-type { font-size: 11px; padding: 3px 12px; }
+      .hero-title { font-size: 13px; padding: 4px 12px; margin: 0; }
       .hero-date { font-size: 10px; padding: 3px 12px; }
       .page { padding: 0 22px 80px 22px; }
       .event-title { margin-top: 56px; font-size: 27px; }
@@ -352,7 +364,8 @@
     </div>
     <div class="hero-word">
       <span class="hero-badge"><span class="hero-badge-sub">「ファーブラー・メソッド」</span>出版決定記念</span>
-      <p class="hero-event-type">サロンと懇談会（立席形式　生ピアノ演奏付）</p>
+      <p class="hero-event-type">シンポジウムと懇談会（立席形式　生ピアノ演奏付）</p>
+      <p class="hero-title">「哲学とAI─システムに全てが回収される時代にどう豊かに生きるか」</p>
       <p class="hero-date">2026年9月10日（木）19：30〜22:00 赤坂区民ホール</p>
     </div>
     <figure class="hero-portrait">
@@ -367,7 +380,8 @@
 
   <div class="page">
 
-    <h1 class="event-title">哲学とAI<span class="event-title-sub">─システムに全てが回収される時代にどう豊かに生きるか</span></h1>
+    {# ヒーローに同じタイトルが出ているため非表示。再表示するときは style を外す。 #}
+    <h1 class="event-title" style="display: none;">哲学とAI<span class="event-title-sub">─システムに全てが回収される時代にどう豊かに生きるか</span></h1>
     <hr class="title-rule">
 
     <!-- ↓↓↓↓ 見どころ ↓↓↓↓ -->
