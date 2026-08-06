@@ -23,6 +23,7 @@
   "/apply/regular": 200,
   "/blognews": 200,
   "/blognews/<news_id>": 500,
+  "/event/philsemi2609.html": 200,
   "/filedrop": 200,
   "/history": 200,
   "/inquiry/collaboration": 200,
