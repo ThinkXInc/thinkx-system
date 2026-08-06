@@ -297,7 +297,7 @@
     }
 
     @media (max-width: 600px) {
-      /* スマホ: アイコン+名前を左上の1行に流し、その下に帯/文言/タイトル/日付。
+      /* スマホ: 帯/種別/日付を先に読ませ、アイコン+名前はその下に置く。
          コラージュは背景。ヘッダー全体は 4:3 を基準に、収まらない場合だけ伸びる */
       .hero { display: flex; flex-direction: column; aspect-ratio: 4 / 3; }
       .hero-collage { position: absolute; inset: 0; aspect-ratio: auto; height: 100%; }
@@ -305,18 +305,18 @@
         position: relative;
         inset: auto;
         transform: none;
-        order: -1;
         width: auto;
+        align-self: center;
         flex-direction: row;
         align-items: center;
         gap: 12px;
-        margin: 14px 0 0 14px;
+        margin: 0 0 16px 0;
       }
-      .hero-portrait img { width: 72px; height: 72px; box-shadow: 0 0 0 4px rgba(16, 12, 8, .4); }
+      .hero-portrait img { width: 62px; height: 62px; box-shadow: 0 0 0 4px rgba(16, 12, 8, .4); }
       .hero-portrait figcaption { margin-top: 0; text-align: left; }
       .portrait-titles { font-size: 9px; }
       .portrait-name { font-size: 13px; margin-top: 2px; }
-      .hero-word { position: relative; inset: auto; flex: 1; padding: 8px 14px 16px 14px; gap: 9px; }
+      .hero-word { position: relative; inset: auto; flex: 1; padding: 18px 14px 12px 14px; gap: 9px; }
       .hero-badge { padding: 6px 20px 8px 20px; }
       .hero-badge-main { font-size: 14px; }
       .hero-badge-sub { font-size: 10px; margin-top: 4px; }
@@ -401,16 +401,16 @@
 
       <p class="profile-titles">連続起業家、独立計算進化学者、現代芸術家</p>
 
+      <p class="profile-text">計算理論、代数学、量子物理学、生命科学、哲学、美学、を横断しプラトン以降の哲学的問題を解決し新たな自然科学体系を構成する知識進化に関する学問─第三空間理論─を16歳から構築し続け、パリ外のフランス最上位大学Grenoble Alpes大学に派遣留学生に選出、パリ音響音楽研究所IRCAM Forum会員として荻生徂徠以降も謎とされる東洋和声合竹の数理構造を研究、合衆国ハワイ州マウイ島で数年に渡り録音収集した生物歌研究による「言語の普遍的数理構造」の研究成果に基づく普遍的言語学習法を小学生から大人まで可能にした『ファーブラー・メソッド』を2027年1月にクロスメディア・ランゲージ社より出版予定。</p>
+
+      <p class="profile-text">大学卒業時に独立、現在主流のクロール型ニュースリーダーを日本で初めて普及、半年で2万5千ダウンロード、スーツケース一つで世界を放浪、サンフランシスコでハッカーハウス運営、国内初となるAI活用型の投資用不動産分析システムを企画・開発(2025年にM&amp;A)、独自の言語意味解析機械学習アルゴリズムや音声アルゴリズムで複数の特許を保持。</p>
+
       <ul class="career-list">
         <li>2021年東京大学大学院情報学環客員研究員。</li>
         <li>2022年未来工学研究所(TTCSP科学技術系シンクタンクグローバルインデックス世界3位)客員研究員。</li>
         <li>2026年NTTドコモビジネス(株)新規事業アドバイザー。</li>
         <li>他多数歴任。</li>
       </ul>
-
-      <p class="profile-text">大学卒業時に独立、現在主流のクロール型ニュースリーダーを日本で初めて普及、半年で2万5千ダウンロード、スーツケース一つで世界を放浪、サンフランシスコでハッカーハウス運営、国内初となるAI活用型の投資用不動産分析システムを企画・開発(2025年にM&amp;A)、独自の言語意味解析機械学習アルゴリズムや音声アルゴリズムで複数の特許を保持。</p>
-
-      <p class="profile-text">計算理論、代数学、量子物理学、生命科学、哲学、美学、を横断しプラトン以降の哲学的問題を解決し新たな自然科学体系を構成する知識進化に関する学問─第三空間理論─を16歳から構築し続け、パリ外のフランス最上位大学Grenoble Alpes大学に派遣留学生に選出、パリ音響音楽研究所IRCAM Forum会員として荻生徂徠以降も謎とされる東洋和声合竹の数理構造を研究、合衆国ハワイ州マウイ島で数年に渡り録音収集した生物歌研究による「言語の普遍的数理構造」の研究成果に基づく普遍的言語学習法を小学生から大人まで可能にした『ファーブラー・メソッド』を2027年1月にクロスメディア・ランゲージ社より出版予定。</p>
     </section>
     <!-- ↑↑↑↑ END メインプロフィール ↑↑↑↑ -->
 
