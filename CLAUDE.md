@@ -71,7 +71,7 @@ polyrepo + vendoring 構成をファイルコピーで集約したもので、�
 | いる場所 | やりたいこと | 経路 |
 |---|---|---|
 | staging(`web1-stg`) | 編集を staging に出す | **何もしない。** `/src/thinkx` は staging の配信ツリー本体で、テンプレート編集は `py-autoreload` により即反映される |
-| staging(`web1-stg`) | 本番へ出す | **セッション内のオーナー明示承認が必須**(承認レベル L2 = D-50。正本 `docs/DEPLOY_APPROVAL_LEVELS.md`)。経路は `git push origin develop` → develop→production を merge → 本番の deploy timer が 60 秒以内に反映 → 本番 URL を実測。**deploy key に write が付くまでは実行不可**(付いていなければ L3 = 従来どおりオーナー機のみ) |
+| staging(`web1-stg`) | 本番へ出す | 承認レベル **L2b**(D-50。正本 `docs/DEPLOY_APPROVAL_LEVELS.md`)。`git push origin develop` → `release/<日付>` を切って push → **マージ用 URL を提示してオーナーがマージ(これが承認)** → 本番の deploy timer が 60 秒以内に反映 → 本番 URL を実測。実行者はマージしない。**deploy key に write が付くまでは実行不可**(付いていなければ L3 = オーナー機のみ) |
 | オーナー機 | 編集を staging に出す | 手順書 1(commit・`git push origin monorepo`)→ 2(`pr_and_merge_to_develop.sh monorepo`)→ 3(`deploy_staging.sh`) |
 | オーナー機 | 本番へ出す | 上の 1→2→3 で staging を目視確認してから 4(`deploy_production_from_staging.sh`)。**この実行が承認** |
 | どこでも | staging 上の編集をオーナー機へ戻す | 手順書 0(`pr_develop_and_merge_to_monorepo.sh`)。方向は develop → monorepo の1つだけ(D-64) |
