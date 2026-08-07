@@ -62,6 +62,31 @@ polyrepo + vendoring 構成をファイルコピーで集約したもので、�
 計画書に無い作業を頼まれたら、ROADMAP に照らして「どの計画の管轄か / 新しい計画が要るか」を
 先に答え、勝手に着手しない。
 
+## デプロイ経路のルーティング(都度考えない・オーナー指示 2026-08-07)
+
+**正本は `infra/docs/デプロイ手順書.md`。** ここは「今どの経路か」を最初に確定させるための索引で、
+手順そのものは書かない(二重管理を避ける)。作業を始める前に**まず自分がどの機にいるか**を
+`hostname` で確認する。`web1-stg` = staging 本体、`web1` = 本番、それ以外 = オーナー機。
+
+| いる場所 | やりたいこと | 経路 |
+|---|---|---|
+| staging(`web1-stg`) | 編集を staging に出す | **何もしない。** `/src/thinkx` は staging の配信ツリー本体で、テンプレート編集は `py-autoreload` により即反映される |
+| staging(`web1-stg`) | 本番へ出す | `git push origin develop` → 手順書 0(`pr_develop_and_merge_to_monorepo.sh`)→ 手順書 4。**現状は deploy key が read-only・`gh` 未導入で不可**(findings 参照) |
+| オーナー機 | 編集を staging に出す | 手順書 1(commit・`git push origin monorepo`)→ 2(`pr_and_merge_to_develop.sh monorepo`)→ 3(`deploy_staging.sh`) |
+| オーナー機 | 本番へ出す | 上の 1→2→3 で staging を目視確認してから 4(`deploy_production_from_staging.sh`)。**この実行が承認** |
+| どこでも | staging 上の編集をオーナー機へ戻す | 手順書 0(`pr_develop_and_merge_to_monorepo.sh`)。方向は develop → monorepo の1つだけ(D-64) |
+| どこでも | 前の release に戻す | 手順書「戻し方」。production を直接巻き戻さず release を入れ直す |
+
+- ブランチは `monorepo`(作業)/ `develop`(staging が追う)/ `production`(本番が追う)の3本。
+  **`master` は 2026-08 時点で 9 コミット遅れの死んだブランチで、イベントページも存在しない。
+  ここを起点にしない。**
+- 各サーバーは `deploy-timer@<env>.timer` が 60 秒ごとに追従する(staging→`origin/develop`、
+  本番→`origin/production`)。追従は `merge --ff-only` のみで `reset --hard` を使わないため、
+  サーバー上の未コミット変更が黙って消えることはない(止まって通知される)。
+- 確認 URL は経路とセットで必ず提示する。staging = `https://staging.thinkxinc.com/...`(Basic 認証)、
+  本番 = `https://thinkxinc.com/...`。**「変更しました」だけで報告を終えない**
+  (`docs/GUIDELINES.md`「サイトを変更したら反映(再起動)まで込みでやる」)。
+
 ## ブランチ・push 規約
 
 - ブランチ名は**全リポジトリ統一で `2026refactor`**(オーナー裁定 2026-07-06)。
