@@ -1255,3 +1255,17 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
 - 残課題: 外形監視+Discord 通知(TODO 起票済み)/ add_current_office_ip.sh の
   非対話モード(Claude 代行時に terraform の対話承認ができない)/
   setup 冒頭の apt ロック待ち(要承認)。
+
+### F-I(2026-08-07): 手順書に `<...>` のプレースホルダを残さない(オーナー指摘)
+
+- 指摘: `git add <出すファイル>` / `git commit -m "<何を変えたか>"` のような穴あきブロックは
+  「上から貼れば完走」を満たさない。貼る側が毎回考える手順は手順ではない。
+- 対処: `docs/デプロイ手順書.md` から `<...>` を全廃した。
+  - commit は編集ディレクトリ単位に固定(`git add thinkx/` / `git add infra/`)。
+    `git add -A` 禁止(D-68)と両立し、かつ貼れる形。message は既定文言を置き、
+    必要なら `git commit --amend -m` で直す。
+  - `acceptance-sweep.sh <LB_IP>` は `"$(terraform_output.sh prod lb_public_ip)"` に置換して
+    値の手写しを無くした。
+  - rollback の日付だけは値の選択が必要なので、`BACK_TO=release/2026-08-06` の
+    1行ブロックに隔離し、以降のブロックは `"$BACK_TO"` を参照するだけにした。
+- 規則: 値の選択が要る箇所は、コマンド中に穴を空けず「変数を1行で置くブロック」に隔離する。
