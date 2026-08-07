@@ -71,7 +71,7 @@ polyrepo + vendoring 構成をファイルコピーで集約したもので、�
 | いる場所 | やりたいこと | 経路 |
 |---|---|---|
 | staging(`web1-stg`) | 編集を staging に出す | **何もしない。** `/src/thinkx` は staging の配信ツリー本体で、テンプレート編集は `py-autoreload` により即反映される |
-| staging(`web1-stg`) | 本番へ出す | `git push origin develop` → 手順書 0(`pr_develop_and_merge_to_monorepo.sh`)→ 手順書 4。**現状は deploy key が read-only・`gh` 未導入で不可**(findings 参照) |
+| staging(`web1-stg`) | 本番へ出す | **セッション内のオーナー明示承認が必須**(承認レベル L2 = D-50。正本 `docs/DEPLOY_APPROVAL_LEVELS.md`)。経路は `git push origin develop` → develop→production を merge → 本番の deploy timer が 60 秒以内に反映 → 本番 URL を実測。**deploy key に write が付くまでは実行不可**(付いていなければ L3 = 従来どおりオーナー機のみ) |
 | オーナー機 | 編集を staging に出す | 手順書 1(commit・`git push origin monorepo`)→ 2(`pr_and_merge_to_develop.sh monorepo`)→ 3(`deploy_staging.sh`) |
 | オーナー機 | 本番へ出す | 上の 1→2→3 で staging を目視確認してから 4(`deploy_production_from_staging.sh`)。**この実行が承認** |
 | どこでも | staging 上の編集をオーナー機へ戻す | 手順書 0(`pr_develop_and_merge_to_monorepo.sh`)。方向は develop → monorepo の1つだけ(D-64) |
@@ -140,7 +140,9 @@ polyrepo + vendoring 構成をファイルコピーで集約したもので、�
 
 1. **各リポジトリの計画書(`*_PLAN.md`)** — 実行の唯一の規範
 2. 各リポジトリの CLAUDE.md(計画が生成するもの)
-3. `docs/ROADMAP.md` / `docs/DECISIONS.md` — 順序と確定済み決定の典拠(変更は人間のみ)
+3. `docs/ROADMAP.md` / `docs/DECISIONS.md` — 順序と確定済み決定の典拠。実行者も
+   **オーナーが下した決定の記録**は追記してよい(オーナー裁定 2026-08-07)。自分で決めた
+   方針を決定として書かない。既存の決定の書き換えはオーナーの明示指示が要る
 4. **`docs/coding_guides/` — 規範**(コードを書く際の必須制約。読まずに書くことを禁ずる)
 5. `docs/archive/` — 参考・非規範。撤回済み提案を含む。
    
