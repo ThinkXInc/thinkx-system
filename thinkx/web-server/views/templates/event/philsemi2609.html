@@ -17,7 +17,7 @@
   <meta property="og:type" content="website">
   <meta property="og:title" content="哲学とAI─システムに全てが回収される時代にどう豊かに生きるか | ThinkX">
   <meta property="og:description" content="2026年9月10日（木）19：30〜22:00、赤坂区民ホールにて開催。第一部 講演「哲学とAI─システムに全てが回収される時代にどう豊かに生きるか」、第二部 懇親会（立席形式 オールドジャズの生ピアノ演奏付）。">
-  <meta property="og:url" content="https://thinkxinc.com/event/philsemi2609.html">
+  <meta property="og:url" content="https://thinkxinc.com/event/philsemi2609">
   <meta property="og:image" content="https://thinkxinc.com/img/event/hero_hall.jpg">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="哲学とAI─システムに全てが回収される時代にどう豊かに生きるか | ThinkX">
@@ -101,14 +101,14 @@
     }
     .portrait-titles {
       display: block;
-      font-size: 11px;
+      font-size: 12px;
       letter-spacing: .05em;
       color: #d8cfbc;
     }
     .portrait-name {
       display: block;
       margin-top: 4px;
-      font-size: 18px;
+      font-size: 20px;
       letter-spacing: .22em;
       color: #f2ede3;
     }
@@ -130,17 +130,25 @@
       text-align: center;
     }
     .hero-badge {
-      padding: 8px 30px;
+      padding: 10px 30px 12px 30px;
       border: 1px solid var(--gold-bright);
       background: rgba(16, 12, 8, .45);
       color: #f2ede3;
+    }
+    .hero-badge-main {
       font-size: 22px;
       letter-spacing: .42em;
       text-indent: .42em;
     }
+    .hero-badge-sub {
+      margin-top: 6px;
+      font-size: 13px;
+      letter-spacing: .2em;
+      text-indent: .2em;
+    }
     .hero-event-type {
       color: #f2ede3;
-      font-size: 20px;
+      font-size: 23px;
       letter-spacing: .18em;
       padding: 3px 18px;
       background: rgba(16, 12, 8, .45);
@@ -148,22 +156,11 @@
     }
     .hero-date {
       color: var(--gold-bright);
-      font-size: 15px;
+      font-size: 17px;
       letter-spacing: .22em;
       padding: 3px 16px;
       background: rgba(16, 12, 8, .45);
       text-shadow: 0 1px 10px rgba(0, 0, 0, .65);
-    }
-    .hero-title {
-      color: #f2ede3;
-      font-size: 24px;
-      font-weight: 600;
-      letter-spacing: .1em;
-      line-height: 1.8;
-      max-width: 960px;
-      padding: 6px 22px;
-      background: rgba(16, 12, 8, .45);
-      text-shadow: 0 1px 14px rgba(0, 0, 0, .65);
     }
 
     /* ---- 本文 ---- */
@@ -176,7 +173,7 @@
     .event-title {
       margin-top: 90px;
       text-align: center;
-      font-size: 40px;
+      font-size: 56px;
       font-weight: 600;
       letter-spacing: .12em;
       line-height: 1.6;
@@ -184,7 +181,7 @@
     .event-title-sub {
       display: block;
       margin-top: 18px;
-      font-size: 21px;
+      font-size: 29px;
       font-weight: 500;
       letter-spacing: .14em;
       color: var(--ink-soft);
@@ -216,7 +213,7 @@
       text-align: center;
       white-space: nowrap;
     }
-    .highlight-text { margin-top: 3px; }
+    .highlight-text { margin-top: 3px; font-size: 18px; }
 
     .event-section { margin-top: 110px; }
     .section-label {
@@ -226,6 +223,47 @@
       color: var(--gold);
     }
     .section-rule { height: 1px; background-color: var(--line); border: none; margin-top: 14px; }
+
+    /* ---- こんな人に ---- */
+    .audience {
+      padding: 34px 38px 38px 38px;
+      background-color: #f1ede5;
+    }
+    .audience-title {
+      text-align: center;
+      font-size: 23px;
+      font-weight: 600;
+      letter-spacing: .14em;
+    }
+    .audience-list {
+      list-style: none;
+      counter-reset: audience;
+      margin-top: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .audience-list li {
+      counter-increment: audience;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      font-size: 18px;
+    }
+    .audience-list li::before {
+      content: counter(audience);
+      flex-shrink: 0;
+      width: 30px;
+      height: 30px;
+      margin-top: 4px;
+      border: 1px solid var(--gold);
+      border-radius: 7px;
+      color: var(--gold);
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 28px;
+      text-align: center;
+    }
 
     /* ---- メインプロフィール ---- */
     .speaker-name {
@@ -241,7 +279,7 @@
       letter-spacing: .12em;
       color: var(--ink-soft);
     }
-    .profile-lead { margin-top: 26px; font-weight: 600; }
+    .profile-lead { margin-top: 26px; font-weight: 600; font-size: 18px; }
     .profile-titles { margin-top: 23px; }
     .career-list { list-style: none; margin-top: 22px; }
     .profile-text { margin-top: 22px; }
@@ -300,7 +338,7 @@
     }
 
     @media (max-width: 600px) {
-      /* スマホ: アイコン+名前を左上の1行に流し、その下に帯/文言/タイトル/日付。
+      /* スマホ: 帯/種別/日付を先に読ませ、アイコン+名前はその下に置く。
          コラージュは背景。ヘッダー全体は 4:3 を基準に、収まらない場合だけ伸びる */
       .hero { display: flex; flex-direction: column; aspect-ratio: 4 / 3; }
       .hero-collage { position: absolute; inset: 0; aspect-ratio: auto; height: 100%; }
@@ -308,21 +346,22 @@
         position: relative;
         inset: auto;
         transform: none;
-        order: -1;
         width: auto;
+        align-self: center;
         flex-direction: row;
         align-items: center;
         gap: 12px;
-        margin: 14px 0 0 14px;
+        margin: 0 0 16px 0;
       }
-      .hero-portrait img { width: 72px; height: 72px; box-shadow: 0 0 0 4px rgba(16, 12, 8, .4); }
+      .hero-portrait img { width: 62px; height: 62px; box-shadow: 0 0 0 4px rgba(16, 12, 8, .4); }
       .hero-portrait figcaption { margin-top: 0; text-align: left; }
       .portrait-titles { font-size: 9px; }
       .portrait-name { font-size: 13px; margin-top: 2px; }
-      .hero-word { position: relative; inset: auto; flex: 1; padding: 8px 14px 16px 14px; gap: 9px; }
-      .hero-badge { font-size: 14px; padding: 5px 20px; }
+      .hero-word { position: relative; inset: auto; flex: 1; padding: 18px 14px 12px 14px; gap: 9px; }
+      .hero-badge { padding: 6px 20px 8px 20px; }
+      .hero-badge-main { font-size: 14px; }
+      .hero-badge-sub { font-size: 10px; margin-top: 4px; }
       .hero-event-type { font-size: 11px; padding: 3px 12px; }
-      .hero-title { font-size: 13px; padding: 4px 12px; margin: 0; }
       .hero-date { font-size: 10px; padding: 3px 12px; }
       .page { padding: 0 22px 80px 22px; }
       .event-title { margin-top: 56px; font-size: 27px; }
@@ -330,6 +369,11 @@
       .highlight-list { margin-top: 50px; gap: 24px; }
       .highlight { flex-direction: column; gap: 10px; }
       .event-section { margin-top: 80px; }
+      .audience { padding: 24px 22px 26px 22px; }
+      .audience-title { font-size: 20px; }
+      .audience-list { gap: 14px; }
+      .audience-list li { font-size: 16px; gap: 12px; }
+      .audience-list li::before { width: 26px; height: 26px; line-height: 24px; font-size: 13px; margin-top: 3px; }
       .speaker-name { font-size: 24px; }
       .name-reading { display: block; margin: 8px 0 0 0; }
       .overview-item { flex-direction: column; }
@@ -353,9 +397,11 @@
       <img src="/img/event/pianobar_w.jpg" alt="懇親会イメージ">
     </div>
     <div class="hero-word">
-      <span class="hero-badge">出版記念</span>
-      <p class="hero-event-type">シンポジウムと懇談会（立席形式　生ピアノ演奏付）</p>
-      <p class="hero-title">「哲学とAI─システムに全てが回収される時代にどう豊かに生きるか」</p>
+      <div class="hero-badge">
+        <p class="hero-badge-main">出版決定記念</p>
+        <p class="hero-badge-sub">「ファーブラー・メソッド」</p>
+      </div>
+      <p class="hero-event-type">シンポジウム/懇談会（立席形式　生ピアノ演奏付）</p>
       <p class="hero-date">2026年9月10日（木）19：30〜22:00 赤坂区民ホール</p>
     </div>
     <figure class="hero-portrait">
@@ -390,6 +436,18 @@
     </ul>
     <!-- ↑↑↑↑ END 見どころ ↑↑↑↑ -->
 
+    <!-- ↓↓↓↓ こんな人に ↓↓↓↓ -->
+    <section class="event-section audience">
+      <p class="audience-title">こんな人に</p>
+
+      <ol class="audience-list">
+        <li>ビジネスのルールがどのように変わるのか知りたい。</li>
+        <li>本当の哲学とは何か知りたい。「知的関心の高い人のメンサ」哲学サロンコミュニティ、クリエイタークラスのためのコミュニティに興味がある。</li>
+        <li>ClaudeCodeでプロが生産性をどのように倍化しているのか知りたい。</li>
+      </ol>
+    </section>
+    <!-- ↑↑↑↑ END こんな人に ↑↑↑↑ -->
+
     <!-- ↓↓↓↓ メインプロフィール ↓↓↓↓ -->
     <section class="event-section profile">
       <span class="section-label">SPEAKER</span>
@@ -401,16 +459,16 @@
 
       <p class="profile-titles">連続起業家、独立計算進化学者、現代芸術家</p>
 
+      <p class="profile-text">計算理論、代数学、量子物理学、生命科学、哲学、美学、を横断しプラトン以降の哲学的問題を解決し新たな自然科学体系を構成する知識進化に関する学問─第三空間理論─を16歳から構築し続け、パリ外のフランス最上位大学Grenoble Alpes大学に派遣留学生に選出、パリ音響音楽研究所IRCAM Forum会員として荻生徂徠以降も謎とされる東洋和声合竹の数理構造を研究、合衆国ハワイ州マウイ島で数年に渡り録音収集した生物歌研究による「言語の普遍的数理構造」の研究成果に基づく普遍的言語学習法を小学生から大人まで可能にした『ファーブラー・メソッド』を2027年1月にクロスメディア・ランゲージ社より出版予定。</p>
+
+      <p class="profile-text">大学卒業時に独立、現在主流のクロール型ニュースリーダーを日本で初めて普及、半年で2万5千ダウンロード、スーツケース一つで世界を放浪、サンフランシスコでハッカーハウス運営、国内初となるAI活用型の投資用不動産分析システムを企画・開発(2025年にM&amp;A)、独自の言語意味解析機械学習アルゴリズムや音声アルゴリズムで複数の特許を保持。</p>
+
       <ul class="career-list">
         <li>2021年東京大学大学院情報学環客員研究員。</li>
         <li>2022年未来工学研究所(TTCSP科学技術系シンクタンクグローバルインデックス世界3位)客員研究員。</li>
-        <li>2026年NTTドコモビジネス(株)新規事業アドバイザー。</li>
+        <li>2026年NTTドコモビジネス(株)AIクラウド事業アドバイザー。</li>
         <li>他多数歴任。</li>
       </ul>
-
-      <p class="profile-text">大学卒業時に独立、現在主流のクロール型ニュースリーダーを日本で初めて普及、半年で2万5千ダウンロード、スーツケース一つで世界を放浪、サンフランシスコでハッカーハウス運営、世界初の本格的な業務用不動産投資分析AIシステム企画開発(2025年にM&amp;A)、独自の言語意味解析機械学習アルゴリズムや音声アルゴリズムで複数の特許を保持。</p>
-
-      <p class="profile-text">計算理論、代数学、量子物理学、生命科学、哲学、美学、を横断しプラトン以降の哲学的問題を解決し新たな自然科学体系を構成する知識進化に関する学問─第三空間理論─を16歳から構築し続け、パリ外のフランス最上位大学Grenoble Alpes大学に派遣留学生に選出、パリ音響音楽研究所IRCAM Forum会員として荻生徂徠以降も謎とされる東洋和声合竹の数理構造を研究、合衆国ハワイ州マウイ島で数年に渡り録音収集した生物歌研究による「言語の普遍的数理構造」の研究成果に基づく普遍的言語学習法を小学生から大人まで可能にした『ファーブラー・メソッド』を2027年1月にクロスメディア・ランゲージ社より出版予定。</p>
     </section>
     <!-- ↑↑↑↑ END メインプロフィール ↑↑↑↑ -->
 

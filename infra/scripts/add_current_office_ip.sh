@@ -27,9 +27,14 @@ else
   printf '# %s を追加 %s\n' "$IP/32" "$(date +%F)" >> "$TF/terraform.tfvars"
 fi
 grep "^my_office_ips" "$TF/terraform.tfvars"
+# apply は SG のみに限定(-target)+承認プロンプト必須。
+# 2026-08-06 の事故: -auto-approve の全体 apply が AMI 追従の「インスタンス要再作成」
+# 差分を巻き込み、prod/staging の全4台を破壊再作成した。IP 追加で触ってよいのは
+# SG だけであり、それ以外の差分をこのスクリプトから適用してはならない。
 for E in prod staging; do
   [ -f "$TF/envs/$E/terraform.tfstate" ] || continue
-  terraform -chdir="$TF/envs/$E" apply -input=false -auto-approve
+  terraform -chdir="$TF/envs/$E" apply -input=false \
+    -target=aws_security_group.web -target=aws_security_group.lb
 done
 
 # staging: SG の 22 番に現在 IP を追加(既存の許可は残す)

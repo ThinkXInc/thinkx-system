@@ -1126,3 +1126,146 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
 - 対応(実施): golden(サイト単体テストが正)は触らず、acceptance-sweep.sh で `thinkx:/filedrop` を
   受け入れ対象外にし skip 行を出す(黙って落とさない)。実測: thinkx 58/58・ACCEPTANCE 全 green。
 - 波及ルールが増えたら acceptance-sweep.sh の case に足す。
+
+## 2026-08-06 start_staging.sh の待ち時間が表示(最大120秒)より長い
+
+- 事象: staging 起動時、Discord の起動通知が来ているのにスクリプトは
+  「ssh 到達と主要サービスを確認中(最大 120 秒)...」のまま待ち続けた。
+- 原因1(表示と実態の乖離): ループが ssh ConnectTimeout=5 + sleep 5 × 24周で、
+  ssh が沈黙する間は1周最大10秒 → 実際は最大約4分待ち得た。
+- 原因2(観測対象の違い): Discord 通知はブート初期(ネットワーク up)に飛ぶが、
+  スクリプトの OK 条件は「ssh 到達 + nginx と uwsgi_thinkx が active」。
+  サービス起動完了はブート通知より数十秒遅れるため、体感差が出る。
+- 対応(実施): ConnectTimeout=3 + sleep 2(1周≦5秒 × 24 = ちょうど120秒)に短縮。
+  検知遅延は最大10秒→5秒に。次回の staging 起動が実流し検証を兼ねる。
+
+## 2026-08-06 push_assets: ssh 不達だと「箱が空」に見える / .DS_Store 混入
+
+- 事象: staging デプロイで assets 確認の diff が「箱のみ」空・「手元のみ」11本
+  (計約384MB)と出た直後、scp が `port 22: Operation timed out` で FAIL。
+  真因は SG の接続元 IP 許可リスト(手元 IP の変化)で、箱側一覧の取得(ssh)も
+  同じ理由で失敗して空扱いになっていた。**「箱が空」と「ssh 不達」が同じ見た目**
+  になるのは誤診を誘う — push_assets.sh は一覧取得の ssh 失敗を transfer 失敗と
+  区別して報告すべき(未実施・要修正)。
+- 手元のみ一覧に `.DS_Store`(6148B)が含まれ配布対象になる。実害は小さいが
+  ゴミの同期は不要。除外(-name .DS_Store の類)を足すべき(未実施・要修正)。
+- 対処ルーチン: `add_current_office_ip.sh` で現 IP を許可 → deploy_staging.sh 再実行。
+
+## 2026-08-06 【事故】add_current_office_ip.sh の auto-approve apply が prod/staging 全4台を破壊再作成
+
+- 経緯: SSH 締め出し(手元 IP 変化)の解消に add_current_office_ip.sh を実行。
+  同スクリプトは terraform apply を **-auto-approve** で prod/staging の両 env に
+  実行する実装だった(ヘッダーコメントは「承認プロンプトで yes」と記載しており
+  実装と乖離)。apply には IP 追加と無関係の **AMI 追従差分**(data.aws_ami
+  most_recent が新 Ubuntu AMI を検出 → ami 変更は ForceNew)が同乗しており、
+  **web/lb × prod/staging の4台が破壊→新規作成**された。EIP は台帳(D-53)により
+  保持=IP・DNS 不変。旧ルート EBS はインスタンスと共に削除。
+- 症状: 全公開サイト connection refused(新品 Ubuntu に nginx 無し)。ssh は
+  「REMOTE HOST IDENTIFICATION HAS CHANGED」(同一 IP に別マシン=入替の証拠)。
+  Discord への異常通知は無し(外形監視が存在しない)。
+- 復旧: 構築手順.md により prod → staging の順で再構築(箱=terraform は事故 apply
+  で新規作成済みのため手順4以降)。known_hosts は ssh-keygen -R で旧鍵を掃除。
+- 恒久対処(実施済み・本コミット):
+  1) add_current_office_ip.sh: -auto-approve を廃止し、apply を
+     -target=aws_security_group.{web,lb} に限定。IP 追加が SG 以外の差分を
+     巻き込む経路を構造的に遮断。
+  2) instances.tf: aws_instance {lb,web} に lifecycle ignore_changes = [ami]。
+     新 AMI 公開のたびに「要再作成」差分が潜伏する地雷を除去(新 AMI は意図した
+     建て直しのときだけ拾う)。terraform fmt/validate 済み。apply は次回の
+     承認付き実行で反映(コード変更のみでは挙動に影響しない)。
+- 教訓: 「スクリプトのヘッダー記述」と「実装」の乖離は致命傷になる。terraform apply
+  を含むスクリプトは (a) 承認プロンプト必須 (b) 目的リソースへの -target 限定
+  (c) 事前 plan の要約提示、を規約化すべき(規範化は人間判断・要 D-xx 起票)。
+
+## 2026-08-06 TODO: 外形監視+Discord 通知が無い(本番ダウンに気づけない)
+
+- 今回の全損時、Discord には何の通知も出なかった(ダウン検知の仕組み自体が無い)。
+- 最小構成案: 常時稼働の k00bot2 EC2 の cron で5分毎に全サイト
+  (thinkxinc/truetechjapan/transformism/kazukiotsuka/nntm/staging)へ curl し、
+  非 200 が続いたら Discord webhook へ通知。復旧通知も出す。
+- オーナー指示(2026-08-06 原文):「ダウンしたら知らせる仕組みがないので、
+  これはTODOにしておかなければいけない」
+
+## 2026-08-06 復旧進捗メモ(全損事故からの再構築・prod)
+
+- 完了: web 基盤(setup_user/setup_webserver: python3.9/node/nginx/mongod 揃い)、
+  deploy key 検証(3鍵)、monorepo clone(web/LB とも・checkout は monorepo)、
+  .env 配布(thinkx/kazukiotsukacom/transformism/loadbalancer)、
+  動画アセット11本配布、setup_nginx-web-root(8005 応答)、
+  setup_thinkx(8005->200)、setup_kazukiotsukacom(8007->200)、
+  setup_loadbalancer(exit 0・詳細ログ未精査)。
+- 未了: setup_transformism(実行直前にオーナー中断→再開時にネット断で不達)、
+  LB ログ精査、check_request_path、acceptance-sweep、
+  本番 checkout の production ブランチ同期(sync_from_origin prod)、staging 再構築一式。
+- 備考: 2度の setup_webserver FAIL の原因は (1)二重実行の apt ロック衝突
+  (2)新品初回ブートの unattended-upgrades のロック。3回目は単独実行+ロック解放
+  待ちで成功。setup 冒頭に apt ロック解放待ちを入れる改修を提案(要承認)。
+
+### F-I(2026-08-07): staging の箱は空(中身が未構築)。push_assets はそれを「中身が違う」と誤表示する
+
+- 事象: `deploy_staging.sh` が `tar: /src/thinkx/web-server/views: Cannot open: No such file or directory`
+  で FAIL。その手前で毎回「アセットが supercom-web1-stg と違うので配ります」が出て
+  343MB を送っていた。
+- 実測(読み取りのみ): supercom-web1-stg / supercom-lb1-stg とも uptime 約20時間、
+  `/src` が存在しない、`kaz` ユーザーなし(home は ubuntu のみ)、nginx inactive、node 未導入。
+  箱(EC2)は在るが**中身(setup 一式)が未構築**。prod (supercom-web1) は `/src/thinkx-system` あり。
+- 原因: 全損事故後に prod を再構築した一方、staging の中身は再構築していない
+  (infra/CLAUDE.md D-32-2 は「staging 再構築はカットオーバー後」)。空箱に対して
+  デプロイ経路だけが従来どおり動こうとした。
+- ツール側の欠陥(別件として残る):
+  1. `push_assets.sh` は remote の一覧取得を `2>/dev/null` で握りつぶすため、
+     「箱に views/video が無い」と「中身が違う」を区別できず、前者を後者として表示する
+     (2026-07-24 の「箱が空 = ssh 不達の誤表示」と同型の再発)。
+  2. 転送先の存在確認より先に 343MB を scp するので、失敗が最後まで分からない。
+     宛先の存在確認(安価)を先に行い、無ければ「箱が未構築」と言って即座に止めるべき。
+  3. ローカル `views/video/.DS_Store` が一覧にもアーカイブにも入る(既知)。
+- 対処の選択肢: (a) staging の中身を prod と同一手順で再構築する(I-STEP3 前倒し・人間判断)
+  (b) staging を使わず production へ出す(受け入れの後退なので非推奨)
+  (c) ツール側の誤表示と fail fast だけ先に直す(箱が空である事実は変わらない)
+
+### F-I(2026-08-07): 手順書が実在しないパスを指していた(`infra/etc/push_assets.sh`)
+
+- `push_assets.sh` は `infra/etc/` から `infra/scripts/` へ移した(GUIDELINES「etc/ と scripts/ の線引き」
+  2026-07-21)が、実行用の手順書3本が旧パスのまま残っていた:
+  `docs/構築手順.md`(7章)・`docs/運用.md`・`docs/DNS切替手順.md`。貼れば
+  `No such file or directory` で止まる。staging 再構築の最中に踏む位置にあった。
+- 対処: 3本を `infra/scripts/push_assets.sh` に修正。DECISIONS / GUIDELINES / 引き継ぎ・
+  discussion の記述は当時の記録なので変更しない(履歴であって手順ではない)。
+- 再発防止として、手順書に出てくる `*.sh` / `*.py` のパスが実在するかを機械的に照合した
+  (構築手順・運用・DNS切替・デプロイ手順書の4本。現在 MISSING なし):
+  `grep -rhoE "(infra|thinkx)/[A-Za-z0-9_./-]+\.(sh|py)" <docs> | sort -u | while read -r p; do [ -e "$p" ] || echo "MISSING: $p"; done`
+  この照合をスクリプト化して CI 的に回すかは人間の判断(提案)。
+
+## 2026-08-07 全損事故からの復旧完了(prod/staging とも受け入れ green)
+
+- prod: 基盤(python3.9/node/nginx/mongod)→ clone → .env/assets → 3サイト(8005/8006/8007
+  すべて 200)→ LB(TLS renewal 全件 dns-route53)→ sync_from_origin prod(9b4aacb =
+  release/2026-08-06 merge)→ check_request_path 全ホップ green → acceptance 全サイト green。
+  公開 URL 全 200(イベントページ /event/philsemi2609.html 含む)。
+- staging: 同一手順で再構築 → pr_and_merge_to_develop で develop を先端化 →
+  deploy_staging.sh で同期 → acceptance 全サイト green。Basic 認証(401)は維持。
+- 途中の躓きと対処:
+  1) 携帯回線(docomo CGNAT 1.73.x)から ssh 不達。checkip の出口 IP を /32 許可しても
+     不達で、**CGNAT はフローごとに出口 IP が変わり得る**と判断。復旧作業の間だけ
+     1.73.0.0/16 の 22 番を4SGに一時許可し、完了後に /16・/32 とも削除済み
+     (SG は terraform 管理の3件のみに復元済み・実測確認)。
+  2) 新品初回ブートは unattended-upgrades が apt ロックを保持し setup が失敗し得る
+     (prod で2回失敗)。ロック解放を確認してから流すと成功。setup 冒頭への
+     ロック待ち組み込みを提案(要承認)。
+- 残課題: 外形監視+Discord 通知(TODO 起票済み)/ add_current_office_ip.sh の
+  非対話モード(Claude 代行時に terraform の対話承認ができない)/
+  setup 冒頭の apt ロック待ち(要承認)。
+
+### F-I(2026-08-07): 手順書に `<...>` のプレースホルダを残さない(オーナー指摘)
+
+- 指摘: `git add <出すファイル>` / `git commit -m "<何を変えたか>"` のような穴あきブロックは
+  「上から貼れば完走」を満たさない。貼る側が毎回考える手順は手順ではない。
+- 対処: `docs/デプロイ手順書.md` から `<...>` を全廃した。
+  - commit は編集ディレクトリ単位に固定(`git add thinkx/` / `git add infra/`)。
+    `git add -A` 禁止(D-68)と両立し、かつ貼れる形。message は既定文言を置き、
+    必要なら `git commit --amend -m` で直す。
+  - `acceptance-sweep.sh <LB_IP>` は `"$(terraform_output.sh prod lb_public_ip)"` に置換して
+    値の手写しを無くした。
+  - rollback の日付だけは値の選択が必要なので、`BACK_TO=release/2026-08-06` の
+    1行ブロックに隔離し、以降のブロックは `"$BACK_TO"` を参照するだけにした。
+- 規則: 値の選択が要る箇所は、コマンド中に穴を空けず「変数を1行で置くブロック」に隔離する。

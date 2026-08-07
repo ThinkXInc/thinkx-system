@@ -17,11 +17,13 @@ echo "起動対象: $IDS"
 aws ec2 start-instances --instance-ids $IDS --query "StartingInstances[].[InstanceId,CurrentState.Name]" --output text
 aws ec2 wait instance-running --instance-ids $IDS
 
+# 1周 = ssh 最大3秒 + sleep 2秒 ≦ 5秒。24周でちょうど最大120秒(旧: 5+5秒×24で
+# 表示に反して最大4分待ち得た。検知遅延も最大10秒→5秒に短縮。2026-08-06)
 echo "ssh 到達と主要サービスを確認中(最大 120 秒)..."
 OK=""
 for i in $(seq 1 24); do
-  ssh -o BatchMode=yes -o ConnectTimeout=5 supercom-web1-stg 'systemctl is-active --quiet nginx && systemctl is-active --quiet uwsgi_thinkx' 2>/dev/null && OK=1 && break
-  sleep 5
+  ssh -o BatchMode=yes -o ConnectTimeout=3 supercom-web1-stg 'systemctl is-active --quiet nginx && systemctl is-active --quiet uwsgi_thinkx' 2>/dev/null && OK=1 && break
+  sleep 2
 done
 [ -n "$OK" ] && printf '%b\n' "${G}OK: start_staging staging 2台が稼働(web の nginx / uwsgi_thinkx も active)${Z}" \
              || printf '%b\n' "${R}FAIL: start_staging インスタンスは running だが web のサービス確認が 120 秒で取れず。check_request_path.sh で追試を${Z}"
