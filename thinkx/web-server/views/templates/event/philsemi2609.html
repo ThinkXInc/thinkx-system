@@ -224,6 +224,47 @@
     }
     .section-rule { height: 1px; background-color: var(--line); border: none; margin-top: 14px; }
 
+    /* ---- こんな人に ---- */
+    .audience {
+      padding: 34px 38px 38px 38px;
+      background-color: #f1ede5;
+    }
+    .audience-title {
+      text-align: center;
+      font-size: 23px;
+      font-weight: 600;
+      letter-spacing: .14em;
+    }
+    .audience-list {
+      list-style: none;
+      counter-reset: audience;
+      margin-top: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .audience-list li {
+      counter-increment: audience;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      font-size: 18px;
+    }
+    .audience-list li::before {
+      content: counter(audience);
+      flex-shrink: 0;
+      width: 30px;
+      height: 30px;
+      margin-top: 4px;
+      border: 1px solid var(--gold);
+      border-radius: 7px;
+      color: var(--gold);
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 28px;
+      text-align: center;
+    }
+
     /* ---- メインプロフィール ---- */
     .speaker-name {
       margin-top: 34px;
@@ -328,6 +369,11 @@
       .highlight-list { margin-top: 50px; gap: 24px; }
       .highlight { flex-direction: column; gap: 10px; }
       .event-section { margin-top: 80px; }
+      .audience { padding: 24px 22px 26px 22px; }
+      .audience-title { font-size: 20px; }
+      .audience-list { gap: 14px; }
+      .audience-list li { font-size: 16px; gap: 12px; }
+      .audience-list li::before { width: 26px; height: 26px; line-height: 24px; font-size: 13px; margin-top: 3px; }
       .speaker-name { font-size: 24px; }
       .name-reading { display: block; margin: 8px 0 0 0; }
       .overview-item { flex-direction: column; }
@@ -389,6 +435,18 @@
       </li>
     </ul>
     <!-- ↑↑↑↑ END 見どころ ↑↑↑↑ -->
+
+    <!-- ↓↓↓↓ こんな人に ↓↓↓↓ -->
+    <section class="event-section audience">
+      <p class="audience-title">こんな人に</p>
+
+      <ol class="audience-list">
+        <li>ビジネスのルールがどのように変わるのか知りたい。</li>
+        <li>本当の哲学とは何か知りたい。「知的関心の高い人のメンサ」哲学サロンコミュニティ、クリエイタークラスのためのコミュニティに興味がある。</li>
+        <li>ClaudeCodeでプロが生産性をどのように倍化しているのか知りたい。</li>
+      </ol>
+    </section>
+    <!-- ↑↑↑↑ END こんな人に ↑↑↑↑ -->
 
     <!-- ↓↓↓↓ メインプロフィール ↓↓↓↓ -->
     <section class="event-section profile">

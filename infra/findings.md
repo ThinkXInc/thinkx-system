@@ -1235,3 +1235,23 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   (構築手順・運用・DNS切替・デプロイ手順書の4本。現在 MISSING なし):
   `grep -rhoE "(infra|thinkx)/[A-Za-z0-9_./-]+\.(sh|py)" <docs> | sort -u | while read -r p; do [ -e "$p" ] || echo "MISSING: $p"; done`
   この照合をスクリプト化して CI 的に回すかは人間の判断(提案)。
+
+## 2026-08-07 全損事故からの復旧完了(prod/staging とも受け入れ green)
+
+- prod: 基盤(python3.9/node/nginx/mongod)→ clone → .env/assets → 3サイト(8005/8006/8007
+  すべて 200)→ LB(TLS renewal 全件 dns-route53)→ sync_from_origin prod(9b4aacb =
+  release/2026-08-06 merge)→ check_request_path 全ホップ green → acceptance 全サイト green。
+  公開 URL 全 200(イベントページ /event/philsemi2609.html 含む)。
+- staging: 同一手順で再構築 → pr_and_merge_to_develop で develop を先端化 →
+  deploy_staging.sh で同期 → acceptance 全サイト green。Basic 認証(401)は維持。
+- 途中の躓きと対処:
+  1) 携帯回線(docomo CGNAT 1.73.x)から ssh 不達。checkip の出口 IP を /32 許可しても
+     不達で、**CGNAT はフローごとに出口 IP が変わり得る**と判断。復旧作業の間だけ
+     1.73.0.0/16 の 22 番を4SGに一時許可し、完了後に /16・/32 とも削除済み
+     (SG は terraform 管理の3件のみに復元済み・実測確認)。
+  2) 新品初回ブートは unattended-upgrades が apt ロックを保持し setup が失敗し得る
+     (prod で2回失敗)。ロック解放を確認してから流すと成功。setup 冒頭への
+     ロック待ち組み込みを提案(要承認)。
+- 残課題: 外形監視+Discord 通知(TODO 起票済み)/ add_current_office_ip.sh の
+  非対話モード(Claude 代行時に terraform の対話承認ができない)/
+  setup 冒頭の apt ロック待ち(要承認)。
