@@ -1306,3 +1306,17 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   (ruleset の Allowed merge methods を Merge のみにすれば強制できる) /
   (b) 判定を sha の祖先関係でなく tree の一致(`git rev-parse origin/develop^{tree}` と
   `origin/production^{tree}` の比較)に変える。(b) の方が merge 方法に依存しない。
+### F-I(2026-08-07): 再構築した staging に Claude Code が入っていない
+
+- 実測(supercom-web1-stg・読み取りのみ): `claude` コマンドが kaz のログインシェルでも
+  見つからない。`claude-session.service` の unit ファイルも無い(`is-enabled` が
+  No such file or directory)。tmux セッション `claude` は存在するが中で claude は動いていない。
+  node は `/usr/local/bin/node` にある。
+- 意味: D-59 の「起動時に tmux + `claude --remote-control` を自動で立てる」経路が失われており、
+  スマホの Remote Control から staging へ指示できない。
+- 復旧: `ssh supercom-web1-stg 'ENVX=staging bash -s' < infra/setup/setup_claude_code.sh` を流し、
+  そのあと `attach_claude.sh` で入った tmux 内で `claude --remote-control` を一度起動して
+  対話ログインする(新インスタンスのため `/home/kaz/.claude` の認証は引き継がれていない)。
+- 併せて実測: staging の web/LB は再構築直後 checkout が `monorepo` ブランチのままだった。
+  `sync_from_origin.sh staging` は `develop` を期待するため、そのままでは WRONG-BRANCH で止まる。
+  再構築後は `git checkout -B develop origin/develop` と `setup_deploy_timer.sh` まで含めて完了とする。
