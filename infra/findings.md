@@ -1200,3 +1200,38 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
 - 備考: 2度の setup_webserver FAIL の原因は (1)二重実行の apt ロック衝突
   (2)新品初回ブートの unattended-upgrades のロック。3回目は単独実行+ロック解放
   待ちで成功。setup 冒頭に apt ロック解放待ちを入れる改修を提案(要承認)。
+
+### F-I(2026-08-07): staging の箱は空(中身が未構築)。push_assets はそれを「中身が違う」と誤表示する
+
+- 事象: `deploy_staging.sh` が `tar: /src/thinkx/web-server/views: Cannot open: No such file or directory`
+  で FAIL。その手前で毎回「アセットが supercom-web1-stg と違うので配ります」が出て
+  343MB を送っていた。
+- 実測(読み取りのみ): supercom-web1-stg / supercom-lb1-stg とも uptime 約20時間、
+  `/src` が存在しない、`kaz` ユーザーなし(home は ubuntu のみ)、nginx inactive、node 未導入。
+  箱(EC2)は在るが**中身(setup 一式)が未構築**。prod (supercom-web1) は `/src/thinkx-system` あり。
+- 原因: 全損事故後に prod を再構築した一方、staging の中身は再構築していない
+  (infra/CLAUDE.md D-32-2 は「staging 再構築はカットオーバー後」)。空箱に対して
+  デプロイ経路だけが従来どおり動こうとした。
+- ツール側の欠陥(別件として残る):
+  1. `push_assets.sh` は remote の一覧取得を `2>/dev/null` で握りつぶすため、
+     「箱に views/video が無い」と「中身が違う」を区別できず、前者を後者として表示する
+     (2026-07-24 の「箱が空 = ssh 不達の誤表示」と同型の再発)。
+  2. 転送先の存在確認より先に 343MB を scp するので、失敗が最後まで分からない。
+     宛先の存在確認(安価)を先に行い、無ければ「箱が未構築」と言って即座に止めるべき。
+  3. ローカル `views/video/.DS_Store` が一覧にもアーカイブにも入る(既知)。
+- 対処の選択肢: (a) staging の中身を prod と同一手順で再構築する(I-STEP3 前倒し・人間判断)
+  (b) staging を使わず production へ出す(受け入れの後退なので非推奨)
+  (c) ツール側の誤表示と fail fast だけ先に直す(箱が空である事実は変わらない)
+
+### F-I(2026-08-07): 手順書が実在しないパスを指していた(`infra/etc/push_assets.sh`)
+
+- `push_assets.sh` は `infra/etc/` から `infra/scripts/` へ移した(GUIDELINES「etc/ と scripts/ の線引き」
+  2026-07-21)が、実行用の手順書3本が旧パスのまま残っていた:
+  `docs/構築手順.md`(7章)・`docs/運用.md`・`docs/DNS切替手順.md`。貼れば
+  `No such file or directory` で止まる。staging 再構築の最中に踏む位置にあった。
+- 対処: 3本を `infra/scripts/push_assets.sh` に修正。DECISIONS / GUIDELINES / 引き継ぎ・
+  discussion の記述は当時の記録なので変更しない(履歴であって手順ではない)。
+- 再発防止として、手順書に出てくる `*.sh` / `*.py` のパスが実在するかを機械的に照合した
+  (構築手順・運用・DNS切替・デプロイ手順書の4本。現在 MISSING なし):
+  `grep -rhoE "(infra|thinkx)/[A-Za-z0-9_./-]+\.(sh|py)" <docs> | sort -u | while read -r p; do [ -e "$p" ] || echo "MISSING: $p"; done`
+  この照合をスクリプト化して CI 的に回すかは人間の判断(提案)。

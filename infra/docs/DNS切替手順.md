@@ -17,7 +17,7 @@ LB_IP=$(bash infra/scripts/terraform_output.sh prod lb_public_ip)
 ## 1. 切替前チェック(5分)
 
 ```
-bash infra/etc/push_assets.sh $WEB thinkx
+bash infra/scripts/push_assets.sh $WEB thinkx
 bash infra/scripts/check_request_path.sh $LB_IP $WEB $LB
 bash infra/scripts/acceptance-sweep.sh $LB_IP
 for d in thinkxinc.com transformism.art kazukiotsuka.com; do printf '%-20s ' $d; echo | openssl s_client -connect $LB_IP:443 -servername $d 2>/dev/null | openssl x509 -noout -enddate; done
