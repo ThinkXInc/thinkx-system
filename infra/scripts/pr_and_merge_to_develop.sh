@@ -18,7 +18,7 @@ set -euo pipefail
 
 pr_and_merge_to_develop() {
   local G=$'\033[32m' R=$'\033[31m' Y=$'\033[33m' Z=$'\033[0m'
-  local src sha back svc ans
+  local src sha back svc ans unpushed dirty
   local -a targets=()
 
   if [ "$#" -eq 0 ]; then
@@ -38,6 +38,30 @@ pr_and_merge_to_develop() {
     { printf '%b\n' "${R}FAIL: origin/$src が無い${Z}"; return 1; }
 
   sha="$(git rev-parse "origin/$src")"
+
+  # 出るのは origin/$src であって手元の HEAD ではない(D-58)。push を忘れていると
+  # この先が全部緑で完走したうえで古い内容が staging に出る。ここで止める。
+  if git show-ref --verify --quiet "refs/heads/$src"; then
+    unpushed="$(git rev-list --count "origin/$src..$src")"
+    if [ "$unpushed" != 0 ]; then
+      banner "手元の $src に origin へ出していないコミット($unpushed 件)"
+      git --no-pager log --oneline "origin/$src..$src"
+      echo
+      printf '%b\n' "${R}FAIL: これらは push しない限り staging にも production にも出ません${Z}"
+      echo "To publish them, run:"
+      echo "git push origin $src"
+      return 1
+    fi
+  fi
+
+  # 未コミットは止めない。他トラックの WIP が手元にあるのは通常であり、それを
+  # 巻き込まないのが D-68 の趣旨。ただし「直したはずのものが出ない」を防ぐため見せる。
+  dirty="$(git status --porcelain --untracked-files=no | wc -l | tr -d ' ')"
+  if [ "$dirty" != 0 ]; then
+    banner "未コミットの変更($dirty 件・これらは出ません)"
+    git --no-pager status --porcelain --untracked-files=no
+    echo
+  fi
 
   if git merge-base --is-ancestor "$sha" origin/develop 2>/dev/null; then
     printf '%b\n' "${G}develop は既に $src の内容を含んでいます。やることはありません${Z}"
