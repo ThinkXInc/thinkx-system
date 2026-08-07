@@ -196,3 +196,42 @@ fallback 不整合)は `libcommon/DISCUSSION_2026REFACTOR.md` に記録済み。
 - 規約2(config/paths.conf)⇔ 本プロジェクトは「config.py + .env が正」。同思想・別機構で矛盾なし。
 - CLAUDE.md「文書の優先順位」に CLAUDE_GENERAL.md の位置づけが無い。coding_guides と同格の
   「規範」として明記を推奨(規約変更は人間のみ)。
+
+## 2026-08-07 staging から本番へ出す経路が塞がっている(オーナー要望あり)
+
+イベントページの編集を staging(`web1-stg`)の Claude Code セッションから本番へ出そうとして、
+経路が存在しないことが判明した。オーナーの要望は「オーナー機が常時ネットに繋がっているとは
+限らないので、staging から本番反映を指示できるようにしたい」。
+
+### 実測した塞がり(3点のうち 1・2 が本質)
+
+1. **push できない** — `git push origin develop` が
+   `ERROR: The key you are authenticating with has been marked as read only.`
+   staging の deploy key が read-only。commit はできるが origin に出せない。
+2. **`gh` が無い** — `gh: command not found`。`pr_develop_and_merge_to_monorepo.sh` と
+   `deploy_production_from_staging.sh` は冒頭で `command -v gh` を見て `FAIL` で即停止する。
+3. **本番へ ssh できない** — `ssh supercom-web1` が名前解決に失敗
+   (`Temporary failure in name resolution`)。ただし本番には
+   `deploy-timer@prod.timer` が 60 秒ごとに `origin/production` を追う仕組みがあるため、
+   **origin/production さえ進めば ssh は不要**。3 は塞がりでなく設計どおり。
+
+### 必要な変更(1と2だけ。オーナーの操作が要る)
+
+- GitHub の当該 deploy key を **read/write** にする(または write 権を持つ machine user の
+  token を staging に置く)。push と PR 操作の両方がこれ1つで解ける。
+- staging に `gh` を入れて認証する。もしくは `gh` を使わず **curl + GitHub REST API** で
+  PR 作成・merge を行う経路を新設する(curl は staging に既にある)。後者なら追加導入が無い。
+
+### 設計上のトレードオフ(判断はオーナー)
+
+`docs/SITE_EDIT_WORKFLOW.md` は「本番反映は GitHub マージ権限(人間のアカウント)が必須のため、
+URL 共有相手は本番に触れない(**構造的ゲート**)」と書いている。staging に write 権を与えると
+このゲートが消え、staging のセッション URL を渡した相手が本番に出せるようになる。
+staging を非開発者と共有する運用を続けるなら、write 権は staging 全体ではなく
+「develop への push のみ」に絞るか、production への merge だけは GitHub 側の
+protected branch + 人間の承認に残す設計が要る。
+
+### 現時点の回避策
+
+staging で commit 済みの内容は `git format-patch` で取り出してオーナー機で `git am` する。
+2026-08-07 のイベントページ変更(954ff57 / 78be2f4)はこの方法でオーナーへ渡した。

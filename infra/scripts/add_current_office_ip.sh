@@ -44,10 +44,28 @@ for sg in supercom-staging-web-sg supercom-staging-lb-sg; do
   printf '%s: %s/32 を許可\n' "$sg" "$IP"
 done
 
+# インスタンスを作り直すとホスト鍵が変わり(2026-08-06 の全損復旧で実際に変わった)、
+# known_hosts が古いままだと SG を直しても ssh は繋がらない。人間に ssh-keygen -R を
+# 手打ちさせると、このスクリプトの verify が「NG」を出したまま原因が SG に見える。
+# 鍵の不一致に当たったときだけ古い鍵を捨てて張り直す(毎回捨てると成りすましも黙って通る)。
+reach_host() {
+  local h="$1" out
+  ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=8 "$h" true 2>/dev/null && return 0
+  out="$(ssh -o BatchMode=yes -o ConnectTimeout=8 "$h" true 2>&1 || true)"
+  case "$out" in
+    *"REMOTE HOST IDENTIFICATION HAS CHANGED"*|*"Host key verification failed"*) ;;
+    *) return 1 ;;
+  esac
+  printf '%b\n' "${Y}$h: ホスト鍵が変わっている。作り直した覚えが無ければ止めて調べること${Z}"
+  ssh-keygen -R "$h" >/dev/null 2>&1 || true
+  ssh-keygen -R "$(ssh -G "$h" 2>/dev/null | awk '/^hostname /{print $2}')" >/dev/null 2>&1 || true
+  ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new -o ConnectTimeout=8 "$h" true 2>/dev/null
+}
+
 # verify(4台へ SSH 到達確認。末尾に色で成否)
 fail=0
 for h in supercom-web1 supercom-lb1 supercom-web1-stg supercom-lb1-stg; do
-  if ssh -o BatchMode=yes -o ConnectTimeout=8 "$h" true 2>/dev/null; then
+  if reach_host "$h"; then
     printf '%b\n' "${G}ok  $h${Z}"
   else
     printf '%b\n' "${R}NG  $h${Z}"; fail=$((fail+1))
