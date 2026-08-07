@@ -1126,3 +1126,77 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
 - 対応(実施): golden(サイト単体テストが正)は触らず、acceptance-sweep.sh で `thinkx:/filedrop` を
   受け入れ対象外にし skip 行を出す(黙って落とさない)。実測: thinkx 58/58・ACCEPTANCE 全 green。
 - 波及ルールが増えたら acceptance-sweep.sh の case に足す。
+
+## 2026-08-06 start_staging.sh の待ち時間が表示(最大120秒)より長い
+
+- 事象: staging 起動時、Discord の起動通知が来ているのにスクリプトは
+  「ssh 到達と主要サービスを確認中(最大 120 秒)...」のまま待ち続けた。
+- 原因1(表示と実態の乖離): ループが ssh ConnectTimeout=5 + sleep 5 × 24周で、
+  ssh が沈黙する間は1周最大10秒 → 実際は最大約4分待ち得た。
+- 原因2(観測対象の違い): Discord 通知はブート初期(ネットワーク up)に飛ぶが、
+  スクリプトの OK 条件は「ssh 到達 + nginx と uwsgi_thinkx が active」。
+  サービス起動完了はブート通知より数十秒遅れるため、体感差が出る。
+- 対応(実施): ConnectTimeout=3 + sleep 2(1周≦5秒 × 24 = ちょうど120秒)に短縮。
+  検知遅延は最大10秒→5秒に。次回の staging 起動が実流し検証を兼ねる。
+
+## 2026-08-06 push_assets: ssh 不達だと「箱が空」に見える / .DS_Store 混入
+
+- 事象: staging デプロイで assets 確認の diff が「箱のみ」空・「手元のみ」11本
+  (計約384MB)と出た直後、scp が `port 22: Operation timed out` で FAIL。
+  真因は SG の接続元 IP 許可リスト(手元 IP の変化)で、箱側一覧の取得(ssh)も
+  同じ理由で失敗して空扱いになっていた。**「箱が空」と「ssh 不達」が同じ見た目**
+  になるのは誤診を誘う — push_assets.sh は一覧取得の ssh 失敗を transfer 失敗と
+  区別して報告すべき(未実施・要修正)。
+- 手元のみ一覧に `.DS_Store`(6148B)が含まれ配布対象になる。実害は小さいが
+  ゴミの同期は不要。除外(-name .DS_Store の類)を足すべき(未実施・要修正)。
+- 対処ルーチン: `add_current_office_ip.sh` で現 IP を許可 → deploy_staging.sh 再実行。
+
+## 2026-08-06 【事故】add_current_office_ip.sh の auto-approve apply が prod/staging 全4台を破壊再作成
+
+- 経緯: SSH 締め出し(手元 IP 変化)の解消に add_current_office_ip.sh を実行。
+  同スクリプトは terraform apply を **-auto-approve** で prod/staging の両 env に
+  実行する実装だった(ヘッダーコメントは「承認プロンプトで yes」と記載しており
+  実装と乖離)。apply には IP 追加と無関係の **AMI 追従差分**(data.aws_ami
+  most_recent が新 Ubuntu AMI を検出 → ami 変更は ForceNew)が同乗しており、
+  **web/lb × prod/staging の4台が破壊→新規作成**された。EIP は台帳(D-53)により
+  保持=IP・DNS 不変。旧ルート EBS はインスタンスと共に削除。
+- 症状: 全公開サイト connection refused(新品 Ubuntu に nginx 無し)。ssh は
+  「REMOTE HOST IDENTIFICATION HAS CHANGED」(同一 IP に別マシン=入替の証拠)。
+  Discord への異常通知は無し(外形監視が存在しない)。
+- 復旧: 構築手順.md により prod → staging の順で再構築(箱=terraform は事故 apply
+  で新規作成済みのため手順4以降)。known_hosts は ssh-keygen -R で旧鍵を掃除。
+- 恒久対処(実施済み・本コミット):
+  1) add_current_office_ip.sh: -auto-approve を廃止し、apply を
+     -target=aws_security_group.{web,lb} に限定。IP 追加が SG 以外の差分を
+     巻き込む経路を構造的に遮断。
+  2) instances.tf: aws_instance {lb,web} に lifecycle ignore_changes = [ami]。
+     新 AMI 公開のたびに「要再作成」差分が潜伏する地雷を除去(新 AMI は意図した
+     建て直しのときだけ拾う)。terraform fmt/validate 済み。apply は次回の
+     承認付き実行で反映(コード変更のみでは挙動に影響しない)。
+- 教訓: 「スクリプトのヘッダー記述」と「実装」の乖離は致命傷になる。terraform apply
+  を含むスクリプトは (a) 承認プロンプト必須 (b) 目的リソースへの -target 限定
+  (c) 事前 plan の要約提示、を規約化すべき(規範化は人間判断・要 D-xx 起票)。
+
+## 2026-08-06 TODO: 外形監視+Discord 通知が無い(本番ダウンに気づけない)
+
+- 今回の全損時、Discord には何の通知も出なかった(ダウン検知の仕組み自体が無い)。
+- 最小構成案: 常時稼働の k00bot2 EC2 の cron で5分毎に全サイト
+  (thinkxinc/truetechjapan/transformism/kazukiotsuka/nntm/staging)へ curl し、
+  非 200 が続いたら Discord webhook へ通知。復旧通知も出す。
+- オーナー指示(2026-08-06 原文):「ダウンしたら知らせる仕組みがないので、
+  これはTODOにしておかなければいけない」
+
+## 2026-08-06 復旧進捗メモ(全損事故からの再構築・prod)
+
+- 完了: web 基盤(setup_user/setup_webserver: python3.9/node/nginx/mongod 揃い)、
+  deploy key 検証(3鍵)、monorepo clone(web/LB とも・checkout は monorepo)、
+  .env 配布(thinkx/kazukiotsukacom/transformism/loadbalancer)、
+  動画アセット11本配布、setup_nginx-web-root(8005 応答)、
+  setup_thinkx(8005->200)、setup_kazukiotsukacom(8007->200)、
+  setup_loadbalancer(exit 0・詳細ログ未精査)。
+- 未了: setup_transformism(実行直前にオーナー中断→再開時にネット断で不達)、
+  LB ログ精査、check_request_path、acceptance-sweep、
+  本番 checkout の production ブランチ同期(sync_from_origin prod)、staging 再構築一式。
+- 備考: 2度の setup_webserver FAIL の原因は (1)二重実行の apt ロック衝突
+  (2)新品初回ブートの unattended-upgrades のロック。3回目は単独実行+ロック解放
+  待ちで成功。setup 冒頭に apt ロック解放待ちを入れる改修を提案(要承認)。

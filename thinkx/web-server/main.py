@@ -837,6 +837,16 @@ def cleanup():
     #    connection_pool.close_all()
 
 if __name__ == '__main__':
+    # 本番と staging では nginx が views/ 下の静的ファイルを配信する(uwsgi は通らない)。
+    # 開発サーバーを直接起動したときだけ、同じ URL を Flask から返す。
+    from flask import send_from_directory
+    VIEWS_DIR = abspath(join(os.path.dirname(__file__), 'views'))
+    STATIC_DIRS = 'img, js, css, video, fonts, node_modules, documents'
+
+    @app.route(f'/<any({STATIC_DIRS}):directory>/<path:filename>')
+    def local_static_handler(directory, filename):
+        return send_from_directory(join(VIEWS_DIR, directory), filename)
+
     app.run(
         debug=True,
     )

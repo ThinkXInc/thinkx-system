@@ -314,3 +314,18 @@
 - 新設のイベントページ(`/event/deepsocietyclub3.html`)は独立ページ方針(オーナー指示
   2026-08-05)で locale・language_wrapper を使わないためこの穴の影響を受けない。
   既存ページの扱いは要判断。
+
+### F-E19(実測): 開発サーバー単体では /img/ /css/ /js/ が 404(nginx 前提の配線)
+
+- 2026-08-06、イベントページをローカル確認したところページは 200 だが画像が全て出ない。
+  `curl /img/event/hero_hall.jpg` が 404。原因は静的配信を nginx が担っていること
+  (`web-server/nginx/conf.d/thinkx.conf` の `location /img/` 等)で、Flask 側には
+  `/img/` のルートも static_folder の設定も無かった。実ファイルは views/img/ に存在する。
+- 対処: `main.py` の `if __name__ == '__main__':` 内にだけ `local_static_handler` を追加し、
+  img/js/css/video/fonts/node_modules/documents を views/ から返す。uwsgi は main.py を
+  import するだけで `__main__` にならないため、本番・staging の配線は変わらない。
+- ついでに判明: 開発サーバーは `web-server/` をカレントにして起動しないと
+  `TemplateNotFound`(jinja_loader が相対パス `views/templates` 指定)。
+  手順は `docs/ローカルサーバー起動手順.md`。
+- 既存の `local/nginx/conf.d/webserver.conf` は uwsgi ソケット前提かつパスが旧
+  `/Users/K00TSUKA/Sources/thinkx/...`(monorepo 移行前)のままで、現状では使えない。
