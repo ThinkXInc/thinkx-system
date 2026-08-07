@@ -1222,3 +1222,16 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
 - 対処の選択肢: (a) staging の中身を prod と同一手順で再構築する(I-STEP3 前倒し・人間判断)
   (b) staging を使わず production へ出す(受け入れの後退なので非推奨)
   (c) ツール側の誤表示と fail fast だけ先に直す(箱が空である事実は変わらない)
+
+### F-I(2026-08-07): 手順書が実在しないパスを指していた(`infra/etc/push_assets.sh`)
+
+- `push_assets.sh` は `infra/etc/` から `infra/scripts/` へ移した(GUIDELINES「etc/ と scripts/ の線引き」
+  2026-07-21)が、実行用の手順書3本が旧パスのまま残っていた:
+  `docs/構築手順.md`(7章)・`docs/運用.md`・`docs/DNS切替手順.md`。貼れば
+  `No such file or directory` で止まる。staging 再構築の最中に踏む位置にあった。
+- 対処: 3本を `infra/scripts/push_assets.sh` に修正。DECISIONS / GUIDELINES / 引き継ぎ・
+  discussion の記述は当時の記録なので変更しない(履歴であって手順ではない)。
+- 再発防止として、手順書に出てくる `*.sh` / `*.py` のパスが実在するかを機械的に照合した
+  (構築手順・運用・DNS切替・デプロイ手順書の4本。現在 MISSING なし):
+  `grep -rhoE "(infra|thinkx)/[A-Za-z0-9_./-]+\.(sh|py)" <docs> | sort -u | while read -r p; do [ -e "$p" ] || echo "MISSING: $p"; done`
+  この照合をスクリプト化して CI 的に回すかは人間の判断(提案)。
