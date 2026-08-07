@@ -224,6 +224,36 @@
     }
     .section-rule { height: 1px; background-color: var(--line); border: none; margin-top: 14px; }
 
+    /* ---- こんな人に ---- */
+    .audience-title {
+      margin-top: 34px;
+      font-size: 23px;
+      font-weight: 600;
+      letter-spacing: .14em;
+    }
+    .audience-list {
+      list-style: none;
+      margin-top: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .audience-list li {
+      position: relative;
+      padding-left: 26px;
+      font-size: 18px;
+    }
+    .audience-list li::before {
+      content: "";
+      position: absolute;
+      left: 2px;
+      top: calc(1em - 3px);
+      width: 6px;
+      height: 6px;
+      transform: rotate(45deg);
+      background-color: var(--gold);
+    }
+
     /* ---- メインプロフィール ---- */
     .speaker-name {
       margin-top: 34px;
@@ -328,6 +358,9 @@
       .highlight-list { margin-top: 50px; gap: 24px; }
       .highlight { flex-direction: column; gap: 10px; }
       .event-section { margin-top: 80px; }
+      .audience-title { font-size: 20px; }
+      .audience-list { gap: 14px; }
+      .audience-list li { font-size: 16px; padding-left: 22px; }
       .speaker-name { font-size: 24px; }
       .name-reading { display: block; margin: 8px 0 0 0; }
       .overview-item { flex-direction: column; }
@@ -389,6 +422,21 @@
       </li>
     </ul>
     <!-- ↑↑↑↑ END 見どころ ↑↑↑↑ -->
+
+    <!-- ↓↓↓↓ こんな人に ↓↓↓↓ -->
+    <section class="event-section audience">
+      <span class="section-label">FOR YOU</span>
+      <hr class="section-rule">
+
+      <p class="audience-title">こんな人に</p>
+
+      <ul class="audience-list">
+        <li>マネーゲームがどのように変わるのか知りたい。</li>
+        <li>本当の哲学とは何かに興味がある。「知的関心の高い人のメンサ」哲学サロンコミュニティに興味がある。</li>
+        <li>AIツールでプロがどう生産性を倍化しているのかに興味がある。</li>
+      </ul>
+    </section>
+    <!-- ↑↑↑↑ END こんな人に ↑↑↑↑ -->
 
     <!-- ↓↓↓↓ メインプロフィール ↓↓↓↓ -->
     <section class="event-section profile">
