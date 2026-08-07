@@ -1269,3 +1269,40 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   - rollback の日付だけは値の選択が必要なので、`BACK_TO=release/2026-08-06` の
     1行ブロックに隔離し、以降のブロックは `"$BACK_TO"` を参照するだけにした。
 - 規則: 値の選択が要る箇所は、コマンド中に穴を空けず「変数を1行で置くブロック」に隔離する。
+
+## 2026-08-07 deploy timer が staging にも prod にも入っていない(全損復旧で欠落)
+
+- 事象: release/2026-08-07-2 を production へ merge(PR #33)しても、3分間・12回の
+  curl 実測で本番 `https://thinkxinc.com/event/philsemi2609` が旧内容のまま
+  (`.hero-date { font-size: 10px; ... }`)。`origin/production` には新内容が入っている
+  ことを `git show origin/production:...` で確認済みなので、サーバーが追従していない。
+- 原因: **`deploy-timer@<env>.timer` が存在しない。** staging(web1-stg)で実測すると
+  `systemctl list-unit-files | grep -i deploy` が空、`list-timers` も空。
+  `/usr/local/bin/sync_from_origin.sh` は 02:52 に配置されているのにユニットが無い。
+  2026-08-06 の全損事故でインスタンスが破壊再作成された際、`setup_deploy_timer.sh` が
+  再実行されなかったためと考えられる。復旧記録(本ファイル「2026-08-07 全損事故からの
+  復旧完了」)の手順にも timer の再導入は列挙されておらず、prod は
+  `sync_from_origin prod` を人手で1回叩いて同期させている。
+- 影響: **merge しても本番に出ない。** 誰かが手で sync を叩かない限り反映されない。
+  D-50 で定めた L2b の経路(「マージ → timer が 60 秒以内に反映」)が成立しない。
+- 対処(オーナー機から。staging から prod へは名前解決できない):
+  `ssh supercom-web1 'ENVX=prod bash /src/thinkx-system/infra/setup/setup_deploy_timer.sh'`
+  同スクリプトは unit の登録・enable に加えて `systemctl start deploy-timer@prod.service`
+  まで行うので、導入と同時に今回の release が反映される。staging も同様に ENVX=staging で。
+- 再発防止: 復旧手順(構築手順.md)の完了条件に「`systemctl list-timers deploy-timer@<env>.timer`
+  が active」を入れる。箱を作り直すと消える設定は、受け入れ試験の項目に入っていないと
+  必ず落ちる(今回は「全サイト 200」が green だったため欠落に気づけなかった)。
+
+## 2026-08-07 squash merge が deploy_production_from_staging.sh の冪等判定を壊す
+
+- 事象: PR #33 を **squash** で merge したため、`origin/production` は
+  `ff762ca Release/2026 08 07 2 (#33)` という単一コミットになり、元の6コミットは
+  祖先に含まれない。内容は同一。
+- 影響: `deploy_production_from_staging.sh:31` の
+  `git merge-base --is-ancestor "$sha" origin/production` が常に false になり、
+  「production は既に staging の内容を含んでいます」の分岐に入らない。
+  同じ内容でもう一度 release を切って PR を作りにいく(空 PR で失敗しうる)。
+- 対処案(未実施・要判断): (a) merge 方法を Merge commit に統一する
+  (ruleset の Allowed merge methods を Merge のみにすれば強制できる) /
+  (b) 判定を sha の祖先関係でなく tree の一致(`git rev-parse origin/develop^{tree}` と
+  `origin/production^{tree}` の比較)に変える。(b) の方が merge 方法に依存しない。
