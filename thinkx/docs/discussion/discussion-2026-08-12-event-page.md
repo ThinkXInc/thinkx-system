@@ -127,3 +127,20 @@ ruleset で merge が弾かれても**成否が見えないまま PR だけが�
 3. `infra/docs/デプロイ手順書.md` と ルート `CLAUDE.md` のルーティング表を、2経路が
    別スクリプトである前提に更新する。
 4. 完了条件: オーナー機で (a) を叩いて本番 URL が新内容を返すところまで無人で通ること。
+
+## 7. 対応(同日・完了)
+
+原因の確定: **スクリプトは書き換えられていなかった**(git 履歴に L2b 化する変更は無い)。
+実因は 2026-08-07 に PR #33/#34 が **squash merge** されたことによる production ↔ develop の
+履歴分断で、オーナーの実行が作った PR #37 が `CONFLICTING`(マージ不能)になり、
+`gh pr merge` の失敗で `set -e` 停止 →「PR が発行されるだけ」に見えた。
+ruleset(pull_request 必須・承認数 0)はブロッカーではなかった。
+
+実施(詳細は `infra/findings.md` 2026-08-12):
+1. `deploy_production_from_staging.sh` — 冪等判定を tree 比較に。production が develop の
+   祖先でなければ release の先頭に「tree は develop と同一・production を第2親に持つ」
+   merge commit を `git commit-tree` で作って履歴を繋ぐ(以後 squash されても衝突しない。
+   `git merge-tree` で conflict なしを実測)。`gh pr merge` の失敗は FAIL + PR URL で止まる。
+2. `request_production_release.sh` を新設(L2b。マージ用 URL 提示で停止)。
+3. デプロイ手順書・ルート CLAUDE.md ルーティング表を2経路前提に更新。D-51 として記録。
+4. 衝突していた PR #37 はコメント付きで close。

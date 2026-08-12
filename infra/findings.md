@@ -1320,3 +1320,28 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
 - 併せて実測: staging の web/LB は再構築直後 checkout が `monorepo` ブランチのままだった。
   `sync_from_origin.sh staging` は `develop` を期待するため、そのままでは WRONG-BRANCH で止まる。
   再構築後は `git checkout -B develop origin/develop` と `setup_deploy_timer.sh` まで含めて完了とする。
+
+## 2026-08-12 本番デプロイが「PR を出すだけ」で止まった — 原因は squash 分断。スクリプトは書き換えられていない
+
+- 事象: オーナーが `deploy_production_from_staging.sh` を実行すると PR #37 が作られた
+  ところで止まり、本番反映が完了しない。「手動デプロイの仕組みが書き換えられている」
+  ように見えた(オーナー指示 2026-08-12・議事録 §6)。
+- 実測: スクリプトの git 履歴に L2b 化する変更は存在しない(最終変更は 58ac834 の
+  アセット配布組み込み)。PR #37 は `mergeable=CONFLICTING`。2026-08-07 に PR #33/#34 が
+  **squash merge** されて production の履歴が develop から切断され(同日 findings 参照)、
+  その後 develop 側で同じファイル(philsemi2609.html 等)に後続変更が載ったため、
+  release→production の merge が衝突するようになっていた。`gh pr merge` が失敗して
+  `set -e` で停止、stdout は `>/dev/null` で捨てられていたため「PR が発行されるだけ」に
+  見えた。ruleset `production protection`(pull_request 必須・承認数 0)は merge 自体を
+  妨げない(ブロッカーではなかった)。
+- 対処(実施 2026-08-12):
+  1. 冪等判定を tree 比較に変更(2026-08-07 findings の対処案 (b) を採用)。
+  2. release を切るとき production が develop の祖先でなければ、`git commit-tree` で
+     「tree は develop と完全同一・production を第2親に持つ」merge commit を release の
+     先頭に作って履歴を繋ぐ。中身は staging で確認したものと 1 bit も変わらず、以後
+     squash merge されても次回の PR は衝突しない(`git merge-tree` で conflict なしを実測)。
+  3. `gh pr merge` の失敗を FAIL 表示 + PR URL 付きで止めるようにした(握り潰さない)。
+  4. L2b(staging から出す)は `request_production_release.sh` に分離。release/PR を作り
+     マージ用 URL を提示して止まる。2経路は独立した別スクリプト(D-51)。
+- 衝突していた PR #37 はコメント付きで close(release/2026-08-12 ブランチは残す。
+  命名ループが次を -2 で採番する)。
