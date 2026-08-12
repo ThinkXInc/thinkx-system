@@ -1,17 +1,23 @@
 #!/usr/bin/env bash
 # thinkx-system/k00bot2/deploy/setup_k00bot2_ec2.sh
 #
-# Build k00bot2 in the monorepo and its adjacent data persistence clone. 変更系。
+# Build k00bot2 from its own branch clone and the adjacent data persistence clone. 変更系。
+# monorepo への merge は revert 済み(719e856)のため、実行コードは k00bot2 ブランチの
+# 独立 clone /src/thinkx-system-k00bot2 に置く。/src/thinkx-system(production 追従)には置かない。
 
 set -euo pipefail
 
-MONOREPO=/src/thinkx-system
-APP_ROOT="$MONOREPO/k00bot2"
+APP_CLONE=/src/thinkx-system-k00bot2
+APP_ROOT="$APP_CLONE/k00bot2"
+APP_REMOTE=git@github-thinkx-system:ThinkXInc/thinkx-system.git
 DATA_REPO=/src/k00bot2
 DATA_REMOTE=git@github-thinkx-system-rw:kazukiotsuka/k00bot2.git
 
-sudo -u kaz git -C "$MONOREPO" pull --ff-only origin monorepo
-[ -d "$APP_ROOT" ] || { echo "[error] monorepo does not contain k00bot2: $APP_ROOT"; exit 1; }
+if [ ! -d "$APP_CLONE/.git" ]; then
+  sudo -u kaz git clone --branch k00bot2 "$APP_REMOTE" "$APP_CLONE"
+fi
+sudo -u kaz git -C "$APP_CLONE" pull --ff-only origin k00bot2
+[ -d "$APP_ROOT" ] || { echo "[error] k00bot2 branch does not contain k00bot2/: $APP_ROOT"; exit 1; }
 [ ! -L "$DATA_REPO" ] || { echo "[error] legacy symlink remains: $DATA_REPO"; exit 1; }
 
 if [ ! -d "$DATA_REPO/.git" ]; then
