@@ -97,3 +97,33 @@ SHA 重複）。D-68 の経路（リモート PR で develop→monorepo）を試
 - 本番は未反映（参加フォーム URL が未確定のため見送り）
 - 残タスク: Google フォーム URL / 司会・ゲスト・パネラーの確定（現在「準備中」）/
   ヘッダーバナー画像 / sitemap 掲載可否
+
+## 6. 【次の TODO】本番デプロイ手順が書き換えられている(オーナー指示 2026-08-12)
+
+> **cd /Users/K00TSUKA/Sources/thinkx-systembash infra/scripts/deploy_production_from_staging.sh**
+>
+> **なぜかこれまでの私が手動でデプロイする仕組みが書き換えられている。ステージングから直接デプロイするパターンと、私がローカルからデプロイするパターン、2つ数を設けているはずだが、今私がこれを実行してもプルリクエストが発行されるだけで、プロダクションデプロイが完了しない。つまり、これまでの私が手動で実行するときの手順を戻して、ステージングから直接デプロイする場合の手順を別のスクリプトで表現すべきだろう。この私の指示をそのまま記録しておけ。ディスカッションに。それが次のTODOになるから、次の作業者への指示として最終的に出してくれ。この会話の中で。**
+
+**解釈**: 本番反映には2経路あり、両者は別々のスクリプトとして独立していなければならない。
+(a) **オーナー機からの手動デプロイ** = `deploy_production_from_staging.sh` を叩けば
+release 作成から production 反映・確認まで**完走する**(実行そのものが承認。PR を出して
+人間のマージ待ちにしない)。(b) **staging から出す経路**(D-50 の L2b。マージ用 URL を
+提示してオーナーがマージ)は**別スクリプトに分ける**。L2b の導入で (a) が (b) の形に
+書き換わってしまったのが問題。
+
+**実測(2026-08-12)**: `production` ブランチに ruleset `production protection`(id 20539430・
+active)が入っており、`deletion` / `non_fast_forward` / `pull_request`(必要承認数 0)を要求する。
+スクリプト側は `gh pr create` → `gh pr merge --merge` を出力捨てで実行しているため、
+ruleset で merge が弾かれても**成否が見えないまま PR だけが残る**。
+
+**次の作業者への指示**:
+1. `deploy_production_from_staging.sh` を (a) の挙動に戻す — PR 作成後に**自分でマージまで
+   実行し**、失敗したら理由を表示して止める(`>/dev/null` で握り潰さない)。ruleset が
+   merge をブロックするなら、ruleset 側の調整(bypass actor にオーナーを入れる等)か
+   `gh pr merge --admin` の採否をオーナーに確認する。
+2. staging から出す経路は `deploy_production_from_staging.sh` から切り出し、別名の
+   スクリプト(例: `request_production_release.sh`)にする。こちらはマージ用 URL を
+   リンクで提示して終わる(D-50 L2b・GUIDELINES「開く URL はリンクで出す」)。
+3. `infra/docs/デプロイ手順書.md` と ルート `CLAUDE.md` のルーティング表を、2経路が
+   別スクリプトである前提に更新する。
+4. 完了条件: オーナー機で (a) を叩いて本番 URL が新内容を返すところまで無人で通ること。
