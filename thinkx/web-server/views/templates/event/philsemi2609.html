@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <title>哲学とAI─システムに全てが回収される時代にどう豊かに生きるか | ThinkX</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="2026年9月10日（木）19：30〜22:00、赤坂区民ホールにて開催。第一部 講演「哲学とAI─システムに全てが回収される時代にどう豊かに生きるか」、第二部 懇親会（立席形式 オールドジャズの生ピアノ演奏付）。">
+  <meta name="description" content="2026年9月24日（木）19：30〜22:00、赤坂区民ホールにて開催。第一部 講演「哲学とAI─システムに全てが回収される時代にどう豊かに生きるか」、第二部 懇親会（立席形式 オールドジャズの生ピアノ演奏付）。">
   <meta name="keywords" content="ThinkX, 哲学, AI, イベント, セミナー, 大塚一輝, Deep Society Club">
   <meta name="format-detection" content="telephone=no">
 
@@ -16,12 +16,12 @@
   <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="哲学とAI─システムに全てが回収される時代にどう豊かに生きるか | ThinkX">
-  <meta property="og:description" content="2026年9月10日（木）19：30〜22:00、赤坂区民ホールにて開催。第一部 講演「哲学とAI─システムに全てが回収される時代にどう豊かに生きるか」、第二部 懇親会（立席形式 オールドジャズの生ピアノ演奏付）。">
+  <meta property="og:description" content="2026年9月24日（木）19：30〜22:00、赤坂区民ホールにて開催。第一部 講演「哲学とAI─システムに全てが回収される時代にどう豊かに生きるか」、第二部 懇親会（立席形式 オールドジャズの生ピアノ演奏付）。">
   <meta property="og:url" content="https://thinkxinc.com/event/philsemi2609">
   <meta property="og:image" content="https://thinkxinc.com/img/event/hero_hall.jpg">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="哲学とAI─システムに全てが回収される時代にどう豊かに生きるか | ThinkX">
-  <meta name="twitter:description" content="2026年9月10日（木）19：30〜22:00、赤坂区民ホールにて開催。第一部 講演「哲学とAI─システムに全てが回収される時代にどう豊かに生きるか」、第二部 懇親会（立席形式 オールドジャズの生ピアノ演奏付）。">
+  <meta name="twitter:description" content="2026年9月24日（木）19：30〜22:00、赤坂区民ホールにて開催。第一部 講演「哲学とAI─システムに全てが回収される時代にどう豊かに生きるか」、第二部 懇親会（立席形式 オールドジャズの生ピアノ演奏付）。">
   <meta name="twitter:image" content="https://thinkxinc.com/img/event/hero_hall.jpg">
 
   <!-- Google Tag Manager -->
@@ -288,7 +288,7 @@
     .performer { margin-top: 34px; }
     .performer + .performer { margin-top: 44px; }
     .performer-role {
-      font-size: 13px;
+      font-size: 21px;
       font-weight: 500;
       letter-spacing: .24em;
       color: var(--ink-soft);
@@ -300,6 +300,26 @@
       letter-spacing: .14em;
     }
     .performer-name.preparing { color: var(--placeholder-text); font-weight: 400; font-size: 19px; }
+
+    /* 写真つきの出演者(写真 左・氏名と略歴 右) */
+    .performer-detail {
+      margin-top: 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 26px;
+    }
+    .performer-photo {
+      flex-shrink: 0;
+      width: 168px;
+      display: block;
+    }
+    .performer-body { min-width: 0; }
+    .performer-body .performer-name { margin-top: 0; }
+    .performer-bio {
+      margin-top: 12px;
+      font-size: 15px;
+      line-height: 1.95;
+    }
 
     /* ---- 開催概要 ---- */
     .overview-list { margin-top: 34px; }
@@ -408,7 +428,7 @@
         <p class="hero-badge-sub">「ファーブラー・メソッド」</p>
       </div>
       <p class="hero-event-type">シンポジウム/懇談会（立席形式　生ピアノ演奏付）</p>
-      <p class="hero-date">2026年9月10日（木）19：30〜22:00 赤坂区民ホール</p>
+      <p class="hero-date">2026年9月24日（木）19：30〜22:00 赤坂区民ホール</p>
     </div>
     <figure class="hero-portrait">
       <img src="/img/event/otsuka.jpg" alt="大塚一輝">
@@ -490,13 +510,20 @@
       </div>
 
       <div class="performer">
-        <p class="performer-role">講師</p>
+        <p class="performer-role">ゲスト・パネラー</p>
         <p class="performer-name preparing">準備中</p>
       </div>
 
+      {# ピアノに加えサックス・フルートも演奏するため、役割名は楽器を併記した1行で表す #}
       <div class="performer">
-        <p class="performer-role">ピアノ演奏</p>
-        <p class="performer-name preparing">準備中</p>
+        <p class="performer-role">ピアノ・サックス演奏</p>
+        <div class="performer-detail">
+          <img class="performer-photo" src="/img/event/stevesacks.jpg" alt="Steve Sacks">
+          <div class="performer-body">
+            <p class="performer-name">Steve Sacks</p>
+            <p class="performer-bio">サックス＆フルート・プレーヤー、アレンジャー。<br>1953年アメリカ・ワシントンD.C.生まれ、シカゴ、コネチカット州育ち。<br>ハーバード大学を卒業したのち音楽理論家として活動を開始。２０年に及びニューヨークのラテン音楽とジャズシーンで活躍。共に演奏や録音をして主なアーティストに、小野リサ、ティト・プエンテ、デューク・エリントン・オーケストラ、パキト・デリヴェラ、森山良子、香港交響楽団らがいる。</p>
+          </div>
+        </div>
       </div>
 
       {# パネラー段落は設けるか未定(原稿の指示)。設ける場合は以下を有効化する。
@@ -516,7 +543,7 @@
       <dl class="overview-list">
         <div class="overview-item">
           <dt>日時</dt>
-          <dd>2026年9月10日（木）19：30〜22:00</dd>
+          <dd>2026年9月24日（木）19：30〜22:00</dd>
         </div>
         <div class="overview-item">
           <dt>プログラム</dt>

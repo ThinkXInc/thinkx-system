@@ -322,3 +322,17 @@
 - **原文**: 「0 staging -> PR -> monorepo (remote) / 1 local (monorepo branch) -> PR -> develop / 2 develop -> staging / 3 staging -> production …こういう書き方だよ」「assets (local thinkx/web-server/views/video/ -> prod thinkx/web-server/views/video/)」
 - **解釈**: 各ステップは散文で説明せず、`src -> [PR ->] dst (remote/local)` の矢印ラベルで「どこからどこへ・どこで実行するか」を一目で分かる形にする。
 - **運用**: デプロイ手順書のステップ見出しを矢印ラベルにする。アセット等の転送も `(local <path> -> prod <path>)` のように実パスで向きを明記する。適用: `infra/docs/デプロイ手順書.md`。
+
+## デプロイ手順は commit から始め、穴を残さない(オーナー指示 2026-08-07)
+
+- **原文**: 「上から順に貼れば完走します。そう言いながらいつもコミットしないと、最初のコミットが
+  抜けているんだけど、手順書が間違っているんじゃないか。」「これそのまんま出してくれない。」
+- **運用**: ①`docs/デプロイ手順書.md` の通常フローは
+  「1 local (working tree) -> local (monorepo branch) -> origin」から始める(status → add → commit → push)。
+  ②`git add` は編集ディレクトリ単位(`git add thinkx/` / `git add infra/`)に固定する
+  — `git add -A` 禁止(D-68)と両立し、かつそのまま貼れる。
+  ③`<LB_IP>` のような穴は `"$(bash infra/scripts/terraform_output.sh prod lb_public_ip)"` のように
+  コマンド置換で埋める。選択が要る値(rollback の日付)だけ `BACK_TO=release/2026-08-06` の
+  1行ブロックに隔離し、以降は `"$BACK_TO"` を参照する。
+  ④スクリプト側にもガードを置く(`pr_and_merge_to_develop.sh` は未 push があれば一覧を出して停止)。
+  手順書の記述だけを対策にしない(「忘れる余地のある手順は忘れられない場所に埋め込む」と同旨)。

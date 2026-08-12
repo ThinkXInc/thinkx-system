@@ -329,3 +329,16 @@
   手順は `docs/ローカルサーバー起動手順.md`。
 - 既存の `local/nginx/conf.d/webserver.conf` は uwsgi ソケット前提かつパスが旧
   `/Users/K00TSUKA/Sources/thinkx/...`(monorepo 移行前)のままで、現状では使えない。
+
+### F-E20(仕様): イベントページは言語プレフィックス付き URL を持たない
+
+- 2026-08-07、`/en/event/philsemi2609` が 404 になるとの指摘。仕様どおりで、
+  `main.py` に登録しているのは `@app.route('/event/philsemi2609')` の1本だけである。
+  他ページは `@app.route('/<lang>/about')` を併記しているが、このページは
+  「サイト共通の base/header/locale に依存しない独立ページ」(オーナー指示 2026-08-05)
+  として作ったため language_wrapper を通していない。
+- 影響: 本番でも `/en/` 付きは 404 になる。必要なら `@app.route('/<lang>/event/philsemi2609')` を
+  足すか、`/event/philsemi2609` への 301 を1本置く(人間判断)。
+- 同日、URL を `/event/philsemi2609.html` から拡張子なしの `/event/philsemi2609` へ変更した。
+  ルート・ゴールデン(`tests/golden/route_sweep.json`)・`og:url`・ローカル起動手順を同時に更新済み。
+  旧 `.html` の URL は 404 になる(リダイレクトは置いていない)。
