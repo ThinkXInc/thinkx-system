@@ -57,6 +57,9 @@
 <script>
     (function () {
         const form = document.querySelector("#{{ id }}");
+        form.querySelector('input[name="mind"]').addEventListener("change", function() {
+            if (this.checked) { form.querySelector('.mind-check').style.color = ''; }
+        });
         form.addEventListener("submit", function(e) {
             e.preventDefault();
     
@@ -101,7 +104,7 @@
                 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;  // simple email pattern
 
                 if (!formData.mind) {
-                    return [false, '{{ mind_check_error }}'];
+                    return [false, '{{ mind_check_error | safe }}'];
                 }
 
                 for (const [field, value] of Object.entries(formData)) {
@@ -135,6 +138,9 @@
             }
     
             const [isValid, errorMsg] = validate(formData);
+            // 未チェックのまま送ろうとしたらラベルも赤くして目立たせる(チェックで戻る)
+            const mindLabel = form.querySelector('.mind-check');
+            mindLabel.style.color = formData.mind ? '' : '#8f2a2a';
             if (!isValid) {
                 showMessage('error', errorMsg);
                 enableSubmitButton(true);
