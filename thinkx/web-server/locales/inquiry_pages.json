@@ -126,16 +126,16 @@
         "ar": "فشل في الإرسال. الرجاء التواصل على inquiry@thinkxinc.com."
     },
     "mind_check_label": {
-        "ja": "あなたは心がありますか？",
-        "en": "Do you have a \"mind\"?",
-        "zh": "你有心灵吗？",
-        "fr": "Avez-vous un esprit ?",
-        "es": "¿Tienes mente?",
-        "ru": "Есть ли у вас разум?",
-        "ar": "هل لديك عقل؟"
+        "ja": "あなたには心があります",
+        "en": "You have a “mind”",
+        "zh": "你有心灵",
+        "fr": "Vous avez un esprit",
+        "es": "Tienes mente",
+        "ru": "У вас есть разум",
+        "ar": "لديك عقل"
     },
     "mind_check_error": {
-        "ja": "「あなたは心がありますか？」にチェックを入れてください。",
+        "ja": "「あなたには心があります」にチェックを入れてください。",
         "en": "Please confirm that you have a \"mind\".",
         "zh": "请确认你有心灵。",
         "fr": "Veuillez confirmer que vous avez un esprit.",
