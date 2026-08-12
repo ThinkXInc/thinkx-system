@@ -1345,3 +1345,18 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
      マージ用 URL を提示して止まる。2経路は独立した別スクリプト(D-51)。
 - 衝突していた PR #37 はコメント付きで close(release/2026-08-12 ブランチは残す。
   命名ループが次を -2 で採番する)。
+- 結果: オーナー機からの再実行(release/2026-08-12-2)が完走し、本番反映に成功。
+
+## 2026-08-12 「公開ドメインはまだオンプレを指しています(DNS 未切替)」は古い決め打ち文言
+
+- 事象: 本番デプロイ完走時に上記メッセージが出た(オーナーから「おかしい」と指摘)。
+- 実測: 4ドメイン(thinkxinc.com / truetechjapan.com / transformism.art /
+  kazukiotsuka.com)の A レコードはすべて `52.197.179.70` = AWS 本番 LB の EIP
+  (`terraform_output.sh prod lb_public_ip` と一致)。https での直叩きも全て 200 で、
+  イベントページの新内容(Steve Sacks・9/24)が公開ドメイン経由で配信されている。
+  **DNS は切替済みで、実際の問題は無い。**
+- 原因: `deploy_production_from_staging.sh` の当該行は 2026-07-21(DNS 未切替時点)に
+  書かれた無条件の printf で、現実を観測していない。切替後も毎回同じ文言を出す。
+- 対処案(未実施): 決め打ち printf を実観測に置き換える — 各ドメインの A レコードを
+  `dig +short` で引いて LB EIP と比較して表示する、または DNS 切替済みを前提に
+  公開ドメインへの https 200 チェックへ置き換える(web 直叩きの内部チェックは残す)。
