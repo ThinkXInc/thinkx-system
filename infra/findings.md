@@ -1387,3 +1387,13 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   「受け入れ試験の項目に入っていない設定は必ず落ちる」)。復旧は
   `ssh supercom-web1 'bash -s' < k00bot2/deploy/setup_k00bot2_ec2.sh`(k00bot2 worktree から)
   + cron 設置 + `.env` 配布で素通りする形に手順書を直した。
+
+### 追記(2026-08-12): k00bot2 の真の停止原因は X API クレジット枯渇
+
+- 復旧後の手動実行で `X API error 402 Payment Required: credits depleted`。認証は成功
+  (`authenticated as user_id=113382242`)しており、bot・サーバー側は正常。
+- これにより data repo の push が 7/20 で止まっていた理由も説明がつく:
+  クレジット枯渇で投稿が失敗し続けると state が変わらず sync も push しない。
+  **bot は 08-06 の事故以前、7月下旬から投稿できていなかった**可能性が高い。
+- 対処: X Developer Portal でのクレジット補充(オーナーのみ・支払い操作)。
+  補充後は cron(JST 06:10)が自動再開する。
