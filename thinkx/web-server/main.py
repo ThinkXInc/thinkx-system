@@ -355,6 +355,14 @@ def _submit_handler(lang, source):
     """Common submission handler. source: 'inquiry' or 'apply'."""
     logger.info(magenta(f'=> /{source}/submit [POST]'))
 
+    # bot guard: 「心があります」の宣言が無い、または不可視フィールドが埋まっている
+    # 送信は bot とみなして受けない(フォームの JS は必ず mind を送る)
+    if request.json.get('website') or not request.json.get('mind'):
+        logger.warning(yellow(
+            f'[botguard] rejected {source} submission '
+            f'(mind={request.json.get("mind")!r}, honeypot={"filled" if request.json.get("website") else "empty"})'))
+        return json.dumps({'success': False, 'error': 'rejected'}), 400
+
     name = request.json['name']
     email = request.json['email']
     phone = request.json['phone']
@@ -745,6 +753,14 @@ def truetechjapan_inquiry_handler(locale, lang, lang_name):
 @language_wrapper
 def truetechjapan_inquiry_submit_handler(lang, lang_name):
     logger.info(magenta(f'=> /truetechjapan/inquiry/submit [{request.method}]'))
+
+    # bot guard(_submit_handler と同じ)
+    if request.json.get('website') or not request.json.get('mind'):
+        logger.warning(yellow(
+            f'[botguard] rejected truetechjapan inquiry '
+            f'(mind={request.json.get("mind")!r}, honeypot={"filled" if request.json.get("website") else "empty"})'))
+        return json.dumps({'success': False, 'error': 'rejected'}), 400
+
     name = request.json['name']
     email = request.json['email']
     phone = request.json['phone']

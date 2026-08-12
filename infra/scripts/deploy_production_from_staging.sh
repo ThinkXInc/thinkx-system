@@ -18,7 +18,7 @@ set -euo pipefail
 
 deploy_production_from_staging() {
   local G=$'\033[32m' R=$'\033[31m' Y=$'\033[33m' Z=$'\033[0m'
-  local sha day br n svc ans host fail=0
+  local sha day br n svc ans host rel pr_url fail=0
   local -a targets=()
 
   command -v gh >/dev/null 2>&1 || { printf '%b\n' "${R}FAIL: gh が無い${Z}"; return 1; }
@@ -28,8 +28,10 @@ deploy_production_from_staging() {
   git fetch --quiet origin
   sha="$(git rev-parse origin/develop)"
 
-  # すでに production が この内容を含んでいるなら、release は切らずに反映だけやり直す
-  if git merge-base --is-ancestor "$sha" origin/production 2>/dev/null; then
+  # すでに production の中身がこれと同一なら、release は切らずに反映だけやり直す。
+  # 比較は祖先関係でなく tree で行う。release が squash merge されると production の
+  # sha が変わり、--is-ancestor では同一内容を検出できない(2026-08-07 findings)。
+  if [ "$(git rev-parse "$sha^{tree}")" = "$(git rev-parse "origin/production^{tree}")" ]; then
     printf '%b\n' "${Y}production は既に staging の内容を含んでいます。反映だけをやり直します${Z}"
   else
     # 何が再起動されるかを事前に見せるためだけの判定(実際の判定はサーバー側が行う)
@@ -44,7 +46,7 @@ deploy_production_from_staging() {
         *) continue ;;
       esac
       case " ${targets[*]-} " in *" $svc "*) ;; *) targets+=("$svc") ;; esac
-    done <<< "$(git diff --name-only "origin/production...$sha")"
+    done <<< "$(git diff --name-only origin/production "$sha")"
 
     banner "develop -> production(本番に出す内容)"
     git --no-pager log --oneline origin/production.."$sha"
@@ -63,15 +65,32 @@ deploy_production_from_staging() {
     br="release/$day"; n=2
     while git rev-parse --verify --quiet "origin/$br" >/dev/null; do br="release/$day-$n"; n=$((n+1)); done
 
+    # release が squash merge されると production の履歴が develop から切れ、次の PR が
+    # CONFLICTING になって merge できない(2026-08-12 PR #37 実測)。切れている場合は
+    # release の先頭に production を第2親に持つ merge commit を作って履歴を繋ぐ。
+    # tree は $sha と同一なので、staging で確認した中身は 1 bit も変わらない。
+    rel="$sha"
+    if ! git merge-base --is-ancestor origin/production "$sha"; then
+      echo "tying production history into $br (中身は origin/develop のまま)..."
+      rel="$(git commit-tree "$sha^{tree}" -p "$sha" -p "$(git rev-parse origin/production)" \
+        -m "release: production の履歴を繋ぐ(tree は origin/develop $sha と同一)")"
+    fi
+
     echo
     echo "cutting release branch $br (承認の凍結)..."
-    git branch "$br" "$sha"
+    git branch "$br" "$rel"
     git push --quiet origin "$br"
 
     echo "creating PullRequest ($br->production)..."
-    gh pr create --base production --head "$br" --title "$br" --body "承認 SHA: $sha" >/dev/null
+    pr_url="$(gh pr create --base production --head "$br" --title "$br" --body "承認 SHA: $sha")"
+    echo "  $pr_url"
     echo "merging ($br->production)..."
-    gh pr merge "$br" --merge --delete-branch=false >/dev/null
+    if ! gh pr merge "$br" --merge --delete-branch=false; then
+      printf '%b\n' "${R}FAIL: PullRequest を merge できませんでした${Z}"
+      printf '%b\n' "${Y}  release の凍結までは終わっています。サーバーにはまだ触れていません。${Z}"
+      printf '%b\n' "${Y}  上のエラーと PR 画面で原因を確認してください: $pr_url${Z}"
+      return 1
+    fi
     git fetch --quiet origin
   fi
 
