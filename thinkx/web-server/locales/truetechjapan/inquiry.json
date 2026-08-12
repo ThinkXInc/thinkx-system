@@ -106,5 +106,23 @@
         "es": "Fallo al enviar. Por favor, contacte a inquiry@thinkxinc.com.",
         "ru": "Не удалось отправить. Пожалуйста, свяжитесь с inquiry@thinkxinc.com.",
         "ar": "فشل في الإرسال. الرجاء التواصل على inquiry@thinkxinc.com."
+    },
+    "mind_check_label": {
+        "ja": "I have a \"mind\".",
+        "en": "I have a \"mind\".",
+        "zh": "I have a \"mind\".",
+        "fr": "I have a \"mind\".",
+        "es": "I have a \"mind\".",
+        "ru": "I have a \"mind\".",
+        "ar": "I have a \"mind\"."
+    },
+    "mind_check_error": {
+        "ja": "上のボタンにチェックを入れてください。",
+        "en": "Please check the box above.",
+        "zh": "请勾选上方的选择框。",
+        "fr": "Veuillez cocher la case ci-dessus.",
+        "es": "Por favor, marca la casilla de arriba.",
+        "ru": "Пожалуйста, отметьте флажок выше.",
+        "ar": "يرجى تحديد المربع أعلاه."
     }
 }

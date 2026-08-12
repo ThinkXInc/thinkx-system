@@ -342,3 +342,30 @@
 - 同日、URL を `/event/philsemi2609.html` から拡張子なしの `/event/philsemi2609` へ変更した。
   ルート・ゴールデン(`tests/golden/route_sweep.json`)・`og:url`・ローカル起動手順を同時に更新済み。
   旧 `.html` の URL は 404 になる(リダイレクトは置いていない)。
+
+### F-E(2026-08-12): イベントページのテキスト反映で踏んだ点
+
+- **貼られた改行は届かない**: Steve Sacks の略歴で「改行を維持しろ」と4回指摘されたが、
+  セッションログの実測で**入力側に改行文字が存在しない**ことが判明。以後 `<br>` を
+  明示してもらう運用に(正本: docs/GUIDELINES.md)。
+- **staging 先行に注意**: このページは staging セッションでも編集されている。手元の
+  monorepo が古いまま編集すると staging の変更を打ち消す。着手前に
+  `git log monorepo..origin/develop` で先行を確認する(この日は10件以上先行しており、
+  URL も `/event/philsemi2609.html` から `.html` 無しへ変わっていた)。
+- **rebase 後の PR が not mergeable になる**: origin/develop を rebase で取り込むと
+  同内容が別 SHA で重複し、monorepo→develop の PR が「merge commit を作れない」で失敗する。
+  この日は `git merge origin/develop`(衝突2件を両側採用)で解消した。D-68 の
+  リモート PR 経路(pr_develop_and_merge_to_monorepo.sh)も同じ理由で失敗する。
+- **画像は原本が軽ければそのまま使う**: stevesacks.jpg は 28KB で、sips の縮小版(51KB)より
+  小さかった。機械的に縮小版を作らず、まずサイズを見る。
+
+## 2026-08-12 botguard 実装で見つけた既存の潜在バグ
+
+- **`logger.warn` は libcommon Logger に存在しない**(あるのは `warning`)。
+  `main.py` の Discord skip 経路(`[discord] skipped: ...` の行)が `logger.warn` を
+  呼んでおり、webhook 未設定の環境で問い合わせ送信が AttributeError で 500 になる。
+  webhook が設定済みの本番では到達しないため顕在化していない。規約(勝手に直さない)に
+  従い記録のみ。botguard で追加した分は `logger.warning` を使用。
+- **MailSendError の握り経路が return を持たない**: `_submit_handler` /
+  truetechjapan handler とも `except MailSendError` が logger.error のみで return せず、
+  ハンドラが None を返して 500 になる(既存挙動。記録のみ)。

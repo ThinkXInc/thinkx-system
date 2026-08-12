@@ -28,7 +28,9 @@
     format_error="$0 is invalid format.",
     submit_success="Successfully sent.",
     submit_failed="Failed to send.",
-    required_fields=["name", "email", "message"]
+    required_fields=["name", "email", "message"],
+    mind_check_label="Do you have a mind?",
+    mind_check_error="Please confirm you have a mind."
     ) %}
 <form class="inquiry-form {{ id }}" id="{{ id }}">
     <div class="input-fields">
@@ -39,15 +41,26 @@
         <input type="text" name="company_name" placeholder="{{ place_holder_company_name }}">
         <textarea name="message" rows="4" placeholder="{{ place_holder_message }}"></textarea>
     </div>
+    {# 不可視のダミー入力。人間には見えず触れない。自動記入 bot はここを埋めて弾かれる #}
+    <div style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden" aria-hidden="true">
+        <input type="text" name="website" tabindex="-1" autocomplete="off">
+    </div>
     <div class="submit">
         <input type="submit" value="{{ value_submit_button }}">
     </div>
+    <label class="mind-check" style="display:flex;align-items:center;justify-content:center;gap:0.5em;margin:0.8em 0;cursor:pointer">
+        <input type="checkbox" name="mind">
+        <span>{{ mind_check_label }}</span>
+    </label>
     <p class="message"></p>
 </form>
 
 <script>
     (function () {
         const form = document.querySelector("#{{ id }}");
+        form.querySelector('input[name="mind"]').addEventListener("change", function() {
+            if (this.checked) { form.querySelector('.mind-check').style.color = ''; }
+        });
         form.addEventListener("submit", function(e) {
             e.preventDefault();
     
@@ -63,7 +76,9 @@
                 'phone': getFieldValue("phone"),
                 'job_title': getFieldValue("job_title"),
                 'company_name': getFieldValue("company_name"),
-                'message': getFieldValue("message")
+                'message': getFieldValue("message"),
+                'website': getFieldValue("website"),
+                'mind': form.querySelector('input[name="mind"]').checked
             };
 
             const enableSubmitButton = (enabled) => {
@@ -79,6 +94,10 @@
             const validate = (formData) => {
                 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+                if (!formData.mind) {
+                    return [false, '{{ mind_check_error | safe }}'];
+                }
+
                 for (const field of {{ required_fields | tojson }}) {
                     if (!formData[field]) {
                         const label = form.querySelector(`[name="${field}"]`).placeholder;
@@ -93,6 +112,9 @@
             };
 
             const [isValid, errorMsg] = validate(formData);
+            // 未チェックのまま送ろうとしたらラベルも赤くして目立たせる(チェックで戻る)
+            const mindLabel = form.querySelector('.mind-check');
+            mindLabel.style.color = formData.mind ? '' : '#8f2a2a';
             if (!isValid) {
                 showMessage('error', errorMsg);
                 enableSubmitButton(true);
@@ -128,6 +150,7 @@
                 form.querySelector('input[name="job_title"]').value = '';
                 form.querySelector('input[name="company_name"]').value = '';
                 form.querySelector('textarea[name="message"]').value = '';
+                form.querySelector('input[name="mind"]').checked = false;
             }
         });
     })();
