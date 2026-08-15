@@ -1397,3 +1397,20 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   **bot は 08-06 の事故以前、7月下旬から投稿できていなかった**可能性が高い。
 - 対処: X Developer Portal でのクレジット補充(オーナーのみ・支払い操作)。
   補充後は cron(JST 06:10)が自動再開する。
+
+### 追記(2026-08-15): deploy_staging.sh がアセット配布段階で失敗(ssh timeout)・反映は deploy-timer 経由で完了
+
+- `bash infra/scripts/deploy_staging.sh` が push_assets の scp で
+  `ssh: connect to host 57.182.107.57 port 22: Operation timed out`(supercom-web1-stg)。
+  supercom-lb1-stg(52.68.142.190)への ssh も同様に timeout。スクリプトは
+  「サーバーには触れていません」で安全に停止(設計どおり)。
+- HTTPS は正常(staging.thinkxinc.com は 401 = Basic 認証で応答)。落ちているのは ssh(22) だけ。
+  オーナー機の現在の公開 IP は 122.30.116.97。SG の ssh 許可元 IP と食い違っている可能性が高い
+  (オーナー機の回線変更 or SG 設定時の IP が古い)。対処は SG の ssh 許可元更新(terraform・承認制)。
+- git 反映自体は deploy-timer@staging(60秒ごと origin/develop へ ff-only)で完了し、
+  イベントページ変更(text(thinkx) e78f1ae ほか)は staging 実測で反映確認済み。
+  **ssh 不通でも git 経路のデプロイは生きる**が、views/video のアセット配布と
+  サービス再起動を要する変更は ssh 復旧まで staging に出せない。
+- 付随観測: push_assets の diff で supercom-web1-stg の thinkx views/video が**空**
+  (手元のみ 11 ファイル)。イベントページには影響しないが、staging のサイトトップ等で
+  動画が 404 になっている可能性がある。ssh 復旧後に `push_assets.sh supercom-web1-stg thinkx` で解消する。
