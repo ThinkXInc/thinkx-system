@@ -1360,3 +1360,40 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
 - 対処案(未実施): 決め打ち printf を実観測に置き換える — 各ドメインの A レコードを
   `dig +short` で引いて LB EIP と比較して表示する、または DNS 切替済みを前提に
   公開ドメインへの https 200 チェックへ置き換える(web 直叩きの内部チェックは残す)。
+
+## 2026-08-12 k00bot2 が web1 に存在しない — 08-06 全損事故の再構築で復旧漏れ(復旧済み)
+
+- 事象: オーナーから「本番サーバーの k00bot が止まっているように見える」。実測すると
+  web1 に k00bot2 の cron・プロセス・ディレクトリが**一切無い**。08-06 の全損事故で
+  インスタンスが破壊再作成された際、deploy timer(同日 findings)と同じく k00bot2 の
+  再セットアップが復旧手順に入っておらず、そのまま失われていた。
+- 復旧(2026-08-12 実施):
+  1. `/src/thinkx-system-k00bot2` に k00bot2 ブランチを clone(既存 read-only deploy key)。
+     monorepo への merge は revert 済み(719e856)のため production checkout には置けない。
+  2. 書き込み用 deploy key を web1 で新規生成し `kazukiotsuka/k00bot2`(data 永続化 repo)に
+     登録(旧鍵 `supercom-web-k00bot2-rw` は旧箱と共に消失。**GitHub 上に残っているので
+     削除推奨 — オーナー判断**)。ssh alias `github-thinkx-system-rw` は config.d に追加。
+  3. data を `/src/k00bot2`(clone)から復元、`.env` はオーナーが Mac worktree から scp
+     (実行者は credentials に触れない設定のためコマンドを手渡し)。
+  4. venv 構築 → `post_daily --dry-run` で投稿候補2件の組み立てを確認(実投稿なし)→
+     `/etc/cron.d/k00bot2` 設置(daily 21:10 UTC = JST 06:10 / monthly 1日 03:20 UTC)。
+  5. k00bot2 ブランチの復旧手順書(`k00bot2/deploy/*`)が revert 前の「monorepo に k00bot2 が
+     ある」前提のままだったため、独立 clone 前提に更新して push(bc2f2a3)。
+- 未解決の観測: data repo(kazukiotsuka/k00bot2)の最終 push が **2026-07-20**。
+  bot が 7/20〜8/6 に投稿していた場合、その期間の投稿履歴 state は旧箱と共に消えており、
+  復元 state では**同じ記事を再投稿する可能性**がある。7/20 で既に止まっていた可能性もある
+  (旧箱のログ消失で確定不能)。X アカウントの実投稿履歴で確認できる。
+- 再発防止: 箱の再構築完了条件に k00bot2 を含める(deploy timer と同じ教訓 —
+  「受け入れ試験の項目に入っていない設定は必ず落ちる」)。復旧は
+  `ssh supercom-web1 'bash -s' < k00bot2/deploy/setup_k00bot2_ec2.sh`(k00bot2 worktree から)
+  + cron 設置 + `.env` 配布で素通りする形に手順書を直した。
+
+### 追記(2026-08-12): k00bot2 の真の停止原因は X API クレジット枯渇
+
+- 復旧後の手動実行で `X API error 402 Payment Required: credits depleted`。認証は成功
+  (`authenticated as user_id=113382242`)しており、bot・サーバー側は正常。
+- これにより data repo の push が 7/20 で止まっていた理由も説明がつく:
+  クレジット枯渇で投稿が失敗し続けると state が変わらず sync も push しない。
+  **bot は 08-06 の事故以前、7月下旬から投稿できていなかった**可能性が高い。
+- 対処: X Developer Portal でのクレジット補充(オーナーのみ・支払い操作)。
+  補充後は cron(JST 06:10)が自動再開する。
