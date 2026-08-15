@@ -303,7 +303,7 @@
 
     /* 写真つきの出演者(写真 左・氏名と略歴 右) */
     .performer-detail {
-      margin-top: 14px;
+      margin-top: 25px;
       display: flex;
       align-items: flex-start;
       gap: 26px;
@@ -319,6 +319,18 @@
       margin-top: 12px;
       font-size: 15px;
       line-height: 1.95;
+    }
+    /* 未確定の出演者: 写真枠は薄い茶色の矩形に「準備中」を中央置き */
+    .performer-photo-placeholder {
+      aspect-ratio: 230 / 238; /* 実写真(nakanokei2.jpg)と同じ縦横比 */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #e9dfcf;
+      color: var(--placeholder-text);
+      font-size: 14px;
+      letter-spacing: .18em;
+      text-indent: .18em;
     }
 
     /* ---- 開催概要 ---- */
@@ -509,11 +521,6 @@
         <p class="performer-name preparing">準備中</p>
       </div>
 
-      <div class="performer">
-        <p class="performer-role">ゲスト・パネラー</p>
-        <p class="performer-name preparing">準備中</p>
-      </div>
-
       {# ピアノに加えサックス・フルートも演奏するため、役割名は楽器を併記した1行で表す #}
       <div class="performer">
         <p class="performer-role">ピアノ・サックス演奏</p>
@@ -522,6 +529,30 @@
           <div class="performer-body">
             <p class="performer-name">Steve Sacks</p>
             <p class="performer-bio">1953年アメリカ・ワシントンD.C.生まれ。<br>ハーバード大学を卒業したのち音楽理論家として活動を開始。２０年に及びニューヨークのラテン音楽とジャズシーンで活躍。主な共演アーティストに、小野リサ、デューク・エリントン・オーケストラ、森山良子、香港交響楽団らがいる。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="performer">
+        <p class="performer-role">ゲスト・パネラー</p>
+        <div class="performer-detail">
+          <img class="performer-photo" src="/img/event/nakanokei2.jpg" alt="中野圭">
+          <div class="performer-body">
+            <p class="performer-name">中野圭</p>
+            <p class="performer-bio">大阪芸術大学芸術学部准教授、理化学研究所生命医科学研究センター開放情報科学特別チーム客員研究員。<br>東京芸術大学や武蔵野美術大学での講師、産総研研究員等を経て、メディアアーティストとしてコンピューターやAIを使った芸術表現、音楽情報処理、映像シュルレアリスムに従事。</p>
+          </div>
+        </div>
+        {# 残り2名は確定まで「準備中」表示(写真枠も含めて実物と同じレイアウトで置く) #}
+        <div class="performer-detail">
+          <div class="performer-photo performer-photo-placeholder">準備中</div>
+          <div class="performer-body">
+            <p class="performer-name preparing">準備中</p>
+          </div>
+        </div>
+        <div class="performer-detail">
+          <div class="performer-photo performer-photo-placeholder">準備中</div>
+          <div class="performer-body">
+            <p class="performer-name preparing">準備中</p>
           </div>
         </div>
       </div>
