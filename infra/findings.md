@@ -1414,3 +1414,13 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
 - 付随観測: push_assets の diff で supercom-web1-stg の thinkx views/video が**空**
   (手元のみ 11 ファイル)。イベントページには影響しないが、staging のサイトトップ等で
   動画が 404 になっている可能性がある。ssh 復旧後に `push_assets.sh supercom-web1-stg thinkx` で解消する。
+
+### 追記(2026-08-21): 本番 web への ssh も timeout・views/video は本番も空
+
+- `deploy_production_from_staging.sh` 実行時、release/2026-08-21 の凍結と production への
+  マージ(PR #53)までは完走。push_assets で supercom-web1(57.182.151.177)への ssh が
+  `Operation timed out`(staging と同一symptom。SG の ssh 許可元 IP 齟齬の疑いを補強)。
+- git 分は deploy-timer@production が追従し、イベントページの変更は本番 URL で実測反映済み。
+- 本番 web の thinkx views/video も**空**(手元のみ 11 ファイル)。サイトトップ等の動画が
+  404 になっている可能性がある。ssh 復旧後に `deploy_production_from_staging.sh` を再実行するか
+  `push_assets.sh supercom-web1 thinkx` で配布する。
