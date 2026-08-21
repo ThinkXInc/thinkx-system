@@ -303,7 +303,7 @@
 
     /* 写真つきの出演者(写真 左・氏名と略歴 右) */
     .performer-detail {
-      margin-top: 14px;
+      margin-top: 25px;
       display: flex;
       align-items: flex-start;
       gap: 26px;
@@ -319,6 +319,18 @@
       margin-top: 12px;
       font-size: 15px;
       line-height: 1.95;
+    }
+    /* 未確定の出演者: 写真枠は薄い茶色の矩形に「準備中」を中央置き */
+    .performer-photo-placeholder {
+      aspect-ratio: 230 / 238; /* 実写真(nakanokei2.jpg)と同じ縦横比 */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #d5d5d5;
+      color: #ffffff;
+      font-size: 14px;
+      letter-spacing: .18em;
+      text-indent: .18em;
     }
 
     /* ---- 開催概要 ---- */
@@ -485,7 +497,7 @@
 
       <p class="profile-titles">連続起業家、独立計算進化学者、現代芸術家</p>
 
-      <p class="profile-text">計算理論、代数学、量子物理学、生命科学、哲学、美学、を横断しプラトン以降の哲学的問題を解決し新たな自然科学体系を構成する知識進化に関する学問─第三空間理論─を16歳から構築し続け、パリ外のフランス最上位大学Grenoble Alpes大学に派遣留学生に選出、パリ音響音楽研究所IRCAM Forum会員として荻生徂徠以降も謎とされる東洋和声合竹の数理構造を研究、合衆国ハワイ州マウイ島で数年に渡り録音収集した生物歌研究による「言語の普遍的数理構造」の研究成果に基づく普遍的言語学習法を小学生から大人まで可能にした『ファーブラー・メソッド』を2027年1月にクロスメディア・ランゲージ社より出版予定。</p>
+      <p class="profile-text">計算理論、代数学、量子物理学、生命科学、哲学、美学、を横断しプラトン以降の哲学的問題を解決し新たな自然科学体系を構成する知識進化に関する学問─第三空間理論─を16歳から構築し続け、フランス Université Grenoble III（現Université Grenoble Alpes パリ圏外でのフランス最上位大学）派遣留学生（2009年)、フランス国営音響音楽研究所IRCAM Forum会員として荻生徂徠以降も謎とされる東洋和声合竹の数理構造を研究、合衆国ハワイ州マウイ島で数年に渡り録音収集した生物歌研究による「言語の普遍的数理構造」の研究成果に基づく普遍的言語学習法を小学生から大人まで可能にした『ファーブラー・メソッド』を2027年1月にクロスメディア・ランゲージ社より出版予定。東京大学大学院学際情報学部修士課程を「量子論理の非分配性に基づく直交モジュラー束上の計算言語β」の研究で修了。人口の上位２％のIQを持つ人々の国際団体MENSA会員。</p>
 
       <p class="profile-text">大学卒業時に独立、現在主流のクロール型ニュースリーダーを自主開発し日本で初めて普及、半年で2万5千ダウンロード、スーツケース一つで世界を放浪、サンフランシスコでハッカーハウス運営、国内初となるAI活用型の投資用不動産分析システムを企画・開発(2025年にM&amp;A)、独自の言語意味解析機械学習アルゴリズムや音声アルゴリズムで複数の特許を保持。</p>
 
@@ -506,12 +518,13 @@
       {# 出演者確定まで「準備中」表示。確定後に氏名(永井　照明 / Jonathan Katz)へ戻す #}
       <div class="performer">
         <p class="performer-role">司会</p>
-        <p class="performer-name preparing">準備中</p>
-      </div>
-
-      <div class="performer">
-        <p class="performer-role">ゲスト・パネラー</p>
-        <p class="performer-name preparing">準備中</p>
+        <div class="performer-detail">
+          <img class="performer-photo" src="/img/event/akahirachihiro.jpg" alt="赤平知優">
+          <div class="performer-body">
+            <p class="performer-name">赤平知優</p>
+            <p class="performer-bio">フジ系列秋田テレビ「土曜の情報缶詰どっかん」リポーター、DOWAセミコンダクター秋田TVCM出演中、ワセダコレクション2026モデル、他。</p>
+          </div>
+        </div>
       </div>
 
       {# ピアノに加えサックス・フルートも演奏するため、役割名は楽器を併記した1行で表す #}
@@ -522,6 +535,30 @@
           <div class="performer-body">
             <p class="performer-name">Steve Sacks</p>
             <p class="performer-bio">1953年アメリカ・ワシントンD.C.生まれ。<br>ハーバード大学を卒業したのち音楽理論家として活動を開始。２０年に及びニューヨークのラテン音楽とジャズシーンで活躍。主な共演アーティストに、小野リサ、デューク・エリントン・オーケストラ、森山良子、香港交響楽団らがいる。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="performer">
+        <p class="performer-role">ゲスト・パネラー</p>
+        <div class="performer-detail">
+          <img class="performer-photo" src="/img/event/nakanokei2.jpg" alt="中野圭">
+          <div class="performer-body">
+            <p class="performer-name">中野圭</p>
+            <p class="performer-bio">大阪芸術大学芸術学部准教授、理化学研究所生命医科学研究センター開放情報科学特別チーム客員研究員。<br>東京芸術大学や武蔵野美術大学での講師、産総研研究員等を経て、シュルレアリストとしてコンピューターやAIを使った芸術表現、音楽情報処理、映像表現や批評に従事。</p>
+          </div>
+        </div>
+        {# 残り2名は確定まで「準備中」表示(写真枠も含めて実物と同じレイアウトで置く) #}
+        <div class="performer-detail">
+          <div class="performer-photo performer-photo-placeholder">準備中</div>
+          <div class="performer-body">
+            <p class="performer-name preparing">準備中</p>
+          </div>
+        </div>
+        <div class="performer-detail">
+          <div class="performer-photo performer-photo-placeholder">準備中</div>
+          <div class="performer-body">
+            <p class="performer-name preparing">準備中</p>
           </div>
         </div>
       </div>
@@ -566,8 +603,7 @@
 
     <!-- ↓↓↓↓ 参加フォーム ↓↓↓↓ -->
     <div class="entry">
-      {# TODO: href を Google フォームの URL に差し替える #}
-      <a class="entry-button" href="#" target="_blank" rel="noopener">参加フォーム</a>
+      <a class="entry-button" href="https://docs.google.com/forms/d/e/1FAIpQLSd1jVsQLuVQ3outSsyOkZLdZAbsmrz_7Tp0mhE24nxVYHR8ow/viewform?usp=dialog" target="_blank" rel="noopener">参加フォーム</a>
     </div>
     <!-- ↑↑↑↑ END 参加フォーム ↑↑↑↑ -->
 
