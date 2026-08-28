@@ -16,7 +16,7 @@ fabula は取り込みのみ後日行い、サイト(fabula-method.com)の設計
 - ARCHIVE.md への出所行はオーナーが追記する(settings.json が実行者の ARCHIVE.md 書き込みを
   deny しているため。D-21 の代行記録ルールに従いこの文書と findings に記録)
 
-## Phase 2: 構造合わせ + WSGI 化
+## Phase 2: 構造合わせ + WSGI 化(実施済み 2026-08-28。8c4e262〜8704705)
 
 - 他サイト(thinkx / kazukiotsukacom)共通構造に合わせる:
   `.env`(ルート直下) / `web-server/{main.py, requirements.txt, nginx/conf.d/,
@@ -82,11 +82,15 @@ fabula は取り込みのみ後日行い、サイト(fabula-method.com)の設計
 
 ## Phase 3: staging 稼働(ゴール = 編集UIがブラウザで開く)
 
-1. `infra/setup/setup_podcast.sh` 新設(venv 構築・ffmpeg・systemd unit・htpasswd・
-   flusher timer)— web1-stg で1回実行
-2. LB の direct ブロック + nginx-web-root include 有効化 → 手順書 1→2→3 でデプロイ
-3. `push_assets_podcast.sh staging <ID>` で編集対象データを搬入
-4. 確認 URL `http://{lb1-stgのEIP}/podcast/` をオーナーに提示して目視確認
+コード・conf・スクリプトは作成済み(2026-08-28)。残りはサーバー上の実行のみ:
+
+1. 手順書 1→2→3 でデプロイ(nginx-web-root include・loadbalancer/conf.d/direct.conf・
+   podcast/ 一式が staging に乗る)
+2. web1-stg で `bash infra/setup/setup_podcast.sh`(ffmpeg・venv・uwsgi_podcast・flusher)
+3. lb1-stg で `bash infra/setup/setup_podcast_lb.sh`(Basic 認証ファイル。最終行が対話)
+4. オーナー機で data をローカル `podcast/data/` へ移し、edit/ をコミット。
+   `bash infra/scripts/push_assets_podcast.sh staging <ID>` で大物を搬入
+5. 確認 URL `http://{lb1-stgのEIP}/podcast/` をオーナーに提示して目視確認
 
 ## Phase 4: 本番常設(staging OK 後)
 

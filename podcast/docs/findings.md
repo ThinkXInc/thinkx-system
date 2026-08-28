@@ -410,3 +410,11 @@ initial_prompt に渡して `mlx_transcribe.py` で再ASRしたところ、実�
 なお発生しうる。復元後は assign_speakers.py 再実行と transcript.txt 再生成、
 cut_decisions の該当Cを keep に更新するところまでで1セット
 （実施例: backup/transcript_before_reasr_1326.json に元を退避）。
+
+## 2026-08-28 monorepo 移行(Phase 2)での実測
+
+- uwsgi 2.0.31 は macOS arm64 で SSL リンクエラー(`_hr_https_add_vars` not found)により
+  ビルド不能。web-server/requirements.txt は `uwsgi==2.0.31; sys_platform == "linux"` の
+  環境マーカーで Linux(サーバー)のみに入れる。ローカルは Flask 内蔵サーバーで足りる。
+- requirements の click 8.5.0 は Python 3.10+ 前提。サーバー(Ubuntu 22.04)の python3 =
+  3.10 なので setup_podcast.sh は素の python3 で venv を作る(他サイトの python3.9 とは別)。
