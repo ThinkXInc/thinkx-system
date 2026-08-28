@@ -8,9 +8,10 @@
 関わるファイル（venv・依存・データ・中間物）はすべて作業ディレクトリ内に置く。ホーム
 （~/venvs 等）に散らさない」。venv は `<project>/venv`、既定もプロジェクト内を指す。
 
-**生成物チェック用サイト（`web/`）**: 生成物をブラウザで確認する独立サイトが `web/` にある。
-自己完結したサブコンポーネントで、**専用の venv / requirements.txt / CLAUDE.md を持つ**（本体と別）。
-サイト作業は `web/CLAUDE.md` に従う。本番は uWSGI→nginx→LB。処理後に該当ID ページのリンクを提示する。
+**編集サイト（`web-server/`）**: タイムライン編集UIを配信するサイトが `web-server/` にある。
+thinkx 等と同じサイト構造で、**専用の venv / requirements.txt / CLAUDE.md を持つ**（本体と別）。
+サイト作業は `web-server/CLAUDE.md` に従う。本番は uWSGI→nginx→LB（`/podcast/` 配下）。
+処理後に該当ID ページのリンクを提示する。
 
 **運用コマンド**: build / uWSGI 再起動 / ログ / nginx の運用は `OPS_GENERAL.md`（ルール）と
 `docs/運用コマンド_原本.md`（コマンド原本）に従う。uWSGI サービスは `uwsgi_podcast.service`。
