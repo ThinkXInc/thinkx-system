@@ -32,6 +32,13 @@ deploy_staging() {
   bash infra/scripts/push_assets.sh supercom-web1-stg thinkx transformism kazukiotsukacom ||
     { printf '%b\n' "${R}FAIL: アセットの配布に失敗しました。サーバーには触れていません${Z}"; return 1; }
 
+  # podcast の編集用データは例外規則の別スクリプトで配る(D-52。汎用規則に混ぜない)。
+  # 引数なし = サーバーに公開済みの ID だけ差分同期。新規 ID の公開は手動で
+  # bash infra/scripts/push_assets_podcast.sh staging <ID> を叩く
+  banner "アセット(podcast データ)を確かめる"
+  bash infra/scripts/push_assets_podcast.sh staging ||
+    { printf '%b\n' "${R}FAIL: podcast データの配布に失敗しました。サーバーには触れていません${Z}"; return 1; }
+
   # 実行する本体は origin/develop から取り出して ssh の標準入力で渡す。サーバーの
   # checkout にあるファイルを使うと、そのファイル自体をこれから配る回に「まだ無い」で止まる
   # (実際に本番と staging LB の両方で無かった。2026-07-21 実測)。
@@ -54,7 +61,9 @@ deploy_staging() {
       h="${hp%%:*}"; p="${hp##*:}"
       c="$(curl -s -o /dev/null -w "%{http_code}" -m 10 -H "Host: $h" "http://localhost:$p/" || true)"
       [ "$c" = 200 ] && printf "  \033[32m%-24s %s\033[0m\n" "$h" "$c" || printf "  \033[31m%-24s %s\033[0m\n" "$h" "$c"
-    done'
+    done
+    c="$(curl -s -o /dev/null -w "%{http_code}" -m 10 "http://localhost:8010/podcast/" || true)"
+    [ "$c" = 200 ] && printf "  \033[32m%-24s %s\033[0m\n" "podcast(8010)" "$c" || printf "  \033[33m%-24s %s (setup_podcast.sh 未実施なら想定内)\033[0m\n" "podcast(8010)" "$c"'
 
   printf '%b\n' "${G}OK: deployed to staging${Z}"
   echo

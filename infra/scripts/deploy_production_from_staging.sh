@@ -105,6 +105,16 @@ deploy_production_from_staging() {
     return 1
   fi
 
+  # podcast の編集用データは例外規則の別スクリプトで配る(D-52。汎用規則に混ぜない)。
+  # 引数なし = 本番に公開済みの ID だけ差分同期(本番に podcast が居ない間は素通り)
+  banner "アセット(podcast データ)を確かめる"
+  if ! bash infra/scripts/push_assets_podcast.sh prod; then
+    printf '%b\n' "${R}FAIL: podcast データの配布に失敗しました${Z}"
+    printf '%b\n' "${Y}  release の凍結と production への取り込みは終わっています。${Z}"
+    printf '%b\n' "${Y}  サーバーにはまだ触れていません。原因を直して同じコマンドをもう一度実行してください。${Z}"
+    return 1
+  fi
+
   # サーバーを production に合わせる。実装はサーバー側の sync_from_origin.sh 1つだけで、
   # systemd timer が呼ぶのも同じもの。手動と自動で挙動が食い違わない。
   #
