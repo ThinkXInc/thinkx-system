@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""編集の操作履歴（edit/save_inbox.jsonl）から任意時点の状態を確認・復元する。
+"""編集の保存ジャーナル（edit/edit_save_journal.jsonl）から任意時点の状態を確認・復元する。
 
-サイトは操作のたびに全カット状態を保存し、受信内容は成否に関わらず save_inbox.jsonl に
-記録される（2026-08-08・オーナー指示「操作するたびに操作履歴を完全に書き込め」）。
+サイトは操作のたびに全カット状態を保存し、受信内容は成否に関わらず
+edit_save_journal.jsonl に記録される（2026-08-08・オーナー指示「操作するたびに
+操作履歴を完全に書き込め」。旧名 save_inbox.jsonl — 名前単体で役割が読めるよう改名 2026-08-28）。
 このスクリプトはその履歴を一覧し、指定した時点の drops を segments.json に書き戻す。
 書き戻す前に backup_edit.py 相当の退避を自動で行う。
 
@@ -20,12 +21,18 @@ import datetime
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 
 
-def load_inbox(base):
-    p = base / "edit" / "save_inbox.jsonl"
-    if not p.exists():
-        sys.exit(f"[restore] {p} がまだありません（履歴はこれから貯まります）")
+def load_journal(base):
+    # 旧名 save_inbox.jsonl の既存履歴も失わないよう、古い方 → 新しい方の順に連結して読む
+    paths = [base / "edit" / "save_inbox.jsonl",
+             base / "edit" / "edit_save_journal.jsonl"]
+    lines = []
+    for p in paths:
+        if p.exists():
+            lines.extend(p.read_text(encoding="utf-8").splitlines())
+    if not lines:
+        sys.exit(f"[restore] {paths[1]} がまだありません（履歴はこれから貯まります）")
     out = []
-    for i, ln in enumerate(p.read_text(encoding="utf-8").splitlines()):
+    for i, ln in enumerate(lines):
         try:
             out.append((i, json.loads(ln)))
         except json.JSONDecodeError:
@@ -41,7 +48,7 @@ def main():
     ap.add_argument("--restore", type=int, default=None, help="一覧の行番号")
     args = ap.parse_args()
     base = ROOT / "data" / args.id
-    recs = load_inbox(base)
+    recs = load_journal(base)
 
     if args.restore is None:
         for i, r in recs:

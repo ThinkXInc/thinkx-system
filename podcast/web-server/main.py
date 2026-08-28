@@ -1020,7 +1020,7 @@ def apply_timeline_save(payload):
     # 古いページの保存が拒否されても、ここに全編集データが残る。
     try:
         import datetime
-        inbox = os.path.join(idpaths.edit_dir(os.path.join(DATA_DIR, idv)), "save_inbox.jsonl")
+        inbox = os.path.join(idpaths.edit_dir(os.path.join(DATA_DIR, idv)), "edit_save_journal.jsonl")
         with open(inbox, "a", encoding="utf-8") as f:
             f.write(json.dumps({"at": datetime.datetime.now().isoformat(timespec="milliseconds"),
                                 "payload": payload}, ensure_ascii=False) + "\n")
@@ -1895,7 +1895,7 @@ def start_render_spec(spec):
         return "bad_id"
     # 何を書き出したかも受信箱へ完全記録
     try:
-        inbox = os.path.join(idpaths.edit_dir(os.path.join(DATA_DIR, idv)), "save_inbox.jsonl")
+        inbox = os.path.join(idpaths.edit_dir(os.path.join(DATA_DIR, idv)), "edit_save_journal.jsonl")
         with open(inbox, "a", encoding="utf-8") as f:
             f.write(json.dumps({"at": datetime.datetime.now().isoformat(timespec="milliseconds"),
                                 "payload": dict(spec, op="export")}, ensure_ascii=False) + "\n")
