@@ -166,6 +166,10 @@ def main():
                 _stage(2)
                 dnr = out.with_name(out.name + ".dn.wav")
                 enh_py = HERE / "venv_enhance" / "bin" / "python"
+                if not enh_py.is_file():
+                    sys.exit("[audio] ノイズ除去環境(venv_enhance)がこのマシンにありません。"
+                             "チェックを外して書き出すか、ローカル(mac)で実行してください"
+                             "（サーバーには置かない方針 — D-52。処理部は将来差し替え）")
                 code = (
                     "import sys\n"
                     "from clearvoice import ClearVoice\n"
