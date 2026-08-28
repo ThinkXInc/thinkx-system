@@ -1011,6 +1011,23 @@ def timeline_block(idv, sg, tsegments, silence, main_spk=1, cutdecs=None, quotes
     )
 
 
+def _queue_for_sync(*paths):
+    """書いたファイルをコミット対象キューへ追記する（D-52 保存トリガー同期）。
+    サーバーの flusher はこの明示リストに載ったファイルだけを git add する。
+    手で消した・動かしたファイルはここに載らないので、事故が push されることはない。"""
+    import datetime
+    try:
+        q = os.path.join(DATA_DIR, ".pending_sync.jsonl")
+        with open(q, "a", encoding="utf-8") as f:
+            for p in paths:
+                if not p or not os.path.exists(p):
+                    continue
+                f.write(json.dumps({"at": datetime.datetime.now().isoformat(timespec="seconds"),
+                                    "path": os.path.realpath(p)}, ensure_ascii=False) + "\n")
+    except Exception:
+        pass  # キューが書けなくても保存は続ける（次の保存で追いつく）
+
+
 def apply_timeline_save(payload):
     """/edit_save: タイムライン編集の drops を segments.json に保存する。"""
     idv = str(payload.get("id") or "")
@@ -1072,6 +1089,7 @@ def apply_timeline_save(payload):
     _append_history(base, seg_path)
     with open(seg_path, "w", encoding="utf-8") as f:
         json.dump(seg, f, ensure_ascii=False, indent=2)
+    _queue_for_sync(seg_path, os.path.join(idpaths.edit_dir(base), "segments_history.jsonl"))
     return True
 
 
@@ -1849,6 +1867,7 @@ def apply_decision(idv, cid, action, status_only=False):
     if status_only:
         with open(dec_path, "w", encoding="utf-8") as f:
             json.dump(dec, f, ensure_ascii=False, indent=2)
+        _queue_for_sync(dec_path)
         return True
     seg_path = idpaths.find(base, "segments.json")
     seg = _load_json(seg_path, {})
@@ -1870,6 +1889,7 @@ def apply_decision(idv, cid, action, status_only=False):
         json.dump(dec, f, ensure_ascii=False, indent=2)
     with open(seg_path, "w", encoding="utf-8") as f:
         json.dump(seg, f, ensure_ascii=False, indent=2)
+    _queue_for_sync(dec_path, seg_path)
     return True
 
 
