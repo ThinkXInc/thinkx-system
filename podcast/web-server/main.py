@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
-# web/preview_local.py — mac ローカルで生成物(contents/)を確認するスタンドアロン preview。
-#
-# 依存ゼロ（Python 標準ライブラリのみ）。本番の uWSGI / nginx / general/base.html には
-# 一切依存しない。本番の雛形（templates/page.html, config/uwsgi.ini, nginx/*）は触らない。
+# web-server/main.py — podcast タイムライン編集サイト（Flask アプリ本体）。
 #
 # 動画がメイン。各動画の下に「切り出し全文」を出し、校正用PDFに近い配色で
 # カット済み(確定)/カット推奨(未決)/事実確認/候補外/詰め候補(無音)/象徴的セリフ を
-# すべて全文中にインライン表示する。
+# すべて全文中にインライン表示する。文字起こしの場所がそのままタイムラインになる。
 #
-# 起動:  python3 web/preview_local.py        → http://127.0.0.1:8010/
-# data:  既定は web/ の1つ上の data/。 環境変数 SITE_DATA_DIR で上書き可。
+# 起動:  ローカル = venv/bin/python main.py → http://127.0.0.1:8010/
+#        本番     = uwsgi --ini uwsgi/uwsgi.ini（mount=/podcast。プレフィックスは
+#                   manage-script-name が剥がすので、この中では意識しない）
+# data:  既定は web-server/ の1つ上の data/。環境変数 SITE_DATA_DIR で上書き可。
 
 import os
 import re
@@ -18,7 +17,8 @@ import html
 import mimetypes
 import urllib.parse
 from difflib import SequenceMatcher
-from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+from flask import Flask, Response, request, send_file
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 import sys as _sys
@@ -28,6 +28,16 @@ DATA_DIR = os.path.realpath(
     os.environ.get("SITE_DATA_DIR") or os.path.join(os.path.dirname(HERE), "data")
 )
 PORT = int(os.environ.get("PORT", "8010"))
+
+app = Flask(__name__)
+
+
+def approot():
+    """公開プレフィックス（本番 = /podcast、ローカル = 空）。リンクは必ずこれ経由で作る。"""
+    try:
+        return request.script_root or ""
+    except RuntimeError:
+        return ""
 
 MEDIA_FILES = [
     ("final.mp4", "mp4(字幕あり)"),
@@ -566,7 +576,7 @@ function makeTimeline(root){
     }
     /* cut_decisions.json の status だけ更新する。drops はタイムライン側が
        /edit_save で書くので、ここで両方書くと競合する。 */
-    fetch('/decide?id='+encodeURIComponent(D.id)+'&cid='+encodeURIComponent(pd.cid)
+    fetch(window.APP+'/decide?id='+encodeURIComponent(D.id)+'&cid='+encodeURIComponent(pd.cid)
           +'&action='+action+'&status_only=1');
   }
   var lastOp='';
@@ -590,7 +600,7 @@ function makeTimeline(root){
     var rec={id:D.id,index:D.index,sid:D.sid,segStart:D.segStart,segEnd:D.segEnd,
              op:lastOp,drops:currentDrops()};
     lastOp='';
-    fetch('/edit_save',{method:'POST',headers:{'Content-Type':'application/json'},
+    fetch(window.APP+'/edit_save',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify(rec)})
     .then(function(r){
       if(r.ok){ setStatus('保存済み'); try{ localStorage.removeItem('tl_dirty_'+D.sid); }catch(e){} }
@@ -1101,7 +1111,8 @@ def page(title, body):
         "<!doctype html><html lang='ja'><head><meta charset='utf-8'>"
         "<meta name='viewport' content='width=device-width, initial-scale=1'>"
         f"<title>{esc(title)}</title><style>{PAGE_CSS}{TIMELINE_CSS}</style>"
-        "<script>document.documentElement.dataset.theme="
+        # 公開プレフィックス（本番 /podcast・ローカル 空）。JS の fetch はすべてこれ経由
+        f"<script>window.APP='{approot()}';document.documentElement.dataset.theme="
         "localStorage.getItem('theme')||'light';</script></head>"
         f"<body><button class='theme-btn' onclick=\"var r=document.documentElement,"
         "t=r.dataset.theme==='dark'?'light':'dark';r.dataset.theme=t;"
@@ -1115,7 +1126,7 @@ def page(title, body):
         "function seekOrig(t){document.querySelectorAll('video').forEach(function(v){v.pause();});"
         "var a=document.getElementById('orig');if(!a)return;a.currentTime=t;a.play();}"
         "function decide(cid,action){var idv=new URLSearchParams(location.search).get('id');"
-        "fetch('/decide?id='+encodeURIComponent(idv)+'&cid='+cid+'&action='+action)"
+        "fetch(window.APP+'/decide?id='+encodeURIComponent(idv)+'&cid='+cid+'&action='+action)"
         ".then(function(){location.reload();});}"
         # 「この編集で書き出す」: 完了したらそのままダウンロードが落ちてくる
         "function nrToggle(cb){localStorage.setItem('nr_on',cb.checked?'1':'0');"
@@ -1128,17 +1139,17 @@ def page(title, body):
         "var st=window.tlState?window.tlState(sid):null;"
         "if(!st){el.textContent='タイムラインの状態を取得できません（リロードしてください）';return;}"
         "if(localStorage.getItem('nr_on')==='1')st.denoise=true;"
-        "fetch('/render_seg',{method:'POST',headers:{'Content-Type':'application/json'},"
+        "fetch(window.APP+'/render_seg',{method:'POST',headers:{'Content-Type':'application/json'},"
         "body:JSON.stringify(st)}).then(function(r){return r.text();})"
         ".then(function(st){if(st!=='started'&&st!=='already_running'){el.textContent='開始できません: '+st;return;}"
         "el.textContent='書き出し中…（数分かかります。ページを開いたままで）';"
         "var iv=setInterval(function(){"
-        "fetch('/render_status?id='+encodeURIComponent(idv)+'&sid='+encodeURIComponent(sid)).then(function(r){return r.text();})"
+        "fetch(window.APP+'/render_status?id='+encodeURIComponent(idv)+'&sid='+encodeURIComponent(sid)).then(function(r){return r.text();})"
         ".then(function(s){if(s.indexOf('running:')===0){el.textContent='書き出し中… '+s.slice(8)+'%';}"
         "else if(s.indexOf('done')===0){clearInterval(iv);"
         "var fn=s.length>5?s.slice(5):'';"
         "if(fn){var a=document.createElement('a');"
-        "a.href='/media?p='+encodeURIComponent(idv+'/contents/'+fn);"
+        "a.href=window.APP+'/media/'+encodeURIComponent(idv)+'/contents/'+encodeURIComponent(fn);"
         "a.download=fn;document.body.appendChild(a);a.click();a.remove();"
         "el.textContent='完了: '+fn;}else{el.textContent='完了';}}"
         "else if(s.indexOf('failed')===0){clearInterval(iv);"
@@ -1288,7 +1299,7 @@ def load_id_data(idv):
 
 
 def media_url(idv, seg, fname):
-    return "/media?p=" + urllib.parse.quote(f"{idv}/contents/{seg}/{fname}")
+    return approot() + "/media/" + urllib.parse.quote(f"{idv}/contents/{seg}/{fname}")
 
 
 def trim_applied(idv, segments):
@@ -1644,7 +1655,7 @@ def render_index():
     for i in ids:
         key, label = id_status(i)
         rows.append(
-            f"<li><a href='/id?id={urllib.parse.quote(i)}'>{esc(i)}</a>"
+            f"<li><a href='{approot()}/id?id={urllib.parse.quote(i)}'>{esc(i)}</a>"
             f"<span class='st st-{key}'>{label}</span></li>")
     return page("音源一覧", f"<h1>音源一覧</h1><ul class='ids'>{''.join(rows)}</ul>")
 
@@ -1657,7 +1668,7 @@ def render_id(idv):
     d = load_id_data(idv)
     segments = d["segments"]
     parts = [
-        "<div class='crumb'><a href='/'>← 一覧</a></div>",
+        f"<div class='crumb'><a href='{approot()}/'>← 一覧</a></div>",
         f"<h1>{esc(idv)}</h1>",
     ]
     if not segments:
@@ -1685,7 +1696,7 @@ def render_id(idv):
     if src_name:
         # preload='none' だと尺が分からずシークできない。タイムラインは 800秒などの
         # 絶対時刻へ飛ぶので metadata まで読ませる。
-        parts.append(f"<audio id='orig' src='/media?p={urllib.parse.quote(idv + '/' + src_name)}'"
+        parts.append(f"<audio id='orig' src='{approot()}/media/{urllib.parse.quote(idv + '/' + src_name)}'"
                      " preload='metadata' style='display:none'></audio>")
     # 並び順: オーナー評価の★が高い順。未評価は★1.5相当（★2以上の下・★0〜1の上）。同順位は index 順。
     def seg_order(sg):
@@ -1964,157 +1975,84 @@ def render_status(idv, sid):
     return "done:" + names[0] if names else "done"
 
 
-def safe_media_path(p):
-    rel = urllib.parse.unquote(p or "")
-    full = os.path.realpath(os.path.join(DATA_DIR, rel))
+def safe_media_path(rel):
+    full = os.path.realpath(os.path.join(DATA_DIR, rel or ""))
     if (full == DATA_DIR or full.startswith(DATA_DIR + os.sep)) and os.path.isfile(full):
         return full
     return None
 
 
-class Handler(BaseHTTPRequestHandler):
-    server_version = "podcast-preview/3.0"
-
-    def log_message(self, fmt, *args):
-        pass
-
-    def do_GET(self):
-        parsed = urllib.parse.urlparse(self.path)
-        route, qs = parsed.path, urllib.parse.parse_qs(parsed.query)
-        try:
-            if route == "/":
-                self._send_html(render_index())
-            elif route == "/id":
-                content = render_id((qs.get("id") or [""])[0])
-                if content is None:
-                    self._send_html(page("404", "<h1>404</h1><a href='/'>一覧へ</a>"), 404)
-                else:
-                    self._send_html(content)
-            elif route == "/decide":
-                ok = apply_decision((qs.get("id") or [""])[0],
-                                    (qs.get("cid") or [""])[0],
-                                    (qs.get("action") or [""])[0],
-                                    (qs.get("status_only") or ["0"])[0] == "1")
-                data = (b"ok" if ok else b"ng")
-                self.send_response(200 if ok else 400)
-                self.send_header("Content-Type", "text/plain")
-                self.send_header("Content-Length", str(len(data)))
-                self.end_headers()
-                self.wfile.write(data)
-            elif route == "/render_status":
-                st = render_status((qs.get("id") or [""])[0],
-                                   (qs.get("sid") or [""])[0])
-                data = st.encode()
-                self.send_response(200)
-                self.send_header("Content-Type", "text/plain")
-                self.send_header("Content-Length", str(len(data)))
-                self.end_headers()
-                self.wfile.write(data)
-            elif route == "/media":
-                full = safe_media_path((qs.get("p") or [""])[0])
-                if full is None:
-                    self.send_error(404)
-                else:
-                    self._send_file(full)
-            else:
-                self.send_error(404)
-        except BrokenPipeError:
-            pass
-        except Exception as ex:
-            try:
-                self._send_html(page("500", f"<h1>500</h1><pre>{esc(ex)}</pre>"), 500)
-            except Exception:
-                pass
-
-    def do_POST(self):
-        parsed = urllib.parse.urlparse(self.path)
-        if parsed.path == "/render_seg":
-            try:
-                n = int(self.headers.get("Content-Length") or 0)
-                spec = json.loads(self.rfile.read(n).decode("utf-8")) if n else {}
-                st = start_render_spec(spec)
-            except Exception:
-                st = "bad_request"
-            data = st.encode()
-            self.send_response(200)
-            self.send_header("Content-Type", "text/plain")
-            self.send_header("Content-Length", str(len(data)))
-            self.end_headers()
-            self.wfile.write(data)
-            return
-        ok = False
-        if parsed.path == "/edit_save":
-            try:
-                n = int(self.headers.get("Content-Length") or 0)
-                payload = json.loads(self.rfile.read(n).decode("utf-8")) if n else {}
-                ok = apply_timeline_save(payload)
-            except Exception:
-                ok = False
-        data = b"ok" if ok else b"ng"
-        self.send_response(200 if ok else 400)
-        self.send_header("Content-Type", "text/plain")
-        self.send_header("Content-Length", str(len(data)))
-        self.end_headers()
-        self.wfile.write(data)
-
-    def _send_html(self, data, code=200):
-        self.send_response(code)
-        self.send_header("Content-Type", "text/html; charset=utf-8")
-        self.send_header("Content-Length", str(len(data)))
-        self.end_headers()
-        self.wfile.write(data)
-
-    def _send_file(self, fullpath):
-        ctype = mimetypes.guess_type(fullpath)[0] or "application/octet-stream"
-        fs = os.path.getsize(fullpath)
-        rng = self.headers.get("Range")
-        if rng:
-            m = re.match(r"bytes=(\d*)-(\d*)", rng.strip())
-            start = int(m.group(1)) if m and m.group(1) else 0
-            end = int(m.group(2)) if m and m.group(2) else fs - 1
-            end = min(end, fs - 1)
-            if start > end or start >= fs:
-                self.send_response(416)
-                self.send_header("Content-Range", f"bytes */{fs}")
-                self.end_headers()
-                return
-            self.send_response(206)
-            self.send_header("Content-Type", ctype)
-            self.send_header("Content-Range", f"bytes {start}-{end}/{fs}")
-            self.send_header("Accept-Ranges", "bytes")
-            self.send_header("Content-Length", str(end - start + 1))
-            self.end_headers()
-            self._stream(fullpath, start, end - start + 1)
-        else:
-            self.send_response(200)
-            self.send_header("Content-Type", ctype)
-            self.send_header("Content-Length", str(fs))
-            self.send_header("Accept-Ranges", "bytes")
-            self.end_headers()
-            self._stream(fullpath, 0, fs)
-
-    def _stream(self, fullpath, start, length):
-        with open(fullpath, "rb") as f:
-            f.seek(start)
-            remaining = length
-            while remaining > 0:
-                chunk = f.read(min(64 * 1024, remaining))
-                if not chunk:
-                    break
-                self.wfile.write(chunk)
-                remaining -= len(chunk)
 
 
-def main():
-    mimetypes.add_type("video/mp4", ".mp4")
-    mimetypes.add_type("audio/mp4", ".m4a")
-    srv = ThreadingHTTPServer(("127.0.0.1", PORT), Handler)
-    print(f"[preview] http://127.0.0.1:{PORT}/  (data: {DATA_DIR})")
+# ---------- ルーティング ----------
+mimetypes.add_type("video/mp4", ".mp4")
+mimetypes.add_type("audio/mp4", ".m4a")
+
+
+def _text(body, code=200):
+    return Response(body, status=code, mimetype="text/plain")
+
+
+def _html(data, code=200):
+    return Response(data, status=code, content_type="text/html; charset=utf-8")
+
+
+@app.get("/")
+def route_index():
+    return _html(render_index())
+
+
+@app.get("/id")
+def route_id():
+    content = render_id(request.args.get("id") or "")
+    if content is None:
+        return _html(page("404", f"<h1>404</h1><a href='{approot()}/'>一覧へ</a>"), 404)
+    return _html(content)
+
+
+@app.get("/decide")
+def route_decide():
+    ok = apply_decision(request.args.get("id") or "",
+                        request.args.get("cid") or "",
+                        request.args.get("action") or "",
+                        request.args.get("status_only") == "1")
+    return _text("ok" if ok else "ng", 200 if ok else 400)
+
+
+@app.get("/render_status")
+def route_render_status():
+    return _text(render_status(request.args.get("id") or "",
+                               request.args.get("sid") or ""))
+
+
+@app.get("/media/<path:rel>")
+def route_media(rel):
+    # 本番は nginx が /podcast/media/ を直接配信するのでここへは来ない。
+    # ローカル(Flask 単体)用。conditional=True で Range(音源シーク)に応える
+    full = safe_media_path(rel)
+    if full is None:
+        return _text("not found", 404)
+    return send_file(full, conditional=True)
+
+
+@app.post("/render_seg")
+def route_render_seg():
     try:
-        srv.serve_forever()
-    except KeyboardInterrupt:
-        print("\n[preview] 停止しました")
+        st = start_render_spec(request.get_json(force=True) or {})
+    except Exception:
+        st = "bad_request"
+    return _text(st)
+
+
+@app.post("/edit_save")
+def route_edit_save():
+    try:
+        ok = apply_timeline_save(request.get_json(force=True) or {})
+    except Exception:
+        ok = False
+    return _text("ok" if ok else "ng", 200 if ok else 400)
 
 
 if __name__ == "__main__":
-    main()
+    print(f"[podcast-web] http://127.0.0.1:{PORT}/  (data: {DATA_DIR})")
+    app.run(host="127.0.0.1", port=PORT, threaded=True)
