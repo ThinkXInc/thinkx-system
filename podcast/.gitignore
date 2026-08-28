@@ -4,8 +4,13 @@ venv/
 __pycache__/
 *.pyc
 
-# データ・生成物
-data/
+# データ・生成物。edit/ の判断データと編集履歴だけは git で運ぶ(D-52)。
+# edit_save_journal.jsonl(復旧用の受信ジャーナル)は端末ローカルに残し git 外
+data/**
+!data/*/
+!data/*/edit/
+!data/*/edit/*.json
+!data/*/edit/segments_history.jsonl
 *.mp4
 *.m4a
 *.wav
