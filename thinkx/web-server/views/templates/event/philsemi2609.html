@@ -142,7 +142,7 @@
     }
     .hero-badge-sub {
       margin-top: 6px;
-      font-size: 13px;
+      font-size: 15px;
       letter-spacing: .2em;
       text-indent: .2em;
     }
@@ -266,6 +266,12 @@
     }
 
     /* ---- メインプロフィール ---- */
+    .speaker-photo {
+      margin-top: 34px;
+      width: 255px;
+      display: none;
+    }
+    .speaker-photo + .speaker-name { margin-top: 18px; }
     .speaker-name {
       margin-top: 34px;
       font-size: 30px;
@@ -283,6 +289,10 @@
     .profile-titles { margin-top: 23px; }
     .career-list { list-style: none; margin-top: 22px; }
     .profile-text { margin-top: 22px; }
+    .profile-text a {
+      color: #5b5b5b;
+      text-decoration: none;
+    }
 
     /* ---- 共演者 ---- */
     .performer { margin-top: 34px; }
@@ -439,8 +449,8 @@
         <p class="hero-badge-main">出版決定記念</p>
         <p class="hero-badge-sub">「ファーブラー・メソッド」</p>
       </div>
-      <p class="hero-event-type">[完全招待制]シンポジウム/懇談会（立席形式　生ピアノ演奏付）</p>
-      <p class="hero-date">2026年9月24日（木）19：30〜22:00 赤坂区民ホール</p>
+      <p class="hero-event-type">[招待制]懇談会/セミナー（生演奏付）</p>
+      <p class="hero-date">2026年9月24日(木) 19：30〜22:00 自由解散 赤坂区民ホール</p>
     </div>
     <figure class="hero-portrait">
       <img src="/img/event/otsuka.jpg" alt="大塚一輝">
@@ -461,11 +471,11 @@
     <ul class="highlight-list">
       <li class="highlight">
         <span class="highlight-tag">ビジネス</span>
-        <p class="highlight-text">ゲームのルールはもう変わった。思考を切り替えられていますか？</p>
+        <p class="highlight-text">市場のルールはもう変わった。思考を切り替えられていますか？</p>
       </li>
       <li class="highlight">
         <span class="highlight-tag">思想</span>
-        <p class="highlight-text">理論哲学で異例の１万フォロワー。機能不全化した民主主義の時代に個人はどう生きるか。</p>
+        <p class="highlight-text">哲学とAI─プラトンからポパーまで。古代ギリシャ以前から人間は世界に従属的か。</p>
       </li>
       <li class="highlight">
         <span class="highlight-tag">プロのAI</span>
@@ -488,24 +498,25 @@
 
     <!-- ↓↓↓↓ メインプロフィール ↓↓↓↓ -->
     <section class="event-section profile">
-      <span class="section-label">SPEAKER</span>
+      <span class="section-label">MC・SPEAKER</span>
       <hr class="section-rule">
 
+      <img class="speaker-photo" src="/img/event/otsuka.jpg" alt="大塚一輝">
       <h2 class="speaker-name">大塚一輝<span class="name-reading">(おおつか・かずき)</span></h2>
 
       <p class="profile-lead">「本当の哲学を教える」学術水準の理論哲学で異例の1万フォロワー</p>
 
       <p class="profile-titles">連続起業家、独立計算進化学者、現代芸術家</p>
 
-      <p class="profile-text">計算理論、代数学、量子物理学、生命科学、哲学、美学、を横断しプラトン以降の哲学的問題を解決し新たな自然科学体系を構成する知識進化に関する学問─第三空間理論─を16歳から構築し続け、フランス Université Grenoble III（現Université Grenoble Alpes パリ圏外でのフランス最上位大学）派遣留学生（2009年)、フランス国営音響音楽研究所IRCAM Forum会員として荻生徂徠以降も謎とされる東洋和声合竹の数理構造を研究、合衆国ハワイ州マウイ島で数年に渡り録音収集した生物歌研究による「言語の普遍的数理構造」の研究成果に基づく普遍的言語学習法を小学生から大人まで可能にした『ファーブラー・メソッド』を2027年1月にクロスメディア・ランゲージ社より出版予定。東京大学大学院学際情報学部修士課程を「量子論理の非分配性に基づく直交モジュラー束上の計算言語β」の研究で修了。人口の上位２％のIQを持つ人々の国際団体MENSA会員。</p>
+      <p class="profile-text">計算理論、代数学、量子物理学、生命科学、哲学、美学、を横断しプラトン以降の哲学的問題を解決し新たな自然科学体系を構成する知識進化に関する学問─第三空間理論─を16歳から構築し続け、フランス Université Grenoble III（現Université Grenoble Alpes パリ圏外でのフランス最上位大学）派遣留学生（2009年)、フランス国営音響音楽研究所IRCAM Forum会員（2009-2010年）として荻生徂徠以降も謎とされる東洋和声合竹の数理構造を研究、合衆国ハワイ州マウイ島で数年に渡り録音収集した<a href="https://europepmc.org/article/PPR/PPR1130628" target="_blank" rel="noopener">生物歌研究</a>による「言語の普遍的数理構造」の研究成果に基づく普遍的言語学習法を小学生から大人まで可能にした『ファーブラー・メソッド』を2027年1月にクロスメディア・ランゲージ社より出版予定。主な論文に「<a href="https://arxiv.org/abs/2203.12385" target="_blank" rel="noopener">量子論理の非分配性に基づく直交モジュラー束上の計算言語β</a>」。人口の上位２％のIQを持つ人々の国際団体MENSA会員。</p>
 
-      <p class="profile-text">大学卒業時に独立、現在主流のクロール型ニュースリーダーを自主開発し日本で初めて普及、半年で2万5千ダウンロード、スーツケース一つで世界を放浪、サンフランシスコでハッカーハウス運営、国内初となるAI活用型の投資用不動産分析システムを企画・開発(2025年にM&amp;A)、独自の言語意味解析機械学習アルゴリズムや音声アルゴリズムで複数の特許を保持。</p>
+      <p class="profile-text">大学卒業とともに独立し、現在主流のクロール型ニュースリーダーを自主開発し日本で初めて普及、半年で2万5千ダウンロード、スーツケース一つで世界を放浪、サンフランシスコでハッカーハウス運営、国内初となるAI活用型の投資用不動産分析システムを企画・開発(2025年にM&amp;A)、独自の言語意味解析機械学習アルゴリズムや音声アルゴリズムで複数の特許を保持。</p>
 
       <ul class="career-list">
         <li>2021年東京大学大学院情報学環客員研究員。</li>
         <li>2022年未来工学研究所(米TTCSP科学技術系シンクタンクグローバルインデックス世界3位)客員研究員。</li>
-        <li>2026年NTTドコモビジネス(株)AIクラウド事業アドバイザー。</li>
-        <li>他多数歴任。</li>
+        <li>2026年NTTドコモビジネス(株)（旧NTTコミュニケーションズ(株)）AIクラウド事業アドバイザー。</li>
+        <li>他技術顧問など多数歴任。</li>
       </ul>
     </section>
     <!-- ↑↑↑↑ END メインプロフィール ↑↑↑↑ -->
@@ -580,7 +591,7 @@
       <dl class="overview-list">
         <div class="overview-item">
           <dt>日時</dt>
-          <dd>2026年9月24日（木）19：30〜22:00</dd>
+          <dd>2026年9月24日（木）19：30〜22:00 自由解散</dd>
         </div>
         <div class="overview-item">
           <dt>プログラム</dt>
