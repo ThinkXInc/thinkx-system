@@ -1,0 +1,58 @@
+{
+  "permissions": {
+    "defaultMode": "default",
+    "deny": [
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Read(~/.config/**)",
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(**/.env)",
+      "Write(~/.ssh/**)",
+      "Edit(~/.ssh/**)",
+      "Write(**/.env)",
+      "Edit(**/.env)",
+      "Write(~/Library/CloudStorage/**)",
+      "Edit(~/Library/CloudStorage/**)",
+      "Bash(rm -rf:*)",
+      "Bash(rm -r:*)",
+      "Bash(sudo:*)",
+      "Bash(curl:*)",
+      "Bash(wget:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git push --force-with-lease:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git branch -d:*)",
+      "Bash(git branch -D:*)"
+    ],
+    "ask": [
+      "Bash(brew install:*)"
+    ],
+    "allow": [
+      "Read(./**)",
+      "Glob(./**)",
+      "Grep(./**)",
+      "Write(./**)",
+      "Edit(./**)",
+      "Bash",
+
+      "Bash(pip install:*)",
+      "Bash(pip3 install:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push)",
+      "Bash(git push origin:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+
+      "Bash(python3 scripts/*)",
+      "Bash(python3 ./scripts/*)",
+      "Bash(python3.11 scripts/*)",
+      "Bash(python3.11 ./scripts/*)",
+
+      "Bash(aws --version*)"
+    ]
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "source_no": 4,
+  "cuts": [
+    {
+      "cid": "C4-1",
+      "start_sec": 136.0,
+      "end_sec": 143.0,
+      "reason": "店員との会話（注文）が候補①の区間内に入っている。カット推奨",
+      "quote": "",
+      "status": "pending",
+      "decided": null,
+      "note": "",
+      "category": "gpt"
+    },
+    {
+      "cid": "C4-2",
+      "start_sec": 351.0,
+      "end_sec": 381.0,
+      "reason": "転写が「そうですね」の連呼になっており、長い無音または転写破綻の可能性。詰め・カット検討",
+      "quote": "",
+      "status": "pending",
+      "decided": null,
+      "note": "",
+      "category": "gpt"
+    },
+    {
+      "cid": "C4-3",
+      "start_sec": 428.0,
+      "end_sec": 489.0,
+      "reason": "Apple創業逸話の事実誤認の疑い。ジョブズが電話したのはHP共同創業者ビル・ヒューレットとされる有名な逸話で、DELL（創業者は1人）とする説明は誤りの可能性が高い",
+      "quote": "",
+      "status": "pending",
+      "decided": null,
+      "note": "",
+      "category": "gpt"
+    },
+    {
+      "cid": "C4-4",
+      "start_sec": 601.0,
+      "end_sec": 717.0,
+      "reason": "量子力学の解釈をめぐる断定（コペンハーゲン解釈を主張する人の論は破綻している等）。物理学界の通説と逆の主張で、実名の学者評価も含むため注意",
+      "quote": "",
+      "status": "pending",
+      "decided": null,
+      "note": "",
+      "category": "gpt"
+    },
+    {
+      "cid": "C4-5",
+      "start_sec": 796.0,
+      "end_sec": 805.0,
+      "reason": "多世界（エベレット）解釈の支持者を「やばい」と揶揄する発言",
+      "quote": "",
+      "status": "pending",
+      "decided": null,
+      "note": "",
+      "category": "gpt"
+    },
+    {
+      "cid": "C4-6",
+      "start_sec": 818.0,
+      "end_sec": 877.0,
+      "reason": "美容師との私的な会話内容への言及（第三者のプライベートな話題）",
+      "quote": "",
+      "status": "pending",
+      "decided": null,
+      "note": "",
+      "category": "gpt"
+    },
+    {
+      "cid": "C4-7",
+      "start_sec": 1192.0,
+      "end_sec": 1283.0,
+      "reason": "X上の「かなり著名な」実在の哲学者への批判。名指しはないが投稿内容から特定されうる",
+      "quote": "",
+      "status": "pending",
+      "decided": null,
+      "note": "",
+      "category": "gpt"
+    },
+    {
+      "cid": "C4-8",
+      "start_sec": 1370.0,
+      "end_sec": 1398.0,
+      "reason": "ニーチェ・デリダ等、実在の思想家への断定的批判",
+      "quote": "",
+      "status": "pending",
+      "decided": null,
+      "note": "",
+      "category": "gpt"
+    },
+    {
+      "cid": "C4-9",
+      "start_sec": 1840.0,
+      "end_sec": 2000.0,
+      "reason": "実在の政治家への評価・政治的断定が連続（オバマ・トランプ・田中角栄・小泉純一郎・現職首相）。特に現職首相を「露骨に利口しか見えない」とする箇所は公開前に要判断",
+      "quote": "",
+      "status": "pending",
+      "decided": null,
+      "note": "",
+      "category": "gpt"
+    },
+    {
+      "cid": "C4-10",
+      "start_sec": 1997.0,
+      "end_sec": 2025.0,
+      "reason": "転写破綻（「技」の連呼）。無音または雑音区間の可能性が高く、該当区間の実音声確認とカット検討が必要（幻覚なら区間再ASRで復元可・findings 11章）",
+      "quote": "",
+      "status": "pending",
+      "decided": null,
+      "note": "",
+      "category": "gpt"
+    }
+  ]
+}

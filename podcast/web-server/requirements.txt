@@ -1,0 +1,15 @@
+# web-server（podcast 編集サイト）の依存。専用 venv 用（本体の venv とは別）。
+# セットアップ: python3.11 -m venv venv && venv/bin/pip install -r requirements.txt
+# ローカル(mac)は Flask 内蔵サーバーで動かすため uwsgi を入れない
+# （uwsgi 2.0.31 は macOS arm64 でビルドに失敗する。本番 Linux のみ必要）。
+
+blinker==1.9.0
+click==8.5.0
+Flask==3.1.3
+itsdangerous==2.2.0
+Jinja2==3.1.6
+MarkupSafe==3.0.3
+Werkzeug==3.1.8
+
+# 本番(Linux)の uWSGI 起動用
+uwsgi==2.0.31; sys_platform == "linux"
