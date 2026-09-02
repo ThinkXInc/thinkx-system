@@ -1,0 +1,33 @@
+{
+  "speakers": [],
+  "manual": [
+    {
+      "index": 1,
+      "start": 1099.8,
+      "end": 1103.0,
+      "category": "個人名",
+      "reason": "山田さんの内輪参照"
+    },
+    {
+      "index": 1,
+      "start": 1647.0,
+      "end": 1681.0,
+      "category": "脱線",
+      "reason": "食事・進行のメタ発言"
+    },
+    {
+      "index": 1,
+      "start": 909.8,
+      "end": 915.0,
+      "category": "批判煽り",
+      "reason": "「教育も研究も終わってる」過度な断定"
+    },
+    {
+      "index": 3,
+      "start": 2214.5,
+      "end": 2228.0,
+      "category": "独り言",
+      "reason": "スマホ手元確認の独り言"
+    }
+  ]
+}

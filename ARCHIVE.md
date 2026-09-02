@@ -16,6 +16,7 @@ SHA・日付は M-2(リポジトリごとの取り込み)で1行ずつ確定・�
 | `loadbalancer/` | git@github.com:ThinkXInc/loadbalancer.git | 2026refactor | `5ac8ceb6b917009826884f7c60011cfdef3a6d39` | 2026-07-15 |
 | `nginx-web-root/` | git@github.com:ThinkXInc/nginx-web-root.git | 2026refactor | `9214f267b88544daecb8110a7307f3d5bf031d85` | 2026-07-15 |
 | `citywalk/` | git@github.com:ThinkXInc/citywalkservers.git | develop | `d54ec193a463974e06bb9a1584845aa55097d548` | 2026-07-20 — 取り込み時に `business.py` / `items.py` の Basic 認証資格情報と `main.py` の Flask secret_key を redact (`citywalk/findings.md` 参照) |
+| `podcast/` | git@github.com:ThinkXInc/podcast.git | master | `21c9ce71058e2bd463ff2f19c8ef628ba8ae4879` | 2026-08-28 |
 
 ## 取り込み対象外(記録)
 

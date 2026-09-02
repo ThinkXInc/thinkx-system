@@ -1,0 +1,12 @@
+[Unit]
+Description=Flush podcast edit-data queue to git (D-52)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/src/thinkx-system
+ExecStart=/usr/bin/python3 /usr/local/bin/podcast_data_sync.py
+
+# root で動かし、git だけスクリプト側が sudo -H -u kaz で実行する
+# (deploy-timer@.service と同じ理由。kaz は sudoers に入っていない)

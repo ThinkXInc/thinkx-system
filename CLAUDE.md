@@ -58,6 +58,7 @@ polyrepo + vendoring 構成をファイルコピーで集約したもので、�
 | インフラ(I トラック: AWS 移行) | `infra/CLAUDE.md` + `infra/docs/`(STEP1/STEP2) | infra のみ(+承認済み ssh 先) |
 | 全体の順序・引き金 | `docs/ROADMAP.md` | — |
 | monorepo 取り込み(M トラック) | `docs/MONOREPO_PLAN.md`(正本はこの1箇所) | 新規 monorepo ディレクトリのみ(既存リポジトリは読み取り) |
+| podcast 統合(編集サイト常設。D-52) | `docs/PODCAST_TRACK.md`(正本はこの1箇所) | podcast + infra + loadbalancer + nginx-web-root |
 
 計画書に無い作業を頼まれたら、ROADMAP に照らして「どの計画の管轄か / 新しい計画が要るか」を
 先に答え、勝手に着手しない。
