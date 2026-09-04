@@ -68,12 +68,13 @@
     .nav a:hover { opacity: .8; }
 
     /* ---- ヘッダー: 写真 + バナーのコピー + ボタン ---- */
+    /* 高さは NNTM と同じ vh 指定。aspect-ratio + max-height は制約が幅へ移って横長画面で右が白くなるので使わない */
     .hero {
       position: relative;
       display: flex;
-      aspect-ratio: 3 / 2;
+      width: 100%;
+      height: 80vh;
       min-height: 560px;
-      max-height: 820px;
       background: url("/img/products/KOBITO/beach.jpg") center 28% / cover no-repeat;
       overflow: hidden;
     }
@@ -316,7 +317,7 @@
     .page-foot img { width: 120px; margin: 0 auto 14px auto; }
 
     @media (max-width: 760px) {
-      .hero { aspect-ratio: auto; min-height: 560px; max-height: none; background-position: 62% 30%; }
+      .hero { height: auto; min-height: 560px; background-position: 62% 30%; }
       .hero::after { background: linear-gradient(180deg, rgba(255,255,255,.45) 0%, rgba(255,255,255,0) 25%, rgba(0,0,0,.6) 100%); }
       .hero-inner { padding: 22px 20px 34px 20px; }
       .hero-top { flex-direction: column; gap: 10px; }
