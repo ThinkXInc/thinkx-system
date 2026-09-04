@@ -1446,3 +1446,83 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   差分があれば terraform 標準の "Enter a value:" が出て yes で進む。期待差分をコメントに明記。
 - 実行時の見方: prod → staging の順に 2 回聞かれる。どちらも `2 to change, 0 to destroy` のみなら yes。
   それ以外が出たら no(何も変わらない)。
+
+## 2026-09-04 N-0 前提ゲート(Claude 接続ページ・infra/docs/CLAUDE_CONNECT_PLAN.md)の実測
+
+- ssh は add_current_office_ip.sh(修正後・092fe68)の実行で 4 台とも到達。以下 staging web(web1-stg)で実測。
+- `claude --version` = `2.1.223 (Claude Code)` / python3 = 3.10.12 / `hostname -I` 先頭 = `192.168.2.11`
+  (2番目に docker の 172.17.0.1 が並ぶ。server.py の bind は先頭を取る)。
+- `ss -ltn` に 8008 は無い(8005/8006/8007 のみ LISTEN)。**8008 は空き。**
+- **前提「systemctl is-active claude-session が active」は不成立**: unit は enabled だが `inactive (dead)`・journal 空。
+  uptime 29 日(8/6 の再構築起動)に対し unit の symlink は 8/7 02:56 作成で、起動後に enable されたため
+  一度も走っていない。一方 kaz の tmux セッション `claude` は 8/7 02:56 に手動(attach_claude.sh)で作られ、
+  `claude --remote-control`(pid 30250)が生きている。**機能的には接続中**。unit を今 start すると
+  `tmux new-session -s claude` が duplicate で失敗するだけなので触らない(大原則3)。次回の stop→start
+  (N-3/N-7)で unit が初めて本番動作する。そこで確認する。
+- **前提「/etc/thinkx/discord_webhook が存在」は不成立**: `/etc/thinkx` ディレクトリ自体が無い。
+  8/6 の再構築後に push_discord_webhook.sh が流されていない。N-5(Discord 通知)はオーナー指示(2026-09-04
+  「今運用している以上のことはいらない」)で実施しないため本トラックには影響しないが、
+  **sync_from_origin.sh の通知も同じファイルを読むので staging の deploy-timer 通知は黙って出ていない**
+  (別件・オーナー判断。復旧は `bash infra/etc/push_discord_webhook.sh supercom-web1-stg` 相当)。
+- `tmux list-panes -t claude -F '#{pane_current_command}'` = **`claude`**(接続中)。pane は 38x22
+  (スマホの Remote Control で使われているため幅が狭い。URL が折り返される前提で拾う)。
+- **`claude auth status` が JSON を返す**(2.1.223): `{"loggedIn": true, "authMethod": "claude.ai",
+  "apiProvider": "firstParty", "email": ..., "orgId": ..., "orgName": ..., "subscriptionType": "max"}`。
+  `--json`(既定)/`--text` あり。**ログイン要否は pane の文言を推測するより `loggedIn` を見る方が確実**。
+  計画書の `login_required` 判定は「pane 末尾のログイン要求文言」だが、一次判定を `claude auth status`
+  の `loggedIn` に置き、pane の文言は URL の抽出だけに使う方が大原則7(推測で書かない)に沿う。
+  server.py はこの形で書く(計画からの差異として報告)。
+- `claude auth login/logout/status` サブコマンドあり(`login` は `--claudeai`(既定)/`--console`/`--email`/`--sso`)。
+  常駐 pane 外からログイン状態を変えられるが、pane 内の claude がどう反応するかは未実測。
+- staging の checkout は 90c54e1(PR #66 の merge)・clean・deploy-timer@staging.timer active。
+- 未実施: (2) `/logout` → `/login` の文言実測。**稼働中の Remote Control セッション(オーナー使用中・
+  321k tokens)を切断するため、オーナーの合図待ち。**
+
+### N-0 (2) 実測: /logout → 再起動 → ログイン画面の文言(Claude Code 2.1.223・2026-09-04)
+
+- **`/logout` は claude 本体を終了させる**(計画書の想定「claude が動いたままログイン要求を出す」とは違う)。
+  pane の原文:
+  ```
+  ❯ /logout
+  Successfully logged out from your Anthropic account.
+  Resume this session with:
+  claude --resume ceca5d3a-5625-408a-a049-119770ccf5a7
+  kaz@web1-stg:/src/thinkx-system$
+  ```
+  直後: `pane_current_command` = **`bash`** / `claude auth status` = `{"loggedIn": false, "authMethod": "none", "apiProvider": "firstParty"}`。
+  → 計画書の `login_required`(pane にログイン要求文言)は /logout では発生しない。ログアウト後の状態は
+  「claude 不在(pane=bash)+ loggedIn=false」。**ログイン要否の一次判定は `claude auth status` の `loggedIn`**、
+  claude の生死は `pane_current_command` で見る、の2軸で state を決める(server.py はこの形)。
+- 未ログインで `claude --remote-control` を起動すると**初回セットアップの対話**が先に出る(Enter で進む):
+  1. `Let's get started.` / `Choose the text style that looks best with your terminal` (theme 選択・既定 `2. Dark mode`)→ Enter
+  2. `Select login method:` / `❯ 1. Claude account with subscription · Pro, Max, Team, or` → Enter
+  3. URL とコード入力:
+     ```
+      Browser didn't open? Use the url below to sign in (c to copy)
+     https://claude.com/cai/oauth/authorize?code=true&client_id=...&response_type=code&redirect_uri=...&scope=...&code_challenge=...&code_challenge_method=S256&state=...
+      Paste code here if prompted >
+     ```
+- **URL の抽出**: URL は TUI が複数行に**ハード改行**して描くため `capture-pane -J` でも 1 行に戻らない。
+  「`Use the url below`」の行の次から「`Paste code here`」の行の手前までを、各行の末尾空白を落として連結する。
+  行頭に空白が無い行が URL の続き(文言行は行頭に空白がある)。
+- pane 幅は attach するクライアントで変わる(スマホ 38 桁 / PC 68 桁)。抽出は幅に依存させない(上の方式)。
+- 起動時に `.claude/settings.json` の警告が 10 行出る:
+  `Permission deny rule (.claude/settings.json): Write(**/dist/**) is not matched by file permission checks — only Edit(path) rules are. Use Edit(**/dist/**) instead`(同型が Write(**/*_PLAN.md) / Write(transformism/refactor_plan.md) / Write(ARCHIVE.md) / Write(.claude/**) / Write(**/*.tfstate) / Write(**/*.tfvars) / ask の Write(docs/**) / Write(infra/docs/**) / Write(infra/runbooks/**))。
+  **2.1.223 では `Write(...)` の permission ルールは効いておらず `Edit(...)` のみが有効**。deny の実効性に関わる
+  (Edit 側は同じパスに書かれているので実害は無いが、Write 行は死んでいる)。settings は実行者が触れない — オーナー判断。
+- コード貼り付け後(オーナーが attach した pane で実施)の続き: `Security notes:` … `Press Enter to continue…` → Enter →
+  通常画面。**接続中の原文**:
+  ```
+  /remote-control is active · Continue here, on your phone, or at
+  https://claude.ai/code/session_012qJBS5DAG2g7PvW6hL7iLk
+  ```
+  `pane_current_command` = `claude` / `claude auth status` = `loggedIn: true`。所要は URL 表示から復旧まで
+  オーナーの認証操作込みで約 2 分(2026-09-04 実測)。
+- 再ログイン後は**新しいセッション**として立ち上がる(以前の会話は `claude --resume <id>` で戻せる。
+  unit の ExecStart は素の `claude --remote-control` なので、ページからの復旧も同じく新セッション)。
+- N-0 (3) `pane_current_command`: 接続中 = `claude` / claude 終了後 = `bash`。
+- N-0 (4) setup-token: **不採用**(オーナー裁定 2026-09-04。今の仕組みを変えない。要ログインは /connect/ で戻す)。
+- **state 判定の確定(server.py)**: `session_missing`(tmux 無し)/ `login_required`(`loggedIn: false`。pane が bash なら
+  claude を起動して初回対話を Enter で進め URL を拾う。pane が claude でログイン画面なら URL を拾う)/
+  `connected`(tmux あり・pane=claude・`loggedIn: true`)/ `unknown`(それ以外。pane=bash かつ loggedIn=true 等 →
+  claude を起動し直す)。
