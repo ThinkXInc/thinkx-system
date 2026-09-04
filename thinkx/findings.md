@@ -369,3 +369,21 @@
 - **MailSendError の握り経路が return を持たない**: `_submit_handler` /
   truetechjapan handler とも `except MailSendError` が logger.error のみで return せず、
   ハンドラが None を返して 500 になる(既存挙動。記録のみ)。
+
+## 2026-09-04 KOBITO サーバークラウド LP(`/products/KOBITO`)初版で見つけた点
+
+- ページは `views/templates/products/kobito.html`。イベントページと同じ独立ページ方式
+  (base.html・locale・多言語ルートに依存しない)。画像は `views/img/products/KOBITO/`
+  (原本 `infra/assets/KOBITO` を sips で Web 用に縮小)。問い合わせは `macro/inquiry.html` を
+  日本語リテラルで埋め込み、既存の `/inquiry/submit`(Discord 通知+確認メール)へ送る。
+- **ゴールデンの `/filedrop` はローカル機で 404 になる**(hostname が `-stg` で終わる機だけ 200)。
+  `route_sweep.json` は staging の値で凍結されているため、ローカルでの sweep は本件と無関係に
+  この1件で落ちる。本件の追加分(`"/products/KOBITO": 200`)は一致を確認済み。
+- 初版は行政向け資料(機能一覧表)とイベントページの見出し様式(WHAT/WHY)を持ち込み、チャット図を載せて
+  差し戻された(2026-09-04)。2版は「1画面1メッセージ・大見出し+1〜2行・価格は冒頭・図は
+  スマホ→サーバーの小人→サイトが直る」で全面再設計。図はオーナーのドラフト待ちで SVG は仮置き。
+- **文言のうちオーナー未決のまま LP に載せた項目**(要確認): 2年目以降の保守料金(未記載)、
+  Lite の分割(初期42万+月1.5万×12)は 2版では載せず買取60万のみ、補助金は「登録申請中」と表記、
+  電話番号は未記載(050 未契約)。
+- ヒーローの「Web構築・運用エージェント」はオーナー作のバナー文言をそのまま使用。議事録では
+  主語を「運用」に置く方針(構築は導入役務)なので、補助金整合の観点で見直し候補。

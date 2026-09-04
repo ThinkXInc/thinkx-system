@@ -40,6 +40,7 @@
   "/nntm/privacy_policy/": 200,
   "/philosophy": 200,
   "/products/CITYWALK": 500,
+  "/products/KOBITO": 200,
   "/products/LSH": 200,
   "/products/Quantz-Voice-AI-OS": 200,
   "/static/<path:filename>": 404,
