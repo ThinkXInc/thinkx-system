@@ -350,6 +350,12 @@ def event_philsemi2609_handler():
     logger.info(magenta(f'=> /event/philsemi2609 [{request.method}]'))
     return render_template('/event/philsemi2609.html')
 
+# KOBITO サーバークラウド LP(独立ページ: 共通テンプレート・locale・多言語ルートに依存しない)
+@app.route('/products/KOBITO')
+def products_kobito_handler():
+    logger.info(magenta(f'=> /products/KOBITO [{request.method}]'))
+    return render_template('/products/kobito.html')
+
 # inquiry
 def _submit_handler(lang, source):
     """Common submission handler. source: 'inquiry' or 'apply'."""
