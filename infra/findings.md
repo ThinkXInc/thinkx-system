@@ -1424,3 +1424,25 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
 - 本番 web の thinkx views/video も**空**(手元のみ 11 ファイル)。サイトトップ等の動画が
   404 になっている可能性がある。ssh 復旧後に `deploy_production_from_staging.sh` を再実行するか
   `push_assets.sh supercom-web1 thinkx` で配布する。
+
+## 2026-09-04 add_current_office_ip.sh は差分があると承認できずに失敗する(-input=false)/ 修正済み
+
+- 経緯: N トラック(Claude 接続ページ)の着手で staging web への ssh がタイムアウト。
+  原因はオーナー機の現 IP `122.30.116.97` が SG の 22 番許可(4 件)に無いこと(8/15・8/21 と同じ)。
+  正規手順 `add_current_office_ip.sh` をオーナーが叩く前に、8/6 の事故の再発が無いかを机上と plan で点検。
+- 点検結果:
+  1. 全体 plan(-target なし)は staging / prod とも **No changes**。AMI 追従などの潜伏差分は無い
+     (instances.tf の `ignore_changes = [ami]` が効いている)。
+  2. SG 限定 plan に現 IP を足したシミュレーション(`-var my_office_ips=[既存4件+現IP]`)は
+     両 env とも **`0 to add, 2 to change, 0 to destroy`**、web/lb の SG が update in-place のみ。
+     インスタンスは触れない。
+  3. **不具合**: apply が `-input=false` 付きで、`-auto-approve` 無し。Terraform 公式 docs
+     「-input=false は承認プロンプトも無効にし、承認されなかったものとして apply を失敗させる」。
+     つまり差分があると prod の apply で必ず失敗 → `set -e` でそこで終了 → staging の aws CLI 追加も
+     verify も走らない。tfvars だけ書き換わって SG はどこも変わらない(安全側に壊れている)。
+     8/6 の恒久対処以降、差分のある状態で走ったことが無かったため露見しなかった
+     (ヘッダー「承認プロンプトで yes」と実装の乖離 = 8/6 と同じ型の不具合)。
+- 対処(本コミット): apply から `-input=false` を外す(-target と承認プロンプトはそのまま)。
+  差分があれば terraform 標準の "Enter a value:" が出て yes で進む。期待差分をコメントに明記。
+- 実行時の見方: prod → staging の順に 2 回聞かれる。どちらも `2 to change, 0 to destroy` のみなら yes。
+  それ以外が出たら no(何も変わらない)。

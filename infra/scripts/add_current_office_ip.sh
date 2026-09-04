@@ -31,9 +31,13 @@ grep "^my_office_ips" "$TF/terraform.tfvars"
 # 2026-08-06 の事故: -auto-approve の全体 apply が AMI 追従の「インスタンス要再作成」
 # 差分を巻き込み、prod/staging の全4台を破壊再作成した。IP 追加で触ってよいのは
 # SG だけであり、それ以外の差分をこのスクリプトから適用してはならない。
+# -input=false を付けない: 付けると terraform は承認を聞けず「承認されなかった」として
+# apply を失敗させる(公式 docs)。差分があるときは必ず "Enter a value:" で yes を打つ。
+# 期待する差分は env ごとに「0 to add, 2 to change, 0 to destroy」(web/lb の SG のみ・
+# update in-place)。それ以外が出たら no で止める(何も変わらない)。
 for E in prod staging; do
   [ -f "$TF/envs/$E/terraform.tfstate" ] || continue
-  terraform -chdir="$TF/envs/$E" apply -input=false \
+  terraform -chdir="$TF/envs/$E" apply \
     -target=aws_security_group.web -target=aws_security_group.lb
 done
 
