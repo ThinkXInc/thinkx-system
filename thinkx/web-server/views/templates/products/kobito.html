@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+{# KOBITO サーバークラウド LP。イベントページと同じく base.html / header / footer / main.css に依存しない独立ページ。 #}
+{# 文言の正本は infra/assets/KOBITO/documents/04_機能説明資料_v6.pdf・05_価格説明資料_v2.pdf と #}
+{# infra/docs/discussion/discussion_260903_KobitoSalesPlanning.md(オーナー発言)。主語は「運用」(構築・移行は導入役務)。 #}
+{# ヘッダーは写真+一言+ボタンのみ(オーナー指示 2026-09-04: コピー文はヘッダーに要らない)。価格はヘッダー直後。 #}
+{# 図はオーナー作 KOBITOダイアグラム.jpg(infra/assets/KOBITO)の Web 用縮小版。 #}
+{# 画像は views/img/products/KOBITO/ の Web 用縮小版。原本(infra/assets/KOBITO)は参照しない。 #}
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>KOBITO サーバークラウド ─ サーバーの“コビト”にスマホで指示。エンジニアなしで自社サイトを運用する</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="ClaudeCodeベース。AI開発10年のThinkXが自ら開発し使用するWeb運用エージェントのデフォルトセットアップパッケージ。スマホで指示するだけでページ追加・更新・公開。環境はお客様のもの。Lite 60万円から。">
+  <meta name="keywords" content="KOBITO, コビト, サーバークラウド, ThinkX, Claude Code, サイト運用, AIエージェント, ホームページ更新">
+  <meta name="format-detection" content="telephone=no">
+
+  <link rel="shortcut icon" href="/favicon.ico">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="KOBITO サーバークラウド ─ サーバーの“コビト”にスマホで指示。">
+  <meta property="og:description" content="AI開発10年のThinkXが自ら開発し使用するWeb運用エージェントのデフォルトセットアップパッケージ。スマホで指示するだけでページ追加・更新・公開。Lite 60万円から。">
+  <meta property="og:url" content="https://thinkxinc.com/products/KOBITO">
+  <meta property="og:image" content="https://thinkxinc.com/img/products/KOBITO/banner.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="KOBITO サーバークラウド ─ サーバーの“コビト”にスマホで指示。">
+  <meta name="twitter:description" content="AI開発10年のThinkXが自ら開発し使用するWeb運用エージェントのデフォルトセットアップパッケージ。スマホで指示するだけでページ追加・更新・公開。Lite 60万円から。">
+  <meta name="twitter:image" content="https://thinkxinc.com/img/products/KOBITO/banner.jpg">
+
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-PDC3NKT');</script>
+  <!-- End Google Tag Manager -->
+
+  <style>
+    :root {
+      --paper: #ffffff;
+      --paper-soft: #f3f6fa;
+      --ink: #1c1f26;
+      --ink-soft: #5a6070;
+      --navy: #1f3864;        /* 資料の見出し色 */
+      --blue: #4a6fa5;        /* ロゴのカタカナ色 */
+      --blue-light: #d9e3f2;
+      --green: #0b8a2f;       /* コビトの緑 */
+      --green-soft: #e4f3e8;
+      --line: #dfe4ec;
+      --sans: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { background-color: var(--paper); scroll-behavior: smooth; }
+    body {
+      font-family: var(--sans);
+      color: var(--ink);
+      line-height: 1.9;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { max-width: 100%; display: block; }
+    a { color: var(--blue); }
+
+    /* ---- メニュー: 写真の上に透過で重ねる(バーは置かない)。該当節へ smooth scroll ---- */
+    .hero-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 30px; }
+    .nav ul { list-style: none; display: flex; gap: 22px; white-space: nowrap; padding-top: 14px; }
+    .nav a { color: #fff; font-size: 14px; font-weight: 700; text-decoration: none; letter-spacing: .02em; }
+    .nav a:hover { opacity: .8; }
+
+    /* ---- ヘッダー: 写真 + バナーのコピー + ボタン ---- */
+    .hero {
+      position: relative;
+      display: flex;
+      aspect-ratio: 3 / 2;
+      min-height: 560px;
+      max-height: 820px;
+      background: url("/img/products/KOBITO/beach.jpg") center 28% / cover no-repeat;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,.10) 0%, rgba(0,0,0,0) 35%, rgba(0,0,0,.55) 100%);
+    }
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 34px 40px 56px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .hero-logo { width: 300px; }
+    .hero-word { color: #ffffff; max-width: 1020px; }
+    .hero-base { font-size: 25px; font-weight: 700; letter-spacing: .04em; }
+    .hero-title { font-size: 42px; font-weight: 800; line-height: 1.3; letter-spacing: .01em; margin-top: 4px; }
+    .hero-sub { margin-top: 12px; font-size: 25px; font-weight: 600; line-height: 1.5; }
+    .hero-cta { margin-top: 28px; display: flex; gap: 14px; flex-wrap: wrap; }
+    .btn {
+      display: inline-block;
+      padding: 7px 34px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 16px;
+      text-decoration: none;
+      letter-spacing: .06em;
+      transition: opacity .2s;
+    }
+    .btn:hover { opacity: .88; }
+    .btn-primary { background: #717171; color: #fff; }
+    .btn-ghost { background: rgba(255,255,255,.92); color: var(--navy); }
+
+    /* ---- 本文 ---- */
+    .page { max-width: 980px; margin: 0 auto; padding: 0 28px 100px 28px; }
+    .section { margin-top: 96px; }
+    .section-title {
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1.4;
+      color: var(--navy);
+    }
+    .section-lead { margin-top: 18px; font-size: 17px; color: var(--ink-soft); max-width: 760px; }
+
+    /* 料金(ヘッダー直後) */
+    .section.price-top { margin-top: 72px; }
+    .plans { margin-top: 36px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .plan { border: 1px solid var(--line); border-radius: 14px; padding: 28px 26px; display: flex; flex-direction: column; }
+    .plan.featured { border: 2px solid var(--green); }
+    .plan .name { font-size: 22px; font-weight: 800; color: var(--navy); }
+    .plan .badge { font-size: 12px; font-weight: 700; color: var(--blue); letter-spacing: .1em; }
+    .plan.featured .badge { color: var(--green); }
+    .plan .price { margin-top: 10px; font-size: 38px; font-weight: 800; line-height: 1.2; color: var(--ink); }
+    .plan .price small { font-size: 14px; font-weight: 500; color: var(--ink-soft); margin-left: 4px; }
+    .plan .split { margin-top: 6px; font-size: 13px; color: var(--ink-soft); }
+    .plan ul { list-style: none; margin-top: 18px; font-size: 14px; display: flex; flex-direction: column; gap: 8px; }
+    .plan ul li::before { content: "✓ "; color: var(--green); font-weight: 800; }
+    .plan .btn { margin-top: auto; text-align: center; margin-top: 22px; }
+    .running { margin-top: 28px; border-radius: 12px; background: var(--paper-soft); padding: 24px 28px; }
+    .running h3 { font-size: 17px; color: var(--navy); }
+    .running table { margin-top: 12px; width: 100%; border-collapse: collapse; font-size: 15px; }
+    .running td { padding: 8px 0; border-bottom: 1px solid var(--line); }
+    .running td:last-child { text-align: right; font-weight: 700; white-space: nowrap; }
+    .running p { margin-top: 12px; font-size: 13px; color: var(--ink-soft); }
+
+    /* 何をするのか: 図 + 3ステップ */
+    .figure { margin-top: 36px; }
+    .figure img { width: 100%; height: auto; }
+    .steps {
+      list-style: none;
+      counter-reset: step;
+      margin-top: 36px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .steps li {
+      counter-increment: step;
+      background: var(--paper-soft);
+      border-radius: 12px;
+      padding: 26px 24px 24px 24px;
+      position: relative;
+    }
+    .steps li::before {
+      content: counter(step);
+      display: inline-block;
+      width: 34px;
+      height: 34px;
+      line-height: 34px;
+      text-align: center;
+      border-radius: 9px;
+      background: var(--navy);
+      color: #fff;
+      font-weight: 800;
+    }
+    .steps h3 { margin-top: 12px; font-size: 19px; color: var(--navy); }
+    .steps p { margin-top: 8px; font-size: 15px; color: var(--ink-soft); }
+    .examples-note { margin-top: 18px; font-size: 14px; color: var(--ink-soft); max-width: 640px; }
+
+    /* 何を解決するのか */
+    .pains { margin-top: 36px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .pain { border: 1px solid var(--line); border-radius: 12px; padding: 26px 24px; }
+    .pain .before {
+      font-size: 14px;
+      color: var(--ink-soft);
+      padding-bottom: 12px;
+      border-bottom: 1px dashed var(--line);
+    }
+    .pain .before::before { content: "これまで"; display: block; font-size: 12px; font-weight: 700; letter-spacing: .1em; color: #a06060; }
+    .pain .after { margin-top: 12px; font-size: 17px; font-weight: 700; color: var(--navy); }
+    .pain .after::before { content: "KOBITOなら"; display: block; font-size: 12px; font-weight: 700; letter-spacing: .1em; color: var(--green); }
+    .pain .after p { margin-top: 6px; font-size: 14px; font-weight: 400; color: var(--ink); }
+    .yours {
+      margin-top: 24px;
+      background: var(--green-soft);
+      border-radius: 12px;
+      padding: 24px 28px;
+      font-size: 15px;
+    }
+    .yours strong { color: var(--green); font-size: 17px; display: block; margin-bottom: 6px; }
+    .yours.philosophy { background: var(--paper-soft); }
+    .yours.philosophy strong { color: var(--navy); margin-bottom: 14px; }
+    .philosophy-list { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 12px 28px; }
+    .philosophy-list li { font-size: 14px; line-height: 1.7; }
+    .philosophy-list b { display: block; color: var(--navy); font-size: 15px; }
+    .stack { margin-top: 20px; width: 100%; border-collapse: collapse; font-size: 14px; }
+    .stack th, .stack td { padding: 8px 0; border-top: 1px solid var(--line); text-align: left; vertical-align: top; }
+    .stack th { width: 130px; color: var(--navy); font-weight: 700; }
+    .philosophy-foot { margin-top: 14px; font-size: 13px; color: var(--ink-soft); }
+
+    /* 機能 */
+    .features { margin-top: 32px; width: 100%; border-collapse: collapse; font-size: 15px; }
+    .features th, .features td { padding: 12px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    .features th { width: 240px; color: var(--navy); font-weight: 700; background: var(--paper-soft); }
+    .features tr.option th { background: #fff8e8; }
+    .tag {
+      display: inline-block;
+      margin-left: 8px;
+      padding: 1px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 700;
+      vertical-align: middle;
+    }
+    .tag-opt { background: #fff1cc; color: #8a6200; }
+    .features-note { margin-top: 12px; font-size: 13px; color: var(--ink-soft); }
+    .sub-title { margin-top: 40px; font-size: 18px; color: var(--navy); }
+    .sub-title + .features { margin-top: 12px; }
+
+    /* 導入の流れ */
+    .flow { margin-top: 36px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; counter-reset: flow; }
+    .flow li { list-style: none; counter-increment: flow; padding: 22px 20px; background: var(--paper-soft); border-radius: 12px; }
+    .flow li::before { content: "STEP " counter(flow); font-size: 12px; font-weight: 800; letter-spacing: .15em; color: var(--blue); }
+    .flow h3 { margin-top: 6px; font-size: 17px; color: var(--navy); }
+    .flow p { margin-top: 8px; font-size: 14px; color: var(--ink-soft); }
+    .flow-note { margin-top: 20px; display: flex; gap: 14px; flex-wrap: wrap; }
+    .flow-note span { padding: 6px 16px; background: var(--navy); color: #fff; border-radius: 20px; font-size: 14px; font-weight: 700; }
+
+    /* 実績 */
+    .cases { margin-top: 32px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .case { border-top: 3px solid var(--blue); padding-top: 14px; }
+    .case .site { font-weight: 800; color: var(--navy); font-size: 16px; }
+    .case p { margin-top: 6px; font-size: 14px; color: var(--ink-soft); }
+
+    /* FAQ */
+    .faq { margin-top: 28px; border-top: 1px solid var(--line); }
+    .faq details { border-bottom: 1px solid var(--line); }
+    .faq summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 18px 44px 18px 0;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--navy);
+      position: relative;
+    }
+    .faq summary::-webkit-details-marker { display: none; }
+    .faq summary::before { content: "Q. "; color: var(--blue); }
+    .faq summary::after {
+      content: "+";
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 24px;
+      font-weight: 400;
+      color: var(--blue);
+    }
+    .faq details[open] summary::after { content: "−"; }
+    .faq .answer { padding: 0 0 20px 0; font-size: 15px; color: var(--ink); }
+    .faq .answer::before { content: "A. "; color: var(--green); font-weight: 800; }
+
+    /* 問い合わせ */
+    .contact { margin-top: 96px; background: var(--paper-soft); border-radius: 16px; padding: 44px 40px; }
+    .contact .section-lead { margin-top: 10px; }
+    .inquiry-form { margin-top: 28px; max-width: 620px; }
+    .inquiry-form .input-fields { display: flex; flex-direction: column; gap: 12px; }
+    .inquiry-form input[type="text"],
+    .inquiry-form input[type="email"],
+    .inquiry-form textarea {
+      width: 100%;
+      padding: 13px 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-family: var(--sans);
+      font-size: 16px;
+      background: #fff;
+    }
+    .inquiry-form textarea { min-height: 140px; resize: vertical; }
+    .inquiry-form .submit { margin-top: 18px; }
+    .inquiry-form input[type="submit"] {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 8px;
+      background: var(--green);
+      color: #fff;
+      font-family: var(--sans);
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      cursor: pointer;
+    }
+    .inquiry-form input[type="submit"]:disabled { opacity: .5; }
+    .inquiry-form .mind-check { font-size: 14px; color: var(--ink-soft); }
+    .inquiry-form p.message { text-align: center; font-size: 15px; min-height: 1.5em; }
+    .inquiry-form p.message.error { color: #b03030; }
+    .inquiry-form p.message.success { color: var(--green); }
+    .contact-alt { margin-top: 18px; font-size: 14px; color: var(--ink-soft); }
+
+    .page-foot { margin-top: 90px; text-align: center; font-size: 12px; letter-spacing: .2em; color: var(--ink-soft); }
+    .page-foot img { width: 120px; margin: 0 auto 14px auto; }
+
+    @media (max-width: 760px) {
+      .hero { aspect-ratio: auto; min-height: 560px; max-height: none; background-position: 62% 30%; }
+      .hero::after { background: linear-gradient(180deg, rgba(255,255,255,.45) 0%, rgba(255,255,255,0) 25%, rgba(0,0,0,.6) 100%); }
+      .hero-inner { padding: 22px 20px 34px 20px; }
+      .hero-top { flex-direction: column; gap: 10px; }
+      .nav ul { gap: 14px; padding-top: 0; overflow-x: auto; }
+      .nav a { font-size: 13px; }
+      .hero-logo { width: 220px; }
+      .hero-base { font-size: 16px; }
+      .hero-title { font-size: 28px; }
+      .hero-sub { font-size: 16px; }
+      .hero-cta .btn { flex: 1; text-align: center; padding: 14px 10px; }
+      .page { padding: 0 20px 70px 20px; }
+      .section { margin-top: 70px; }
+      .section.price-top { margin-top: 56px; }
+      .section-title { font-size: 25px; }
+      .steps, .pains, .flow, .plans, .cases { grid-template-columns: 1fr; }
+      .features th { width: 120px; }
+      .features th, .features td { padding: 10px 8px; font-size: 14px; }
+      .philosophy-list { grid-template-columns: 1fr; }
+      .stack th { width: 90px; }
+      .contact { padding: 30px 20px; }
+      .faq summary { font-size: 15px; }
+    }
+  </style>
+</head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PDC3NKT"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+  <!-- ↓↓↓↓ ヘッダー(写真 + 左上ロゴ + 右上メニュー + バナーのコピー + ボタン) ↓↓↓↓ -->
+  <header class="hero" id="top">
+    <div class="hero-inner">
+      <div class="hero-top">
+        <img class="hero-logo" src="/img/products/KOBITO/logo_hT.png" alt="KOBITO コビト サーバークラウド ─ サーバーの“コビト”にスマホで指示。">
+        <nav class="nav">
+          <ul>
+            <li><a href="#price">プランと価格</a></li>
+            <li><a href="#why">特徴</a></li>
+            <li><a href="#features">機能</a></li>
+            <li><a href="#flow">導入の流れ</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="#contact">お問い合わせ</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="hero-word">
+        <p class="hero-base">ClaudeCodeベース</p>
+        <h1 class="hero-title">サーバーに常駐する“コビト”に、スマホで指示。</h1>
+        <p class="hero-sub">10年のAI企業が自ら開発し使用するサイト運用システム</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#contact">お問い合わせ</a>
+          <a class="btn btn-ghost" href="#price">料金を見る</a>
+        </div>
+      </div>
+    </div>
+  </header>
+  <!-- ↑↑↑↑ END ヘッダー ↑↑↑↑ -->
+
+  <div class="page">
+
+    <!-- ↓↓↓↓ 何をするのか ↓↓↓↓ -->
+    <section class="section price-top" id="what">
+      <h2 class="section-title">長年のノウハウがすぐ手に入る</h2>
+      <p class="section-lead">KOBITOは、AI開発10年のThinkXが自ら用いている「非エンジニアでもスマートフォンやPCからクラウド内のAIコードエージェントに指示し、ページ追加等のサイト運用が可能になる」サイト基盤と運用基盤の、完成されたデフォルトのセットアップです。“コビト”はお客様のAWSクラウドサーバーの内部に常駐し、非エンジニアでも手元のスマートフォンで指示を出し、直接テスト環境と本番環境を変更できます。</p>
+
+      <div class="figure">
+        <img src="/img/products/KOBITO/diagram.jpg" alt="スマホから「最新情報のページに今日付で以下の内容を追加して」と指示すると、AWS のテスト環境サーバーに常駐する KOBITO がサイトを変更し、本番環境へ反映する図">
+      </div>
+
+      <ol class="steps">
+        <li>
+          <h3>指示する</h3>
+          <p>「サービスページに事例を1件追加して」。スマホでもPCでも、いつもの言葉で。</p>
+        </li>
+        <li>
+          <h3>テスト環境で確認する</h3>
+          <p>コビトがサイトを読んで変更案を作り、ステージング(テスト環境)に反映。実際の表示をスマホで確認します。</p>
+        </li>
+        <li>
+          <h3>承認して本番に公開する</h3>
+          <p>「公開して」で本番へ。本番への反映は必ず「お客様の承認」と「ステージングでの確認」を経ます。気に入らなければ「戻して」。</p>
+        </li>
+      </ol>
+      <p class="examples-note">ほかにも「FAQに質問を足して」「問い合わせボタンを目立たせて」「戻して」「ステージングを止めて」「先週のアクセスログを見せて」。運用に要る指示は、すべて同じチャットで。</p>
+    </section>
+    <!-- ↑↑↑↑ END 何をするのか ↑↑↑↑ -->
+
+    <!-- ↓↓↓↓ 料金 ↓↓↓↓ -->
+    <section class="section" id="price">
+      <h2 class="section-title">プランと価格</h2>
+      <p class="section-lead">買うのはテンプレートではなく、運用の土台一式。価格はすべて税抜。本体は買取で、初年度1年間のサポートを含みます。お申込みから2〜3週間で運用開始。2年目以降の保守は別途(年額・お見積り)。</p>
+
+      <div class="plans">
+        <div class="plan featured">
+          <span class="badge">まずはここから</span>
+          <p class="name">Lite</p>
+          <p class="price">60<small>万円</small></p>
+          <p class="split">一括、または 初期42万円＋月1.5万円×12ヶ月(年契約)</p>
+          <ul>
+            <li>サイト数 1つ</li>
+            <li>本番・ステージング分離の専用環境</li>
+            <li>標準機能すべて</li>
+            <li>初年度サポート(メール対応等の基本サポート)</li>
+          </ul>
+          <a class="btn btn-primary" href="#contact">Liteについて問い合わせる</a>
+        </div>
+        <div class="plan">
+          <span class="badge">複数サイト</span>
+          <p class="name">Standard</p>
+          <p class="price">120<small>万円</small></p>
+          <p class="split">一括</p>
+          <ul>
+            <li>複数サイト可</li>
+            <li>本番・ステージング分離の専用環境</li>
+            <li>標準機能すべて</li>
+            <li>基本サポート＋簡単なコンサルティング</li>
+          </ul>
+          <a class="btn btn-ghost" href="#contact" style="background:var(--paper-soft)">Standardについて問い合わせる</a>
+        </div>
+        <div class="plan">
+          <span class="badge">カスタム機能</span>
+          <p class="name">Pro</p>
+          <p class="price">220<small>万円</small></p>
+          <p class="split">一括</p>
+          <ul>
+            <li>複数サイト可</li>
+            <li>実装支援によるカスタム機能を含む</li>
+            <li>標準機能すべて</li>
+            <li>コンサルティング＋実装支援</li>
+          </ul>
+          <a class="btn btn-ghost" href="#contact" style="background:var(--paper-soft)">Proについて問い合わせる</a>
+        </div>
+      </div>
+
+      <div class="running">
+        <h3>別途かかる費用(お客様所有のクラウド・AI利用料)</h3>
+        <table>
+          <tr><td>AWS(サーバー一式。ステージングの稼働量による)</td><td>月 6,000〜9,000円程度</td></tr>
+          <tr><td>Claude 有料プラン(コビトの頭脳。お客様のアカウント)</td><td>月 $20〜</td></tr>
+          <tr><td>ドメイン</td><td>年 1,500円程度</td></tr>
+          <tr><td>既存サイトの移行(導入サービス・個別見積)</td><td>目安 50万〜100万円</td></tr>
+        </table>
+        <p>AWSとClaudeの利用料は、お客様のアカウントでお客様が直接お支払いになります(当社を経由しません)。既存サイトの移行費用は、サイトの規模・使われている技術・データベースの有無によって変わります。50万円は当社の構成との差が小さく、変更がほとんど要らない場合の目安です。</p>
+      </div>
+    </section>
+    <!-- ↑↑↑↑ END 料金 ↑↑↑↑ -->
+
+    <!-- ↓↓↓↓ 選ばれる理由(ただ Claude Code を使うのとの違い) ↓↓↓↓ -->
+    <section class="section" id="why">
+      <h2 class="section-title">AIの設計に任せない。<br>長期的に失敗しないシンプルなスタックと運用。</h2>
+      <p class="section-lead">エンジニアを雇わなくてもエージェントで自社サイトを作れる時代になりました。しかし商用用途でゼロから作らせると、設計の品質が低く、長期的に不安定で安全性の低いシステムになることが多く、運用に耐えるまで長い改善が要ります。KOBITOは「作るAI」ではなく、完成された土台の上で「運用するAI」です。</p>
+
+      <div class="pains">
+        <div class="pain">
+          <p class="before">AIは頼まれるたび、その場しのぎで作り足す。半年で中身は誰にも分からない。</p>
+          <div class="after">一貫した設計と基盤
+            <p>当社が10年かけて決めた設計がそのまま入っている。コビトはその上でしか作らないので、何を足しても一貫したまま。</p>
+          </div>
+        </div>
+        <div class="pain">
+          <p class="before">作るのは簡単。公開・戻す・バックアップ・証明書・費用は、誰がやる?</p>
+          <div class="after">運用の仕組みが、初日から動く。
+            <p>テストで確認して本番へ。「戻して」。毎日のバックアップ、証明書の自動更新、費用の見える化、問い合わせ通知、SEO。全部、同じチャットで。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="yours philosophy">
+        <strong>設計思想 ― 10年の運用で崩れなかった構成</strong>
+        <ul class="philosophy-list">
+          <li><b>大規模フレームワークに依存しない。</b>AI駆動開発で停止・矛盾の要因になる。小型軽量の標準ライブラリだけでシンプルに。</li>
+          <li><b>疎結合・高いモジュール性。</b>AIが部品を独立して安全に変更・拡張できる。</li>
+          <li><b>流行り廃りに左右されない。</b>フレームワークのバージョン変更で止まらない。動作は軽く、読み込みも速い。</li>
+          <li><b>独自プラットフォームに閉じない。</b>ノーコード基盤ではなく、広く普及した標準技術だけ。</li>
+        </ul>
+        <table class="stack">
+          <tr><th>サーバー</th><td>Python／Flask、nginx、uWSGI・systemd、Linux(AWS EC2)</td></tr>
+          <tr><th>フロントエンド</th><td>JavaScript(ECMAScript)、CSS(LESS)。大規模フレームワークを使用せず、時流に左右されない</td></tr>
+          <tr><th>履歴・配布</th><td>Git／GitHub</td></tr>
+          <tr><th>エージェント</th><td>Anthropic社 Claude Code＋当社のエージェント用基本マナー</td></tr>
+        </table>
+        <p class="philosophy-foot">当社が自社サイトで実際に使い続けている構成と同一です。</p>
+      </div>
+
+      <div class="yours">
+        <strong>環境はお客様のもの</strong>
+        AWS・GitHub・Claudeの各アカウントとドメインはお客様が所有します。当社がお客様のメールアドレスで作成し、完了後にログイン情報一式を引き渡します。契約が終わってもサイトはそのまま動き続け、記事などのデータはGitで管理されているのでいつでも他のシステムへ移せます。
+      </div>
+    </section>
+    <!-- ↑↑↑↑ END 何を解決するのか ↑↑↑↑ -->
+
+    <!-- ↓↓↓↓ 機能 ↓↓↓↓ -->
+    <section class="section" id="features">
+      <h2 class="section-title">運用に要るものは、最初から入っている。</h2>
+      <p class="section-lead">全プラン共通の標準機能です。どれも同じチャットで指示します。</p>
+      <table class="features">
+        <tr><th>スマホでページ追加・更新</th><td>ページ更新、LP追加、告知、FAQ、問い合わせ導線。</td></tr>
+        <tr><th>テスト環境・クローズド公開</th><td>IDとパスワードで閲覧。使わないときは「停止して」。</td></tr>
+        <tr><th>本番へ公開</th><td>確認・承認のうえ反映。</td></tr>
+        <tr><th>戻す</th><td>変更はすべてGitに記録。「戻して」で元通り。</td></tr>
+        <tr><th>日次バックアップ</th><td>お客様のGitHubに毎日保存。</td></tr>
+        <tr><th>問い合わせフォーム</th><td>受信をチャット(Discord)に通知。</td></tr>
+        <tr><th>SEO</th><td>検索に配慮したページ構成・メタ情報。</td></tr>
+        <tr><th>AWS自動構築・費用の見える化</th><td>本番・テストのサーバー一式を自動で立ち上げ。費用は事前に分かる。</td></tr>
+        <tr><th>再起動・ログ確認・証明書更新</th><td>同じチャットで指示。</td></tr>
+      </table>
+
+      <h3 class="sub-title">追加予定<span class="tag tag-opt">未提供</span></h3>
+      <table class="features">
+        <tr class="option"><th>ブログ</th><td>標準機能として追加予定。</td></tr>
+        <tr class="option"><th>ログイン・決済・商品販売</th><td>月額オプション(各3,000円、セット5,000円)で順次追加予定。</td></tr>
+      </table>
+    </section>
+    <!-- ↑↑↑↑ END 機能 ↑↑↑↑ -->
+
+    <!-- ↓↓↓↓ 導入の流れ ↓↓↓↓ -->
+    <section class="section" id="flow">
+      <h2 class="section-title">お申込みから2〜3週間。<br>お客様がすることは、電話で認証コードを読み上げるだけ。</h2>
+      <p class="section-lead">アカウント作成からサーバー構築、コビトの設置まで、すべて当社が行います。訪問なし、お客様の端末操作なし、コマンドラインもIAMも触りません。</p>
+
+      <ol class="flow">
+        <li>
+          <h3>お問い合わせ・ヒアリング</h3>
+          <p>フォームからご連絡ください。資料をお送りし、電話またはオンラインでご要望を伺います。お申込みは電子契約で完結します。</p>
+        </li>
+        <li>
+          <h3>アカウント作成</h3>
+          <p>当社がお客様のメールアドレスでAWS・GitHub・Claudeのアカウントを作成。お客様は電話でメールの認証コードを読み上げるだけ。</p>
+        </li>
+        <li>
+          <h3>サーバー構築とコビトの設置</h3>
+          <p>当社がAWS上にサーバー一式(本番・ステージング)を自動構築し、コビトを設置。このとき月々の費用が確定します。既存サイトがあれば移行(別途お見積り)。</p>
+        </li>
+        <li>
+          <h3>動作確認・引き渡し・運用開始</h3>
+          <p>お客様のスマホで動作を確認しながら操作をご案内。ログイン情報一式を「引き渡し書」でお渡しして運用開始。</p>
+        </li>
+      </ol>
+      <div class="flow-note">
+        <span>訪問なし</span>
+        <span>端末操作なし</span>
+        <span>2〜3週間</span>
+        <span>1社1環境</span>
+      </div>
+    </section>
+    <!-- ↑↑↑↑ END 導入の流れ ↑↑↑↑ -->
+
+    <!-- ↓↓↓↓ 実績 ↓↓↓↓ -->
+    <section class="section" id="cases">
+      <h2 class="section-title">売っている構成と、使っている構成が同じ。</h2>
+      <p class="section-lead">ThinkXはAI開発10年、自社コードベース約67万行、特許4件(うち2件出願中)。このページ自体も、コビトが運用するサイトの1ページです。</p>
+      <div class="cases">
+        <div class="case">
+          <p class="site">thinkxinc.com(2016年〜)</p>
+          <p>自社コーポレートサイトを本製品の構成で構築・運用。2026年よりコビトによるチャット運用に移行し、ページ追加・更新・公開・TLS更新・ログ確認を担当者がスマートフォンから実施。</p>
+        </div>
+        <div class="case">
+          <p class="site">nntmapp.com(2025年〜)</p>
+          <p>自社サービスサイトを同一基盤で運用。検索キーワード「ブラウンノイズ」で検索上位を維持(SEO実績)。</p>
+        </div>
+        <div class="case">
+          <p class="site">truetechjapan.com(2025年〜)</p>
+          <p>True Tech Association Japan の公式サイト(日英多言語、エントリーフォーム、問い合わせフォーム、資料配布)を本製品の基盤で構築・運用。</p>
+        </div>
+      </div>
+    </section>
+    <!-- ↑↑↑↑ END 実績 ↑↑↑↑ -->
+
+    <!-- ↓↓↓↓ FAQ ↓↓↓↓ -->
+    <section class="section" id="faq">
+      <h2 class="section-title">よくあるご質問</h2>
+
+      <div class="faq">
+        <details>
+          <summary>エンジニアがいなくても本当に運用できますか。</summary>
+          <p class="answer">できます。指示は日本語のチャットで、コマンドや設定画面を触ることはありません。当社自身が、担当者のスマートフォンからこの方法で自社サイトを運用しています。導入時にはお客様のスマホで一緒に操作しながらご案内します。</p>
+        </details>
+        <details>
+          <summary>AIがサイトを壊してしまうことはありませんか。</summary>
+          <p class="answer">本番サイトは、テスト環境(ステージング)での確認とお客様の承認なしには変わりません。変更はすべてGitに記録されるので、万一気に入らない結果になっても「戻して」で元に戻せます。</p>
+        </details>
+        <details>
+          <summary>壊れたとき、誰が直してくれますか。</summary>
+          <p class="answer">まずお客様自身が「戻して」で直前の状態に戻せます。それで解決しないときは、メールまたは電話(受付時間内)でサポートが対応します。契約開始から1年間は保守を保証します。</p>
+        </details>
+        <details>
+          <summary>準備するものはありますか。</summary>
+          <p class="answer">会社のメールアドレス、電話、クレジットカードの3つだけです。AWS・GitHub・Claudeのアカウントもドメインも、当社がそのメールアドレスで作成します。お客様が行うのは、電話でメールの認証コードを読み上げることと、運用開始前にご自身のクレジットカードをAWSとClaudeの請求画面に登録すること(電話でご案内します)です。</p>
+        </details>
+        <details>
+          <summary>毎月いくらかかりますか。Claudeのどのプランが必要ですか。</summary>
+          <p class="answer">お客様のAWS利用料が月6,000〜9,000円程度(ステージングの稼働量による)、Claude有料プランが月$20〜、ドメインが年1,500円程度です。いずれもお客様のアカウントでお客様が直接お支払いになります。Claudeは有料プラン(月$20〜)で運用できます。プランの条件はAnthropic社により変更されることがあるため、導入時点の最適なプランをご案内します。サーバー構築の時点で、月々の費用がいくらになるかを明示します。</p>
+        </details>
+        <details>
+          <summary>サイトのデータや会社の情報は安全ですか。</summary>
+          <p class="answer">サーバーもソースコードもデータも、お客様所有のAWSとGitHubにあり、当社の環境には置きません。サイトのソースコードとお客様の指示はClaude(Anthropic社)のAIに送られて処理されます。顧客名簿や決済情報などの機密データはサイトに置かない設計を導入時にご案内します。</p>
+        </details>
+        <details>
+          <summary>担当者が変わったら、複数人で使いたいときは。</summary>
+          <p class="answer">コビトへの接続はお客様のClaudeアカウントで行うため、担当者の変更はアカウントの引き継ぎで済みます。複数人で運用する場合の設定は導入時にご相談ください。</p>
+        </details>
+        <details>
+          <summary>スマホの機種は問いますか。</summary>
+          <p class="answer">iPhone・AndroidのClaudeアプリ、またはPCのブラウザから利用できます。</p>
+        </details>
+        <details>
+          <summary>すでにあるサイトをそのまま使えますか。</summary>
+          <p class="answer">既存サイトは本製品の基盤へ移行してから運用対象になります。移行は導入サービスとして個別にお見積りします(目安50万〜100万円。サイトの規模・使われている技術・データベースの有無によります)。まずは現在のサイトのURLをお知らせください。</p>
+        </details>
+        <details>
+          <summary>どんなサイトに向いていますか。</summary>
+          <p class="answer">コーポレートサイト、サービス紹介、告知やお知らせ、LP、問い合わせ受付など、更新頻度はあるが大量アクセスを想定しないサイトに向いています。1社1環境で、サーバーはお客様専用です。大規模なECサイトや会員数の多いWebサービスは対象外です。</p>
+        </details>
+        <details>
+          <summary>公開前に社内だけで確認できますか。</summary>
+          <p class="answer">できます。ステージングサーバーはIDとパスワードでログインして閲覧するクローズド公開です。使わないときは「停止して」で止まり、その間のAWS費用が下がります。</p>
+        </details>
+        <details>
+          <summary>契約が終わったらサイトはどうなりますか。</summary>
+          <p class="answer">環境はすべてお客様所有なので、サイトはそのまま動き続けます。ソースコードと記事などのデータはお客様のGitHubにあり、いつでも他のシステムへ移せます。契約開始から1年間は保守を保証します。</p>
+        </details>
+        <details>
+          <summary>サポートはどのように受けられますか。</summary>
+          <p class="answer">メールおよび電話(受付時間内)で対応します。コビトとの接続が切れた場合の再接続も、スマホの画面から行える案内を用意しています。</p>
+        </details>
+        <details>
+          <summary>決済やログイン、ネットショップの機能はありますか。</summary>
+          <p class="answer">現時点では提供していません。ログイン認証・オンライン決済・商品販売は月額オプション(各月3,000円・セット月5,000円を予定)として順次追加する予定です。ブログ機能も追加予定です。</p>
+        </details>
+        <details>
+          <summary>支払い方法は。</summary>
+          <p class="answer">銀行振込です。ご契約後に請求書をお送りします。</p>
+        </details>
+        <details>
+          <summary>補助金は使えますか。</summary>
+          <p class="answer">本製品(Lite)は「デジタル化・AI導入補助金2026」のITツールとして登録申請中です。補助金を利用した導入をご検討の場合は、お問い合わせ時にその旨をお知らせください。</p>
+        </details>
+        <details>
+          <summary>英語ページや多言語のサイトもできますか。</summary>
+          <p class="answer">できます。当社が運用する truetechjapan.com は日英の多言語サイトです。</p>
+        </details>
+        <details>
+          <summary>2つ以上のサイトを運用したい。</summary>
+          <p class="answer">Standard以上のプランで複数サイトを運用できます。Liteは1サイトです。</p>
+        </details>
+        <details>
+          <summary>ソースコードは自社のものになりますか。</summary>
+          <p class="answer">サイトのソースコードはお客様のGitHubに置かれ、お客様が利用できます。ただし本製品のシステムを再販すること、第三者に譲渡・提供することはできません(契約書に定めます)。</p>
+        </details>
+      </div>
+    </section>
+    <!-- ↑↑↑↑ END FAQ ↑↑↑↑ -->
+
+    <!-- ↓↓↓↓ 問い合わせ ↓↓↓↓ -->
+    <section class="contact" id="contact">
+      <h2 class="section-title">お問い合わせ・資料請求</h2>
+      <p class="section-lead">ご希望のプラン、現在のサイトのURL、お困りごとをお書きください。担当者からメールでご連絡し、資料をお送りします。</p>
+
+      {% from "macro/inquiry.html" import inquiry_form %}
+      {{ inquiry_form('inquiry-form', '/inquiry/submit',
+          place_holder_name='お名前*',
+          place_holder_email='メールアドレス*',
+          place_holder_phone='電話番号',
+          place_holder_job_title='職名',
+          place_holder_company_name='所属・会社名',
+          place_holder_message='お問い合わせ内容*(例: KOBITO Lite の資料希望。現在のサイト https://...)',
+          value_submit_button='送信',
+          requirement_error='$0は必須です。',
+          format_error='$0を正しい形式で入力してください。',
+          submit_success='正常に送信されました。担当者からご連絡します。',
+          submit_failed='送信に失敗しました。inquiry@thinkxinc.comまでご連絡ください。',
+          mind_check_label='I have a "mind".',
+          mind_check_error='上のボタンにチェックを入れてください。')
+      }}
+      <p class="contact-alt">メールでのお問い合わせ: inquiry@thinkxinc.com</p>
+    </section>
+    <!-- ↑↑↑↑ END 問い合わせ ↑↑↑↑ -->
+
+    <p class="page-foot">
+      <img src="/img/products/KOBITO/logo_v.png" alt="KOBITO">
+      © ThinkX Inc.
+    </p>
+
+  </div>
+</body>
+</html>
