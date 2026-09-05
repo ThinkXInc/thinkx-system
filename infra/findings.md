@@ -1556,3 +1556,20 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
 - (a)〜(e) は計画書どおり全て通過。server.py の状態判定は `claude auth status` の `loggedIn` + `pane_current_command`
   + 画面の実測文言(`Paste code here` / `Use the url below` / `Choose the text style` / `Select login method` /
   `Press Enter to continue` / `/remote-control is active`)。
+
+## 2026-09-05 N-3/N-4: unit 稼働・LB の staging conf は loadbalancer/conf.d が正(計画書の infra/setup/nginx は古い複製)
+
+- N-3: develop へのマージ(PR #72)→ staging web の deploy-timer が追従 → `setup_claude_connect.sh` を
+  `ssh 'bash -s'` で実行。`claude_connect` は enabled/active、verify は
+  `{"state": "connected", "url": null, "disk_free_gb": 4, "observed_at": "2026-09-05T02:01:14+00:00"}`。
+  計画書の「staging を stop→start して両 unit が自動で上がる」確認は N-7 の再起動でまとめて行う。
+- **計画書 N-4 は `infra/setup/nginx/staging.thinkxinc.com.conf` を編集対象にしているが、LB の nginx が読むのは
+  `/src/loadbalancer/conf.d/*conf`(= monorepo の `loadbalancer/conf.d/`)。** `infra/setup/nginx/` の複製は
+  取り込み時(afe137c)のまま更新されておらず、filedrop の `client_max_body_size 75m`(d1e1711)も入っていない。
+  → `loadbalancer/conf.d/staging.thinkxinc.com.conf` に location を足す(前例: 252c142 feat(infra) が同ファイルを編集)。
+  `infra/setup/nginx/` の複製は残置(削除はオーナー判断。構築手順・setup からは参照されていない)。
+- staging LB には deploy-timer が無い(web のみ)。LB の反映は `deploy_staging.sh` が行う
+  `git show origin/develop:infra/run/sync_from_origin.sh | ssh supercom-lb1-stg 'sudo bash -s staging'` と同じ手で行う
+  (deploy_staging.sh 全体を回すと push_assets が staging に無い thinkx views/video 11 ファイルの配布を始めるため、
+  今回は LB の同期だけに絞る。アセット配布は別件)。
+- LB → web の 8008 は SG 越しに到達(LB 上の curl で `/connect/state` が返る)。SG 変更なし。
