@@ -44,6 +44,28 @@ apply 前に「構成図 + 変更 + 料金」を出す。
 Claude Code PostToolUse フック本体。stdin の JSON から編集対象を読み、`infra/terraform/*.tf` のときだけ
 概算(cost-estimate 相当)を出す。settings から薄く呼ぶ。
 
+## stg.py 【観測系】staging の Claude 常駐セッションと claude_connect を Mac から観測
+計画書 `infra/docs/STG_OBSERVE_PLAN.md`。目的は「毎回同じ観測」を Claude Code の承認プロンプト無しで回すこと。
+`python3 infra/scripts/stg.py <sub>` は settings の ask(`ssh` / `curl` 前置一致)に掛からない。python3 標準ライブラリのみ。
+- **観測のみ。** send-keys / kill / restart / logout を持たない(変更系は人間が attach_claude.sh で行う)。
+- **リモートで走る文字列は全て固定リテラル。** 引数で受けない(`exec <任意>` を作らない)。値引数は整数の範囲検査か
+  ホワイトリスト(`--unit` は claude_connect / claude-session)に限り、置換で埋める。
+- ssh は `ssh -o ConnectTimeout=8 -o BatchMode=yes supercom-web1-stg`(ログイン ubuntu・`sudo -n` 可)。
+  state は `http://web1:8008/connect/state`(bind は private IP のみ。127.0.0.1 は不可。web1 は dns.tf の内部名)。
+- **ログイン URL を出さない。** state の url は yes/no、pane に折れて描かれた URL は塊ごと `<url hidden>`。`--show-url` で解除。
+- `check`: uptime / `systemctl is-active claude-session claude_connect nginx uwsgi_thinkx` / `sudo -n -u kaz tmux ls` と
+  pane_current_command / state JSON / pane 末尾 8 行(空行・Permission 行を除く)/ 外形 `https://staging.thinkxinc.com`
+  の `/` `/connect/` `/connect/state` を curl(OS の信頼ストア)で取り **401 が正常**。最終行 `OK: stg check state=<state> ...` / `FAIL: ...`。
+- `watch [--interval 5] [--max 54] [--log-lines 8]`: リモート側の 1 ループで state を取り、変化時だけ `HH:MM:SSZ <state> url=yes/no`。
+  connected で抜けて OK。上限到達は FAIL(最終 state を出す)。終了時に claude_connect の journal から `GET /connect/state` を除いた末尾 N 行。
+- `log [--unit claude_connect] [--since-min 30] [-n 50]`: `sudo -n journalctl -u <unit> --since -<N>min -o cat`。相対時刻なので
+  サーバー TZ(UTC)を意識しない。0 行なら黄色でその旨。
+- `doctor`: 前提 9 件を key=value で取り期待値と照合(user=ubuntu / hostname=web1-stg / sudo=ok / tz=Etc/UTC /
+  listen=192.168.2.11:8008 / web1=192.168.2.11 / 両 unit enabled / state_http=200)。1 件でも NG なら
+  `FAIL: ... stg.py の定数と infra/findings.md を更新`。staging 再構築後に最初に叩く。
+- 戻り値 0/1(`sys.exit(main())`)。ssh 不達(rc 255)は `FAIL: stg <sub> ssh 到達不可(staging 停止中?)`。引数無しは使い方を出して 1。
+- 昇格ルール: 同じ形の ssh/curl 調査を 3 回書いたらサブコマンドに足す(計画書改訂→オーナー承認)。1 回きりは素の ssh で承認 1 回。
+
 ## setup_user.sh 【変更系】
 RUN_USER 前処理(`docs/user_setup.md` 準拠)。ssh で各 EC2 に流す。
 - `RUN_USER`(既定 kaz)を作成 → repo ごとに read-only Deploy key を `~<user>/.ssh/deploy_<repo>` に生成 →

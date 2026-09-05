@@ -54,14 +54,22 @@
 
   .note { margin: 10px 0 0; font-size: 14px; color: var(--ink-soft); min-height: 22px; }
 
-  /* 進行中の帯(送信〜接続中に切り替わるまで動き続ける) */
-  .progress { margin-top: 12px; }
+  /* 進行の段階表示(サーバーが返す phase に合わせて、済み・進行中・これから を切り替える) */
+  .progress { margin-top: 14px; }
   .progress[hidden] { display: none; }
-  .progress .track { height: 4px; border-radius: 2px; background: var(--line); overflow: hidden; }
-  .progress .track i { display: block; width: 38%; height: 100%; border-radius: 2px; background: var(--blue); animation: slide 1.1s ease-in-out infinite; }
-  @keyframes slide { 0% { transform: translateX(-110%); } 100% { transform: translateX(290%); } }
-  .progress .steps { display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: var(--ink-soft); }
-  .progress .steps b { color: var(--blue-deep); font-weight: 600; }
+  .steps { list-style: none; margin: 0; padding: 0; }
+  .steps li { position: relative; display: flex; align-items: center; gap: 12px; padding: 7px 0; font-size: 14px; color: var(--grey); transition: color 0.4s ease; }
+  .steps li + li::before { content: ""; position: absolute; left: 9px; top: -9px; width: 2px; height: 16px; background: var(--line); transition: background 0.4s ease; }
+  .steps li.done + li::before { background: var(--green); }
+  .steps .mark { width: 20px; height: 20px; border-radius: 50%; flex: none; box-sizing: border-box; border: 2px solid var(--line); background: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #fff; transition: background 0.4s ease, border-color 0.4s ease, transform 0.4s ease; }
+  .steps li.active { color: var(--ink); }
+  .steps li.active .mark { border-color: var(--blue); background: var(--blue); box-shadow: 0 0 0 0 rgba(79,107,158,0.5); animation: ring 1.4s ease-out infinite; }
+  .steps li.done { color: var(--ink-soft); }
+  .steps li.done .mark { border-color: var(--green); background: var(--green); transform: scale(1.05); }
+  .steps li.done .mark::after { content: "✓"; color: #fff; font-weight: 700; }
+  .steps li.active .mark::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #fff; }
+  .steps .elapsed { margin-left: auto; font-size: 12px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  @keyframes ring { 0% { box-shadow: 0 0 0 0 rgba(79,107,158,0.55); } 100% { box-shadow: 0 0 0 10px rgba(79,107,158,0); } }
 
   /* 接続中に切り替わった瞬間の合図 */
   .card.done { animation: flash 1.4s ease-out; }
@@ -115,8 +123,7 @@
     <div class="status"><span class="dot checking" id="dot"></span><span id="status_text">確認中</span></div>
     <p class="note" id="note"></p>
     <div class="progress" id="progress" hidden>
-      <div class="track"><i></i></div>
-      <div class="steps"><span id="progress_label"></span><b id="progress_elapsed"></b></div>
+      <ol class="steps" id="steps"></ol>
     </div>
 
     <div class="actions" id="actions" hidden>
@@ -154,13 +161,28 @@
 
   var card = document.querySelector(".card");
   var progress = document.getElementById("progress");
-  var progressLabel = document.getElementById("progress_label");
-  var progressElapsed = document.getElementById("progress_elapsed");
+  var stepsList = document.getElementById("steps");
 
   var current = { state: null, url: null };
   var busy = false;
   var progressTimer = null;
   var wasConnected = null;
+
+  // サーバーの phase(いま何をしているか)を、画面の段階に対応させる。
+  // 「コードを送信」の流れと「セッションを再接続」の流れで段階が違う。
+  var FLOWS = {
+    code: {
+      labels: ["コードを送信", "認証を確認", "セッションを起動", "接続を確認"],
+      phase: { sending_code: 0, waiting_code: 1, security_notes: 2, first_run: 2, starting: 2, starting_session: 2, connected: 3 }
+    },
+    session: {
+      labels: ["セッションを起動", "初期設定を進行", "認証画面を準備"],
+      phase: { starting_session: 0, starting: 0, first_run: 1, waiting_code: 2, url_ready: 2, security_notes: 1, connected: 2 }
+    }
+  };
+  var flow = null;
+  var activeIndex = 0;
+  var started = 0;
 
   function setStatus(kind, text, noteText) {
     dot.className = "dot " + kind;
@@ -168,16 +190,72 @@
     note.textContent = noteText || "";
   }
 
-  // 送信〜接続中になるまで、帯を動かし経過秒を数える(待たされている間に何も変わらないと不安になる)
-  function startProgress(label) {
-    var started = Date.now();
-    progressLabel.textContent = label;
-    progressElapsed.textContent = "0 秒";
+  function drawSteps() {
+    var items = stepsList.children;
+    for (var i = 0; i < items.length; i++) {
+      items[i].className = i < activeIndex ? "done" : (i === activeIndex ? "active" : "");
+    }
+    var elapsed = stepsList.querySelector(".elapsed");
+    if (elapsed) elapsed.textContent = Math.round((Date.now() - started) / 1000) + " 秒";
+  }
+
+  function advanceTo(index) {
+    if (index > activeIndex) { activeIndex = index; drawSteps(); }
+  }
+
+  // 送信〜接続中になるまで、サーバーの phase を 1 秒ごとに読み、段階を進めて見せる
+  function startProgress(kind) {
+    flow = FLOWS[kind];
+    activeIndex = 0;
+    started = Date.now();
+    stepsList.innerHTML = "";
+    flow.labels.forEach(function (label, i) {
+      var li = document.createElement("li");
+      var mark = document.createElement("span"); mark.className = "mark";
+      var text = document.createElement("span"); text.textContent = label;
+      li.appendChild(mark); li.appendChild(text);
+      if (i === 0) { var el = document.createElement("span"); el.className = "elapsed"; li.appendChild(el); }
+      stepsList.appendChild(li);
+    });
+    // 経過秒は最初の行でなく、進行中の行に付ける
+    drawSteps();
     progress.hidden = false;
     clearInterval(progressTimer);
     progressTimer = setInterval(function () {
-      progressElapsed.textContent = Math.round((Date.now() - started) / 1000) + " 秒";
-    }, 500);
+      fetch("/connect/state", { cache: "no-store" })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          var idx = flow.phase[d.phase];
+          if (idx !== undefined) advanceTo(idx);
+          moveElapsed();
+          drawSteps();
+        })
+        .catch(function () { drawSteps(); });
+    }, 1000);
+  }
+
+  function moveElapsed() {
+    var el = stepsList.querySelector(".elapsed");
+    var target = stepsList.children[Math.min(activeIndex, stepsList.children.length - 1)];
+    if (el && target && el.parentNode !== target) target.appendChild(el);
+  }
+
+  // 残りの段階を順に「済み」にしてから閉じる(突然切り替わらないように 1 段ずつ)
+  function finishProgress(done) {
+    clearInterval(progressTimer);
+    progressTimer = null;
+    var total = stepsList.children.length;
+    var step = function () {
+      if (activeIndex < total) {
+        activeIndex += 1;
+        moveElapsed();
+        drawSteps();
+        setTimeout(step, 350);
+      } else {
+        setTimeout(function () { progress.hidden = true; done(); }, 500);
+      }
+    };
+    step();
   }
 
   function stopProgress() {
@@ -245,14 +323,15 @@
     busy = true;
     reconnect.setAttribute("aria-disabled", "true");
     setStatus("checking", "確認中", "セッションを立て直しています");
-    startProgress("セッションを起動中(30 秒ほどかかることがあります)");
+    startProgress("session");
     post("/connect/session")
       .then(function (data) {
-        busy = false;
-        reconnect.removeAttribute("aria-disabled");
-        stopProgress();
-        render(data);
-        if (data.url) note.textContent = "もう一度「セッションを再接続」を押すと認証画面が別タブで開きます。認証後に表示されたコードを下に貼ってください";
+        finishProgress(function () {
+          busy = false;
+          reconnect.removeAttribute("aria-disabled");
+          render(data);
+          if (data.url) note.textContent = "もう一度「セッションを再接続」を押すと認証画面が別タブで開きます。認証後に表示されたコードを下に貼ってください";
+        });
       })
       .catch(function (e) {
         busy = false;
@@ -272,17 +351,19 @@
     busy = true;
     sendButton.disabled = true;
     codeInput.disabled = true;
-    setStatus("checking", "確認中", "コードを送りました。接続を確認しています");
-    startProgress("認証 → セッション起動 → 接続確認(20 秒ほど)");
+    setStatus("checking", "確認中", "コードを送りました");
+    startProgress("code");
     post("/connect/code", { code: code })
       .then(function (data) {
-        busy = false;
-        sendButton.disabled = false;
-        codeInput.disabled = false;
-        codeInput.value = "";
-        stopProgress();
-        render(data);
-        if (data.state !== "connected") error.textContent = "まだ接続中になっていません。コードが違う場合は「セッションを再接続」からやり直してください";
+        var finish = data.state === "connected" ? finishProgress : function (cb) { stopProgress(); cb(); };
+        finish(function () {
+          busy = false;
+          sendButton.disabled = false;
+          codeInput.disabled = false;
+          codeInput.value = "";
+          render(data);
+          if (data.state !== "connected") error.textContent = "まだ接続中になっていません。コードが違う場合は「セッションを再接続」からやり直してください";
+        });
       })
       .catch(function (e) {
         busy = false;
