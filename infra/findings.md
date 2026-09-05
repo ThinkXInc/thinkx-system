@@ -1526,3 +1526,33 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   claude を起動して初回対話を Enter で進め URL を拾う。pane が claude でログイン画面なら URL を拾う)/
   `connected`(tmux あり・pane=claude・`loggedIn: true`)/ `unknown`(それ以外。pane=bash かつ loggedIn=true 等 →
   claude を起動し直す)。
+
+## 2026-09-04 N-1 server.py の完了条件 (a)〜(e) 実測(staging・kaz で手動起動・/tmp/claude_connect)
+
+- 起動: `python3 server.py` → `claude_connect listening on 192.168.2.11:8008`(`hostname -I` 先頭)。
+- (a) `GET /connect/state`(接続中):
+  `{"state": "connected", "url": null, "disk_free_gb": 4, "observed_at": "2026-09-04T08:10:46+00:00"}`
+- (b) `tmux kill-session -t claude` → `GET /connect/state`:
+  `{"state": "session_missing", "url": null, "disk_free_gb": 4, "observed_at": "2026-09-04T08:26:14+00:00"}`
+- (c) `POST /connect/session` → 4.4 秒で
+  `{"state": "connected", "url": null, "observed_at": "2026-09-04T08:26:18+00:00"}`。pane は
+  `/remote-control is active · Continue here, on your phone, or at https://claude.ai/code/session_017MHntXUbYtKDegjtEPgzw7`。
+- (d) ログアウト後(tmux 無し・`loggedIn: false`)→ `POST /connect/session`:
+  `{"state": "login_required", "url": "https://claude.com/cai/oauth/authorize?code=true&client_id=9d1c250a-...&code_challenge_method=S256&state=2-v2QuNoTYV6plL-O8MxnNnEhgBaPdaBwy4qjFEQ2QY", "observed_at": "2026-09-04T12:12:38+00:00"}`
+  `GET /connect/state` も同じ URL を返す。
+- (e) オーナーが Mac から `ssh supercom-web1-stg "curl -X POST .../connect/code -d '{\"code\":\"…\"}'"`(コードは
+  `read -rs` で受けて実行者を経由しない)→
+  `{"state": "connected", "url": null, "observed_at": "2026-09-04T12:24:18+00:00"}`。pane は
+  `/remote-control is active … https://claude.ai/code/session_01GDhuFmn2h1hBveBHGfK2YR`、`loggedIn: true`。
+- 1回目の (d) で `url: null` になった不具合: 見出し「Use the url below」の**直後に空行**があり、見出し起点の抽出が
+  そこで止まっていた。行頭が `http` の行を起点に「Paste code here」/空行/行頭空白の手前まで連結する形に修正。
+  pane はクライアント未 attach だと **80x24** になり、URL は 80 桁で折れる(抽出は幅に依存しない)。
+- 同じ回で walk_login_prompts の「/login を送る」フォールバックがコード入力待ちの画面にも走った可能性がある
+  (scrollback に痕跡は無いが構造上起きうる)。**コード待ち(`Paste code here`)の画面では何も送らない**ガードを追加。
+- 観測: `attach_claude.sh` で入った pane で claude を終了(/logout)したあと shell を `exit` すると tmux サーバーごと消え
+  (`no server running on /tmp/tmux-1001/default`)、state は `session_missing` になる。ページの「セッションを再接続」で戻る。
+- ssh 越しにサーバーを裏で起動すると ssh が返らない(子プロセスが ssh の fd を握る)。手動試験だけの話で、
+  N-3 の systemd unit では起きない。
+- (a)〜(e) は計画書どおり全て通過。server.py の状態判定は `claude auth status` の `loggedIn` + `pane_current_command`
+  + 画面の実測文言(`Paste code here` / `Use the url below` / `Choose the text style` / `Select login method` /
+  `Press Enter to continue` / `/remote-control is active`)。
