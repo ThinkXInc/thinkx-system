@@ -50,6 +50,29 @@ MAX_STEPS = 12
 
 action_lock = threading.Lock()
 
+# 操作中にサーバーが「いま何をしているか」。画面はこれを 1 秒ごとに読んで段階表示にする。
+# phase: idle / starting_session / first_run / url_ready / sending_code / waiting_code /
+#        security_notes / starting / connected
+progress = {"phase": "idle", "since": None}
+
+
+def set_phase(phase: str) -> None:
+    if progress["phase"] != phase:
+        progress["phase"] = phase
+        progress["since"] = time.time()
+
+
+def phase_from_screen(lines: list[str]) -> str:
+    if screen_has(lines, CONNECTED_MARK):
+        return "connected"
+    if screen_has(lines, "Press Enter to continue"):
+        return "security_notes"
+    if screen_has(lines, CODE_PROMPT):
+        return "waiting_code"
+    if screen_has(lines, "Choose the text style", "Select login method"):
+        return "first_run"
+    return "starting"
+
 
 def run(args: list[str], timeout: int = 20) -> tuple[int, str]:
     """外部コマンドを引数リストで実行し、(戻り値, 標準出力) を返す。shell は使わない。"""
@@ -157,6 +180,7 @@ def walk_login_prompts() -> dict:
         time.sleep(STEP_WAIT_SECONDS)
         lines = screen_lines()
         url = find_url(lines)
+        set_phase("url_ready" if url else phase_from_screen(lines))
         if url:
             return {"state": "login_required", "url": url}
         if screen_has(lines, CONNECTED_MARK):
@@ -177,19 +201,23 @@ def reconnect() -> dict:
     current = observe()
     state = current["state"]
 
-    if state == "connected":
-        return current
-    if state == "session_missing":
-        start_session()
-    elif state == "unknown":
-        restart_session()
-    elif state == "login_required":
-        if current["url"]:
+    try:
+        if state == "connected":
             return current
-        if pane_command() != "claude":
+        set_phase("starting_session")
+        if state == "session_missing":
+            start_session()
+        elif state == "unknown":
             restart_session()
+        elif state == "login_required":
+            if current["url"]:
+                return current
+            if pane_command() != "claude":
+                restart_session()
 
-    return walk_login_prompts()
+        return walk_login_prompts()
+    finally:
+        set_phase("idle")
 
 
 def paste_code(code: str) -> dict:
@@ -198,9 +226,13 @@ def paste_code(code: str) -> dict:
     if not screen_has(screen_lines(), CODE_PROMPT):
         raise LookupError("コードの入力待ちではありません。先に「セッションを再接続」を押してください")
 
-    tmux("send-keys", "-t", SESSION, "-l", code)
-    press_enter()
-    return walk_login_prompts()
+    try:
+        set_phase("sending_code")
+        tmux("send-keys", "-t", SESSION, "-l", code)
+        press_enter()
+        return walk_login_prompts()
+    finally:
+        set_phase("idle")
 
 
 def now_iso() -> str:
@@ -255,7 +287,7 @@ class Handler(BaseHTTPRequestHandler):
             elif path == "/connect/":
                 self.send_index()
             elif path == "/connect/state":
-                self.send_json(200, {**observe(), "disk_free_gb": disk_free_gb(), "observed_at": now_iso()})
+                self.send_json(200, {**observe(), "phase": progress["phase"], "disk_free_gb": disk_free_gb(), "observed_at": now_iso()})
             else:
                 self.send_json(404, {"error": "not found"})
         except Exception as e:  # ハンドラで落とさない

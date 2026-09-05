@@ -85,7 +85,10 @@ python3 infra/scripts/stg.py doctor
   コードは `[A-Za-z0-9#_-]{1,512}` で先頭 `-` 不可。例外はハンドラ内で捕捉して 500 と短い理由。
 - index.html: 1 ファイル・外部アセットなし・日本語のみ。ロゴは `infra/assets/KOBITO/logo/KOBITOhT.png` を 720px に縮小し
   data URI で内包。5 秒ごとに state を取り、接続中以外は常に「セッションを再接続」(#070707)と入力欄を同じ位置に出す。
-  ボタンはタップ内で空タブを開き、`/connect/session` の応答の URL をそのタブに流し込む(Safari の制限を避ける)。
+  ボタンは 1 回目のタップで `/connect/session` を POST し、URL が返ったら同じ位置・同じ見た目の `<a target=_blank>` に
+  差し替える(2 回目のタップで認証画面。空タブを先に開く方式は iPhone Safari で元ページの fetch が止まり不可)。
+  送信〜接続中の間は `/connect/state` の `phase` を 1 秒ごとに読み、段階(コードを送信 → 認証を確認 → セッションを起動 →
+  接続を確認)を済み/進行中/これから で描く。
 - unit: `User=kaz` / `WorkingDirectory=/src/thinkx-system/infra/claude_connect` / `ExecStart=/usr/bin/python3 server.py` /
   `Restart=always` / `After=claude-session.service`。setup は symlink → daemon-reload → enable → restart → verify。
 - 大原則: staging 限定 / 認証情報を預からない / claude-session.service を変えない / 依存を増やさない /
