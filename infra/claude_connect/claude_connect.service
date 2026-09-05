@@ -1,0 +1,20 @@
+[Unit]
+Description=Claude connect page (staging only; state/reconnect of the Claude Code tmux session)
+After=network-online.target claude-session.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=kaz
+Environment=HOME=/home/kaz
+WorkingDirectory=/src/thinkx-system/infra/claude_connect
+ExecStart=/usr/bin/python3 server.py
+Restart=always
+RestartSec=3
+
+# kaz で動かす。tmux セッション `claude` も claude の認証(/home/kaz/.claude)も kaz のものなので、
+# 同じユーザーでないと見えない・操作できない。sudo は使わない(kaz は sudoers に居ない)。
+# bind 先は web の private IP:8008(server.py が hostname -I の先頭を使う)。LB の SG からしか届かない。
+
+[Install]
+WantedBy=multi-user.target
