@@ -151,10 +151,8 @@
 
     /* 何をするのか: 図 + 3ステップ */
     .figure img { width: 100%; height: auto; }
-    .section.figure-top { margin-top: 0; }
-    .figure-top .figure { margin-top: 0; }
-    .figure-title { margin-top: 60px; }
-    .section#price { margin-top: 43px; }
+    .figure { margin-top: 36px; }
+    .price-plans { margin-top: 36px; }
     .steps {
       list-style: none;
       counter-reset: step;
@@ -371,7 +369,7 @@
       <div class="hero-word">
         <p class="hero-base">ClaudeCodeベース</p>
         <h1 class="hero-title">サーバーに常駐する“コビト”に、スマホで指示。</h1>
-        <p class="hero-sub">10年のAI企業が自ら開発し使用する効率的なサイト運用システム</p>
+        <p class="hero-sub">10年のAI企業が自ら開発し使用するサイト運用システム</p>
         <div class="hero-cta">
           <a class="btn btn-primary" href="#contact">お問い合わせ</a>
           <a class="btn btn-ghost" href="#price">料金を見る</a>
@@ -383,19 +381,40 @@
 
   <div class="page">
 
-    {# 図はヘッダー直下に単独で置く(オーナー指示 2026-09-05「figureを上にもってきた」) #}
-    <section class="section price-top figure-top">
+    {# 構成(オーナー指示 2026-09-05): ヘッダー → ノウハウ(見出し・本文・図・3ステップ) → 「ビジネスやラボのために」+本文 → プラン → 特徴 → … #}
+    <!-- ↓↓↓↓ 何をするのか(図) ↓↓↓↓ -->
+    <section class="section price-top" id="what">
+      <h2 class="section-title">長年のノウハウがすぐ手に入る</h2>
+      <p class="section-lead">KOBITOは、AI開発10年のThinkXが自ら用いている「非エンジニアでもスマートフォンやPCからクラウド内のAIコードエージェントに指示し、ページ追加等のサイト運用が可能になる」サイト基盤と運用基盤の、完成されたデフォルトのセットアップです。“コビト”はお客様のAWSクラウドサーバーの内部に常駐し、非エンジニアでも手元のスマートフォンで指示を出し、直接テスト環境と本番環境を変更できます。</p>
+
       <div class="figure">
         <img src="/img/products/KOBITO/diagram.jpg" alt="スマホから「最新情報のページに今日付で以下の内容を追加して」と指示すると、AWS のテスト環境サーバーに常駐する KOBITO がサイトを変更し、本番環境へ反映する図">
       </div>
-      <h2 class="section-title figure-title">ビジネスやラボのために。<br>洗練された設計が今すぐ使える。</h2>
-      <p class="section-lead">エンジニアを雇わなくてもエージェントで自社サイトを作れる時代になりました。しかし商用用途でゼロから作らせると、設計の品質が低く、長期的に不安定で安全性の低いシステムになることが多く、運用に耐えるまで長い改善が要ります。KOBITOはClaudeCodeをベースに長年の基盤がデフォルトパッケージ化されています</p>
-    </section>
 
-    <!-- ↓↓↓↓ 料金 ↓↓↓↓ -->
-    {# 見出しは置かず、プランのカード → 説明文 → 別途費用の順(オーナー指示 2026-09-05) #}
+      <ol class="steps">
+        <li>
+          <h3>指示する</h3>
+          <p>「サービスページに事例を1件追加して」。スマホでもPCでも、いつもの言葉で。</p>
+        </li>
+        <li>
+          <h3>テスト環境で確認する</h3>
+          <p>コビトがサイトを読んで変更案を作り、ステージング(テスト環境)に反映。実際の表示をスマホで確認します。</p>
+        </li>
+        <li>
+          <h3>承認して本番に公開する</h3>
+          <p>「公開して」で本番へ。本番への反映は必ず「お客様の承認」と「ステージングでの確認」を経ます。気に入らなければ「戻して」。</p>
+        </li>
+      </ol>
+      <p class="examples-note">ほかにも「FAQに質問を足して」「問い合わせボタンを目立たせて」「戻して」「ステージングを止めて」「先週のアクセスログを見せて」。運用に要る指示は、すべて同じチャットで。</p>
+    </section>
+    <!-- ↑↑↑↑ END 何をするのか(図) ↑↑↑↑ -->
+
+    <!-- ↓↓↓↓ 料金(見出し+本文 → カード → 説明文 → 別途費用) ↓↓↓↓ -->
     <section class="section" id="price">
-      <div class="plans">
+      <h2 class="section-title">ビジネスやラボのために。<br>洗練された設計が今すぐ使える。</h2>
+      <p class="section-lead">エンジニアを雇わなくてもエージェントで自社サイトを作れる時代になりました。しかし商用用途でゼロから作らせると、設計の品質が低く、長期的に不安定で安全性の低いシステムになることが多く、運用に耐えるまで長い改善が要ります。KOBITOはClaudeCodeをベースに長年の基盤がデフォルトパッケージ化されています</p>
+
+      <div class="plans price-plans">
         <div class="plan featured">
           <span class="badge">まずはここから</span>
           <p class="name">Lite</p>
@@ -451,29 +470,6 @@
       </div>
     </section>
     <!-- ↑↑↑↑ END 料金 ↑↑↑↑ -->
-
-    <!-- ↓↓↓↓ 何をするのか(図) ↓↓↓↓ -->
-    <section class="section" id="what">
-      <h2 class="section-title">シンプルに使える。高い拡張性</h2>
-      <p class="section-lead">KOBITOは、AI開発10年のThinkXが自ら用いている「非エンジニアでもスマートフォンやPCからクラウド内のAIコードエージェントに指示し、ページ追加等のサイト運用が可能になる」サイト基盤と運用基盤の、完成されたデフォルトのセットアップです。“コビト”はお客様のAWSクラウドサーバーの内部に常駐し、非エンジニアでも手元のスマートフォンで指示を出し、直接テスト環境と本番環境を変更できます。</p>
-
-      <ol class="steps">
-        <li>
-          <h3>指示する</h3>
-          <p>「サービスページに事例を1件追加して」。スマホでもPCでも、いつもの言葉で。</p>
-        </li>
-        <li>
-          <h3>テスト環境で確認する</h3>
-          <p>コビトがサイトを読んで変更案を作り、ステージング(テスト環境)に反映。実際の表示をスマホで確認します。</p>
-        </li>
-        <li>
-          <h3>承認して本番に公開する</h3>
-          <p>「公開して」で本番へ。本番への反映は必ず「お客様の承認」と「ステージングでの確認」を経ます。気に入らなければ「戻して」。</p>
-        </li>
-      </ol>
-      <p class="examples-note">ほかにも「FAQに質問を足して」「問い合わせボタンを目立たせて」「戻して」「ステージングを止めて」「先週のアクセスログを見せて」。運用に要る指示は、すべて同じチャットで。</p>
-    </section>
-    <!-- ↑↑↑↑ END 何をするのか(図) ↑↑↑↑ -->
 
     <!-- ↓↓↓↓ 選ばれる理由(ただ Claude Code を使うのとの違い) ↓↓↓↓ -->
     <section class="section" id="why">
