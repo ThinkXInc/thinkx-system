@@ -128,8 +128,9 @@
     .section-lead { margin-top: 18px; font-size: 17px; color: var(--ink-soft); max-width: 760px; }
 
     /* 料金(ヘッダー直後) */
-    .section.price-top { margin-top: 72px; }
-    .plans { margin-top: 36px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .section.price-top { margin-top: 90px; }
+    .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .price-lead { margin-top: 28px; max-width: none; }
     .plan { border: 1px solid var(--line); border-radius: 14px; padding: 28px 26px; display: flex; flex-direction: column; }
     .plan.featured { border: 2px solid var(--green); }
     .plan .name { font-size: 22px; font-weight: 800; color: var(--navy); }
@@ -149,8 +150,11 @@
     .running p { margin-top: 12px; font-size: 13px; color: var(--ink-soft); }
 
     /* 何をするのか: 図 + 3ステップ */
-    .figure { margin-top: 36px; }
     .figure img { width: 100%; height: auto; }
+    .section.figure-top { margin-top: 0; }
+    .figure-top .figure { margin-top: 0; }
+    .figure-title { margin-top: 60px; }
+    .section#price { margin-top: 43px; }
     .steps {
       list-style: none;
       counter-reset: step;
@@ -367,7 +371,7 @@
       <div class="hero-word">
         <p class="hero-base">ClaudeCodeベース</p>
         <h1 class="hero-title">サーバーに常駐する“コビト”に、スマホで指示。</h1>
-        <p class="hero-sub">10年のAI企業が自ら開発し使用するサイト運用システム</p>
+        <p class="hero-sub">10年のAI企業が自ら開発し使用する効率的なサイト運用システム</p>
         <div class="hero-cta">
           <a class="btn btn-primary" href="#contact">お問い合わせ</a>
           <a class="btn btn-ghost" href="#price">料金を見る</a>
@@ -379,38 +383,18 @@
 
   <div class="page">
 
-    <!-- ↓↓↓↓ 何をするのか ↓↓↓↓ -->
-    <section class="section price-top" id="what">
-      <h2 class="section-title">長年のノウハウがすぐ手に入る</h2>
-      <p class="section-lead">KOBITOは、AI開発10年のThinkXが自ら用いている「非エンジニアでもスマートフォンやPCからクラウド内のAIコードエージェントに指示し、ページ追加等のサイト運用が可能になる」サイト基盤と運用基盤の、完成されたデフォルトのセットアップです。“コビト”はお客様のAWSクラウドサーバーの内部に常駐し、非エンジニアでも手元のスマートフォンで指示を出し、直接テスト環境と本番環境を変更できます。</p>
-
+    {# 図はヘッダー直下に単独で置く(オーナー指示 2026-09-05「figureを上にもってきた」) #}
+    <section class="section price-top figure-top">
       <div class="figure">
         <img src="/img/products/KOBITO/diagram.jpg" alt="スマホから「最新情報のページに今日付で以下の内容を追加して」と指示すると、AWS のテスト環境サーバーに常駐する KOBITO がサイトを変更し、本番環境へ反映する図">
       </div>
-
-      <ol class="steps">
-        <li>
-          <h3>指示する</h3>
-          <p>「サービスページに事例を1件追加して」。スマホでもPCでも、いつもの言葉で。</p>
-        </li>
-        <li>
-          <h3>テスト環境で確認する</h3>
-          <p>コビトがサイトを読んで変更案を作り、ステージング(テスト環境)に反映。実際の表示をスマホで確認します。</p>
-        </li>
-        <li>
-          <h3>承認して本番に公開する</h3>
-          <p>「公開して」で本番へ。本番への反映は必ず「お客様の承認」と「ステージングでの確認」を経ます。気に入らなければ「戻して」。</p>
-        </li>
-      </ol>
-      <p class="examples-note">ほかにも「FAQに質問を足して」「問い合わせボタンを目立たせて」「戻して」「ステージングを止めて」「先週のアクセスログを見せて」。運用に要る指示は、すべて同じチャットで。</p>
+      <h2 class="section-title figure-title">ビジネスやラボのために。<br>洗練された設計が今すぐ使える。</h2>
+      <p class="section-lead">エンジニアを雇わなくてもエージェントで自社サイトを作れる時代になりました。しかし商用用途でゼロから作らせると、設計の品質が低く、長期的に不安定で安全性の低いシステムになることが多く、運用に耐えるまで長い改善が要ります。KOBITOはClaudeCodeをベースに長年の基盤がデフォルトパッケージ化されています</p>
     </section>
-    <!-- ↑↑↑↑ END 何をするのか ↑↑↑↑ -->
 
     <!-- ↓↓↓↓ 料金 ↓↓↓↓ -->
+    {# 見出しは置かず、プランのカード → 説明文 → 別途費用の順(オーナー指示 2026-09-05) #}
     <section class="section" id="price">
-      <h2 class="section-title">プランと価格</h2>
-      <p class="section-lead">買うのはテンプレートではなく、運用の土台一式。価格はすべて税抜。本体は買取で、初年度1年間のサポートを含みます。お申込みから2〜3週間で運用開始。2年目以降の保守は別途(年額・お見積り)。</p>
-
       <div class="plans">
         <div class="plan featured">
           <span class="badge">まずはここから</span>
@@ -453,6 +437,8 @@
         </div>
       </div>
 
+      <p class="section-lead price-lead">買うのはテンプレートではなく、運用の土台一式。価格はすべて税抜。本体は買取で、初年度1年間のサポートを含みます。お申込みから2〜3週間で運用開始。2年目以降の保守は別途(年額・お見積り)。</p>
+
       <div class="running">
         <h3>別途かかる費用(お客様所有のクラウド・AI利用料)</h3>
         <table>
@@ -466,15 +452,37 @@
     </section>
     <!-- ↑↑↑↑ END 料金 ↑↑↑↑ -->
 
+    <!-- ↓↓↓↓ 何をするのか(図) ↓↓↓↓ -->
+    <section class="section" id="what">
+      <h2 class="section-title">シンプルに使える。高い拡張性</h2>
+      <p class="section-lead">KOBITOは、AI開発10年のThinkXが自ら用いている「非エンジニアでもスマートフォンやPCからクラウド内のAIコードエージェントに指示し、ページ追加等のサイト運用が可能になる」サイト基盤と運用基盤の、完成されたデフォルトのセットアップです。“コビト”はお客様のAWSクラウドサーバーの内部に常駐し、非エンジニアでも手元のスマートフォンで指示を出し、直接テスト環境と本番環境を変更できます。</p>
+
+      <ol class="steps">
+        <li>
+          <h3>指示する</h3>
+          <p>「サービスページに事例を1件追加して」。スマホでもPCでも、いつもの言葉で。</p>
+        </li>
+        <li>
+          <h3>テスト環境で確認する</h3>
+          <p>コビトがサイトを読んで変更案を作り、ステージング(テスト環境)に反映。実際の表示をスマホで確認します。</p>
+        </li>
+        <li>
+          <h3>承認して本番に公開する</h3>
+          <p>「公開して」で本番へ。本番への反映は必ず「お客様の承認」と「ステージングでの確認」を経ます。気に入らなければ「戻して」。</p>
+        </li>
+      </ol>
+      <p class="examples-note">ほかにも「FAQに質問を足して」「問い合わせボタンを目立たせて」「戻して」「ステージングを止めて」「先週のアクセスログを見せて」。運用に要る指示は、すべて同じチャットで。</p>
+    </section>
+    <!-- ↑↑↑↑ END 何をするのか(図) ↑↑↑↑ -->
+
     <!-- ↓↓↓↓ 選ばれる理由(ただ Claude Code を使うのとの違い) ↓↓↓↓ -->
     <section class="section" id="why">
-      <h2 class="section-title">AIの設計に任せない。<br>長期的に失敗しないシンプルなスタックと運用。</h2>
-      <p class="section-lead">エンジニアを雇わなくてもエージェントで自社サイトを作れる時代になりました。しかし商用用途でゼロから作らせると、設計の品質が低く、長期的に不安定で安全性の低いシステムになることが多く、運用に耐えるまで長い改善が要ります。KOBITOは「作るAI」ではなく、完成された土台の上で「運用するAI」です。</p>
+      <h2 class="section-title">AIの設計に任せない。<br>長期的に失敗しないノウハウの蓄積</h2>
 
       <div class="pains">
         <div class="pain">
           <p class="before">AIは頼まれるたび、その場しのぎで作り足す。半年で中身は誰にも分からない。</p>
-          <div class="after">一貫した設計と基盤
+          <div class="after">一貫した設計と基盤で長期的な保守コストを下げる
             <p>当社が10年かけて決めた設計がそのまま入っている。コビトはその上でしか作らないので、何を足しても一貫したまま。</p>
           </div>
         </div>
@@ -568,7 +576,7 @@
 
     <!-- ↓↓↓↓ 実績 ↓↓↓↓ -->
     <section class="section" id="cases">
-      <h2 class="section-title">売っている構成と、使っている構成が同じ。</h2>
+      <h2 class="section-title">AI開発１０年の企業が自ら使用</h2>
       <p class="section-lead">ThinkXはAI開発10年、自社コードベース約67万行、特許4件(うち2件出願中)。このページ自体も、コビトが運用するサイトの1ページです。</p>
       <div class="cases">
         <div class="case">
@@ -610,7 +618,7 @@
         </details>
         <details>
           <summary>毎月いくらかかりますか。Claudeのどのプランが必要ですか。</summary>
-          <p class="answer">お客様のAWS利用料が月6,000〜9,000円程度(ステージングの稼働量による)、Claude有料プランが月$20〜、ドメインが年1,500円程度です。いずれもお客様のアカウントでお客様が直接お支払いになります。Claudeは有料プラン(月$20〜)で運用できます。プランの条件はAnthropic社により変更されることがあるため、導入時点の最適なプランをご案内します。サーバー構築の時点で、月々の費用がいくらになるかを明示します。</p>
+          <p class="answer">AWSクラウドサーバーのレンタル費用(月6,000〜9,000円程度*ステージングの稼働量による)、Claude有料プランが月$20〜、ドメインが年1,500円程度、がお客様負担で別途かかります。いずれもお客様のアカウントでお客様が直接お支払いになります。プランの条件はサービスプロバイダーにより変更されることがあるため、導入時点の最適なプランをご案内します。サーバー構築の時点で、月々の費用がいくらになるかを明示します。</p>
         </details>
         <details>
           <summary>サイトのデータや会社の情報は安全ですか。</summary>
