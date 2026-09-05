@@ -1573,3 +1573,15 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   (deploy_staging.sh 全体を回すと push_assets が staging に無い thinkx views/video 11 ファイルの配布を始めるため、
   今回は LB の同期だけに絞る。アセット配布は別件)。
 - LB → web の 8008 は SG 越しに到達(LB 上の curl で `/connect/state` が返る)。SG 変更なし。
+
+## 2026-09-05 N-4 完了・N-6 完了・N-7 待ち
+
+- N-4: LB を develop に同期(sync_from_origin.sh を ssh 経由で実行 → nginx -t → restart)。外形:
+  `/` 401 / `/connect/` 401 / `/connect` 301→`/connect/` / `/connect/state` 401 / `/event/philsemi2609` 401
+  (Basic 認証の外からは全て 401 = 既存ルートの応答は変わらない)。オーナーがスマホで
+  https://staging.thinkxinc.com/connect/ を開き「ロゴ・製品名・緑の『接続中』が出ている」を確認(2026-09-05)。
+- 見出しの一時変更(d704a89「ビジネスやラボのために。…」)は別セッション宛ての指示の誤送で、3b739da で
+  N-2 の版に戻した(diff なしを確認)。staging も追従済み(PR #77)。
+- N-6: `infra/runbooks/claude-connect.md` 新設、`infra/docs/運用.md` に URL 1 行(8bbdd58)。
+- N-7(未): staging stop→start の後に両 unit が自動起動するかは未確認(claude-session.service は一度も
+  systemd から起動されたことがない。8/7 の手動起動のまま)。オーナーの合図待ち。
