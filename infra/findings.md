@@ -1622,3 +1622,26 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
      塊で隠す(server.py find_url と同じ判定)。
   3. watch の journal tail が空: `-n 400` が全部 `GET /connect/state`(5 秒間隔 ≒ 33 分分)だった。`-n 5000` に。
 - 現時点の常駐セッションは `login_required`(URL あり)。ページからコード入力で戻る状態。
+
+## 2026-09-05 N-7 最終検証(スマホのみ)の結果と、途中で直したこと
+
+- (a) staging stop→start(02:30:55 停止開始 → 02:31:51 起動完了・start_staging.sh)。起動後 `claude-session` が
+  **初めて systemd から起動**して tmux+claude を作り(02:31:45)、`claude_connect` も自動起動。ページは起動から
+  約 70 秒で `connected`。両 unit とも enable 済みで再起動に耐える。
+- (b) ログアウトからの復旧: 02:33:22 に pane へ `/logout` → claude 終了で systemd の tmux(claude 単独のウィンドウ)ごと消え
+  `session_missing`+`loggedIn:false`。ページ操作(オーナー・iPhone): 05:53:39 ページ表示 → ボタン → 認証 →
+  05:54:34 コード送信 → 約 20 秒で `connected`。**ページだけで復旧できた。所要は認証込みで約 1 分。**
+- (c) tmux 消失からの復旧(ログイン済み): 10:54:56 ページ表示 → 10:54:57 頃ボタン 1 回 → 10:54:58 tmux 作成 →
+  10:55:05 `connected`。**タップから約 8 秒。**
+- 途中で直したこと:
+  1. **iPhone Safari でボタンが効かない**(about:blank だけ開く)。タップ内で空タブを開いて後から URL を入れる方式は、
+     Safari が空タブに切り替えた時点で元ページの fetch が止まり `/connect/session` が届かない。→ 1 回目のタップで
+     POST、URL が返ったら同じ位置の `<a target=_blank>` に差し替え、2 回目のタップで認証画面(a36219c)。
+  2. **送信後の 20 秒に何が起きているか分からない**(オーナー指摘)。→ server.py が操作中の `phase` を返し、ページが
+     1 秒ごとに読んで段階(コードを送信 → 認証を確認 → セッションを起動 → 接続を確認)を済み/進行中/これからで描き、
+     完了時は残りを 1 段ずつ済みにしてから接続中へ(5e3a13a)。
+  3. 見出し: 製品名 → キャッチコピー(誤送・戻し)→「サーバーの常駐エージェントへの接続」(サブタイトル無し)で確定。
+- 観測: `claude_connect` が 8 時間で CPU 10 分消費。状態取得(ページ 5 秒ごと)のたびに `claude auth status`(node 起動)を
+  走らせていたため。→ 結果を 3 秒だけ使い回す(本コミット)。
+- 別セッションが `infra/runbooks/claude-connect.md` に `stg.py`(未コミット・未作成)の節を追記している。
+  自分のハンクだけを `git apply --cached` で載せて commit した。
