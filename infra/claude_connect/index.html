@@ -66,6 +66,7 @@
   }
   .button:active { background: #2a2a2a; }
   .button[aria-disabled="true"], .button:disabled { opacity: 0.55; pointer-events: none; }
+  .button[hidden] { display: none; }
 
   .code { margin-top: 14px; }
   .code label { display: block; font-size: 13px; color: var(--ink-soft); margin-bottom: 6px; }
@@ -104,6 +105,7 @@
 
     <div class="actions" id="actions" hidden>
       <button class="button" id="reconnect" type="button">セッションを再接続</button>
+      <a class="button" id="open_auth" target="_blank" rel="noopener" hidden>セッションを再接続</a>
       <div class="code">
         <label for="code">認証後に表示されたコードをここに貼る</label>
         <form class="row" id="code_form" autocomplete="off">
@@ -126,6 +128,7 @@
   var note = document.getElementById("note");
   var actions = document.getElementById("actions");
   var reconnect = document.getElementById("reconnect");
+  var openAuth = document.getElementById("open_auth");
   var form = document.getElementById("code_form");
   var codeInput = document.getElementById("code");
   var sendButton = document.getElementById("send");
@@ -154,9 +157,16 @@
       return;
     }
     actions.hidden = false;
+    // URL が分かっているときは、同じ位置・同じ見た目の本物のリンクにする(タップで別タブに認証画面。
+    // 空タブを先に開いて後から URL を入れる方式は iPhone Safari で元ページの処理が止まり動かなかった)。
     if (data.state === "login_required" && data.url) {
-      setStatus("disconnected", "接続されていません", "ボタンを押すと認証画面が開きます。認証後のコードを下に貼ってください");
+      openAuth.href = data.url;
+      openAuth.hidden = false;
+      reconnect.hidden = true;
+      setStatus("disconnected", "接続されていません", "ボタンを押すと認証画面が別タブで開きます。認証後に表示されたコードを下に貼ってください");
     } else {
+      openAuth.hidden = true;
+      reconnect.hidden = false;
       setStatus("disconnected", "接続されていません", "");
     }
   }
@@ -181,26 +191,19 @@
     if (busy) return;
     error.textContent = "";
 
-    // URL が分かっているときは、そのまま認証画面を別タブで開く(タップ直後なので開ける)。
-    if (current.url) { window.open(current.url, "_blank"); return; }
-
-    // まだ URL が無いときは、タップの中で空タブを先に開いておき、応答の URL を流し込む(Safari でも開ける)。
-    var popup = window.open("", "_blank");
     busy = true;
     reconnect.setAttribute("aria-disabled", "true");
-    setStatus("checking", "確認中", "セッションを立て直しています");
+    setStatus("checking", "確認中", "セッションを立て直しています(30 秒ほどかかることがあります)");
     post("/connect/session")
       .then(function (data) {
         busy = false;
         reconnect.removeAttribute("aria-disabled");
-        if (data.url) { if (popup) popup.location = data.url; }
-        else if (popup) popup.close();
         render(data);
+        if (data.url) note.textContent = "もう一度「セッションを再接続」を押すと認証画面が別タブで開きます。認証後に表示されたコードを下に貼ってください";
       })
       .catch(function (e) {
         busy = false;
         reconnect.removeAttribute("aria-disabled");
-        if (popup) popup.close();
         error.textContent = e.message;
         poll();
       });
