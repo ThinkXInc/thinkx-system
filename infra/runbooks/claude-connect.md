@@ -63,11 +63,17 @@ attach 先で状況に応じて:
 - claude が固まっている → Ctrl-C で抜けてから同上。
 - デタッチは Ctrl-b d。**`exit` で shell を抜けると tmux サーバーごと消える**(ページの「セッションを再接続」で戻る)。
 
-サーバー側の確認:
+サーバー側の確認(Mac から。承認プロンプトは出ない。要件は `infra/scripts/README.md` stg.py の節):
 ```bash
-ssh supercom-web1-stg 'systemctl is-active claude_connect claude-session; sudo -u kaz tmux ls; sudo -u kaz claude auth status; curl -s http://192.168.2.11:8008/connect/state'
+cd ~/Sources/thinkx-system
+python3 infra/scripts/stg.py check
+python3 infra/scripts/stg.py watch
+python3 infra/scripts/stg.py log --since-min 30
+python3 infra/scripts/stg.py doctor
 ```
-`claude_connect` が落ちていれば `sudo systemctl restart claude_connect`、ログは `journalctl -u claude_connect`。
+`check` = unit・tmux・state・pane 末尾・外形(401 が正常)。`watch` = 復旧の見守り(connected で抜ける)。
+`log` = claude_connect の journal(相対時刻・サーバーは UTC)。`doctor` = 前提の照合(staging 再構築後に最初に叩く)。
+`claude_connect` が落ちていれば `ssh supercom-web1-stg 'sudo systemctl restart claude_connect'`(変更系。承認あり)。
 
 ## 5. ゼロから再実装できる要件
 
