@@ -1585,3 +1585,40 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
 - N-6: `infra/runbooks/claude-connect.md` 新設、`infra/docs/運用.md` に URL 1 行(8bbdd58)。
 - N-7(未): staging stop→start の後に両 unit が自動起動するかは未確認(claude-session.service は一度も
   systemd から起動されたことがない。8/7 の手動起動のまま)。オーナーの合図待ち。
+
+## 2026-09-05 staging 観測スクリプト(stg 監視の無承認化)の前提調査
+
+- claude_connect は **web1-stg 自身**で動く(setup_claude_connect.sh は staging web に流す・unit は User=kaz)。
+  bind は `hostname -I` 先頭 = 192.168.2.11 のみ(`ss -ltn` で `192.168.2.11:8008`)。**127.0.0.1:8008 には居ない**
+  (curl 実測 000)。ホスト上からは `http://web1:8008/connect/state`(200)か `hostname -I` 先頭で叩く。
+  `hostname -I` は `192.168.2.11 172.17.0.1`(docker bridge が2番目)。
+- 192.168.2.11 は terraform の `local.web_ip` で固定指定(variables.tf)。再構築で変わらない。
+  内部名 web1.supercom.internal も dns.tf が private_ip に追従(search domain 配布済み・`getent hosts web1` = 192.168.2.11)。
+- ssh 別名 supercom-web1-stg は hostname.md ①層の正規名。公開 IP は EIP 台帳(terraform/eips・D-53)で
+  57.182.107.57 固定、staging.thinkxinc.com は staging_lb EIP 52.68.142.190 固定(Route53 手動 A・DNS切替手順で触らない)。
+  再構築でも別名・URL とも不変。
+- サーバー TZ は **Etc/UTC**(timedatectl 実測。setup に TZ 設定なし = Ubuntu 既定)。server.py の observed_at も UTC。
+  journalctl `--since "HH:MM"` は UTC 解釈。相対指定(`--since -30min`)なら TZ を意識しなくてよい。
+- ssh ログインは ubuntu。`sudo -n` は通る。tmux は `sudo -n -u kaz tmux ls` で見える。
+- 観測時(03:22Z)の state は `login_required` + URL あり(tmux `claude` は 03:05:57Z 作成)。
+- 置き場所: infra/docs/GUIDELINES.md に「bash は linear のみ・分岐が要るなら python(`scripts/`)」「新規 bash を scripts/ に足さない」
+  の指示あり。サブコマンド分岐を持つ観測ツールは bash でなく `infra/scripts/*.py` が規約適合。
+- settings の Edit/Write deny は Bash 経由(sed -i・tee)を止められない(素の Bash が allow)。ファイル保護は
+  「標準ツールでの誤編集防止」であり境界ではない。境界が要るなら ssh forced command(authorized_keys)側。
+
+## 2026-09-05 O-1 stg.py(staging 観測・承認なし)実測
+
+- `python3 infra/scripts/stg.py {doctor,check,log,watch}` は Mac から承認プロンプト無しで走った(ask は ssh/curl の前置一致のみ)。
+- doctor: 9 件すべて OK(user=ubuntu / hostname=web1-stg / sudo=ok / tz=Etc/UTC / listen=192.168.2.11:8008 /
+  web1=192.168.2.11 / claude-session enabled / claude_connect enabled / state_http=200)。
+- check: 4 unit active / tmux `claude` 1 windows・pane=claude / state=login_required url=yes /
+  外形 `/` `/connect/` `/connect/state` = 401 401 401 → `OK: stg check state=login_required 外形 3/3 = 401`。
+- log --since-min 5 -n 5: `GET /connect/state` が 5 秒間隔で 5 行(ページのポーリング)。
+- watch --interval 2 --max 2: `05:48:59Z login_required url=yes` → 上限で FAIL(state が connected でないため正しい)。
+  journal tail は `GET /connect/` / `POST /connect/session` x2(03:06Z)/ `GET /connect/`。
+- 直した点(1 回目の実行で露出):
+  1. Mac の python3(3.9.2)の urllib は CA バンドル無しで `CERTIFICATE_VERIFY_FAILED`。外形は curl(OS 信頼ストア)を subprocess で呼ぶ形に。
+  2. pane の URL は複数行に折れるため行単位の隠しでは 2 行目以降が漏れた。行頭 http から空行・行頭空白の手前までを
+     塊で隠す(server.py find_url と同じ判定)。
+  3. watch の journal tail が空: `-n 400` が全部 `GET /connect/state`(5 秒間隔 ≒ 33 分分)だった。`-n 5000` に。
+- 現時点の常駐セッションは `login_required`(URL あり)。ページからコード入力で戻る状態。
