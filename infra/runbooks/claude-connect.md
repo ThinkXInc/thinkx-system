@@ -90,7 +90,9 @@ python3 infra/scripts/stg.py doctor
   送信〜接続中の間は `/connect/state` の `phase` を 1 秒ごとに読み、段階(コードを送信 → 認証を確認 → セッションを起動 →
   接続を確認)を済み/進行中/これから で描く。
 - unit: `User=kaz` / `WorkingDirectory=/src/thinkx-system/infra/claude_connect` / `ExecStart=/usr/bin/python3 server.py` /
-  `Restart=always` / `After=claude-session.service`。setup は symlink → daemon-reload → enable → restart → verify。
+  `Restart=always` / `After=claude-session.service` / **`KillMode=process`**(ページから作った tmux は server.py の子で
+  この unit の cgroup に入る。既定の control-group だと unit の restart で tmux ごと消える — findings 2026-09-06)。
+  setup は symlink → daemon-reload → enable → restart → verify。
 - 大原則: staging 限定 / 認証情報を預からない / claude-session.service を変えない / 依存を増やさない /
   観測した文言を正にする(推測で判定を書かない)。
 - やらないこと: prod 配置・SG/terraform 変更・トークン保存・各サイト main.py への組み込み・停止中 staging の起動。
