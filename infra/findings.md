@@ -1698,3 +1698,11 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   2 は staging の deploy-timer が既に自動で行う(ボタン化するなら「develop に合わせる」= sync の即時実行)。
   0 は GitHub の PR(gh が staging に無い・API token の扱い D-50)、1 はローカル機の作業なので、
   それぞれ受け口の設計が要る。「リモートのソースコードをローカルマシンに fetch」も同じ系統。
+
+## 2026-09-06 UI に載せない操作(オーナー提示): start/stop/plan/apply/destroy は CLI に残す
+
+- 原文: 「これらも手元にあるがすべてをこの UI に実装するべきではないだろう」(start/stop(staging)・plan/apply/destroy(staging)・
+  plan/apply(prod) のコマンドリスト)
+- 対応: stop/start はページ自体が staging 上にあるので原理的に載せられない(計画書「やらないこと」)。terraform の
+  plan/apply/destroy は箱の生成・破壊で、承認プロンプトつきの CLI(terraform_apply.sh / terraform_destroy.sh)に残す。
+  リモコンに載せるのは「staging に既にあるものを動かす・出す」操作(接続の復旧・Claude を開く・本番に反映)まで。
