@@ -1660,3 +1660,16 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
 - 検証(2026-09-06 04:29): KillMode=process を daemon-reload → restart で適用 → ページと同じ POST で tmux 作成(4.4 秒で
   `connected`)→ `systemctl restart claude_connect` → `tmux ls` に残り、state は `connected` のまま。cgroup には
   tmux / claude / python3 が同居するが python3 だけが入れ替わる。
+
+## 2026-09-06 今後の候補(オーナー発言・未着手): /connect/ を「テレビのリモコン」にする
+
+- 原文: 「bash infra/scripts/deploy_production_from_staging.sh 今これをコンソールで実行している これを connect の
+  ウィンドウでボタンを押せば同じことをできるようにする可能性があるので覚えておいてほしい connect のウィンドウで
+  接続したら claude のチャット画面に飛ぶようにもしたい つまり connect のウィンドウはテレビリモコンのようになる」
+- 候補 1(小): 接続中のとき pane の `/remote-control is active … https://claude.ai/code/session_…` から URL を拾って
+  「Claude を開く」リンクを出す。server.py は既に pane を読んでいるので追加は数行。
+- 候補 2(要設計): 本番デプロイのボタン。承認レベル D-50(L2b = マージがオーナー承認)と「本番の引き金はオーナー」に
+  関わる。ボタン=承認(完走型 deploy_production_from_staging.sh 相当)にするか、release/PR を作ってマージ URL を出す
+  (request_production_release.sh 相当)までにするかはオーナー判断。staging 上で完走型を動かすには deploy key の write と
+  Mac 側 fetch バックアップ(D-55②)の置き換えも要る。
+- どちらも現計画書(CLAUDE_CONNECT_PLAN.md)の範囲外。着手は新しい計画または追記(人間)を待つ。
