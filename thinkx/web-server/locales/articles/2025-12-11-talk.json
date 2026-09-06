@@ -1,0 +1,241 @@
+{
+  "metadata_blog_2025-12-11-talk": {
+    "ja": {
+      "title": "創造性と人間の思考──認知科学者 植田一博教授と探る、近代文明の及ぼす思考の力学",
+      "description": "専門知識と発想力の逆相関、情報探索と脳科学研究の方法論、ASDと予測不可能性",
+      "keywords": "インタビュー, 植田一博, 認知科学, 創造性, 発想力, 専門知識, 情報探索, fMRI, 前頭極, 行動経済学, 需要側イノベーション, ASD, 自由エネルギー原理, WEIRD, 分析的思考, 東京大学, ThinkX"
+    },
+    "en": {
+      "title": "Creativity and Human Thought ── Exploring the Dynamics of Thinking Shaped by Modern Civilization with Cognitive Scientist Professor Kazuhiro Ueda",
+      "description": "The inverse correlation between expertise and creativity, methodology in information search and brain science, and ASD and unpredictability",
+      "keywords": "Interview, Kazuhiro Ueda, Cognitive Science, Creativity, Ideation, Expertise, Information Search, fMRI, Frontopolar Cortex, Behavioral Economics, Demand-side Innovation, ASD, Free Energy Principle, WEIRD, Analytic Thinking, The University of Tokyo, ThinkX"
+    },
+    "zh": {
+      "title": "Creativity and Human Thought ── Exploring the Dynamics of Thinking Shaped by Modern Civilization with Cognitive Scientist Professor Kazuhiro Ueda",
+      "description": "The inverse correlation between expertise and creativity, methodology in information search and brain science, and ASD and unpredictability",
+      "keywords": "Interview, Kazuhiro Ueda, Cognitive Science, Creativity, Ideation, Expertise, Information Search, fMRI, Frontopolar Cortex, Behavioral Economics, Demand-side Innovation, ASD, Free Energy Principle, WEIRD, Analytic Thinking, The University of Tokyo, ThinkX"
+    },
+    "es": {
+      "title": "Creativity and Human Thought ── Exploring the Dynamics of Thinking Shaped by Modern Civilization with Cognitive Scientist Professor Kazuhiro Ueda",
+      "description": "The inverse correlation between expertise and creativity, methodology in information search and brain science, and ASD and unpredictability",
+      "keywords": "Interview, Kazuhiro Ueda, Cognitive Science, Creativity, Ideation, Expertise, Information Search, fMRI, Frontopolar Cortex, Behavioral Economics, Demand-side Innovation, ASD, Free Energy Principle, WEIRD, Analytic Thinking, The University of Tokyo, ThinkX"
+    },
+    "ru": {
+      "title": "Creativity and Human Thought ── Exploring the Dynamics of Thinking Shaped by Modern Civilization with Cognitive Scientist Professor Kazuhiro Ueda",
+      "description": "The inverse correlation between expertise and creativity, methodology in information search and brain science, and ASD and unpredictability",
+      "keywords": "Interview, Kazuhiro Ueda, Cognitive Science, Creativity, Ideation, Expertise, Information Search, fMRI, Frontopolar Cortex, Behavioral Economics, Demand-side Innovation, ASD, Free Energy Principle, WEIRD, Analytic Thinking, The University of Tokyo, ThinkX"
+    },
+    "fr": {
+      "title": "Creativity and Human Thought ── Exploring the Dynamics of Thinking Shaped by Modern Civilization with Cognitive Scientist Professor Kazuhiro Ueda",
+      "description": "The inverse correlation between expertise and creativity, methodology in information search and brain science, and ASD and unpredictability",
+      "keywords": "Interview, Kazuhiro Ueda, Cognitive Science, Creativity, Ideation, Expertise, Information Search, fMRI, Frontopolar Cortex, Behavioral Economics, Demand-side Innovation, ASD, Free Energy Principle, WEIRD, Analytic Thinking, The University of Tokyo, ThinkX"
+    },
+    "ar": {
+      "title": "Creativity and Human Thought ── Exploring the Dynamics of Thinking Shaped by Modern Civilization with Cognitive Scientist Professor Kazuhiro Ueda",
+      "description": "The inverse correlation between expertise and creativity, methodology in information search and brain science, and ASD and unpredictability",
+      "keywords": "Interview, Kazuhiro Ueda, Cognitive Science, Creativity, Ideation, Expertise, Information Search, fMRI, Frontopolar Cortex, Behavioral Economics, Demand-side Innovation, ASD, Free Energy Principle, WEIRD, Analytic Thinking, The University of Tokyo, ThinkX"
+    }
+  },
+  "article_title": {
+    "ja": "創造性と人間の思考──認知科学者 植田一博教授と探る、近代文明の及ぼす思考の力学",
+    "en": "Creativity and Human Thought ── Exploring the Dynamics of Thinking Shaped by Modern Civilization with Cognitive Scientist Professor Kazuhiro Ueda",
+    "zh": "Creativity and Human Thought ── Exploring the Dynamics of Thinking Shaped by Modern Civilization with Cognitive Scientist Professor Kazuhiro Ueda",
+    "es": "Creativity and Human Thought ── Exploring the Dynamics of Thinking Shaped by Modern Civilization with Cognitive Scientist Professor Kazuhiro Ueda",
+    "ru": "Creativity and Human Thought ── Exploring the Dynamics of Thinking Shaped by Modern Civilization with Cognitive Scientist Professor Kazuhiro Ueda",
+    "fr": "Creativity and Human Thought ── Exploring the Dynamics of Thinking Shaped by Modern Civilization with Cognitive Scientist Professor Kazuhiro Ueda",
+    "ar": "Creativity and Human Thought ── Exploring the Dynamics of Thinking Shaped by Modern Civilization with Cognitive Scientist Professor Kazuhiro Ueda"
+  },
+  "article_date": {
+    "ja": "2025年12月11日",
+    "en": "December 11, 2025",
+    "zh": "December 11, 2025",
+    "es": "December 11, 2025",
+    "ru": "December 11, 2025",
+    "fr": "December 11, 2025",
+    "ar": "December 11, 2025"
+  },
+  "article_guest": {
+    "ja": "植田一博 東京大学大学院総合文化研究科 広域科学専攻 教授",
+    "en": "Kazuhiro Ueda, Professor, Department of General Systems Studies, Graduate School of Arts and Sciences, The University of Tokyo",
+    "zh": "Kazuhiro Ueda, Professor, Department of General Systems Studies, Graduate School of Arts and Sciences, The University of Tokyo",
+    "es": "Kazuhiro Ueda, Professor, Department of General Systems Studies, Graduate School of Arts and Sciences, The University of Tokyo",
+    "ru": "Kazuhiro Ueda, Professor, Department of General Systems Studies, Graduate School of Arts and Sciences, The University of Tokyo",
+    "fr": "Kazuhiro Ueda, Professor, Department of General Systems Studies, Graduate School of Arts and Sciences, The University of Tokyo",
+    "ar": "Kazuhiro Ueda, Professor, Department of General Systems Studies, Graduate School of Arts and Sciences, The University of Tokyo"
+  },
+  "article_intro": {
+    "ja": "認知科学・行動経済学を専門とし、創造性や意思決定の研究をリードしてきた東京大学の植田一博教授に、専門知識と発想力の関係を調べた実験、情報探索をめぐる脳科学研究の方法論、そして予測不可能性の観点から取り組む今後の研究テーマについて、お話を伺いました。",
+    "en": "Professor Kazuhiro Ueda of The University of Tokyo, a specialist in cognitive science and behavioral economics who has led research on creativity and decision-making, spoke with us about experiments examining the relationship between expertise and creativity, the methodology of brain science research on information search, and his future research themes approached from the perspective of unpredictability.",
+    "zh": "Professor Kazuhiro Ueda of The University of Tokyo, a specialist in cognitive science and behavioral economics who has led research on creativity and decision-making, spoke with us about experiments examining the relationship between expertise and creativity, the methodology of brain science research on information search, and his future research themes approached from the perspective of unpredictability.",
+    "es": "Professor Kazuhiro Ueda of The University of Tokyo, a specialist in cognitive science and behavioral economics who has led research on creativity and decision-making, spoke with us about experiments examining the relationship between expertise and creativity, the methodology of brain science research on information search, and his future research themes approached from the perspective of unpredictability.",
+    "ru": "Professor Kazuhiro Ueda of The University of Tokyo, a specialist in cognitive science and behavioral economics who has led research on creativity and decision-making, spoke with us about experiments examining the relationship between expertise and creativity, the methodology of brain science research on information search, and his future research themes approached from the perspective of unpredictability.",
+    "fr": "Professor Kazuhiro Ueda of The University of Tokyo, a specialist in cognitive science and behavioral economics who has led research on creativity and decision-making, spoke with us about experiments examining the relationship between expertise and creativity, the methodology of brain science research on information search, and his future research themes approached from the perspective of unpredictability.",
+    "ar": "Professor Kazuhiro Ueda of The University of Tokyo, a specialist in cognitive science and behavioral economics who has led research on creativity and decision-making, spoke with us about experiments examining the relationship between expertise and creativity, the methodology of brain science research on information search, and his future research themes approached from the perspective of unpredictability."
+  },
+  "article_conversation": {
+    "ja": [
+      {
+        "speaker": "大塚一輝（以下、大塚）",
+        "text": "本日はよろしくお願いします。"
+      },
+      {
+        "speaker": "植田一博先生（以下、植田）",
+        "text": "よろしくお願いします。"
+      },
+      {
+        "speaker": "大塚",
+        "text": "専門知識と発想力の関係について実験をされていると伺いました。どのような研究なのでしょうか。"
+      },
+      {
+        "head": "専門知識と発想力が逆相関する"
+      },
+      {
+        "speaker": "植田",
+        "text": "四年前の実験ですが、<b>専門家とそうでない人たちのどちらがアイデアを出しやすいだろうということに仮説を立てて</b>、まず専門家に近いという自負があるので、他の人の意見に従わないとかね、そういうのもあるんですが、もっと本質的に認知的になんかあるのではということを調べたのがこの実験なんですね。\n\n知識量が多い人と少ない人、全体のトップ25パーセントとボトム25パーセントに、家にあるスピーカーの写真を撮ってきてもらったんですね。専門家は、家にあるスピーカーの写真撮ってきてくださいというと、ドアップにしてくるんですよ。なぜそんなドアップにするですかと聞くと、いや型番とかがわかんないでしょと。専門家でない人たちは、どういうふうに使われているかを写真に撮ってくるんですよ。\n\n<b>写真に撮らせることで、その人に対する製品への注意の向き方が大体わかる。写真の中のスピーカーの占める比率によって注意配分パターンが分かるだろと。</b>専門家でない、要するに知識があまりない人は、こういう風に家の中でどう使われてるかっていうのを撮ってきます。<b>写真のうちどのくらいスピーカーをドアップにしてるか、その割合を縦軸にとると、ここには有意差があるんですね。要するに専門家の方がドアップしやすい</b>ということが分かります。\n\n実際にアイデア生成テストをやって、その質評価してもらうと、これは専門家の評価なんですけど、知識が少ない人の方がいい。<b>逆転するんですね。</b>要するに、知識多すぎるとそこにフォーカスをしすぎてしまって、かえってアイデアが出ない。こういう類いの実験を創造性研究ではやってます。"
+      },
+      {
+        "speaker": "大塚",
+        "text": "発想力は関係ないものを結びつける力と関係がある気がします。"
+      },
+      {
+        "speaker": "植田",
+        "text": "今言われてます。リモートアソシエーションテストみたいなやつですよね。情報探索に関わる脳部位っていうのがあって、そこの活動量を調べてるんですが、微妙な結果なんですよ。いいアイデア出す人の方がその部位があの活動が強いんだけど、統計的に有意とまでは言えないですね。N数の問題もあって、fMRIの中でやるとやっぱりコストがかかるので、あまりNを多くできないという問題がありますね。\n\n別の実験ではウェブ上で検索をさせて、デジイチの新しい機能とかを考えてもらって、そうすると、面白いアイデアを出す人というのは、<b>カメラのピンポイントの情報だけを集めるんじゃなくて、むしろ離れた情報を集めに行く</b>んですね。街中に張り巡らされた監視カメラの情報とか、鳥の目とか、幅広く情報が集まりますよね、その上で情報を結び付けることはやってるようだというのは分かりました。\n\nだからおっしゃるように、離れた領域の情報を結びつけるということも関係するし、関係のないやや外れたものを探索するということも関係する。だから脳部位として情報探索の脳部位を調べました。ただ証拠を出すのはハードルが高いですね。前頭極が関係しているという、NATUREにも載ってる先行研究はありますが、脳科学の実験というのは、実験刺激を統制して、被験者も統制して、いかに分散を小さくするかですが、逆にこうした類の問題では統制したら意味がなくなってしまう。マーケットの、日常に近い場面で情報探索をやらせると必然的にノイズが大きくなる。分散がでかいんですよ。\n\n僕らは基本的にはビヘイビアに興味があるので、こういう実験を色々やっているのですが、脳科学的な根拠もあるといいよねという。そうすると今まで脳科学の方でいろいろ議論してきたことに貢献できるわけです。"
+      },
+      {
+        "speaker": "大塚",
+        "text": "脳（神経）科学と呼ばれる分野は、この脳部位がある認知能力に関係している、と帰結しますが、脳部位が活性化しているという観測から本当に特定の情報処理に関わっていると言えるには飛躍があります。それならむしろ外部の（ビヘイビアの）観察を厳密にする方がある種誠実である気がします。"
+      },
+      {
+        "speaker": "植田",
+        "text": "それは多分脳科学全部そうで、要は積み重ねてきたデータが整合的に解釈できるということが大事で、シンプリシティとか、仮説の良さを評価する基準というのは色々ありますよね。その基準で他の仮説よりはいいということであって、厳密に証明するのは難しいですね。"
+      },
+      {
+        "speaker": "大塚",
+        "text": "マーケットのメカニズムを多く研究されていると思います。私の話で恐縮ですが、結局自然界の進化は受容側が決定してるのではと考えています。例えばある楽曲が流行ったとして、世間ではそれを作った人が起源と見ますが、実際にはシステムの需要が引き出されたと見るべきではないかと。"
+      },
+      {
+        "speaker": "植田",
+        "text": "多分、それはあると思いますね。根本的な原理を考えるのはサプライヤー側かもしれないけど、アイデアは実際に困っている需要側から出る。"
+      },
+      {
+        "speaker": "大塚",
+        "text": "企業とよく仕事をされているイメージがあります。"
+      },
+      {
+        "speaker": "植田",
+        "text": "そうですね。博報堂はずっと一緒にやってきたし、コンサルティング会社とか、あとは日立ソリューションズとかJTとかね、一緒にやっていますね。"
+      },
+      {
+        "head": "文明の歩みとともに思考は分類的になったのか"
+      },
+      {
+        "speaker": "大塚",
+        "text": "今後どのようなことに関心があるのでしょうか。"
+      },
+      {
+        "speaker": "植田",
+        "text": "ASDを予測不可能性の観点から研究したいですね。例えば朝、ニュースを見て天気予報を見て、今日は降雨確率ゼロパーセントだなと思って出かけたのに、その瞬間西の空を見て、ちょっと曇ってると。<b>信念に対する確率を変える</b>ということを僕らは普通しますよね。ASDの人たちはそれがすごい苦手なんですよ。そのことを実験的に検討していて、最終的に自由エネルギー原理の観点からTD<sup>*1</sup>とASDをモデル上で弁別するということをやりたいのです。\n\nWEIRD（Western（西洋の）、Educated（教育水準の高い）、Industrialized（工業化された）、Rich（裕福な）、Democratic（民主主義の））という、ハーバードの人たちですが、西洋の教育水準の高い工業化された裕福な民主主義国の頭文字を取ってきて、<b>この人たちの心的特徴というのが個人主義で、自己に注目して集団への低い同調性があって、所謂ASD的な特徴を持っていると言われている</b>んですよね。これが実際に世の中のいろいろな国のデータを取ると、はっきりと言われている。たとえばそれが親族システムと関係しているというのが、ヘンリック達の親族家族システム、トッドと同じですね。（親族の結びつきが強い社会は）分析的思考<sup>*2</sup>の割合が低い、WEIRDの傾向が少ないとか、そういうことが言われています。\n\nで、僕がやりたいのは、要は情報化社会になって、ある意味専門的な知識がどんどん増えてますよね。その情報化の程度と今の人々の心理の関係を分析して、最終的にASD研究とドッキングさせたいと思っています。分類課題<sup>*2</sup>と知識量の関係を調べているんですが、<b>知識量が多い人ほどですね、分類カテゴリーを選択する割合が右肩上がりなんですよね。しかも女性が顕著なんですよ。</b>なぜかはわからないですが、西洋文明的な考え方が進んでいくと、非常に分析的なやり方になる。\n\nASDと言われている人がどういう行動傾向で、どういう背景でそういう人が生まれるのかを明らかにすることで、その対症療法のようなものに行き着けばいいなと思っているんですね。"
+      },
+      {
+        "speaker": "大塚",
+        "text": "女性が多いのは、需要側が進化を引き起こすということで言えば、女性がその選択の先にいるからかもしれませんね。\n思考の問題は、私がSNSで投稿している哲学の問題にも関係しますが、言語化されにくく後回しにされがちです。非常に本質的で社会的に重要な問題だと思います。本日は様々な興味深い研究をご紹介いただき、ありがとうございました。"
+      },
+      {
+        "speaker": "植田",
+        "text": "こちらこそありがとうございました。"
+      },
+      {
+        "footnote": "<sup>*1</sup> TD: Typically Developing 定型発達の略で、自閉症研究ではASD群とTD群（対照群）の比較が一般的な枠組みとされる。\n\n<sup>*2</sup> 分析的思考/分類課題: 例えばよくある三つ組課題(Nisbett らによる)では「牛・鶏・草」から二つをまとめさせると、「牛と鶏」(動物という分類学的カテゴリー)を選ぶのが分析的思考、「牛と草」(牛は草を食べるという関係)を選ぶのが包括的思考とされ、WEIRD諸国ほど前者の割合が高い。"
+      }
+    ],
+    "en": [
+      {
+        "speaker": "Kazuki Otsuka (hereinafter Otsuka)",
+        "text": "Thank you for taking the time today."
+      },
+      {
+        "speaker": "Professor Kazuhiro Ueda (hereinafter Ueda)",
+        "text": "Thank you as well."
+      },
+      {
+        "speaker": "Otsuka",
+        "text": "I heard that you have been running experiments on the relationship between expertise and creativity. What kind of research is it?"
+      },
+      {
+        "head": "Expertise and Creativity Are Inversely Correlated"
+      },
+      {
+        "speaker": "Ueda",
+        "text": "This was an experiment four years ago. We set up a hypothesis about which group, experts or non-experts, finds it easier to generate ideas. Part of it is that experts have a certain pride in being close to specialists, so they don't follow other people's opinions, and so on. But this experiment looked into whether there is something more fundamentally cognitive going on.\n\nWe asked people with a lot of knowledge and people with little, the top 25 percent and the bottom 25 percent overall, to take a photo of a speaker they have at home. When you ask experts to photograph the speaker at home, they take an extreme close-up. When I asked why they zoomed in so much, they said, well, otherwise you can't see the model number. Non-experts, on the other hand, photograph how the speaker is being used.\n\nBy having people take photos, you can roughly see how their attention is directed toward the product. The idea was that the ratio of the speaker within the photo would reveal their pattern of attention allocation. Non-experts, that is, people with little knowledge, photograph how it is used inside the home. If you plot on the vertical axis how much of the photo is a close-up of the speaker, there is a significant difference. In short, experts are more likely to zoom in.\n\nThen we actually ran an idea generation test and had the quality evaluated, and this is evaluation by experts, but the people with less knowledge did better. It reverses. In other words, when you have too much knowledge, you focus too much on it and ideas actually stop coming. This is the kind of experiment we do in creativity research."
+      },
+      {
+        "speaker": "Otsuka",
+        "text": "I feel that creativity is related to the ability to connect unrelated things."
+      },
+      {
+        "speaker": "Ueda",
+        "text": "That is what people are saying now. Something like the Remote Associates Test. There is a brain region involved in information search, and we have been measuring its activity, but the results are subtle. People who produce good ideas do show stronger activity in that region, but it doesn't reach statistical significance. There is also the problem of sample size. Doing it inside an fMRI is costly, so we can't make N very large.\n\nIn another experiment, we had people search the web and think up new features for a digital SLR camera. What we found is that people who come up with interesting ideas don't just gather pinpoint information about cameras. Rather, they go and collect information from farther away. Information about surveillance cameras spread throughout the city, bird's-eye views, all sorts of things get gathered broadly. On top of that, they do seem to be connecting the information.\n\nSo as you say, connecting information from distant fields is involved, and so is exploring somewhat unrelated, off-center things. That's why we looked at the brain region for information search. But producing evidence is a high hurdle. There is prior research, published in Nature, suggesting the frontopolar cortex is involved. Experiments in brain science are about controlling the stimuli, controlling the participants, and minimizing variance as much as possible. But conversely, for this kind of problem, controlling everything makes it meaningless. If you have people search for information in market-like, everyday settings, the noise inevitably gets large. The variance is huge.\n\nOur interest is fundamentally in behavior, so we run all sorts of experiments like these, but it would be nice to have neuroscientific grounds as well. Then we can contribute to what has been debated on the neuroscience side up to now."
+      },
+      {
+        "speaker": "Otsuka",
+        "text": "The field called brain (neuro)science concludes that a given brain region is related to a certain cognitive ability, but there is a leap from observing that a region is activated to saying it is really involved in a specific kind of information processing. In that case, it might be, in a sense, more honest to make the external, behavioral observation more rigorous instead."
+      },
+      {
+        "speaker": "Ueda",
+        "text": "That is probably true of all of brain science. What matters is that the accumulated data can be interpreted consistently. There are various criteria for evaluating the goodness of a hypothesis, such as simplicity. By those criteria it is better than the alternatives, that's all. Proving it rigorously is difficult."
+      },
+      {
+        "speaker": "Otsuka",
+        "text": "I believe you have studied market mechanisms extensively. Forgive me for bringing up my own view, but I think that in the end, evolution in the natural world is determined by the receiving side. For example, when a song becomes a hit, the world sees its creator as the origin, but in reality it should be seen as the system's demand having been drawn out."
+      },
+      {
+        "speaker": "Ueda",
+        "text": "I think that is probably the case. The supplier side may be the one that thinks about the fundamental principles, but ideas come from the demand side, from people who are actually struggling with something."
+      },
+      {
+        "speaker": "Otsuka",
+        "text": "I have the impression that you often work with companies."
+      },
+      {
+        "speaker": "Ueda",
+        "text": "Yes. I have worked with Hakuhodo for a long time, and also with consulting firms, Hitachi Solutions, JT, and others."
+      },
+      {
+        "head": "Has Thinking Become More Categorical as Civilization Advanced?"
+      },
+      {
+        "speaker": "Otsuka",
+        "text": "What are you interested in going forward?"
+      },
+      {
+        "speaker": "Ueda",
+        "text": "I want to study ASD from the perspective of unpredictability. For example, in the morning you watch the news, see the weather forecast, think the chance of rain is zero percent and head out, and at that moment you look at the western sky and it's a bit cloudy. We normally update the probability we assign to our beliefs. People with ASD find that very difficult. I am examining this experimentally, and ultimately I want to distinguish TD<sup>*1</sup> from ASD on a model, from the standpoint of the free energy principle.\n\nThere is the notion of WEIRD, which stands for Western, Educated, Industrialized, Rich, and Democratic. It comes from the Harvard group, taking the initials of Western, well-educated, industrialized, rich, democratic countries. The psychological characteristics of these people are said to be individualism, a focus on the self, low conformity to the group, that is, ASD-like traits. This is clearly borne out when you actually collect data from various countries around the world. For instance, it is said to be related to kinship systems, the kinship and family systems of Henrich and colleagues, the same as Todd. Societies with strong kinship ties are said to have a lower proportion of analytic thinking<sup>*2</sup> and weaker WEIRD tendencies.\n\nWhat I want to do is this. We have become an information society, and in a sense specialized knowledge keeps increasing. I want to analyze the relationship between the degree of informatization and people's psychology today, and ultimately dock that with ASD research. I have been examining the relationship between categorization tasks<sup>*2</sup> and the amount of knowledge, and the more knowledge people have, the higher the proportion who choose the taxonomic category, rising steadily. And it is especially pronounced in women. I don't know why, but as Western-civilization-style thinking advances, people become extremely analytic.\n\nBy clarifying what behavioral tendencies people described as having ASD show, and against what background such people arise, I hope we can arrive at something like a symptomatic treatment."
+      },
+      {
+        "speaker": "Otsuka",
+        "text": "If the demand side is what drives evolution, the prominence among women may be because women stand ahead in that selection.\nProblems of thought, which also relate to the philosophical questions I post about on social media, are hard to put into words and tend to be put off. I think they are extremely fundamental and socially important. Thank you very much for introducing so many fascinating studies today."
+      },
+      {
+        "speaker": "Ueda",
+        "text": "Thank you as well."
+      },
+      {
+        "footnote": "<sup>*1</sup> TD\nShort for Typically Developing. In autism research, comparing an ASD group with a TD (control) group is the standard framework.\n\n<sup>*2</sup> Analytic thinking / categorization task\nIn the common triad task (by Nisbett and colleagues), participants are asked to group two of \"cow, chicken, grass.\" Choosing \"cow and chicken\" (the taxonomic category of animals) is regarded as analytic thinking, while choosing \"cow and grass\" (the relationship that cows eat grass) is regarded as holistic thinking. The proportion of the former is higher in WEIRD countries."
+      }
+    ],
+    "zh": [],
+    "es": [],
+    "ru": [],
+    "fr": [],
+    "ar": []
+  },
+  "article_bio": {
+    "ja": "植田 一博（うえだ・かずひろ）\n1963年生まれ。認知科学者。東京大学大学院総合文化研究科 広域科学専攻 教授。博士（学術）。1993年に同専攻博士課程を修了後、同研究科助手・助教授、東京大学大学院情報学環教授などを経て現職。専門は認知科学・認知脳科学・行動経済学で、創造性、意思決定、需要側イノベーション、コグニティブインタラクションの研究を主導してきた。日本認知科学会会長（2019–2020年）、同フェロー（2025年）。主な著書に『はじめての認知科学』（新曜社）、『コグニティブインタラクション』（オーム社）がある。",
+    "en": "Kazuhiro Ueda (Ueda Kazuhiro)\nBorn in 1963. Cognitive scientist. Professor, Department of General Systems Studies, Graduate School of Arts and Sciences, The University of Tokyo. Ph.D. After completing his doctorate at the same department in 1993, he served as assistant professor and associate professor there and as professor at the Interfaculty Initiative in Information Studies, The University of Tokyo, before assuming his current position. Specializing in cognitive science, cognitive neuroscience, and behavioral economics, he has led research on creativity, decision-making, demand-side innovation, and cognitive interaction. President of the Japanese Cognitive Science Society (2019–2020) and its Fellow (2025). His main books include \"An Introduction to Cognitive Science\" (Shin-yo-sha) and \"Cognitive Interaction\" (Ohmsha).",
+    "zh": "Kazuhiro Ueda (Ueda Kazuhiro)\nBorn in 1963. Cognitive scientist. Professor, Department of General Systems Studies, Graduate School of Arts and Sciences, The University of Tokyo. Ph.D. After completing his doctorate at the same department in 1993, he served as assistant professor and associate professor there and as professor at the Interfaculty Initiative in Information Studies, The University of Tokyo, before assuming his current position. Specializing in cognitive science, cognitive neuroscience, and behavioral economics, he has led research on creativity, decision-making, demand-side innovation, and cognitive interaction. President of the Japanese Cognitive Science Society (2019–2020) and its Fellow (2025). His main books include \"An Introduction to Cognitive Science\" (Shin-yo-sha) and \"Cognitive Interaction\" (Ohmsha).",
+    "es": "Kazuhiro Ueda (Ueda Kazuhiro)\nBorn in 1963. Cognitive scientist. Professor, Department of General Systems Studies, Graduate School of Arts and Sciences, The University of Tokyo. Ph.D. After completing his doctorate at the same department in 1993, he served as assistant professor and associate professor there and as professor at the Interfaculty Initiative in Information Studies, The University of Tokyo, before assuming his current position. Specializing in cognitive science, cognitive neuroscience, and behavioral economics, he has led research on creativity, decision-making, demand-side innovation, and cognitive interaction. President of the Japanese Cognitive Science Society (2019–2020) and its Fellow (2025). His main books include \"An Introduction to Cognitive Science\" (Shin-yo-sha) and \"Cognitive Interaction\" (Ohmsha).",
+    "ru": "Kazuhiro Ueda (Ueda Kazuhiro)\nBorn in 1963. Cognitive scientist. Professor, Department of General Systems Studies, Graduate School of Arts and Sciences, The University of Tokyo. Ph.D. After completing his doctorate at the same department in 1993, he served as assistant professor and associate professor there and as professor at the Interfaculty Initiative in Information Studies, The University of Tokyo, before assuming his current position. Specializing in cognitive science, cognitive neuroscience, and behavioral economics, he has led research on creativity, decision-making, demand-side innovation, and cognitive interaction. President of the Japanese Cognitive Science Society (2019–2020) and its Fellow (2025). His main books include \"An Introduction to Cognitive Science\" (Shin-yo-sha) and \"Cognitive Interaction\" (Ohmsha).",
+    "fr": "Kazuhiro Ueda (Ueda Kazuhiro)\nBorn in 1963. Cognitive scientist. Professor, Department of General Systems Studies, Graduate School of Arts and Sciences, The University of Tokyo. Ph.D. After completing his doctorate at the same department in 1993, he served as assistant professor and associate professor there and as professor at the Interfaculty Initiative in Information Studies, The University of Tokyo, before assuming his current position. Specializing in cognitive science, cognitive neuroscience, and behavioral economics, he has led research on creativity, decision-making, demand-side innovation, and cognitive interaction. President of the Japanese Cognitive Science Society (2019–2020) and its Fellow (2025). His main books include \"An Introduction to Cognitive Science\" (Shin-yo-sha) and \"Cognitive Interaction\" (Ohmsha).",
+    "ar": "Kazuhiro Ueda (Ueda Kazuhiro)\nBorn in 1963. Cognitive scientist. Professor, Department of General Systems Studies, Graduate School of Arts and Sciences, The University of Tokyo. Ph.D. After completing his doctorate at the same department in 1993, he served as assistant professor and associate professor there and as professor at the Interfaculty Initiative in Information Studies, The University of Tokyo, before assuming his current position. Specializing in cognitive science, cognitive neuroscience, and behavioral economics, he has led research on creativity, decision-making, demand-side innovation, and cognitive interaction. President of the Japanese Cognitive Science Society (2019–2020) and its Fellow (2025). His main books include \"An Introduction to Cognitive Science\" (Shin-yo-sha) and \"Cognitive Interaction\" (Ohmsha)."
+  }
+}

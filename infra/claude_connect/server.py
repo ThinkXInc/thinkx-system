@@ -101,14 +101,25 @@ def screen_lines() -> list[str]:
     return [line.rstrip() for line in out.splitlines()] if rc == 0 else []
 
 
+login_cache = {"at": 0.0, "value": False}
+LOGIN_CACHE_SECONDS = 3.0
+
+
 def is_logged_in() -> bool:
+    """`claude auth status` は node の起動を伴い重い(5 秒ごとの状態取得で CPU の 1 割を食った・実測)。
+    数秒だけ結果を使い回す。操作の直後は set_phase 側で呼び直されるので鮮度は足りる。"""
+    if time.time() - login_cache["at"] < LOGIN_CACHE_SECONDS:
+        return login_cache["value"]
     rc, out = run(["claude", "auth", "status", "--json"])
-    if rc != 0:
-        return False
-    try:
-        return bool(json.loads(out).get("loggedIn"))
-    except ValueError:
-        return False
+    value = False
+    if rc == 0:
+        try:
+            value = bool(json.loads(out).get("loggedIn"))
+        except ValueError:
+            value = False
+    login_cache["at"] = time.time()
+    login_cache["value"] = value
+    return value
 
 
 def find_url(lines: list[str]) -> str | None:
