@@ -175,3 +175,15 @@
 - curl/ssh は分類が危険/不能なので、判定でなく**構築による安全(固定 wrapper)**。任意コマンドを安全分類することが原理的に危ういため。
 - deny の床(force push・rm・sudo・鍵/tfstate 等)は全層で維持。hook も wrapper も、この床の上で承認を足すだけ。
 - 実装: settings = 既存 allow / hook = `hooks/check_git_command.py`(git commit・push) / wrapper = `infra/scripts/stg.py` 等(curl・ssh 観測)。
+
+---
+
+## 状態と次の一手(2026-09-06 セッション終了時)
+
+- **v1 実装・コミット/push 済み(96ee870)**: `hooks/check_git_command.py`(git 判定)/ 本 corpus / `docs/DEPLOY_APPROVAL_LEVELS.md`(判定基準・安全モデル・オーナー指示・hooks ブロック説明)/ `infra/docs/STG_OBSERVE_PLAN.md`。
+- **オーナーが `.claude/settings.json` の hooks を置き換え済み**(PreToolUse に `check_git_command.py` を登録)。反映はセッション再起動時。
+- **次の一手**:
+  1. 動作確認(再起動後): 複数行コミットで承認が出ない / `git push --force` は deny で止まる / `git add x && curl <外部>` は curl でプロンプト。
+  2. 確認できたら v2 へ。curl/ssh は固定 wrapper 層(`infra/scripts/stg.py` 済み、`verify_deploy.py` は事例 F/G がもう一度出たら昇格)。
+  3. 新しい承認事例は `docs/approval_cases_v2.md` に貯める。v1 は構築材料としてここで凍結し archive 候補。
+- **未着手**: WebFetch ドメイン記憶(settings の domain allow か記憶フック)/ curl localhost の wrapper 化(必要になったら)。
