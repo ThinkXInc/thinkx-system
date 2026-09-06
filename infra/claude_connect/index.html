@@ -93,6 +93,7 @@
   .button:active { background: #2a2a2a; }
   .button[aria-disabled="true"], .button:disabled { opacity: 0.55; pointer-events: none; }
   .button[hidden] { display: none; }
+  .button.open { margin-top: 16px; }
 
   .code { margin-top: 14px; }
   .code label { display: block; font-size: 13px; color: var(--ink-soft); margin-bottom: 6px; }
@@ -131,6 +132,8 @@
       <ol class="steps" id="steps"></ol>
     </div>
 
+    <a class="button open" id="open_claude" target="_blank" rel="noopener" hidden>Claude を開く</a>
+
     <div class="actions" id="actions" hidden>
       <button class="button" id="reconnect" type="button">セッションを再接続</button>
       <a class="button" id="open_auth" target="_blank" rel="noopener" hidden>セッションを再接続</a>
@@ -157,6 +160,7 @@
   var actions = document.getElementById("actions");
   var reconnect = document.getElementById("reconnect");
   var openAuth = document.getElementById("open_auth");
+  var openClaude = document.getElementById("open_claude");
   var form = document.getElementById("code_form");
   var codeInput = document.getElementById("code");
   var sendButton = document.getElementById("send");
@@ -282,7 +286,15 @@
     if (busy) return;
 
     if (data.state === "connected") {
-      setStatus("connected", "接続中", "Claude アプリのセッション一覧から開いてください");
+      // セッションの URL が拾えていれば、そのままチャット画面へ飛べるリンクを出す(リモコン化の第一歩)
+      if (data.session_url) {
+        setStatus("connected", "接続中", "ボタンを押すと Claude のチャット画面が開きます");
+        openClaude.href = data.session_url;
+        openClaude.hidden = false;
+      } else {
+        setStatus("connected", "接続中", "Claude アプリのセッション一覧から開いてください");
+        openClaude.hidden = true;
+      }
       actions.hidden = true;
       stopProgress();
       if (wasConnected === false) celebrate();
@@ -290,6 +302,7 @@
       return;
     }
     wasConnected = false;
+    openClaude.hidden = true;
     actions.hidden = false;
     // URL が分かっているときは、同じ位置・同じ見た目の本物のリンクにする(タップで別タブに認証画面。
     // 空タブを先に開いて後から URL を入れる方式は iPhone Safari で元ページの処理が止まり動かなかった)。
