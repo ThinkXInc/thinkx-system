@@ -11,6 +11,10 @@ WorkingDirectory=/src/thinkx-system/infra/claude_connect
 ExecStart=/usr/bin/python3 server.py
 Restart=always
 RestartSec=3
+# ページの「セッションを再接続」で作った tmux は server.py の子で、この unit の cgroup に入る。
+# 既定(control-group)だと stop/restart のたびに tmux ごと殺され、セッションが消える(2026-09-05 実測)。
+# 止めるのは python 本体だけにし、tmux(と中の claude)は残す。
+KillMode=process
 
 # kaz で動かす。tmux セッション `claude` も claude の認証(/home/kaz/.claude)も kaz のものなので、
 # 同じユーザーでないと見えない・操作できない。sudo は使わない(kaz は sudoers に居ない)。
