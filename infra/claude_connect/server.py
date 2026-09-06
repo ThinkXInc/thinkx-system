@@ -146,6 +146,27 @@ def screen_has(lines: list[str], *needles: str) -> bool:
     return any(needle in line for line in lines for needle in needles)
 
 
+# 接続中の画面に出る「/remote-control is active · … https://claude.ai/code/session_…」の URL。
+# 会話が進むと画面外に流れるので、見えたときに覚えておき、セッションを作り直したら忘れる。
+SESSION_URL_PREFIX = "https://claude.ai/code/session_"
+remembered = {"session_url": None}
+
+
+def find_session_url(lines: list[str]) -> str | None:
+    for line in lines:
+        for token in line.split():
+            if token.startswith(SESSION_URL_PREFIX):
+                return token
+    return None
+
+
+def session_url(lines: list[str]) -> str | None:
+    seen = find_session_url(lines)
+    if seen:
+        remembered["session_url"] = seen
+    return remembered["session_url"]
+
+
 def disk_free_gb() -> int:
     return shutil.disk_usage("/").free // (1024 ** 3)
 
@@ -162,7 +183,7 @@ def observe() -> dict:
         if url or screen_has(lines, CODE_PROMPT, *ENTER_PROMPTS):
             return {"state": "login_required", "url": url}
         if is_logged_in():
-            return {"state": "connected", "url": None}
+            return {"state": "connected", "url": None, "session_url": session_url(lines)}
         return {"state": "login_required", "url": None}
 
     if is_logged_in():
@@ -172,6 +193,7 @@ def observe() -> dict:
 
 def start_session() -> None:
     """claude-session.service の ExecStart と同じ形で tmux を立てる。"""
+    remembered["session_url"] = None
     tmux("new-session", "-d", "-s", SESSION, "-c", REPO, CLAUDE_COMMAND)
 
 
@@ -195,7 +217,7 @@ def walk_login_prompts() -> dict:
         if url:
             return {"state": "login_required", "url": url}
         if screen_has(lines, CONNECTED_MARK):
-            return {"state": "connected", "url": None}
+            return {"state": "connected", "url": None, "session_url": session_url(lines)}
         if screen_has(lines, *ENTER_PROMPTS):
             press_enter()
             continue
