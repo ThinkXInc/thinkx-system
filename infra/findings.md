@@ -1657,3 +1657,6 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   確認手順: ページから tmux を作った状態で `systemctl restart claude_connect` → `tmux ls` に残り state が `connected` のまま。
 - 副作用の整理: server.py 由来の tmux は claude_connect の cgroup に残るが、KillMode=process なら unit の停止・再起動・
   クラッシュ再起動で殺されない。web の再起動時は claude-session.service が作り直す(N-7 (a) で確認済み)。
+- 検証(2026-09-06 04:29): KillMode=process を daemon-reload → restart で適用 → ページと同じ POST で tmux 作成(4.4 秒で
+  `connected`)→ `systemctl restart claude_connect` → `tmux ls` に残り、state は `connected` のまま。cgroup には
+  tmux / claude / python3 が同居するが python3 だけが入れ替わる。
