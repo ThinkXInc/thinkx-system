@@ -1680,3 +1680,21 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   会話が進むと画面外に流れるので、見えたときに覚えておき、tmux を作り直したら忘れる(`remembered`)。
 - ページ: `connected` で `session_url` があれば「Claude を開く」(黒ボタン・別タブ)。無ければ従来の文言。
 - 本番デプロイのボタンは未着手(承認の扱いをオーナーが決めてから)。
+
+## 2026-09-06 リモコンの将来メニュー(オーナー発言・未着手): 「リモートのソースコードをローカルマシンに fetch」
+
+- 原文: 「ボタン一発で手元に fetch origin したいが，それはステージング->本番，デプロイと別のリモコン操作として置くべきだ」
+  「つまり明示的に手元に fetch 操作するということ それは『リモートのソースコードをローカルマシンにfetch』のような
+  メニューによって行うだろう」
+- 意味: D-55② の「本番反映のたびに Mac で fetch」を本番反映から切り離し、独立したメニューにする。
+  ブラウザのページは staging 上で動くので、ローカル Mac に fetch させるには Mac 側の受け口(常駐の小さな agent か、
+  Mac の Claude セッションへの指示)が要る。設計は別途。
+
+## 2026-09-06 リモコンのメニュー構成(オーナー提示): 運用.md の Deploy 4 段をそのまま噛み砕く
+
+- 原文(コマンドリスト): 0 staging -> PR -> monorepo (remote) / 1 local (monorepo branch) -> PR -> develop /
+  2 develop -> staging / 3 staging -> production 「おそらくこのタイトルを噛み砕いてメニュー化することになるだろう」
+- 対応: 今回の「本番に反映」= 3 の git 部分(release 作成 → production へ push。アセット配布は Mac のまま)。
+  2 は staging の deploy-timer が既に自動で行う(ボタン化するなら「develop に合わせる」= sync の即時実行)。
+  0 は GitHub の PR(gh が staging に無い・API token の扱い D-50)、1 はローカル機の作業なので、
+  それぞれ受け口の設計が要る。「リモートのソースコードをローカルマシンに fetch」も同じ系統。

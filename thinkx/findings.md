@@ -400,3 +400,23 @@
   (expected 200 / actual 404)。他 60 ルートは一致。
 - 植田教授インタビュー(2025-12-11-talk)の追加作業中に観測。記事追加はルート規則を
   変えないので無関係。環境依存(filedrop の有効化設定)と思われる。ゴールデンは触っていない。
+
+## 2026-09-06 KOBITO LP の favicon をロゴから切り出し(オーナー選択: 箱+コビト全体)
+
+- タブのアイコンが thinkx 本体のものになっていた原因: kobito.html が `/favicon.ico` を指し、
+  nginx(`web-server/nginx/conf.d/thinkx.conf`)がそれを `web-server/favicon.ico` に alias するため。
+  独立ページ方式でも `/favicon.ico` は共有される。製品ページ固有の icon は
+  `views/img/products/KOBITO/` に置いて絶対パスで指す(nginx の /img 配信・開発サーバーの
+  local_static_handler の両方で通る)。
+- 元画像は `infra/assets/KOBITO/logo/KOBITOhT.png`(透過)。左 1650px を crop → `-trim` →
+  正方形に透過余白 → Lanczos で 16/32/48/180px。ico は 16/32/48 の多層。
+  ImageMagick(`magick`)で生成。PIL はこの機で libjpeg 不整合により import 不可。
+- **A案(箱+コビト全体)と B案(顔だけ)を 16/32/180px 並びの比較画像で提示**。オーナーは
+  A → B → A と往復して最終的に A(全体)を選択。16px では A は判別しにくいが、それでも
+  全体の絵を採る判断。B の顔案は箱の青線が顔を横切る(原本どおり・改変せず)。
+- ローカル確認は `http://127.0.0.1:5000`。`localhost:5000` は macOS の AirPlay(ControlCenter)が
+  横取りして 403 を返す(IPv6 側で先に掴む)。
+- Chrome のタブ favicon はブラウザ拡張のスクショでは撮れず、`screencapture` も Chrome ウィンドウが
+  別 Space にあると撮れない。タブ表示の最終確認はオーナー目視に委ねた。
+- 反映: コミット 3db56ec → PR #91 で develop → deploy_staging.sh。staging 上の 4 ファイルの
+  sha256 がローカルと一致。本番は未反映(オーナーの引き金待ち)。
