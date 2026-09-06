@@ -1645,3 +1645,15 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   走らせていたため。→ 結果を 3 秒だけ使い回す(本コミット)。
 - 別セッションが `infra/runbooks/claude-connect.md` に `stg.py`(未コミット・未作成)の節を追記している。
   自分のハンクだけを `git apply --cached` で載せて commit した。
+
+## 2026-09-06 【不具合】claude_connect を restart すると、ページから作った tmux セッションが道連れで消える(修正)
+
+- 事象: `systemctl restart claude_connect` の直後(09:49:25 / 11:11:29)に state が `session_missing` になる。
+  `last` の tmux(30446) の終了時刻 11:11:29 が restart と一致。
+- 原因: `POST /connect/session` で server.py が `tmux new-session -d` を spawn すると、tmux サーバー(と中の claude)は
+  claude_connect.service の cgroup に入る。systemd の既定 `KillMode=control-group` は stop 時に cgroup 内の全プロセスを
+  殺すので、unit の restart で tmux ごと消える。systemd(claude-session.service)が作った tmux は別 cgroup なので影響なし。
+- 対処: claude_connect.service に `KillMode=process`(停止時は main PID の python だけを殺す)。
+  確認手順: ページから tmux を作った状態で `systemctl restart claude_connect` → `tmux ls` に残り state が `connected` のまま。
+- 副作用の整理: server.py 由来の tmux は claude_connect の cgroup に残るが、KillMode=process なら unit の停止・再起動・
+  クラッシュ再起動で殺されない。web の再起動時は claude-session.service が作り直す(N-7 (a) で確認済み)。
