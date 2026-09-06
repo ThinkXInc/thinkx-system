@@ -114,6 +114,20 @@
   .code button:disabled { opacity: 0.55; }
   .error { margin: 8px 0 0; font-size: 13px; color: #a23b2c; min-height: 20px; }
 
+  /* 本番への反映(押す=承認) */
+  .card.deploy { margin-top: 16px; }
+  .card.deploy h2 { font-size: 16px; font-weight: 600; letter-spacing: 0.04em; margin: 0; }
+  .card.deploy .note { margin-top: 6px; }
+  .card.deploy > .button { margin-top: 14px; }
+  .button.quiet { color: var(--ink); background: #fff; border: 1px solid var(--line); }
+  .button.quiet:active { background: #f1efe9; }
+  .confirm { margin-top: 12px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; background: #fbfaf7; }
+  .confirm[hidden] { display: none; }
+  .confirm .summary { margin: 0; font-size: 14px; }
+  .confirm .commits { margin: 8px 0 0; padding-left: 18px; font-size: 12px; color: var(--ink-soft); max-height: 120px; overflow: auto; }
+  .confirm .row { display: flex; gap: 8px; margin-top: 12px; }
+  .confirm .row .button { margin: 0; }
+
   footer { margin-top: 16px; font-size: 12px; color: var(--ink-soft); display: flex; justify-content: space-between; gap: 12px; }
   footer span { white-space: nowrap; }
 </style>
@@ -146,6 +160,25 @@
         <p class="error" id="error"></p>
       </div>
     </div>
+  </section>
+
+  <section class="card deploy" id="deploy_card">
+    <h2>本番への反映</h2>
+    <p class="note" id="deploy_note">staging で確認した内容を、そのまま本番に出します</p>
+    <div class="progress" id="deploy_progress" hidden>
+      <ol class="steps" id="deploy_steps"></ol>
+    </div>
+    <div class="confirm" id="deploy_confirm" hidden>
+      <p class="summary" id="deploy_summary"></p>
+      <ul class="commits" id="deploy_commits"></ul>
+      <div class="row">
+        <button class="button" id="deploy_go" type="button">本番に反映する</button>
+        <button class="button quiet" id="deploy_cancel" type="button">やめる</button>
+      </div>
+    </div>
+    <button class="button" id="deploy" type="button">本番に反映</button>
+    <a class="button open" id="open_production" href="https://thinkxinc.com/" target="_blank" rel="noopener" hidden>本番を開く</a>
+    <p class="error" id="deploy_error"></p>
   </section>
 
   <footer><span id="disk"></span><span id="observed"></span></footer>
@@ -181,12 +214,19 @@
   // 「コードを送信」の流れと「セッションを再接続」の流れで段階が違う。
   var FLOWS = {
     code: {
+      host: "progress", list: "steps",
       labels: ["コードを送信", "認証を確認", "セッションを起動", "接続を確認"],
       phase: { sending_code: 0, waiting_code: 1, security_notes: 2, first_run: 2, starting: 2, starting_session: 2, connected: 3 }
     },
     session: {
+      host: "progress", list: "steps",
       labels: ["セッションを起動", "初期設定を進行", "認証画面を準備"],
       phase: { starting_session: 0, starting: 0, first_run: 1, waiting_code: 2, url_ready: 2, security_notes: 1, connected: 2 }
+    },
+    deploy: {
+      host: "deploy_progress", list: "deploy_steps",
+      labels: ["内容を確認", "release を作成", "production へ送信", "本番サーバーが取り込み(約 60 秒)", "本番の応答を確認"],
+      phase: { deploy_fetch: 0, deploy_release: 1, deploy_push: 2, deploy_wait: 3, deploy_check: 4 }
     }
   };
   var flow = null;
@@ -215,6 +255,8 @@
   // 送信〜接続中になるまで、サーバーの phase を 1 秒ごとに読み、段階を進めて見せる
   function startProgress(kind) {
     flow = FLOWS[kind];
+    progress = document.getElementById(flow.host);
+    stepsList = document.getElementById(flow.list);
     activeIndex = 0;
     started = Date.now();
     stepsList.innerHTML = "";
@@ -296,7 +338,7 @@
         openClaude.hidden = true;
       }
       actions.hidden = true;
-      stopProgress();
+      if (!deployBusy) stopProgress();  // 本番反映の段階表示を 5 秒ごとの状態更新で消さない
       if (wasConnected === false) celebrate();
       wasConnected = true;
       return;
@@ -390,6 +432,82 @@
         stopProgress();
         error.textContent = e.message;
         poll();
+      });
+  });
+
+  // ---- 本番への反映(押す=承認) ----
+  var deployCard = document.getElementById("deploy_card");
+  var deployNote = document.getElementById("deploy_note");
+  var deployButton = document.getElementById("deploy");
+  var deployConfirm = document.getElementById("deploy_confirm");
+  var deploySummary = document.getElementById("deploy_summary");
+  var deployCommits = document.getElementById("deploy_commits");
+  var deployGo = document.getElementById("deploy_go");
+  var deployCancel = document.getElementById("deploy_cancel");
+  var deployError = document.getElementById("deploy_error");
+  var openProduction = document.getElementById("open_production");
+  var deployBusy = false;
+
+  function resetDeploy(noteText) {
+    deployConfirm.hidden = true;
+    deployButton.hidden = false;
+    deployButton.disabled = false;
+    deployNote.textContent = noteText || "staging で確認した内容を、そのまま本番に出します";
+  }
+
+  // 1 回目: 何が出るかを取って見せる(まだ何も変えない)。2 回目(本番に反映する)が承認。
+  deployButton.addEventListener("click", function () {
+    if (deployBusy) return;
+    deployError.textContent = "";
+    deployButton.disabled = true;
+    deployNote.textContent = "本番との差を調べています";
+    fetch("/connect/deploy", { cache: "no-store" })
+      .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || ("HTTP " + r.status)); return j; }); })
+      .then(function (p) {
+        deployButton.disabled = false;
+        if (p.same) {
+          resetDeploy("本番は staging と同じ内容です。反映するものはありません");
+          openProduction.hidden = false;
+          return;
+        }
+        deploySummary.textContent = p.commits.length + " 件の変更を本番に出します" +
+          (p.services.length ? "。再起動: " + p.services.join(", ") : "。再起動するサービスはありません");
+        deployCommits.innerHTML = "";
+        p.commits.forEach(function (line) { var li = document.createElement("li"); li.textContent = line; deployCommits.appendChild(li); });
+        deployButton.hidden = true;
+        deployConfirm.hidden = false;
+        deployNote.textContent = "内容を確認して「本番に反映する」を押してください。押した時点が承認です";
+      })
+      .catch(function (e) { deployButton.disabled = false; deployError.textContent = e.message; });
+  });
+
+  deployCancel.addEventListener("click", function () { resetDeploy(); });
+
+  deployGo.addEventListener("click", function () {
+    if (deployBusy) return;
+    deployBusy = true;
+    deployConfirm.hidden = true;
+    openProduction.hidden = true;
+    deployNote.textContent = "本番に反映しています";
+    startProgress("deploy");
+    post("/connect/deploy")
+      .then(function (r) {
+        finishProgress(function () {
+          deployBusy = false;
+          deployCard.classList.remove("done"); void deployCard.offsetWidth; deployCard.classList.add("done");
+          if (r.result === "already") {
+            resetDeploy("本番は staging と同じ内容でした。反映するものはありません");
+          } else {
+            resetDeploy(r.release + " を本番に出しました。本番の応答: " + (r.production_http === 200 ? "正常(200)" : "確認できません(" + r.production_http + ")。少し待って本番を開いてください"));
+          }
+          openProduction.hidden = false;
+        });
+      })
+      .catch(function (e) {
+        stopProgress();
+        deployBusy = false;
+        resetDeploy();
+        deployError.textContent = e.message;
       });
   });
 
