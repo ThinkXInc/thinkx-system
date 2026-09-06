@@ -1,3 +1,5 @@
+# thinkx-system/hooks/README.md
+
 # hooks — Claude Code フック(ワークスペース共通)
 
 harness(Claude Code)が自動で呼ぶフック。人間も LLM も直接は実行しない。
