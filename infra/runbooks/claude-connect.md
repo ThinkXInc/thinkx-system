@@ -15,7 +15,7 @@ URL: https://staging.thinkxinc.com/connect/ (Basic 認証は staging と同じ)�
 
 | state | 判定(server.py) | 画面 | ボタンの動作 |
 |---|---|---|---|
-| `connected` | tmux `claude` あり・pane のコマンドが `claude`・`claude auth status` の `loggedIn` が true | 緑「接続中」+「Claude アプリのセッション一覧から開いてください」。ボタンなし | — |
+| `connected` | tmux `claude` あり・pane のコマンドが `claude`・`claude auth status` の `loggedIn` が true | 緑「接続中」。pane の `https://claude.ai/code/session_…` が拾えていれば「Claude を開く」(別タブでそのセッションのチャット画面)。拾えなければ「Claude アプリのセッション一覧から開いてください」。再接続ボタンなし | — |
 | `session_missing` | `tmux has-session -t claude` が失敗 | 橙「接続されていません」+ボタン+入力欄 | unit と同じ `tmux new-session -d -s claude -c /src/thinkx-system "claude --remote-control"` |
 | `login_required` | `loggedIn` が false(claude が居ない場合も含む)、または pane にログイン画面(URL / `Paste code here` / 初回対話) | 同上。URL が取れていれば「ボタンを押すと認証画面が開きます」 | claude が居なければ tmux を作り直し、初回対話(`Choose the text style` → `Select login method` → URL)を Enter で進めて URL を返す。URL があればそれを別タブで開く |
 | `unknown` | 上のどれでもない(ログイン済みなのに pane が shell に戻っている等) | 橙「接続されていません」+ボタン+入力欄 | tmux を kill して作り直す |

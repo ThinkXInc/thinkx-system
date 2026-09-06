@@ -1673,3 +1673,10 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   (request_production_release.sh 相当)までにするかはオーナー判断。staging 上で完走型を動かすには deploy key の write と
   Mac 側 fetch バックアップ(D-55②)の置き換えも要る。
 - どちらも現計画書(CLAUDE_CONNECT_PLAN.md)の範囲外。着手は新しい計画または追記(人間)を待つ。
+
+## 2026-09-06 リモコン化の第一歩: 接続中の画面に「Claude を開く」(オーナー指示「作業続けて」)
+
+- server.py: pane の `/remote-control is active … https://claude.ai/code/session_…` から URL を拾い `session_url` として返す。
+  会話が進むと画面外に流れるので、見えたときに覚えておき、tmux を作り直したら忘れる(`remembered`)。
+- ページ: `connected` で `session_url` があれば「Claude を開く」(黒ボタン・別タブ)。無ければ従来の文言。
+- 本番デプロイのボタンは未着手(承認の扱いをオーナーが決めてから)。
