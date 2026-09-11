@@ -10,6 +10,8 @@ kaz で動かす(tmux も claude も kaz のもの)。bind は web の private I
   GET  /connect/state    {"state", "url", "disk_free_gb", "observed_at"}
   POST /connect/session  state に応じて再接続し、動作後の {"state", "url"} を返す
   POST /connect/code     body {"code"} を pane に貼って Enter。動作後の {"state", "url"} を返す
+  GET  /connect/deploy   本番に出る内容(コミット一覧・再起動されるサービス)。何も変えない
+  POST /connect/deploy   origin/develop から release を切って production へ push(押す=承認)。本番の応答を確認して返す
 
 state:
   connected        tmux あり・pane が claude・ログイン済み
@@ -272,6 +274,97 @@ def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
+# ---- 本番への反映(押す=承認・オーナー指示 2026-09-06) --------------------------------------
+# infra/scripts/deploy_production_from_staging.sh の git 部分と同じことを staging 上で行う。
+# origin/develop(= staging で見えている内容)から release/<日付> を切って push し、production へ
+# fast-forward で push する。取り込みは本番の deploy-timer(60 秒ごと・sync_from_origin.sh prod)。
+# PR は作らない(staging に gh が無く、production に branch protection も無い)。
+# git 管理外のアセット(views/video)はここでは出ない(staging から本番 web へ届かない)。
+# 作業ツリーには触れない(fetch と plumbing と push だけ。checkout は clean のまま — D-58/D-60)。
+
+PRODUCTION_URL = "https://thinkxinc.com/"
+PRODUCTION_WAIT_SECONDS = 75
+SERVICE_BY_PREFIX = (("thinkx/", "thinkx"), ("transformism/", "transformism"), ("kazukiotsukacom/", "kazukiotsukacom"),
+                     ("nginx-web-root/", "nginx"), ("loadbalancer/", "nginx"), ("podcast/", "podcast"))
+
+
+def git(*args: str, timeout: int = 60) -> tuple[int, str]:
+    return run(["git", "-C", REPO, *args], timeout=timeout)
+
+
+def git_out(*args: str) -> str:
+    rc, out = git(*args)
+    if rc != 0:
+        raise RuntimeError(f"git {' '.join(args)} が失敗: {out.strip()[:200]}")
+    return out.strip()
+
+
+def services_for(paths: list[str]) -> list[str]:
+    found: list[str] = []
+    for path in paths:
+        for prefix, service in SERVICE_BY_PREFIX:
+            if path.startswith(prefix) and service not in found:
+                found.append(service)
+    return found
+
+
+def deploy_preview() -> dict:
+    """本番に出る内容(コミット一覧と再起動されるサービス)。何も変えない。"""
+    git_out("fetch", "--quiet", "origin")
+    sha = git_out("rev-parse", "origin/develop")
+    prod = git_out("rev-parse", "origin/production")
+    same = git_out("rev-parse", f"{sha}^{{tree}}") == git_out("rev-parse", f"{prod}^{{tree}}")
+    commits = [] if same else [line for line in git_out("log", "--oneline", "--no-merges", f"{prod}..{sha}").splitlines() if line]
+    paths = [] if same else [line for line in git_out("diff", "--name-only", prod, sha).splitlines() if line]
+    return {"same": same, "sha": sha, "production_sha": prod, "commits": commits, "services": services_for(paths)}
+
+
+def next_release_name() -> str:
+    day = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    name, n = f"release/{day}", 2
+    while git("rev-parse", "--verify", "--quiet", f"origin/{name}")[0] == 0:
+        name = f"release/{day}-{n}"
+        n += 1
+    return name
+
+
+def production_http_status() -> int:
+    rc, out = run(["curl", "-s", "-o", "/dev/null", "-m", "15", "-w", "%{http_code}", PRODUCTION_URL], timeout=20)
+    return int(out) if rc == 0 and out.strip().isdigit() else 0
+
+
+def deploy_to_production() -> dict:
+    try:
+        set_phase("deploy_fetch")
+        preview = deploy_preview()
+        if preview["same"]:
+            return {"result": "already", **preview, "production_url": PRODUCTION_URL}
+
+        sha, prod = preview["sha"], preview["production_sha"]
+        set_phase("deploy_release")
+        release = next_release_name()
+        rel = sha
+        if git("merge-base", "--is-ancestor", prod, sha)[0] != 0:
+            # release が squash merge されると production の履歴が develop から切れる。production を第2親に
+            # 持つ merge commit を release の先頭に置いて繋ぐ(tree は sha と同一。deploy_production_from_staging.sh と同じ)
+            rel = git_out("commit-tree", f"{sha}^{{tree}}", "-p", sha, "-p", prod,
+                          "-m", f"release: production の履歴を繋ぐ(tree は origin/develop {sha} と同一)")
+        git_out("push", "--quiet", "origin", f"{rel}:refs/heads/{release}")
+
+        set_phase("deploy_push")
+        git_out("push", "--quiet", "origin", f"{rel}:production")
+
+        set_phase("deploy_wait")
+        time.sleep(PRODUCTION_WAIT_SECONDS)
+
+        set_phase("deploy_check")
+        status = production_http_status()
+        return {"result": "deployed", **preview, "release": release, "release_sha": rel,
+                "production_http": status, "production_url": PRODUCTION_URL}
+    finally:
+        set_phase("idle")
+
+
 class Handler(BaseHTTPRequestHandler):
     server_version = "claude_connect/1"
 
@@ -321,6 +414,8 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_index()
             elif path == "/connect/state":
                 self.send_json(200, {**observe(), "phase": progress["phase"], "disk_free_gb": disk_free_gb(), "observed_at": now_iso()})
+            elif path == "/connect/deploy":
+                self.send_json(200, {**deploy_preview(), "observed_at": now_iso()})
             else:
                 self.send_json(404, {"error": "not found"})
         except Exception as e:  # ハンドラで落とさない
@@ -340,6 +435,15 @@ class Handler(BaseHTTPRequestHandler):
                     return
                 with action_lock:
                     result = paste_code(code)
+                self.send_json(200, {**result, "observed_at": now_iso()})
+            elif path == "/connect/deploy":
+                if not action_lock.acquire(blocking=False):
+                    self.send_json(409, {"error": "別の操作が進行中です。終わってからもう一度押してください"})
+                    return
+                try:
+                    result = deploy_to_production()
+                finally:
+                    action_lock.release()
                 self.send_json(200, {**result, "observed_at": now_iso()})
             else:
                 self.send_json(404, {"error": "not found"})
