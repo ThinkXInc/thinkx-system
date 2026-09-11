@@ -247,3 +247,33 @@ staging で commit 済みの内容は `git format-patch` で取り出してオ�
   `| podcast/ | git@github.com:ThinkXInc/podcast.git | master | 21c9ce71058e2bd463ff2f19c8ef628ba8ae4879 | 2026-08-28 |`
 - 秘密検査: 実物なし(README の `sk-...` はプレースホルダ)。data/ は podcast/.gitignore
   により非追跡で、コピーにも含まれていない(git archive は追跡ファイルのみを出す)。
+
+## 2026-09-06 承認削減 v1 — Claude Code の許可判定の実測と仕様(承認削減トラック)
+
+正本: docs/approval_cases_v1.md(事例と割り当て)、docs/DEPLOY_APPROVAL_LEVELS.md(判定基準・安全モデル)。
+
+- **複数行コミットメッセージが `git commit:*` の allow を壊す**: Claude Code は改行を含む区切り
+  (`&&` `||` `;` `|` 改行)でコマンドをサブコマンドに割り、各断片が allow にマッチしないと通さない。
+  `git commit -m "件名\n\n本文\n\nCo-Authored-By:..."` は 2 行目以降が未知の断片になりマッチが崩れて
+  プロンプトが出る(実測 12.8 秒)。→ 単一 hook で内容非依存に判定するか、1 行メッセージ/`-m` 複数回で回避。
+- **ask ルールは PreToolUse フックの allow に勝つ**(公式 permissions ドキュメント原文:
+  「a matching ask rule still prompts even when the hook returned "allow"」)。だから settings の ask に
+  ある `ssh` / `curl` はフックでは無承認にできない。フックで扱うには対応する ask を外す必要がある。
+- **hook の "ask"(プロンプト強制)が allow ルールを上書きするかは未文書**。permissions ドキュメントは
+  「The hook output can deny the tool call, force a prompt, or skip the prompt」と書くが、allow ルール
+  (bare Bash 等)との precedence は明記が無い。curl を ask から外してフックに委ねる前に実測が要る。
+  上書きしないなら、外した瞬間に外部 curl が無承認で走るため。
+- **curl の localhost 判定は偽装の攻撃面がある**: `curl http://127.0.0.1.evil.com/`(別ホスト)、
+  `curl -H "Host: localhost" http://evil/`(接続先は evil)、`curl http://localhost@evil.com/`(userinfo で
+  実ホストは evil)。文字列一致で localhost を判定すると破られる。実ホストの厳密パースが要る。
+  → curl は runtime 分類が脆いので、hook でなく固定 wrapper(python 内で curl)を推奨。
+- **ssh のリモートコマンドは不透明で分類不能**: `ssh host '<任意>'` の中身は上限なく任意なので、
+  「読み取りだけの ssh」を機械判定できない。→ 固定コマンドの wrapper(stg.py 等)か server 側 forced-command のみ。
+- **既存の `git push --force:*` deny は位置依存**: 前置一致なので `git push origin main --force`(末尾 force)は
+  マッチせず素通りする。force を確実に弾くには全トークン走査(フック側)が要る。
+- **フックは汎用機構**(公式 hooks ドキュメント: 「Hooks are user-defined shell commands. Claude Code runs
+  them at specific points in its lifecycle」)。承認専用でなく、PostToolUse の自動フォーマット等、変更操作も
+  公式に意図されている。今回の check_git_command.py は「検査して許可判定を返す」だけに用途を絞り、変更・副作用なし。
+- **Claude in Chrome のサイト許可は settings とは別系統**: Chrome 拡張の Permissions →「Always allow actions
+  on this site」で恒久許可(拡張アイコン→三点→Extension settings→Permissions の Your approved sites で管理)。
+  settings/フック/スクリプトでは制御できない。
