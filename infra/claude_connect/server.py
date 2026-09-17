@@ -82,7 +82,8 @@ def run(args: list[str], timeout: int = 20) -> tuple[int, str]:
         done = subprocess.run(args, capture_output=True, text=True, timeout=timeout, cwd=REPO)
     except (OSError, subprocess.TimeoutExpired) as e:
         return 1, str(e)
-    return done.returncode, done.stdout
+    # 失敗時は標準エラーも返す(git の本当の理由は stderr に出る。LFS の案内だけが見えて原因が隠れた・2026-09-17)
+    return done.returncode, done.stdout if done.returncode == 0 else (done.stdout + done.stderr)
 
 
 def tmux(*args: str) -> tuple[int, str]:
@@ -319,10 +320,14 @@ def deploy_preview() -> dict:
     return {"same": same, "sha": sha, "production_sha": prod, "commits": commits, "services": services_for(paths)}
 
 
-def next_release_name() -> str:
+def next_release_name(rel: str) -> str:
+    """release/<日付>。同日の release が既にあれば -2, -3…。ただし同じコミットを指す release があればそれを使い回す
+    (production への push だけが失敗した回のやり直しで release を増やさない・2026-09-17)。"""
     day = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     name, n = f"release/{day}", 2
     while git("rev-parse", "--verify", "--quiet", f"origin/{name}")[0] == 0:
+        if git_out("rev-parse", f"origin/{name}") == rel:
+            return name
         name = f"release/{day}-{n}"
         n += 1
     return name
@@ -342,14 +347,15 @@ def deploy_to_production() -> dict:
 
         sha, prod = preview["sha"], preview["production_sha"]
         set_phase("deploy_release")
-        release = next_release_name()
         rel = sha
         if git("merge-base", "--is-ancestor", prod, sha)[0] != 0:
             # release が squash merge されると production の履歴が develop から切れる。production を第2親に
             # 持つ merge commit を release の先頭に置いて繋ぐ(tree は sha と同一。deploy_production_from_staging.sh と同じ)
             rel = git_out("commit-tree", f"{sha}^{{tree}}", "-p", sha, "-p", prod,
                           "-m", f"release: production の履歴を繋ぐ(tree は origin/develop {sha} と同一)")
-        git_out("push", "--quiet", "origin", f"{rel}:refs/heads/{release}")
+        release = next_release_name(rel)
+        if git_out("rev-parse", "--verify", "--quiet", f"origin/{release}") if git("rev-parse", "--verify", "--quiet", f"origin/{release}")[0] == 0 else "" != rel:
+            git_out("push", "--quiet", "origin", f"{rel}:refs/heads/{release}")
 
         set_phase("deploy_push")
         git_out("push", "--quiet", "origin", f"{rel}:production")
