@@ -201,6 +201,19 @@ ask と deny のルールは hook の allow に勝つ。
 - **残るゲート**: 配布の実行承認(人間)。
 - **同型カウント**: 変更系につきカウント対象外。selftest の後片付け漏れとしては 1 回目。
 
+### X. staging の podcast データの NFD 残骸を整理(S の続き・ファイル単位・変更系)
+- **生**: `ssh -o ConnectTimeout=8 supercom-web1-stg 'sudo -u kaz python3 - <<"PY" ... os.walk("/src/podcast/data", topdown=False) ... nfc = unicodedata.normalize("NFC", name) ... if os.path.isfile(dst) and os.path.getsize(dst) == os.path.getsize(src): os.remove(src) ... elif not os.path.exists(dst): os.rename(src, dst) ... else: print("要確認(サイズ相違)") ... 空の NFD フォルダは os.rmdir ... PY'`
+- **引き金**: `ssh`(ask)。中の `sudo -u kaz` と `os.remove` / `os.rmdir` はローカルの deny に当たらない(S と同じ)。
+- **クラス**: **変更**(リモートのファイル削除・リネーム)。**承認が出るのは正しく、削減対象ではない。**
+- **S からの改善と残る穴**: S は同名があれば比較せず NFD 側を丸ごと `rmtree` していた。X は削除前に**サイズ一致**を確認し、
+  不一致は「要確認」で止め、フォルダは空のときだけ消す。前進。ただし**サイズ一致はハッシュ一致ではない**(同サイズで中身が違う
+  ファイルは NFD 側が消える)。edit/*.json のような小さなテキストは同サイズ別内容が普通に起きる。削除前は sha256 で比べる。
+- **形の問題は S と同じ**: ssh の heredoc に書いた一度きりの python は diff に残らず、S→X の改良も履歴に無い(この corpus にしか残らない)。
+  同じ整理を 2 回書いている時点で、レポジトリ内の固定スクリプト(`podcast/scripts/normalize_nfc.py`: dry-run → ハッシュ比較 →
+  不一致なら停止 → 承認 → 実行)にすべき段階。正はローカルの data/ で、サーバーはデプロイ同期で追従させる。
+- **残るゲート**: 実行の承認(人間)。削減対象ではない。
+- **同型カウント**: 変更系につきカウント対象外。NFD→NFC 整理としては **S・X で 2 回目**(次に出たら固定スクリプト化)。
+
 ---
 
 ## 状態と次の一手(2026-09-17)
