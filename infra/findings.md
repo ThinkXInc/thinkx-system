@@ -1808,3 +1808,8 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
 - 注意: 本番の /remote_control/ が返す index.html は production checkout のもの。この修正が本番に出るまでは、
   本番入口から押すと古い JS が 202 を「完了」と誤解して `undefined を本番に出しました` と出る。今回の反映は
   staging の /connect/ から押す。
+
+## 2026-09-17 P-4 本番入口からの「本番に反映」の再試験
+
+- 直前の反映(release/2026-09-17-4)で本番の /remote_control/ が非同期版の画面になった。この行はその画面から
+  「本番に反映」を押す試験のための差分(文書のみ・サービス再起動なし)。結果はこの下に追記する。
