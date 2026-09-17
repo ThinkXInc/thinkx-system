@@ -1666,7 +1666,10 @@ def render_transcript(tsegments, s, e, regions, quotes, gaps, drops=None, vid_id
 
 # ---------- ページ描画 ----------
 def render_index():
-    ids = list_ids()
+    # （切り抜き）は一覧に出さない（オーナー指示 2026-09-17。旧方式の別IDフォルダは
+    # 未着手のまま廃止方向。切り抜きは同じタイトルの最終編集版から同一メニュー内に
+    # 生成する方式へ — 詳細は別途指示）。ID ページ自体は URL 直打ちでは開ける
+    ids = [i for i in list_ids() if "（切り抜き）" not in i]
     if not ids:
         return page("音源一覧", f"<h1>音源一覧</h1><p class='meta'>data: {esc(DATA_DIR)}</p>")
     rows = []
