@@ -7,7 +7,9 @@
 #  - .env は不要(data は既定の /src/podcast/data。ローカルと同一構造 — D-52)
 #
 
-# repository(monorepo 前提。clone と symlink は clone_monorepo.sh が行う)
+# repository(monorepo 前提。clone は clone_monorepo.sh が行う。symlink は podcast が
+# 後から加わったサイトなので、既存機でも通るようにここでも張る)
+sudo ln -sfn /src/thinkx-system/podcast /src/podcast
 [ -e /src/podcast/web-server ] || printf '\033[31mFAIL: /src/podcast が無い。先に clone_monorepo.sh とデプロイを流す\033[0m\n'
 
 # ffmpeg(サーバー書き出しに使う。エンコーダは export_audio.py が aac に自動フォールバック)
