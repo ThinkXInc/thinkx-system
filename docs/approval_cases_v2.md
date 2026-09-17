@@ -214,6 +214,29 @@ ask と deny のルールは hook の allow に勝つ。
 - **残るゲート**: 実行の承認(人間)。削減対象ではない。
 - **同型カウント**: 変更系につきカウント対象外。NFD→NFC 整理としては **S・X で 2 回目**(次に出たら固定スクリプト化)。
 
+### Y. 本番反映前の差分プレビュー(develop と production の先端・tree・未反映コミット・再起動サービス + connect の deploy プレビュー)
+- **生**: `git fetch -q origin; echo "develop: $(git rev-parse --short origin/develop) tree $(git rev-parse --short "origin/develop^{tree}")"; echo "production: $(...)"; git log --oneline --no-merges origin/production..origin/develop | cat; git diff --name-only origin/production origin/develop | cut -d/ -f1 | sort -u; ssh ... supercom-web1-stg 'curl -s -m 60 http://192.168.2.11:8008/connect/deploy | python3 -c "... print(\"same:\", d[\"same\"], \"commits:\", len(d[\"commits\"]), \"services:\", d[\"services\"])"'`
+- **引き金**: `$(git rev-parse ...)` のコマンド置換(4 箇所)+ `ssh`(staging)。git fetch / log / diff は allow。
+- **クラス**: 観測(本番に何が出るかの事前確認。書き込みなし。connect の `/connect/deploy` GET はプレビュー応答)。
+- **正しい形**: ローカル部分(先端・tree・未反映コミット・触るディレクトリ)は `$(...)` を使わない固定スクリプトにすれば無承認で走る
+  (git は allow・置換だけが引き金)。staging の deploy プレビューは claude_connect が既に JSON で返しているので、同じスクリプトが
+  urllib で叩けばよい(URL 固定・GET)。= **`verify_deploy.py` の「反映前」モード**。O(反映後の着地確認)と対で 1 本にする。
+- **残るゲート**: なし(反映そのものは別の承認)。
+- **同型カウント**: production/develop の比較観測は **F・G・O・Q・Y で 5 回目**。`verify_deploy.py` 未着手のまま同型が増え続けている。
+
+### Z. podcast データの配布(変更)+ 配布後の検証(観測)が 1 コマンドに混在
+- **生**: `bash infra/scripts/push_assets_podcast.sh staging 2>&1 | tail -2; ssh ... supercom-web1-stg 'python3 -c "... bad = [非NFC名の一覧] ... urllib.request.urlopen(\"http://localhost:8010/podcast/\") ... names = re.findall(...) ... urlopen(\"http://localhost:8010/podcast/id?id=\" + quote(\"ランチ大沼さん＠ミッドタウン3-5\")) ... print(timelines / drops / 音源 の有無)"'`
+- **引き金**: `ssh`(ask)。`bash infra/scripts/...` は止まらないが、配布(変更系)である以上 1 行に混ぜると観測まで同じ承認に乗る。
+- **クラス**: 変更(配布)+ 観測(サーバーの非 NFC 名の数・一覧ページの件数と重複・特定 ID ページの中身)。
+- **正しい形**: W と同じ結論。**配布スクリプト自身が配布後の検証を持つ**(非 NFC 名 0 件・一覧件数・重複なし)。配布 = 承認 1 回で
+  検証まで済む。特定 ID ページの確認は `stg.py` の podcast サブコマンド(URL 固定・ID は値引数・GET のみ)。
+  検証を ssh の `python3 -c` に書くと、S/X と同じく履歴に残らない。
+- **残るゲート**: 配布の実行承認(人間)。検証部分は無し。
+- **同型カウント**: 配布後検証の手書きは **W・Z で 2 回目**(次に出たらスクリプトに畳む)。
+- **直後の再発**: 同じセッションで `ssh ... 'python3 -c "... urlopen(localhost:8010/podcast/id?id=ランチ大沼さん…) ... print(\"audio tag:\", \"<audio id=\" in p, \"| preview_audio:\", \"preview_audio\" in p)"'`
+  が単独でもう一度出た(観測のみ・引き金 ssh)。特定 ID ページの確認は **Z とこれで 2 回目**。見る項目(timelines / drops / 音源 / audio tag /
+  preview_audio)が毎回少しずつ違う = 固定 wrapper にするなら「ページを取ってきて要素の有無を一覧で出す」1 本にし、項目リストをスクリプト側で持つ。
+
 ---
 
 ## 状態と次の一手(2026-09-17)
@@ -233,7 +256,8 @@ ask と deny のルールは hook の allow に勝つ。
 - W は変更系(削減しない)。selftest の後片付けは配布スクリプト自身に閉じる。
 - **リモート側の rm / sudo はローカルの deny に当たらない**(Q/T/W)。ssh の中身は settings では止まらないことを前提に、変更系の ssh は
   必ずレビュー済みスクリプト経由にする。
-- 収録済みの承認引き金(v2 時点): ssh(N/P/Q/S/T/U/W)・curl 本番(O/Q)・curl localhost(V)・`$(...)`/バッククォート のコマンド置換(O/Q/R/T)・
-  変更系 wrapper への yes 流し込み(P)。
+- X は S の 2 回目(サイズ比較はハッシュ比較でない)。Y で production/develop 比較観測が 5 回目。Z は W の 2 回目(配布後検証の手書き)。
+- 収録済みの承認引き金(v2 時点): ssh(N/P/Q/S/T/U/W/X/Y/Z)・curl 本番(O/Q)・curl localhost(V)・`$(...)`/バッククォート のコマンド置換
+  (O/Q/R/T/Y)・変更系 wrapper への yes 流し込み(P)。
 - 未着手(v1 から持ち越し): WebFetch ドメイン allow の恒久化、`make_favicons.sh`(事例 E)、curl localhost wrapper。
 - `.claude/settings.json` の hooks 登録(オーナー編集)は 2026-09-17 時点で未コミット。
