@@ -46,6 +46,13 @@ push_assets_podcast() {
   droot="$ws/podcast/data"
   [ -d "$droot" ] || { echo "podcast/data がローカルに無い(配るものなし)"; return 0; }
 
+  # 送信前に源流のファイル名を NFC に正準化する(git が運ぶ形と揃える。NFD が混じると
+  # Linux サーバー上で同名フォルダが NFC/NFD に分裂し、編集データと音源が別れる —
+  # 2026-09-17 実測)。補正した名前はその場に表示される。別実体の衝突は人間の判断が
+  # 要るので止まる
+  python3 "$ws/podcast/scripts/normalize_data_names.py" --fix "$droot" ||
+    { printf '%b\n' "${R}FAIL: ファイル名の NFC 正規化で衝突。上の表示を確認して統合してから再実行${Z}"; return 1; }
+
   if [ "$#" -ge 1 ]; then
     ids=("$@")
   else
