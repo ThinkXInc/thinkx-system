@@ -1775,3 +1775,36 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   さらにオーナーの端末で長いコマンドが貼り付け時に折り返され 3 行に分割実行された。
   → `infra/etc/push_remote_auth.sh <host>`(対話でユーザー名・パスワードを受け、正しい .env の REMOTE_ 行を置き換え、
   誤ファイルが REMOTE_ 行だけなら削除、uwsgi 再起動、本番 URL で 200/401 を確認)に置き換え。手順書 4 も差し替え。
+
+## 2026-09-17 【事故】push_remote_auth.sh が本番 thinkx の .env を空にし、本番サイトが約 10 分 500(復旧済み)
+
+- 経緯: 手順書 4 の .env 書き込みを `infra/etc/push_remote_auth.sh`(初版)で行った。スクリプトは
+  `sudo install /dev/null /tmp/remote_auth.env`(kaz 所有の空ファイル)を作り、`sudo bash -c "grep -v … > /tmp/remote_auth.env; cat >> …;
+  install /tmp/remote_auth.env /src/thinkx/.env"` と `;` 区切りで続けていた。Ubuntu 22.04 の **fs.protected_regular=2** により、
+  sticky な /tmp にある他人所有のファイルへは root でも O_CREAT で書けず、grep と cat の書き込みが `Permission denied`。
+  `;` 区切りのため止まらず、空のままの /tmp/remote_auth.env が **/src/thinkx/.env(728 バイト・12 行)を 0 バイトで上書き**。
+  uwsgi 再起動で `no python application found` → 08:43〜08:53 頃まで thinkxinc.com 全ルートが 500。
+- 復旧: Mac の `thinkx/.env`(配布元の正)を `push_env.sh supercom-web1 thinkx` で `/tmp/thinkx.env` に送り、
+  `install -o kaz -g serveradmins -m 640` で設置 → `systemctl restart uwsgi_thinkx` → `/` `/about` `/products/KOBITO` 200、`/remote_control/` 401。
+- 直したこと: (1) /tmp の中間ファイルを使わない。root の python が .env を読み、REMOTE_ 行を差し替え、同じ所有者・権限で
+  `os.replace` により原子的に置く。**元が空なら書かずに止まる。** (2) `;` 連結をやめ、失敗したら何もせず終了。
+  (3) verify にトップの 200 を加える(認証の確認だけでなく本番が生きていることを見る)。
+- 教訓: 秘密ファイルを書き換える処理は「読む → 差し替える → 原子的に置く」の 1 プロセスで行い、シェルの `;` 連結と
+  /tmp 経由の受け渡しを使わない。**本番の .env を触るスクリプトは staging で先に流す**(今回は staging で試していなかった)。
+  復旧経路(Mac の thinkx/.env + push_env.sh)が生きていたので 10 分で戻せた。
+
+## 2026-09-17 「本番に反映」を非同期に(受け付けて即返す)— 本番 LB の 60 秒と本番 uwsgi の 1 プロセスに塞がれていた
+
+- 本番入口 /remote_control/ から押した「本番に反映する」は、staging 側では成功(production 22d72bf)したが、画面は
+  「内容を確認 0 秒」のまま。原因は 2 つ: (1) 本番 Flask の中継が staging の応答(110 秒)を待つ間、本番 LB の nginx が
+  60 秒で切断(uwsgi ログ `SIGPIPE … POST /remote_control/deploy … generated 0 bytes in 110489 ms`)。
+  (2) 本番 thinkx の uwsgi は `processes = 1` / `threads = 1  # for debug`(uwsgi.ini)。中継中は本番サイト全体が
+  応答待ちになり、画面の 1 秒ごとの進捗取得も詰まった。
+- 対処: staging server.py の POST /connect/deploy は裏でスレッドを起こして即 202 `{result: started}` を返し、
+  進み具合と結果は GET /connect/state の `deploy`(running / result / error)に載せる。ページは state を見て完了を判断。
+  経過秒はローカルの時計で毎秒進め、問い合わせは前の応答が返るまで重ねない。本番の中継タイムアウト(deploy)は 30 秒に。
+- **オーナー判断**: 本番 thinkx の uwsgi が 1 プロセス 1 スレッド("for debug")のままなのは、リモコン以前からの
+  設定で、1 リクエストが遅いとサイト全体が待たされる。`threads = 4` 程度に戻すかは thinkx 側の判断(本トラックでは触らない)。
+- 注意: 本番の /remote_control/ が返す index.html は production checkout のもの。この修正が本番に出るまでは、
+  本番入口から押すと古い JS が 202 を「完了」と誤解して `undefined を本番に出しました` と出る。今回の反映は
+  staging の /connect/ から押す。

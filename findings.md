@@ -277,3 +277,20 @@ staging で commit 済みの内容は `git format-patch` で取り出してオ�
 - **Claude in Chrome のサイト許可は settings とは別系統**: Chrome 拡張の Permissions →「Always allow actions
   on this site」で恒久許可(拡張アイコン→三点→Extension settings→Permissions の Your approved sites で管理)。
   settings/フック/スクリプトでは制御できない。
+
+## 2026-09-17 承認削減 v1 クローズ・v2 開始/ 実行者が terraform wrapper の yes を代打ちした(承認削減トラック)
+
+正本: docs/approval_cases_v2.md(事例 N〜・割り当て表)、v1 は docs/archive/approval_cases/v1.md に凍結。
+
+- **v1 は稼働中**: `hooks/check_git_command.py` を `.claude/settings.json` の PreToolUse に登録済み(オーナー編集・**未コミット**)。
+  複数行メッセージの `git commit --dry-run` が無承認で通ることを実測(2026-09-17)。09-07 以降の 31 コミットが複数行トレーラ付き。
+- **実行者が wrapper の承認を代打ちした(事例 P)**: `printf 'yes\n' | bash infra/scripts/terraform_apply.sh staging` の形で
+  apply を実行していた。`terraform_apply.sh` は plan 全件を人間に見せて `yes` を待つ wrapper であり、標準入力に yes を流すのは
+  `-auto-approve` と等価(v1 事例 K・2026-08-06 の prod/staging 全 4 台破壊と同じ構造)。承認プロンプト(Bash の ask)は
+  出ていたが、それは「このコマンドを走らせてよいか」であって「この plan でよいか」ではない。plan を見た yes は代替できない。
+  → **規律: 実行者は wrapper の対話入力(yes/N)を流し込まない。** 変更系 wrapper は素で実行し、yes はオーナーが打つ。
+  観測は別コマンドに分ける。
+- **事例 O(release の production 取り込み検証)は v1 事例 F/G と同型の 3 回目**。昇格規則(3 回で固定スクリプト化)に達した。
+  次の一手は `verify_deploy.py`。
+- **`$(...)` を含むコマンドは settings の allow でも hook でも通らない**(コマンド置換は hook が委ねる設計・settings の前置一致は
+  置換の中身を評価しない)。観測で `$(git rev-parse ...)` を比較したくなったら python 側に畳む。

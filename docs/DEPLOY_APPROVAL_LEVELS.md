@@ -176,12 +176,12 @@ Claude Code の承認プロンプト(`.claude/settings.json` の `ask`)を減ら
 
 - **原文**:「approval_casesはversion 1でかつアーカイブされる前提だ ... それでコマンドを作ってから運用はじめてversion 2をストックする」
   - 解釈: approval_cases はバージョン管理する。v1 は構築の材料で、作り終えたら archive。運用中の新規事例は v2 に貯める。
-  - 文脈: `docs/approval_cases_v1.md` の位置づけ。
+  - 文脈: `docs/approval_cases_v1.md` の位置づけ(2026-09-17 に凍結し `docs/archive/approval_cases/v1.md` へ移動。運用中は `docs/approval_cases_v2.md`)。
 
 ## 承認削減の安全モデル(設計・製品説明にも使う)
 
 「承認を減らす」と「安全」を両立させる根拠。KOBITO サーバークラウドの安全性説明の元にする。
-実装: `hooks/check_git_command.py`(v1)、材料: `docs/approval_cases_v1.md`。
+実装: `hooks/check_git_command.py`(v1)、材料: `docs/archive/approval_cases/v1.md`(v1・凍結)、`docs/approval_cases_v2.md`(運用中)。
 
 ### 前提: Claude Code の許可判定は 2 段階
 

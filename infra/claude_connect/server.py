@@ -11,7 +11,8 @@ kaz で動かす(tmux も claude も kaz のもの)。bind は web の private I
   POST /connect/session  state に応じて再接続し、動作後の {"state", "url"} を返す
   POST /connect/code     body {"code"} を pane に貼って Enter。動作後の {"state", "url"} を返す
   GET  /connect/deploy   本番に出る内容(コミット一覧・再起動されるサービス)。何も変えない
-  POST /connect/deploy   origin/develop から release を切って production へ push(押す=承認)。本番の応答を確認して返す
+  POST /connect/deploy   origin/develop から release を切って production へ push(押す=承認)。裏で進め 202 {result: started}。
+                         進み具合と結果は GET /connect/state の phase / deploy に載る
 
 state:
   connected        tmux あり・pane が claude・ログイン済み
@@ -338,6 +339,30 @@ def production_http_status() -> int:
     return int(out) if rc == 0 and out.strip().isdigit() else 0
 
 
+deploy_job = {"running": False, "started_at": None, "finished_at": None, "result": None, "error": None}
+
+
+def start_deploy_job() -> bool:
+    """本番反映を裏で始める。既に何かの操作中なら False。結果は /connect/state の deploy に載る
+    (同期で返すと 110 秒かかり、LB の nginx(60 秒)と本番 uwsgi(1 プロセス)を塞いだ・2026-09-17 実測)。"""
+    if not action_lock.acquire(blocking=False):
+        return False
+    deploy_job.update(running=True, started_at=now_iso(), finished_at=None, result=None, error=None)
+
+    def work() -> None:
+        try:
+            deploy_job["result"] = deploy_to_production()
+        except Exception as e:  # スレッド内で落とさない
+            deploy_job["error"] = f"{type(e).__name__}: {e}"
+        finally:
+            deploy_job["running"] = False
+            deploy_job["finished_at"] = now_iso()
+            action_lock.release()
+
+    threading.Thread(target=work, daemon=True).start()
+    return True
+
+
 def deploy_to_production() -> dict:
     try:
         set_phase("deploy_fetch")
@@ -419,7 +444,8 @@ class Handler(BaseHTTPRequestHandler):
             elif path == "/connect/":
                 self.send_index()
             elif path == "/connect/state":
-                self.send_json(200, {**observe(), "phase": progress["phase"], "disk_free_gb": disk_free_gb(), "observed_at": now_iso()})
+                self.send_json(200, {**observe(), "phase": progress["phase"], "deploy": dict(deploy_job),
+                                     "disk_free_gb": disk_free_gb(), "observed_at": now_iso()})
             elif path == "/connect/deploy":
                 self.send_json(200, {**deploy_preview(), "observed_at": now_iso()})
             else:
@@ -443,14 +469,13 @@ class Handler(BaseHTTPRequestHandler):
                     result = paste_code(code)
                 self.send_json(200, {**result, "observed_at": now_iso()})
             elif path == "/connect/deploy":
-                if not action_lock.acquire(blocking=False):
+                if deploy_job["running"]:
+                    self.send_json(202, {"result": "started", "started_at": deploy_job["started_at"], "observed_at": now_iso()})
+                    return
+                if not start_deploy_job():
                     self.send_json(409, {"error": "別の操作が進行中です。終わってからもう一度押してください"})
                     return
-                try:
-                    result = deploy_to_production()
-                finally:
-                    action_lock.release()
-                self.send_json(200, {**result, "observed_at": now_iso()})
+                self.send_json(202, {"result": "started", "started_at": deploy_job["started_at"], "observed_at": now_iso()})
             else:
                 self.send_json(404, {"error": "not found"})
         except ValueError as e:

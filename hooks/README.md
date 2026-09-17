@@ -19,5 +19,5 @@ Bash コマンドの直前に走り、そのコマンドを承認なしで通し
 - 登録: `hooks.PreToolUse` に matcher `"Bash"`・`python3 "$CLAUDE_PROJECT_DIR/hooks/check_git_command.py"`。
 
 なぜ git だけをフックにするか(curl/ssh は固定 wrapper、git add/WebFetch は settings):
-判定の割り当ては `docs/approval_cases_v1.md`「判定方式の割り当て」。
+判定の割り当ては `docs/approval_cases_v2.md`「判定方式の割り当て」(v1 の事例は `docs/archive/approval_cases/v1.md`)。
 設計・安全モデル・実行時の流れは `docs/DEPLOY_APPROVAL_LEVELS.md`。
