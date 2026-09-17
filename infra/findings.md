@@ -1717,3 +1717,12 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
 - terraform 全体 plan: prod / staging とも **No changes**(IAM を足す前に他の差分が無い)。
 - オーナー裁定(同日): ロールは本番だけ / staging LB は本番 IP を satisfy any で通す / 本番 .env に staging 認証を置かない / `/remote_control/`。
   「停止するとページが消える」は「停止中はページを開けない」の意味で、データは EBS に残る(先日の stop→start で確認済み)。
+
+## 2026-09-17 P-1 完了(接続ページの相対パス化・電源カード)— 別セッションのコミットに巻き込まれた
+
+- 変更: `infra/claude_connect/index.html` の API(state/session/code/deploy)を相対パスに。電源カード(power/state が 200 の
+  ときだけ表示・staging 直開きでは 404 で隠れる)。staging 停止中(本番入口で 503)は接続・本番反映のカードを隠す。
+  モックで「停止中 → 起動の段階表示 → 起動後にカードが現れる」「電源 API なし = 従来どおり」を確認。
+- 事故: 作業ツリーの index.html が、podcast トラックの別セッションのコミット **1ffe5eb**「fix(infra): /src/podcast symlink を…」に
+  同梱されて push された(自分の持ち場のパスだけを add する規則 D-49② の違反)。中身は意図どおりなので活かし、
+  履歴は書き換えない(共有ブランチ・force push 禁止)。本来のコミットメッセージ: `feat(infra): claude_connect page — API を相対パスに、電源カード(本番の入口でだけ出る)`。
