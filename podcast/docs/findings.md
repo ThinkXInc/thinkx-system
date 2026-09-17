@@ -418,3 +418,17 @@ cut_decisions の該当Cを keep に更新するところまでで1セット
   環境マーカーで Linux(サーバー)のみに入れる。ローカルは Flask 内蔵サーバーで足りる。
 - requirements の click 8.5.0 は Python 3.10+ 前提。サーバー(Ubuntu 22.04)の python3 =
   3.10 なので setup_podcast.sh は素の python3 で venv を作る(他サイトの python3.9 とは別)。
+
+## 2026-09-17 ファイル名の NFC/NFD 分裂(staging で ID が2つずつ表示)
+
+- **症状**: staging の一覧に同名 ID が2つ並び、片方に編集データが無い。
+- **原因**: mac は名前を NFD で保存し、git は NFC に変換して運ぶ(core.precomposeunicode)。
+  tar 同期は NFD のまま送るため、Linux 上で「git 経由の edit/(NFC)」と「tar 経由の
+  音源(NFD)」が別フォルダに分裂した。mac(APFS)は両形を同一視して照合するため、
+  ローカルでは症状が出ない(exists() での衝突検出も誤検出する)。
+- **解決(源流の正準化)**: `scripts/normalize_data_names.py` で data/ の名前を NFC に統一
+  (mac では一時名経由の2段リネームでないと保存形が変わらない)。同期スクリプトが
+  送信前に毎回 --fix で補正・衝突時は停止。サーバー側の分裂・NFD 残骸は一度だけ
+  統合・掃除した。以後 git と tar が同じ NFC 名を運ぶ。
+- **教訓**: 同じツリーを複数経路で運ぶときは、経路ごとの名前の正規化形を最初に揃える。
+  書き出しファイル名照合の NFC 正規化(2026-08-08)と同根。
