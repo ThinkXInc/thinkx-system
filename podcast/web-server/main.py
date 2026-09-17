@@ -81,7 +81,7 @@ ul.ids li a:hover { text-decoration: underline; }
 .st-none  { background: #6b7280; }   /* 未処理  グレー */
 .st-done0 { background: #969da8; }   /* 未編集  未処理と似せた少し薄いグレー（2026-09-17） */
 .st-wip   { background: #a08040; }   /* 編集中  黄土（タイムラインの無音色） */
-.st-done  { background: #4a7c59; }   /* 編集完了 緑（本番使用チェックあり） */
+.st-done  { background: #804e7f; }   /* 編集完了 紫（本番使用チェックあり。オーナー指定 2026-09-17） */
 /* 本番使用が付いた ID は一覧でも黄背景（.seg.production と同じ色） */
 ul.ids li.production { background:#3a3410; }
 :root[data-theme="light"] ul.ids li.production { background:#fff9e4; }
