@@ -86,9 +86,9 @@ ul.ids li a:hover { text-decoration: underline; }
 /* 本番使用が付いた ID は一覧でも黄背景（.seg.production と同じ色） */
 ul.ids li.production { background:#3a3410; }
 :root[data-theme="light"] ul.ids li.production { background:#fff9e4; }
-/* 配信済みは黄ではなく薄紫（オーナー指定 #f7effc）。production より優先 */
-ul.ids li.delivered { background:#322338; }
-:root[data-theme="light"] ul.ids li.delivered { background:#f7effc; }
+/* 配信済みは黄ではなく薄紫（オーナー指定 #fcefef）。production より優先 */
+ul.ids li.delivered { background:#382626; }
+:root[data-theme="light"] ul.ids li.delivered { background:#fcefef; }
 
 .seg { border: 1px solid #ccc4; border-radius: 12px; padding: 16px 19px 21px;
        margin-bottom: 35px; }
@@ -187,9 +187,9 @@ video { width: 100%; max-width: 860px; display: block; border-radius: 6px;
    指定色 #fff9e4 はライト用。ダークは同系の暗い黄で沈ませる */
 .seg.production { background-color:#3a3410; }
 :root[data-theme="light"] .seg.production { background-color:#fff9e4; }
-/* 配信済みは黄ではなく薄紫（オーナー指定 #f7effc）。後置で production より優先 */
-.seg.delivered { background-color:#322338; }
-:root[data-theme="light"] .seg.delivered { background-color:#f7effc; }
+/* 配信済みは黄ではなく薄紫（オーナー指定 #fcefef）。後置で production より優先 */
+.seg.delivered { background-color:#382626; }
+:root[data-theme="light"] .seg.delivered { background-color:#fcefef; }
 .editlink { font-size:13px; color:#6b7280; }
 """
 
