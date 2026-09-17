@@ -58,6 +58,7 @@
   @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.7); } }
 
   .note { margin: 10px 0 0; font-size: 14px; color: var(--ink-soft); min-height: 22px; }
+  .note[hidden], .note:empty { display: none; }
 
   /* 進行の段階表示(サーバーが返す phase に合わせて、済み・進行中・これから を切り替える) */
   .progress { margin-top: 14px; }
@@ -112,7 +113,8 @@
     -webkit-tap-highlight-color: transparent;
   }
   .code button:disabled { opacity: 0.55; }
-  .error { margin: 8px 0 0; font-size: 13px; color: #a23b2c; min-height: 20px; }
+  .error { margin: 8px 0 0; font-size: 13px; color: #a23b2c; }
+  .error:empty { display: none; }
 
   /* staging の電源(本番の入口でだけ出る。電源 API が 404 なら隠す) */
   .card.power { margin-bottom: 16px; }
@@ -273,6 +275,7 @@
     dot.className = "dot " + kind;
     statusText.textContent = text;
     note.textContent = noteText || "";
+    note.hidden = !noteText;  // 空のときは行ごと消して間を詰める
   }
 
   function drawSteps() {
