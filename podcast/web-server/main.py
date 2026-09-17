@@ -79,9 +79,12 @@ ul.ids li a:hover { text-decoration: underline; }
 .st { flex:none; font-size: 11px; font-weight: 700; color: #fff;
       padding: 3px 11px; border-radius: 11px; letter-spacing: .04em; }
 .st-none  { background: #6b7280; }   /* 未処理  グレー */
-.st-done0 { background: #5f8a9c; }   /* 処理済み 青緑（タイムラインの発話色） */
+.st-done0 { background: #969da8; }   /* 未編集  未処理と似せた少し薄いグレー（2026-09-17） */
 .st-wip   { background: #a08040; }   /* 編集中  黄土（タイムラインの無音色） */
-.st-done  { background: #4a7c59; }   /* 編集済み 緑 */
+.st-done  { background: #4a7c59; }   /* 編集完了 緑（本番使用チェックあり） */
+/* 本番使用が付いた ID は一覧でも黄背景（.seg.production と同じ色） */
+ul.ids li.production { background:#3a3410; }
+:root[data-theme="light"] ul.ids li.production { background:#fff9e4; }
 
 .seg { border: 1px solid #ccc4; border-radius: 12px; padding: 16px 19px 21px;
        margin-bottom: 35px; }
@@ -1240,26 +1243,25 @@ def list_ids():
 
 
 def id_status(idv):
-    """ID の進み具合を返す (key, ラベル)。
+    """ID の進み具合を返す (key, ラベル)。区分はオーナー指示 2026-09-17:
     未処理   … 文字起こしがまだ
-    処理済み … 文字起こしはできたが、まだ何も編集していない
-    編集中   … カットを入れたが、未決のカット候補が残っている
-    編集済み … 未決がなくなった
+    未編集   … 文字起こしはできたが、まだ何も編集していない（旧「処理済み」）
+    編集中   … 編集に着手した（本番使用のチェックが付くまではずっと編集中）
+    編集完了 … いずれかの切り出しに「本番使用」のチェックが付いた（一覧の背景も黄）
     """
     base = os.path.join(DATA_DIR, idv)
     if not os.path.exists(idpaths.find(base, "transcript.json")):
         return "none", "未処理"
     segs = _load_json(idpaths.find(base, "segments.json"), {}).get("segments", [])
+    if any(sg.get("production") for sg in segs):
+        return "done", "編集完了"
     cuts = _load_json(idpaths.find(base, "cut_decisions.json"), {}).get("cuts", [])
-    pending = sum(1 for c in cuts if c.get("status") == "pending")
     decided = sum(1 for c in cuts if c.get("status") in ("cut", "keep"))
     has_drop = any(sg.get("drops") for sg in segs)
     started = has_drop or decided   # カット記録が最低1つ＝編集に着手（オーナー指示 2026-08-09）
     if not segs or not started:
-        return "done0", "処理済み"
-    if pending:
-        return "wip", "編集中"
-    return "done", "編集済み"
+        return "done0", "未編集"
+    return "wip", "編集中"
 
 
 def list_segments(idv):
@@ -1689,8 +1691,9 @@ def render_index():
     rows = []
     for i in ids:
         key, label = id_status(i)
+        cls = " class='production'" if key == "done" else ""
         rows.append(
-            f"<li><a href='{approot()}/id?id={urllib.parse.quote(i)}'>{esc(i)}</a>"
+            f"<li{cls}><a href='{approot()}/id?id={urllib.parse.quote(i)}'>{esc(i)}</a>"
             f"<span class='st st-{key}'>{label}</span></li>")
     return page("音源一覧", f"<h1>音源一覧</h1><ul class='ids'>{''.join(rows)}</ul>")
 
