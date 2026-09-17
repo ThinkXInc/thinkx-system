@@ -1814,3 +1814,15 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
 - 直前の反映(release/2026-09-17-4)で本番の /remote_control/ が非同期版の画面になった。この行はその画面から
   「本番に反映」を押す試験のための差分(文書のみ・サービス再起動なし)。結果はこの下に追記する。
 - 再試験 2 回目(2026-09-17): この行が本番入口からの「本番に反映」で production に入れば成功(文書のみ・再起動なし)。
+
+## 2026-09-17 セッション終了時点の状態(KOBITO リモコン)
+
+- 完了: N-0〜N-7(staging の /connect/)、P-0〜P-3(本番入口 /remote_control/: IAM ロール・IMDSv2・Flask・中継・電源カード・
+  Basic 認証・staging LB の satisfy any)、本番反映ボタンの非同期化、セッション URL の sessions.json 由来化、セットアップ手順書。
+  本番反映ボタンは release/2026-09-17 系で複数回成功。本番の /remote_control/ は認証つき 200。
+- 未完: P-4(本番入口からの staging 停止→起動→Claude を開く の通し・所要時間)、P-5(SECURITY.md の web ロール行・運用.md の URL・
+  runbook の入口更新は人間)。最後の「本番に反映」(文書のみ 3 件)はオーナーの押下待ちで終了。
+- オーナー判断待ち(別件): 本番 thinkx の uwsgi `processes=1 / threads=1  # for debug`(1 リクエストが遅いとサイト全体が待つ)、
+  GitHub の未使用 Deploy key `thinkx-system-rw` の削除、`infra/terraform/terraform.tfvars.bak` の git 管理、settings.json の Write ルール、
+  `infra/setup/nginx/` の古い複製、staging の discord_webhook 未配布。
+- 計画の正本化: `infra/docs/staging_power_plan_draft.md` は下書きのまま(採用時に `STAGING_POWER_PLAN.md` へ改名・人間)。
