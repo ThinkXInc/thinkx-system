@@ -3,7 +3,7 @@
 
 Bash コマンドを検査し、安全な git 操作(add / commit / push 非 force)だけを無承認にする。
 harness(Claude Code)が Bash 実行の前に自動で呼ぶ。人間も LLM も直接は実行しない。
-承認削減 version 1。材料: docs/approval_cases_v1.md(事例 I)。判定基準・安全モデル: docs/DEPLOY_APPROVAL_LEVELS.md。
+承認削減 version 1。材料: docs/archive/approval_cases/v1.md(事例 I)。運用中の事例: docs/approval_cases_v2.md。判定基準・安全モデル: docs/DEPLOY_APPROVAL_LEVELS.md。
 
 大原則(安全側に倒す):
   - allow を返すのは、コマンドが git add / commit / push(非 force)**のみ**で構成されているときだけ。
