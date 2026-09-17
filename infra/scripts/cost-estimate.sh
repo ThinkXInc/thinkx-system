@@ -67,7 +67,7 @@ COMPUTE_100=$(calc "($WEB_PRICE + $LB_PRICE) * $HRS_MONTH")  # 24/7 稼働時の
 echo "============================================================"
 echo " インフラ月額概算   env=${ENVX}"
 echo " region=ap-northeast-1(東京) / Linux on-demand / 2026-07 snapshot"
-echo " 稼働率${STD_UTIL}%(EC2のみ稼働率に比例。EBS/EIP/Route53は固定)"
+echo " 稼働率${STD_UTIL}%(computeのみ稼働率に比例。EBS/EIP/Route53は固定)"
 echo "============================================================"
 printf "%-34s %-9s %10s\n" "サービス" "区分" "月額USD"
 printf "%-34s %-9s %10s\n" "----------------------------------" "-------" "--------"
