@@ -1706,3 +1706,14 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
 - 対応: stop/start はページ自体が staging 上にあるので原理的に載せられない(計画書「やらないこと」)。terraform の
   plan/apply/destroy は箱の生成・破壊で、承認プロンプトつきの CLI(terraform_apply.sh / terraform_destroy.sh)に残す。
   リモコンに載せるのは「staging に既にあるものを動かす・出す」操作(接続の復旧・Claude を開く・本番に反映)まで。
+
+## 2026-09-17 P-0 前提ゲート(KOBITO リモコン本番入口・staging 電源)— 全て成立
+
+- 本番 web(web1)の thinkx venv: boto3 1.34.122 / requests 2.32.5(依存追加なし)。`/src/thinkx-system/infra/claude_connect/index.html` あり(production checkout)。
+- 本番 web → `https://staging.thinkxinc.com/connect/state` は 401(到達している。P-1b で本番 IP を通すまでは 401 が正)。
+- IMDS: 本番 web は **IMDSv1 で取れる**(`/latest/meta-data/instance-id` が 200)。IAM ロールは無し(iam/info が 404)。→ P-2 で v2 必須化とロール付与。
+- `describe-instances --filters Env=staging,Project=supercom` は staging 2 台(i-0bb98fabdeeb8aea0 lb1-stg / i-0c2bca1107b156521 web1-stg)のみ。本番は混ざらない。
+- 本番 web の EIP = 57.182.151.177(固定・D-53)。
+- terraform 全体 plan: prod / staging とも **No changes**(IAM を足す前に他の差分が無い)。
+- オーナー裁定(同日): ロールは本番だけ / staging LB は本番 IP を satisfy any で通す / 本番 .env に staging 認証を置かない / `/remote_control/`。
+  「停止するとページが消える」は「停止中はページを開けない」の意味で、データは EBS に残る(先日の stop→start で確認済み)。

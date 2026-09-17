@@ -88,8 +88,10 @@ fabula は取り込みのみ後日行い、サイト(fabula-method.com)の設計
    podcast/ 一式が staging に乗る)
 2. web1-stg で `bash infra/setup/setup_podcast.sh`(ffmpeg・venv・uwsgi_podcast・flusher)
 3. lb1-stg で `bash infra/setup/setup_podcast_lb.sh`(Basic 認証ファイル。最終行が対話)
-4. オーナー機で data をローカル `podcast/data/` へ移し、edit/ をコミット。
-   `bash infra/scripts/push_assets_podcast.sh staging <ID>` で大物を搬入
+4. ~~data のローカル移行~~ **完了(2026-09-17)**: 旧 `~/Sources/podcast/data` の573ファイル
+   (10.8GB)を全 SHA-256 照合つきで `podcast/data/` へ移行し、ハードリンク共有も解消。
+   旧フォルダはバックアップ凍結(オーナー指示: 旧側での編集の気配にはアラートを出す)。
+   残りは `bash infra/scripts/push_assets_podcast.sh staging <ID>` での大物搬入のみ
 5. 確認 URL `http://{lb1-stgのEIP}/podcast/` をオーナーに提示して目視確認
 
 ## Phase 4: 本番常設(staging OK 後)

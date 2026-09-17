@@ -79,9 +79,16 @@ ul.ids li a:hover { text-decoration: underline; }
 .st { flex:none; font-size: 11px; font-weight: 700; color: #fff;
       padding: 3px 11px; border-radius: 11px; letter-spacing: .04em; }
 .st-none  { background: #6b7280; }   /* 未処理  グレー */
-.st-done0 { background: #5f8a9c; }   /* 処理済み 青緑（タイムラインの発話色） */
+.st-done0 { background: #969da8; }   /* 未編集  未処理と似せた少し薄いグレー（2026-09-17） */
 .st-wip   { background: #a08040; }   /* 編集中  黄土（タイムラインの無音色） */
-.st-done  { background: #4a7c59; }   /* 編集済み 緑 */
+.st-done  { background: #804e7f; }   /* 編集完了 紫（本番使用チェックあり。オーナー指定 2026-09-17） */
+.st-sent  { background: #804e7f; }   /* 配信済み 紫のまま（オーナー指示 2026-09-17） */
+/* 本番使用が付いた ID は一覧でも黄背景（.seg.production と同じ色） */
+ul.ids li.production { background:#3a3410; }
+:root[data-theme="light"] ul.ids li.production { background:#fff9e4; }
+/* 配信済みは黄ではなく薄紫（オーナー指定 #fcefef）。production より優先 */
+ul.ids li.delivered { background:#382626; }
+:root[data-theme="light"] ul.ids li.delivered { background:#fcefef; }
 
 .seg { border: 1px solid #ccc4; border-radius: 12px; padding: 16px 19px 21px;
        margin-bottom: 35px; }
@@ -176,6 +183,13 @@ video { width: 100%; max-width: 860px; display: block; border-radius: 6px;
 .seg { scroll-margin-top:42px; }
 /* 全編セグメントは枠で区別する（オーナー指示・2026-08-08） */
 .seg.fullep { border: 3px solid #68000044; border-radius: 12px; }
+/* 本番使用にチェックした切り出しは背景を黄にする（オーナー指示・2026-09-17）。
+   指定色 #fff9e4 はライト用。ダークは同系の暗い黄で沈ませる */
+.seg.production { background-color:#3a3410; }
+:root[data-theme="light"] .seg.production { background-color:#fff9e4; }
+/* 配信済みは黄ではなく薄紫（オーナー指定 #fcefef）。後置で production より優先 */
+.seg.delivered { background-color:#382626; }
+:root[data-theme="light"] .seg.delivered { background-color:#fcefef; }
 .editlink { font-size:13px; color:#6b7280; }
 """
 
@@ -1149,6 +1163,16 @@ def page(title, body):
         # 「この編集で書き出す」: 完了したらそのままダウンロードが落ちてくる
         "function nrToggle(cb){localStorage.setItem('nr_on',cb.checked?'1':'0');"
         "document.querySelectorAll('.nrtoggle').forEach(function(c){c.checked=cb.checked;});}"
+        # 本番使用/配信済み: segments.json に保存し、その場で背景色を切り替える
+        "function segFlag(field,idx,sid,cb){var idv=new URLSearchParams(location.search).get('id');"
+        "fetch(window.APP+'/'+field+'?id='+encodeURIComponent(idv)"
+        "+'&sid='+encodeURIComponent(sid)+'&on='+(cb.checked?'1':'0'))"
+        ".then(function(r){if(!r.ok){cb.checked=!cb.checked;"
+        "document.getElementById('rst'+idx).textContent='保存に失敗しました';return;}"
+        "var seg=document.getElementById('seg'+idx);"
+        "if(seg)seg.classList.toggle(field,cb.checked);})"
+        ".catch(function(){cb.checked=!cb.checked;"
+        "document.getElementById('rst'+idx).textContent='サーバーに接続できません';});}"
         "document.addEventListener('DOMContentLoaded',function(){"
         "var on=localStorage.getItem('nr_on')==='1';"
         "document.querySelectorAll('.nrtoggle').forEach(function(c){c.checked=on;});});"
@@ -1226,26 +1250,27 @@ def list_ids():
 
 
 def id_status(idv):
-    """ID の進み具合を返す (key, ラベル)。
+    """ID の進み具合を返す (key, ラベル)。区分はオーナー指示 2026-09-17:
     未処理   … 文字起こしがまだ
-    処理済み … 文字起こしはできたが、まだ何も編集していない
-    編集中   … カットを入れたが、未決のカット候補が残っている
-    編集済み … 未決がなくなった
+    未編集   … 文字起こしはできたが、まだ何も編集していない（旧「処理済み」）
+    編集中   … 編集に着手した（本番使用のチェックが付くまではずっと編集中）
+    編集完了 … いずれかの切り出しに「本番使用」のチェックが付いた（一覧の背景も黄）
     """
     base = os.path.join(DATA_DIR, idv)
     if not os.path.exists(idpaths.find(base, "transcript.json")):
         return "none", "未処理"
     segs = _load_json(idpaths.find(base, "segments.json"), {}).get("segments", [])
+    if any(sg.get("delivered") for sg in segs):
+        return "sent", "配信済み"
+    if any(sg.get("production") for sg in segs):
+        return "done", "編集完了"
     cuts = _load_json(idpaths.find(base, "cut_decisions.json"), {}).get("cuts", [])
-    pending = sum(1 for c in cuts if c.get("status") == "pending")
     decided = sum(1 for c in cuts if c.get("status") in ("cut", "keep"))
     has_drop = any(sg.get("drops") for sg in segs)
     started = has_drop or decided   # カット記録が最低1つ＝編集に着手（オーナー指示 2026-08-09）
     if not segs or not started:
-        return "done0", "処理済み"
-    if pending:
-        return "wip", "編集中"
-    return "done", "編集済み"
+        return "done0", "未編集"
+    return "wip", "編集中"
 
 
 def list_segments(idv):
@@ -1666,14 +1691,18 @@ def render_transcript(tsegments, s, e, regions, quotes, gaps, drops=None, vid_id
 
 # ---------- ページ描画 ----------
 def render_index():
-    ids = list_ids()
+    # （切り抜き）は一覧に出さない（オーナー指示 2026-09-17。旧方式の別IDフォルダは
+    # 未着手のまま廃止方向。切り抜きは同じタイトルの最終編集版から同一メニュー内に
+    # 生成する方式へ — 詳細は別途指示）。ID ページ自体は URL 直打ちでは開ける
+    ids = [i for i in list_ids() if "（切り抜き）" not in i]
     if not ids:
         return page("音源一覧", f"<h1>音源一覧</h1><p class='meta'>data: {esc(DATA_DIR)}</p>")
     rows = []
     for i in ids:
         key, label = id_status(i)
+        cls = {"done": " class='production'", "sent": " class='delivered'"}.get(key, "")
         rows.append(
-            f"<li><a href='{approot()}/id?id={urllib.parse.quote(i)}'>{esc(i)}</a>"
+            f"<li{cls}><a href='{approot()}/id?id={urllib.parse.quote(i)}'>{esc(i)}</a>"
             f"<span class='st st-{key}'>{label}</span></li>")
     return page("音源一覧", f"<h1>音源一覧</h1><ul class='ids'>{''.join(rows)}</ul>")
 
@@ -1782,7 +1811,9 @@ def render_id(idv):
                 if g.get("flag") != "likely_dropped" and g.get("duration", 0) >= 1.5]
 
         _full = "全編" in (title or "")
-        parts.append(f"<div class='seg{' fullep' if _full else ''}' id='seg{idx}'>")
+        _prod = " production" if sg.get("production") else ""
+        _dlv = " delivered" if sg.get("delivered") else ""
+        parts.append(f"<div class='seg{' fullep' if _full else ''}{_prod}{_dlv}' id='seg{idx}'>")
         rank = cand.get("rank") if cand else None
         # オーナー評価（★5段階＋根拠の発言を併記。分割したら評価はリセットされる）
         rt = d["ratings_by_index"].get(idx)
@@ -1821,6 +1852,10 @@ def render_id(idv):
         parts.append(
             f"<p class='meta'><button onclick=\"renderSeg('{_sid}',{idx})\">この編集で書き出す（m4a）</button>"
             f"　<label><input type='checkbox' class='nrtoggle' onchange='nrToggle(this)'> ノイズ除去</label>"
+            f"　<label><input type='checkbox'{' checked' if sg.get('production') else ''}"
+            f" onchange=\"segFlag('production',{idx},'{_sid}',this)\"> 本番使用</label>"
+            f"　<label><input type='checkbox'{' checked' if sg.get('delivered') else ''}"
+            f" onchange=\"segFlag('delivered',{idx},'{_sid}',this)\"> 配信済み</label>"
             f"　<span id='rst{idx}' class='meta'></span></p>")
 
         # 要約: segments.json の summary（現在の切り出し内容から作り直したもの）を優先。
@@ -1890,6 +1925,47 @@ def apply_decision(idv, cid, action, status_only=False):
     with open(seg_path, "w", encoding="utf-8") as f:
         json.dump(seg, f, ensure_ascii=False, indent=2)
     _queue_for_sync(dec_path, seg_path)
+    return True
+
+
+# チェックボックスで立てるセグメントの印（オーナー指示 2026-09-17）。
+# production=本番使用（黄背景・編集完了）/ delivered=配信済み（薄紫背景・ラベル配信済み）
+SEG_FLAGS = ("production", "delivered")
+
+
+def set_seg_flag(idv, sid, field, on):
+    """セグメントの印の保存。segments.json の該当セグメントにフラグを立てる/外す。
+    編集データなので他の保存と同じ作法で扱う（受信ジャーナル→履歴退避→書き込み→同期キュー）。"""
+    import datetime
+    if idv not in list_ids() or not sid or field not in SEG_FLAGS:
+        return False
+    base = os.path.join(DATA_DIR, idv)
+    try:
+        journal = os.path.join(idpaths.edit_dir(base), "edit_save_journal.jsonl")
+        with open(journal, "a", encoding="utf-8") as f:
+            f.write(json.dumps({"at": datetime.datetime.now().isoformat(timespec="milliseconds"),
+                                "payload": {"op": field, "id": idv, "sid": sid, "on": on}},
+                               ensure_ascii=False) + "\n")
+            f.flush()
+            os.fsync(f.fileno())
+    except Exception:
+        pass
+    seg_path = idpaths.find(base, "segments.json")
+    seg = _load_json(seg_path, {})
+    changed = False
+    for sg in seg.get("segments", []):
+        if sg.get("sid") == sid:
+            if on:
+                sg[field] = True
+            else:
+                sg.pop(field, None)
+            changed = True
+    if not changed:
+        return False
+    _append_history(base, seg_path)
+    with open(seg_path, "w", encoding="utf-8") as f:
+        json.dump(seg, f, ensure_ascii=False, indent=2)
+    _queue_for_sync(seg_path, os.path.join(idpaths.edit_dir(base), "segments_history.jsonl"))
     return True
 
 
@@ -2036,6 +2112,20 @@ def route_decide():
                         request.args.get("cid") or "",
                         request.args.get("action") or "",
                         request.args.get("status_only") == "1")
+    return _text("ok" if ok else "ng", 200 if ok else 400)
+
+
+@app.get("/production")
+def route_production():
+    ok = set_seg_flag(request.args.get("id") or "", request.args.get("sid") or "",
+                      "production", request.args.get("on") == "1")
+    return _text("ok" if ok else "ng", 200 if ok else 400)
+
+
+@app.get("/delivered")
+def route_delivered():
+    ok = set_seg_flag(request.args.get("id") or "", request.args.get("sid") or "",
+                      "delivered", request.args.get("on") == "1")
     return _text("ok" if ok else "ng", 200 if ok else 400)
 
 

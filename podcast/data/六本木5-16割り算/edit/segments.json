@@ -374,7 +374,9 @@
         "魔法以外の何もでもないのよ",
         "42です"
       ],
-      "sid": "7ad60c696f35"
+      "sid": "7ad60c696f35",
+      "production": true,
+      "delivered": true
     }
   ]
 }
