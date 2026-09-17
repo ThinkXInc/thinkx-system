@@ -243,6 +243,19 @@ ask と deny のルールは hook の allow に勝つ。
   が単独でもう一度出た(観測のみ・引き金 ssh)。特定 ID ページの確認は **Z とこれで 2 回目**。見る項目(timelines / drops / 音源 / audio tag /
   preview_audio)が毎回少しずつ違う = 固定 wrapper にするなら「ページを取ってきて要素の有無を一覧で出す」1 本にし、項目リストをスクリプト側で持つ。
 
+### AA. セッション記録(議事録・findings・DECISIONS・GUIDELINES)の Write/Edit で毎回承認が出る(文書系・オーナー裁定で allow へ)
+- **生**: 別セッション(podcast)で `Write(podcast/docs/discussion_20260824_....md)` × 4 ファイル(日付ごと)。それぞれに承認プロンプト。
+  このセッションでも `docs/approval_cases_v2.md` / `docs/GUIDELINES.md` / `findings.md` の Edit のたびに出ている。
+- **引き金**: settings の ask `Edit(docs/**)` `Write(docs/**)` `Edit(infra/docs/**)` `Write(infra/docs/**)` `Edit(infra/runbooks/**)` `Write(infra/runbooks/**)`。
+  `podcast/.claude/settings.json` には docs の ask が無いのに `podcast/docs/` で止まった = ルートの `docs/**` は下位ディレクトリの `podcast/docs/` にも当たる(実測)。
+- **クラス**: 文書系(判定基準の表の 2 行目)。危険はなく、git で戻せる。
+- **オーナー裁定(2026-09-17・原文)**: 「セッションの記録書くのにいちいち承認を得てくる 危険なことはないから書いて最後にまとめて見せて だめなら戻す方がいい この記録操作は頻繁にするからやる価値がある」
+- **正しい形**: 判定基準の表で未決だった「保存時の承認を commit 前のレビューに移す(allow に変える)か現状維持か」を **allow に確定**。
+  実行者は記録を書き、最後に「何を書いたか」をまとめて見せる。だめなら `git checkout -- <file>` / `git revert` で戻す。
+  settings 側: 上の 6 行の ask を外す(settings は実行者が編集禁止のためオーナー作業)。層は **settings**(パスの前置一致で書ける)。
+- **残るゲート**: なし(記録の内容はコミット前の diff とまとめで見る)。`*_PLAN.md` と `docs/coding_guides/` の deny は変えない(規範は人間のみ)。
+- **同型カウント**: 記録操作は毎セッション複数回。頻度最高の文書系。
+
 ---
 
 ## 状態と次の一手(2026-09-17)

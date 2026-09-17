@@ -294,3 +294,10 @@ staging で commit 済みの内容は `git format-patch` で取り出してオ�
   次の一手は `verify_deploy.py`。
 - **`$(...)` を含むコマンドは settings の allow でも hook でも通らない**(コマンド置換は hook が委ねる設計・settings の前置一致は
   置換の中身を評価しない)。観測で `$(git rev-parse ...)` を比較したくなったら python 側に畳む。
+- **ルート settings の `Write(docs/**)` ask は下位の `podcast/docs/` にも当たる**(実測: podcast セッションで `podcast/docs/discussion_*.md` の
+  Write 4 件それぞれにプロンプト。`podcast/.claude/settings.json` には docs の ask が無い)。パスパターンはルート相対の厳密一致ではなく
+  途中のディレクトリにもマッチする。docs 系の ask を外すならルートの 6 行で全サブプロジェクトに効く(D-54)。
+- **v2 の 13 事例(N〜Z・AA)で見えた傾向**: 変更系(P/S/W/X/Z 配布)は承認が正しいが中身に穴(yes 代打ち・削除前ハッシュ比較なし)。
+  観測は production/develop 比較 5 回・本番 ssh 3 回・staging claude_connect 3 回(wrapper 既存だが未使用)で昇格条件超過のまま。
+  リモートの sudo/rm はローカル deny に当たらない(Q/T/W/X)。同じ index.html の heredoc 編集 3 回(Edit を使えば消える)。
+  → wrapper を増やすより先に「既存 wrapper と Edit を使わせるカタログ」が無いことが再発の原因。
