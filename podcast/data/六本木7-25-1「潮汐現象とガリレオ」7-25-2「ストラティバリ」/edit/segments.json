@@ -470,7 +470,8 @@
         ]
       ],
       "sid": "28028dd7ca5f",
-      "production": true
+      "production": true,
+      "delivered": true
     },
     {
       "index": 2,
