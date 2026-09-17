@@ -12,6 +12,8 @@
 #  - 引数なし(deploy からの自動呼び出し) = **ローカル data/ 全体を完全同期**。
 #    デプロイ=commit されたものを出す操作なので、これが git commit との連動点になる
 #  - ID を指定したときはその ID だけ先行して送れる(絞り込み)
+#  - `_` 始まりのフォルダと experiments/ は同期しない(試行・退役の置き場。
+#    一覧UIが `_` 始まりを隠すのと同じ規則。オーナー指示 2026-09-17)
 #  - **edit/ には触れない**(git が正。サーバー側の新しい編集をファイルコピーで
 #    上書きしない)。それ以外は 直下・generated・contents・backup すべて送る
 #  - **削除はしない**(サーバー上で生まれる書き出し・ジャーナルを消さないため)。
@@ -24,7 +26,7 @@ __norm_manifest() { awk '$2 != "total" { print $2, $1 }' | LC_ALL=C sort; }
 
 # ID ディレクトリの中で「配る対象」= edit/ と隠しファイル以外のすべて(相対パス)。
 __sync_files() {
-  (cd "$1" && find . -type f ! -name ".*" ! -path "./edit/*") | sed 's|^\./||'
+  (cd "$1" && find . -type f ! -name ".*" ! -path "./edit/*" ! -path "./experiments/*") | sed 's|^\./||'
 }
 
 push_assets_podcast() {
@@ -51,7 +53,7 @@ push_assets_podcast() {
     ids=()
     while IFS= read -r id; do
       ids+=("$id")
-    done < <(cd "$droot" && find . -maxdepth 1 -mindepth 1 -type d ! -name ".*" | sed 's|^\./||' | LC_ALL=C sort)
+    done < <(cd "$droot" && find . -maxdepth 1 -mindepth 1 -type d ! -name ".*" ! -name "_*" | sed 's|^\./||' | LC_ALL=C sort)
     [ "${#ids[@]}" -ge 1 ] || { echo "podcast: ローカルに ID なし(送るものなし)"; return 0; }
 
     # data 直下の単独ファイル(sources.json 等)も揃える
@@ -74,7 +76,7 @@ push_assets_podcast() {
     [ -d "$droot/$id" ] || { printf '%b\n' "${R}FAIL: ローカルに data/$id が無い${Z}"; fail=$((fail+1)); continue; }
 
     loc="$( (cd "$droot/$id" && __sync_files . | LC_ALL=C sort | tr '\n' '\0' | xargs -0 wc -c 2>/dev/null) | __norm_manifest )"
-    rem="$( ssh -o ConnectTimeout=8 "$host" "cd '/src/podcast/data/$id' 2>/dev/null && find . -type f ! -name '.*' ! -path './edit/*' | sed 's|^\./||' | LC_ALL=C sort | tr '\n' '\0' | xargs -0 wc -c 2>/dev/null" | __norm_manifest )"
+    rem="$( ssh -o ConnectTimeout=8 "$host" "cd '/src/podcast/data/$id' 2>/dev/null && find . -type f ! -name '.*' ! -path './edit/*' ! -path './experiments/*' | sed 's|^\./||' | LC_ALL=C sort | tr '\n' '\0' | xargs -0 wc -c 2>/dev/null" | __norm_manifest )"
 
     if [ -n "$loc" ] && [ "$loc" = "$rem" ]; then
       same=$((same+1))
