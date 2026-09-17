@@ -82,5 +82,6 @@ locals {
   lb_ip       = local.is_prod ? "192.168.1.10" : "192.168.2.10"
   web_ip      = local.is_prod ? "192.168.1.11" : "192.168.2.11"
 
-  web_disk_gb = local.is_prod ? 50 : 20
+  # staging も 50 に統一(podcast data 全量同期のため。D-52 改定・オーナー承認 2026-09-17)
+  web_disk_gb = 50
 }

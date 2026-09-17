@@ -56,6 +56,12 @@ fabula は取り込みのみ後日行い、サイト(fabula-method.com)の設計
   - `edit/` には触れない(git が正。サーバー側の新しい編集を上書きしない)。
     それ以外(直下・generated・contents・backup、元WAV含む)はすべて送る。
     push_assets.sh と同じ一覧突き合わせで、一致した ID は何もしない
+  - **退役規則(2026-09-17)**: data/ 直下で `_` 始まりに改名したフォルダは
+    一覧UIに出ず・同期もされない(experiments は `_experiments` に改名済み)。
+    退役後にサーバー側から消してよい(削除は伝播しないので復活しない)。
+    ID 内の experiments/ サブフォルダも同期対象外
+  - staging web のディスクは 50GB に拡張済み(2026-09-17。手順:
+    infra/runbooks/disk-expand.md)
   - 呼び出しは `deploy_staging.sh` / `deploy_production_from_staging.sh` に
     push_assets.sh の後のシリアル実行として1行ずつ足す(push_assets.sh の中に混ぜない —
     汎用規則とサイト固有例外を分けるオーナー裁定 2026-08-28)
