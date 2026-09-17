@@ -34,6 +34,7 @@ sudo -u kaz git checkout monorepo
 sudo ln -sfn /src/thinkx-system/thinkx /src/thinkx
 sudo ln -sfn /src/thinkx-system/kazukiotsukacom /src/kazukiotsukacom
 sudo ln -sfn /src/thinkx-system/transformism /src/transformism
+sudo ln -sfn /src/thinkx-system/podcast /src/podcast
 sudo ln -sfn /src/thinkx-system/nginx-web-root /src/nginx-web-root
 sudo ln -sfn /src/thinkx-system/loadbalancer /src/loadbalancer
 
