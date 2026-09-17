@@ -250,10 +250,16 @@ ask と deny のルールは hook の allow に勝つ。
   `podcast/.claude/settings.json` には docs の ask が無いのに `podcast/docs/` で止まった = ルートの `docs/**` は下位ディレクトリの `podcast/docs/` にも当たる(実測)。
 - **クラス**: 文書系(判定基準の表の 2 行目)。危険はなく、git で戻せる。
 - **オーナー裁定(2026-09-17・原文)**: 「セッションの記録書くのにいちいち承認を得てくる 危険なことはないから書いて最後にまとめて見せて だめなら戻す方がいい この記録操作は頻繁にするからやる価値がある」
-- **正しい形**: 判定基準の表で未決だった「保存時の承認を commit 前のレビューに移す(allow に変える)か現状維持か」を **allow に確定**。
-  実行者は記録を書き、最後に「何を書いたか」をまとめて見せる。だめなら `git checkout -- <file>` / `git revert` で戻す。
-  settings 側: 上の 6 行の ask を外す(settings は実行者が編集禁止のためオーナー作業)。層は **settings**(パスの前置一致で書ける)。
-- **残るゲート**: なし(記録の内容はコミット前の diff とまとめで見る)。`*_PLAN.md` と `docs/coding_guides/` の deny は変えない(規範は人間のみ)。
+- **正しい形(裁定された範囲)**: **記録ファイル**(議事録・findings・DECISIONS・GUIDELINES・approval_cases)は書いてから最後に
+  「何を書いたか」をまとめて見せ、だめなら `git checkout -- <file>` / `git revert` で戻す。手順書・runbooks・計画文書は裁定に含まれない。
+- **settings の変え方(未決・オーナー選択)**: ask は allow より優先されるため「記録ファイルだけ allow を足す」では効かず、**ask の側を狭める**しかない。
+  (a) `docs/**` の ask だけ外す(infra/docs・runbooks の ask は残す)。docs/ 直下の計画文書(ROADMAP・*_TRACK 等)も一緒に allow になる。
+  infra/docs/discussion の議事録は引き続き止まる。(b) 6 行全部外す(手順書・runbooks も allow。裁定より広い)。
+  (c) ask を「記録でない文書」の列挙に置き換える(例 `infra/runbooks/**`・`infra/docs/*手順書*.md`・`docs/ROADMAP.md`・`docs/*_TRACK.md`)。
+  裁定どおりの範囲になるが列挙の保守が要る。層はいずれも **settings**。
+- **残るゲート**: 記録の内容はコミット前の diff とまとめで見る。`*_PLAN.md` と `docs/coding_guides/` の deny は変えない(規範は人間のみ)。
+- **実行者の誤り**: 当初 (b) を決定として D-54 に書き、settings 変更コマンドまで提示した。オーナーに「こんな決定したか？」と指摘され、
+  裁定の範囲(記録ファイル)に書き戻し、settings の変え方は選択肢として出し直した。
 - **同型カウント**: 記録操作は毎セッション複数回。頻度最高の文書系。
 
 ---
