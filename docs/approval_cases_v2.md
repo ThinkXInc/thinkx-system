@@ -188,6 +188,12 @@ ask と deny のルールは hook の allow に勝つ。
     スクリプトを作っていなかった。
 - **残るゲート**: 生成物の見た目 OK + 公開。mock の起動/停止は可逆で承認不要。
 - **同型カウント**: M・V で **2 回目**(同じ対象ファイル・同じ mock・同じ curl)。次に出たら dev_mock.sh を作る。
+- **3 回目(同日)**: `python3 - <<'EOF' ... p = pathlib.Path("infra/claude_connect/index.html") ... old = '''function setStatus(kind, text, noteText) {...}''' ... t.replace(old, new) ... EOF`
+  が単独で出た(今回は mock も curl も無く、**純粋な編集だけ**)。表示は「Calling claude-in-chrome, running 1 shell command」で、
+  Chrome 側のセッションから承認が出ている。同じ index.html への heredoc 編集は **M・V・本件で 3 回目**。
+  編集だけなら引き金は heredoc の python そのもの(このワークスペースの settings.local には `Bash(python3 -)` の allow があるが、
+  Chrome 側セッションには無い)。**正しい形は wrapper ではなく Edit ツール**。Edit なら承認プロンプトも出ず diff も見える。
+  3 回続いた原因は「Edit を使う」が案内(corpus・GUIDELINES)にしか無く、実行者の手元に届いていないこと。T と同じカタログの問題。
 
 ### W. push_assets_podcast.sh の構文チェック → staging の selftest 残骸を ssh で削除 → 配布実行(変更系)
 - **生**: `bash -n infra/scripts/push_assets_podcast.sh && ssh -o ConnectTimeout=8 supercom-web1-stg 'sudo rm -r /src/podcast/data/_selftest 2>/dev/null; true' && bash infra/scripts/push_assets_podcast.sh staging 2>&1 | tail -6`
