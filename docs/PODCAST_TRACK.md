@@ -92,7 +92,11 @@ fabula は取り込みのみ後日行い、サイト(fabula-method.com)の設計
 - nginx-web-root の予約 include 行(nginx.conf 81行目)を
   `/src/podcast/web-server/nginx/conf.d/*.conf` に修正して有効化する
 
-## Phase 3: staging 稼働(ゴール = 編集UIがブラウザで開く)
+## Phase 3: staging 稼働(**完了 2026-09-17**)
+
+開通済み: `http://{lb1-stgのEIP}/podcast/`(Basic 認証 editor)。全データ同期・
+編集の自動 git 記録(flusher)・退役規則・NFC 正準化・SG 8000-8099・web ディスク 50GB。
+経緯は podcast/docs/discussion_20260917_StagingCutover.md。
 
 コード・conf・スクリプトは作成済み(2026-08-28)。残りはサーバー上の実行のみ:
 
