@@ -32,9 +32,9 @@ deploy_staging() {
   bash infra/scripts/push_assets.sh supercom-web1-stg thinkx transformism kazukiotsukacom ||
     { printf '%b\n' "${R}FAIL: アセットの配布に失敗しました。サーバーには触れていません${Z}"; return 1; }
 
-  # podcast の編集用データは例外規則の別スクリプトで配る(D-52。汎用規則に混ぜない)。
-  # 引数なし = サーバーに公開済みの ID だけ差分同期。新規 ID の公開は手動で
-  # bash infra/scripts/push_assets_podcast.sh staging <ID> を叩く
+  # podcast の data は例外規則の別スクリプトで配る(D-52 改定 2026-09-17)。
+  # 引数なし = ローカル data/ 全体をサーバーへ完全同期(削除なし・edit/ は git が正)。
+  # デプロイ = commit されたものを出す操作なので、これが git commit との連動点
   banner "アセット(podcast データ)を確かめる"
   bash infra/scripts/push_assets_podcast.sh staging ||
     { printf '%b\n' "${R}FAIL: podcast データの配布に失敗しました。サーバーには触れていません${Z}"; return 1; }

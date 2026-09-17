@@ -45,11 +45,17 @@ fabula は取り込みのみ後日行い、サイト(fabula-method.com)の設計
 - git 外: 音源・動画・generated/ の大容量バイナリ、`edit_save_journal.jsonl`(復旧用受信
   ジャーナル。各端末にだけ残る)
 - 大物の配布: `infra/scripts/push_assets_podcast.sh <env> [ID...]`
+  (**改定 2026-09-17** オーナー指示「データはローカルを完全にコピーする。同期は git の
+  commit と連動」— 当初の選択公開ルールを廃止)
   - env は `staging | prod` の必須引数(ホスト対応は内部で自動決定)
-  - **ID を明示したときだけ新規 ID をサーバーへ公開**。引数なし(deploy からの自動呼び出し)は
-    「サーバーに既にある ID だけ」を差分同期(未公開 ID を deploy のついでに公開しない)
-  - **元WAV(source/)も送る**(サーバー書き出しに必要)。`edit/` には触れない(編集中の正は
-    サーバー側)。push_assets.sh と同じ一覧突き合わせで、一致なら何もしない
+  - 引数なし(deploy からの自動呼び出し) = **ローカル data/ 全体を完全同期**。
+    デプロイ=commit されたものを出す操作であり、これが git commit との連動点。
+    ID 指定は先行して1本だけ送るときの絞り込み
+  - **削除はしない**(サーバー上で生まれる書き出し・ジャーナルを消さない)。
+    「完全コピー」= ローカルの全ファイルがサーバーにも同内容で存在すること
+  - `edit/` には触れない(git が正。サーバー側の新しい編集を上書きしない)。
+    それ以外(直下・generated・contents・backup、元WAV含む)はすべて送る。
+    push_assets.sh と同じ一覧突き合わせで、一致した ID は何もしない
   - 呼び出しは `deploy_staging.sh` / `deploy_production_from_staging.sh` に
     push_assets.sh の後のシリアル実行として1行ずつ足す(push_assets.sh の中に混ぜない —
     汎用規則とサイト固有例外を分けるオーナー裁定 2026-08-28)

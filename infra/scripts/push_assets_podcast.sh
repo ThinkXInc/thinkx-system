@@ -1,30 +1,30 @@
 #!/usr/bin/env bash
 # thinkx-system/infra/scripts/push_assets_podcast.sh
 #
-# 変更系: podcast の編集用データ(git 管理外の音源・生成物)をサーバーの data/ へ配る。
-# 汎用の push_assets.sh(views/video 固定)に乗らないための例外規則スクリプト(D-52)。
+# 変更系: podcast の data/(git 管理外の音源・生成物)をサーバーへ差分同期する。
+# 汎用の push_assets.sh(views/video 固定)に乗らないための例外規則スクリプト。
 #
 #   使い方: bash infra/scripts/push_assets_podcast.sh <staging|prod> [ID...]
-#   例:     bash infra/scripts/push_assets_podcast.sh staging 民主主義の会2-5
+#   例:     bash infra/scripts/push_assets_podcast.sh staging
 #
-# 規則(D-52):
-#  - ID を明示したときだけ、その ID を新規にサーバーへ公開する
-#  - ID 省略時(deploy からの自動呼び出し)は「サーバーに既にある ID だけ」を差分同期する
-#    (ローカルの未公開 ID を deploy のついでに公開しない)
-#  - 送るのは 直下のファイル(元音源含む — サーバー書き出しに必要) + generated/ のみ。
-#    edit/ には触れない(git が運ぶ。編集中の正はサーバー側)。contents/ backup/
-#    experiments/ も送らない
+# 規則(D-52 改定・オーナー指示 2026-09-17「データはローカルを完全にコピーする。
+# 同期は git の commit と連動」):
+#  - 引数なし(deploy からの自動呼び出し) = **ローカル data/ 全体を完全同期**。
+#    デプロイ=commit されたものを出す操作なので、これが git commit との連動点になる
+#  - ID を指定したときはその ID だけ先行して送れる(絞り込み)
+#  - **edit/ には触れない**(git が正。サーバー側の新しい編集をファイルコピーで
+#    上書きしない)。それ以外は 直下・generated・contents・backup すべて送る
+#  - **削除はしない**(サーバー上で生まれる書き出し・ジャーナルを消さないため)。
+#    「完全コピー」= ローカルにある全ファイルがサーバーにも同内容で存在すること
 #  - 一覧(パスとサイズ)を突き合わせ、一致する ID は何も送らない
 
 # ファイル一覧を「パス サイズ」の行に揃える。macOS と Linux で sort の照合順序が
 # 違うため、必ず LC_ALL=C で並べ直す(push_assets.sh と同じ教訓 2026-07-21)。
 __norm_manifest() { awk '$2 != "total" { print $2, $1 }' | LC_ALL=C sort; }
 
-# ID ディレクトリの中で「配る対象」だけを列挙する(相対パス)。
-# 直下のファイルと generated/ 配下。edit/ contents/ backup/ experiments/ は含めない。
+# ID ディレクトリの中で「配る対象」= edit/ と隠しファイル以外のすべて(相対パス)。
 __sync_files() {
-  (cd "$1" && find . -maxdepth 1 -type f ! -name ".*" ; \
-   find ./generated -type f 2>/dev/null) | sed 's|^\./||'
+  (cd "$1" && find . -type f ! -name ".*" ! -path "./edit/*") | sed 's|^\./||'
 }
 
 push_assets_podcast() {
@@ -47,34 +47,45 @@ push_assets_podcast() {
   if [ "$#" -ge 1 ]; then
     ids=("$@")
   else
-    # サーバーに既にある ID だけを対象にする(見つからなければ何もしない)
-    local listed
-    listed="$(ssh -o ConnectTimeout=8 "$host" 'ls -1 /src/podcast/data 2>/dev/null' || true)"
-    [ -n "$listed" ] || { echo "podcast: サーバーに公開済み ID なし(送るものなし)"; return 0; }
+    # 完全同期: ローカルの全 ID ディレクトリが対象
     ids=()
     while IFS= read -r id; do
-      [ -d "$droot/$id" ] && ids+=("$id")
-    done <<< "$listed"
-    [ "${#ids[@]}" -ge 1 ] || { echo "podcast: サーバーの ID はローカルに無い(送るものなし)"; return 0; }
+      ids+=("$id")
+    done < <(cd "$droot" && find . -maxdepth 1 -mindepth 1 -type d ! -name ".*" | sed 's|^\./||' | LC_ALL=C sort)
+    [ "${#ids[@]}" -ge 1 ] || { echo "podcast: ローカルに ID なし(送るものなし)"; return 0; }
+
+    # data 直下の単独ファイル(sources.json 等)も揃える
+    loc="$( (cd "$droot" && find . -maxdepth 1 -type f ! -name ".*" | sed 's|^\./||' | LC_ALL=C sort | tr '\n' '\0' | xargs -0 wc -c 2>/dev/null) | __norm_manifest )"
+    rem="$( ssh -o ConnectTimeout=8 "$host" "cd /src/podcast/data 2>/dev/null && find . -maxdepth 1 -type f ! -name '.*' | sed 's|^\./||' | LC_ALL=C sort | tr '\n' '\0' | xargs -0 wc -c 2>/dev/null" | __norm_manifest )"
+    if [ -n "$loc" ] && [ "$loc" != "$rem" ]; then
+      if (cd "$droot" && find . -maxdepth 1 -type f ! -name ".*" | sed 's|^\./||' | COPYFILE_DISABLE=1 tar --no-xattrs -czf "/tmp/podcast-data.tgz" -T -) \
+        && scp -q "/tmp/podcast-data.tgz" "$host:/tmp/" \
+        && ssh "$host" "sudo mkdir -p /src/podcast/data \
+                        && sudo tar -xzf /tmp/podcast-data.tgz -C /src/podcast/data \
+                        && sudo chown kaz:serveradmins /src/podcast/data/*.json 2>/dev/null; true"; then
+        echo "podcast: data 直下のファイルを配った"
+      else
+        printf '%b\n' "${R}FAIL: data 直下ファイルの転送に失敗${Z}"; fail=$((fail+1))
+      fi
+    fi
   fi
 
   for id in "${ids[@]}"; do
     [ -d "$droot/$id" ] || { printf '%b\n' "${R}FAIL: ローカルに data/$id が無い${Z}"; fail=$((fail+1)); continue; }
 
     loc="$( (cd "$droot/$id" && __sync_files . | LC_ALL=C sort | tr '\n' '\0' | xargs -0 wc -c 2>/dev/null) | __norm_manifest )"
-    rem="$( ssh -o ConnectTimeout=8 "$host" "cd '/src/podcast/data/$id' 2>/dev/null && { find . -maxdepth 1 -type f ! -name '.*'; find ./generated -type f 2>/dev/null; } | sed 's|^\./||' | LC_ALL=C sort | tr '\n' '\0' | xargs -0 wc -c 2>/dev/null" | __norm_manifest )"
+    rem="$( ssh -o ConnectTimeout=8 "$host" "cd '/src/podcast/data/$id' 2>/dev/null && find . -type f ! -name '.*' ! -path './edit/*' | sed 's|^\./||' | LC_ALL=C sort | tr '\n' '\0' | xargs -0 wc -c 2>/dev/null" | __norm_manifest )"
 
     if [ -n "$loc" ] && [ "$loc" = "$rem" ]; then
-      echo "podcast/$id: データは $host と一致(送るものなし)"
       same=$((same+1))
       continue
     fi
 
     echo "podcast/$id: データが $host と違うので配ります"
-    diff <(printf '%s\n' "$rem") <(printf '%s\n' "$loc") | sed 's/^</  箱のみ  /; s/^>/  手元のみ/' | grep -v '^---$' | head -20
+    diff <(printf '%s\n' "$rem") <(printf '%s\n' "$loc") | sed 's/^</  箱のみ  /; s/^>/  手元のみ/' | grep -v '^---$' | head -10
 
     if (cd "$droot/$id" && __sync_files . | COPYFILE_DISABLE=1 tar --no-xattrs -czf "/tmp/podcast-data.tgz" -T -) \
-      && scp "/tmp/podcast-data.tgz" "$host:/tmp/" \
+      && scp -q "/tmp/podcast-data.tgz" "$host:/tmp/" \
       && ssh "$host" "sudo mkdir -p '/src/podcast/data/$id' \
                       && sudo tar -xzf /tmp/podcast-data.tgz -C '/src/podcast/data/$id' \
                       && sudo chown -R kaz:serveradmins '/src/podcast/data/$id'"; then
@@ -84,8 +95,9 @@ push_assets_podcast() {
     fi
   done
 
+  echo "podcast: 配布 $sent 件・一致 $same 件・失敗 $fail 件"
   if [ "$fail" -gt 0 ]; then
-    printf '%b\n' "${R}FAIL: push_assets_podcast -> $host 失敗 $fail 件(配布 $sent 件・一致 $same 件)${Z}"
+    printf '%b\n' "${R}FAIL: push_assets_podcast -> $host${Z}"
   fi
   return "$fail"
 }
