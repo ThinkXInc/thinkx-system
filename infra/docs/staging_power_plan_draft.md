@@ -44,7 +44,7 @@ KOBITO(ロゴ)
    中継は `state` / `session` / `code` / `deploy` の 4 つに固定(任意パスを中継しない)。
 4. **本番のみ。** staging では `/remote_control/*` を 404(filedrop の逆。判定はホスト名 `-stg` の有無・D-46)。
 5. **認証は Flask 内の Basic 認証。** `.env` の `REMOTE_BASIC_AUTH_USER/PASS`。staging の Basic 認証とは**別のパスワード**。
-   中継用の staging 側の認証情報は `.env` の **staging 側の認証情報は本番に置かない。** 本番 web の固定 IP(EIP)からの接続は staging LB の nginx が
+   **staging 側の認証情報は本番に置かない。** 本番 web の固定 IP(EIP)からの接続は staging LB の nginx が
    `satisfy any`(Basic 認証 **または** 許可 IP)で通す。人がブラウザで staging を開くときの Basic 認証は今までどおり。HTTPS のみ。
 6. **IMDSv2 を必須にする**(`metadata_options { http_tokens = "required" }`)。in-place 変更で再作成は起きない(plan で確認してから apply)。
 7. 依存を増やさない(boto3 1.34.122・requests 2.32.5 は thinkx に導入済み)。1 項目 = 1 コミット + push。発見は `infra/findings.md`。
