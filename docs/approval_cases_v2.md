@@ -138,6 +138,38 @@ ask と deny のルールは hook の allow に勝つ。
 - **残るゲート**: 実行の承認(人間)。削減対象ではない。
 - **同型カウント**: 変更系につきカウント対象外。
 
+### T. KOBITO リモコンのデバッグ観測(EC2 状態 + 本番 uwsgi ログ + staging claude_connect ログ + phase)
+- **生**: `aws ec2 describe-instances --region ap-northeast-1 --filters "Name=tag:Env,Values=staging" ... --query 'Reservations[].Instances[].[Tags[?Key==\`Name\`].Value|[0],State.Name]' --output text; ssh ... supercom-web1 'sudo -n journalctl -u uwsgi_thinkx --since "-15min" -o cat | grep -i "remote_control\|Traceback\|Error" | tail -15'; ssh ... supercom-web1-stg 'sudo -n journalctl -u claude_connect --since "-15min" -o cat | grep -v "GET /connect/state" | tail -8; curl -s http://192.168.2.11:8008/connect/state | grep -o ...'`
+- **引き金**: 3 つ。(1) JMESPath の **バッククォート** `` `Name` `` がコマンド置換と見なされる(aws 自体は ask/deny に無い)、(2) `ssh`(本番)、(3) `ssh`(staging)。
+- **クラス**: 観測(読み取りのみ・3 ホスト)。
+- **最重要の発見: staging 部分は既存の wrapper で全部できた。** `python3 infra/scripts/stg.py log --unit claude_connect --since-min 15` と
+  `stg.py check`(state を含む)が v1 事例 A の成果としてすでにある。それでも生の ssh を書いた。
+  これは判定方式の割り当てで予告した「頻度が高いと wrapper を毎回使わせる規律が崩れて生コマンドが漏れる」が **wrapper 側で実際に起きた**例。
+  原因は wrapper の存在が実行者の手元に無いこと(CLAUDE.md にも skill にも stg.py の案内が無い。議事録冒頭の「カタログと強制は別レイヤー」の
+  カタログが未整備)。
+- **正しい形**:
+  - staging 部分 → `stg.py log` / `stg.py check`(既存。使えばよい)。
+  - EC2 の状態 → `infra/scripts/status.sh staging`(既存・見るだけ)。JMESPath のバッククォートは、どうしても生で打つなら `--query` を
+    ファイルか `Key=='Name'`(単引用)で書き、可視コマンドにバッククォートを出さない。
+  - 本番 uwsgi のログ → wrapper が無い。`stg.py` は HOST が staging 固定。本番の読み取り観測(journalctl の固定 unit・固定 grep)を
+    **環境を必須引数にした観測 wrapper** に持つ(事例 Q と同じ結論)。unit と grep 語は固定リテラル、`--since-min` と `-n` は範囲つき数値のみ。
+  - **カタログの整備**(このケースの本当の次の一手): 実行者が観測を書く前に「既存 wrapper があるか」を引ける場所を作る。
+    候補は `infra/scripts/README.md` の観測 wrapper 一覧と、ワークスペース CLAUDE.md からの 1 行の参照。強制(hook)ではなく案内で足りるか
+    は v2 の運用で見る。
+- **残るゲート**: なし。
+- **同型カウント**: staging ログ/state の観測は事例 A(v1)と同型の 2 回目。本番 journalctl は 1 回目(Q の本番 ssh と合わせて本番観測 2 回目)。
+
+### U. 同上 + deploy timer 待ち(T の直後・同型 3 回目)
+- **生**: `grep -n "processes\|workers\|..." thinkx/web-server/uwsgi/uwsgi.ini; grep -n "proxy_read_timeout\|location" loadbalancer/conf.d/prod.thinkxinc.com.conf; sleep 70; git fetch -q origin; git log --oneline -1 origin/production; ssh ... supercom-web1-stg 'curl -s http://192.168.2.11:8008/connect/state | grep -o "\"phase\"..."; sudo -n journalctl -u claude_connect --since "-6min" ... | tail -3'; ssh ... supercom-web1 'sudo -n journalctl -u uwsgi_thinkx --since "-6min" | grep "remote_control/deploy\|Traceback" ... | tail -3'`
+- **引き金**: `ssh`(staging)+ `ssh`(本番)。grep / sleep / git fetch / git log は止まらない。
+- **クラス**: 観測。`sleep 70` は本番 deploy timer(60 秒)の反映待ち。
+- **正しい形**: T と同じ。staging 部分は `stg.py log --unit claude_connect --since-min 6` + `stg.py check`。「待ってから観測」は
+  `stg.py watch` の型(state 遷移を見守る)で、本番反映待ちも同じ wrapper に「production の先端が変わるまで待つ」を持たせれば
+  `sleep` を生で書かずに済む(= `verify_deploy.py` の待ち付き版)。本番 journalctl は環境必須引数の観測 wrapper(Q/T/U で 3 回目)。
+- **残るゲート**: なし。
+- **同型カウント**: staging claude_connect のログ/state 観測は **A・T・U で 3 回目**(wrapper は既にある。使われていないのが問題)。
+  本番 journalctl は **T・U で 2 回目、本番 ssh 観測としては Q を含め 3 回目 → 昇格条件に達した**。
+
 ---
 
 ## 状態と次の一手(2026-09-17)
@@ -150,6 +182,9 @@ ask と deny のルールは hook の allow に勝つ。
 - P は削減しない。「wrapper の yes を実行者が流さない」を実行者の規律として守る(findings に記録)。
 - R は「heredoc 埋め込み python を切り出してテスト」の初出。次に出たら python を独立ファイルにしてテストをスクリプト化。
 - S は削減しない(変更系)。中身に削除前のハッシュ比較が無い穴があり、形も heredoc で不可視。変更系は固定スクリプト + dry-run + 承認。
-- 収録済みの承認引き金(v2 時点): ssh(N/P/Q/S)・curl 本番(O/Q)・`$(...)` コマンド置換(O/Q/R)・変更系 wrapper への yes 流し込み(P)。
+- T・U で **既存 wrapper(stg.py)があるのに生 ssh を書いた**ことが判明(A・T・U で 3 回)。wrapper を増やすだけでは減らない。カタログ
+  (`infra/scripts/README.md` の観測 wrapper 一覧 + CLAUDE.md からの参照)の整備が、verify_deploy.py と並ぶ次の一手。
+- 本番 ssh 観測は Q・T・U で 3 回 → 昇格条件に達した。環境を必須引数にした観測 wrapper(固定 unit・固定 grep・範囲つき数値のみ)を新設する。
+- 収録済みの承認引き金(v2 時点): ssh(N/P/Q/S/T/U)・curl 本番(O/Q)・`$(...)`/バッククォート のコマンド置換(O/Q/R/T)・変更系 wrapper への yes 流し込み(P)。
 - 未着手(v1 から持ち越し): WebFetch ドメイン allow の恒久化、`make_favicons.sh`(事例 E)、curl localhost wrapper。
 - `.claude/settings.json` の hooks 登録(オーナー編集)は 2026-09-17 時点で未コミット。
