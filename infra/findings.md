@@ -1726,3 +1726,21 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
 - 事故: 作業ツリーの index.html が、podcast トラックの別セッションのコミット **1ffe5eb**「fix(infra): /src/podcast symlink を…」に
   同梱されて push された(自分の持ち場のパスだけを add する規則 D-49② の違反)。中身は意図どおりなので活かし、
   履歴は書き換えない(共有ブランチ・force push 禁止)。本来のコミットメッセージ: `feat(infra): claude_connect page — API を相対パスに、電源カード(本番の入口でだけ出る)`。
+
+## 2026-09-11 デプロイスクリプトの対話プロンプトと staging の直接確認(実測)
+
+- `pr_and_merge_to_develop.sh` と `deploy_staging.sh` は途中で `continue? (yes/no):` を `read -r` で待つ。
+  Claude Code の Bash から素で叩くと stdin が閉じていて何もせず終わる(PR は作られない)。`echo yes | bash ...` で通る。
+- staging の thinkx は web1-stg 上で `http://localhost:8005/<path>` を直接 curl できる(Basic 認証は LB 側)。
+  `ssh supercom-web1-stg 'curl -s http://localhost:8005/event/philsemi2609'` で配信テンプレートの文言を実測できる。
+  ポート 80 は web で listen していない(000)。
+- web1-stg の `/src/thinkx-system` で `git log` すると dubious ownership で止まる(所有者が違う)。確認はファイル grep か curl で行う。
+
+## 2026-09-17 plan-summary の図と月額概算の文言整理
+
+- plan-summary.sh が表示する図の原本は `infra/runbooks/diagram.md`。文言変更はこのファイルで行い、
+  `bash infra/scripts/plan-summary.sh staging` の実出力で確認する(terraform plan が走るので数十秒)。
+- 実機リスト(supercom3a/3b/3c)と Cisco 注記を削除、見出しを「AWS構成図」「ドメインごとのアドレス」
+  「ストレージ容量と中身」に改名。月額側(cost-estimate.sh)は「インフラ月額概算」
+  「稼働率60%(computeのみ稼働率に比例。EBS/EIP/Route53は固定)」。コミット b400be5 / 280dae0 / e415ab0。
+- 未整理: ストレージ節の「コールドデータ(売却SSD分 約37TB)…」と `docs/architecture.md` の supercom3a / Cisco 表。
