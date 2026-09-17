@@ -153,11 +153,24 @@ def screen_has(lines: list[str], *needles: str) -> bool:
 # 接続中の画面に出る「/remote-control is active · … https://claude.ai/code/session_…」の URL。
 # 会話が進むと画面外に流れるので、見えたときに覚えておき、セッションを作り直したら忘れる。
 SESSION_URL_PREFIX = "https://claude.ai/code/session_"
+REMEMBER_FILE = Path.home() / ".claude_connect_remembered.json"  # server.py を再起動しても URL を持ち越す(2026-09-17)
 remembered = {"session_url": None}
+try:
+    remembered.update(json.loads(REMEMBER_FILE.read_text()))
+except (OSError, ValueError):
+    pass
+
+
+def remember_session_url(url: str | None) -> None:
+    remembered["session_url"] = url
+    try:
+        REMEMBER_FILE.write_text(json.dumps(remembered))
+    except OSError:
+        pass
 
 
 def find_session_url(lines: list[str]) -> str | None:
-    for line in lines:
+    for line in reversed(lines):  # 最新のものを採る
         for token in line.split():
             if token.startswith(SESSION_URL_PREFIX):
                 return token
@@ -166,8 +179,13 @@ def find_session_url(lines: list[str]) -> str | None:
 
 def session_url(lines: list[str]) -> str | None:
     seen = find_session_url(lines)
-    if seen:
-        remembered["session_url"] = seen
+    if not seen and not remembered["session_url"]:
+        # 画面外に流れていたら scrollback(履歴)から拾う(起動直後の一度だけ重い)
+        rc, out = tmux("capture-pane", "-p", "-S", "-", "-t", SESSION)
+        if rc == 0:
+            seen = find_session_url(out.splitlines())
+    if seen and seen != remembered["session_url"]:
+        remember_session_url(seen)
     return remembered["session_url"]
 
 
@@ -197,7 +215,7 @@ def observe() -> dict:
 
 def start_session() -> None:
     """claude-session.service の ExecStart と同じ形で tmux を立てる。"""
-    remembered["session_url"] = None
+    remember_session_url(None)
     tmux("new-session", "-d", "-s", SESSION, "-c", REPO, CLAUDE_COMMAND)
 
 
