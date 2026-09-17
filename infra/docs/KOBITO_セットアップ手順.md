@@ -42,6 +42,23 @@ gh api repos/ThinkXInc/thinkx-system/rulesets --jq '.[] | "\(.id)\t\(.name)\t\(.
 gh api "repos/ThinkXInc/thinkx-system/rulesets/$(gh api repos/ThinkXInc/thinkx-system/rulesets --jq '.[] | select(.name=="production protection") | .id')" --jq '{rules: [.rules[].type], bypass: [.bypass_actors[].actor_type]}'
 ```
 
+### 2-補足. なぜこの設定が要るか・何が変わるか(2026-09-17 確認済み)
+
+- production ブランチのルールセット `production protection`(2026-08-07 作成)は「削除禁止」「履歴の巻き戻し禁止」
+  「変更は Pull Request 経由でなければならない」の 3 つ。**誰が push しても適用される**(人の git push も staging の鍵の push も、
+  PR を通さない限り拒否される)。「本番に反映」が `GH013: Changes must be made through a pull request` で失敗するのはこれ。
+- Mac の `deploy_production_from_staging.sh` が通るのは、直接 push ではなく `gh` で PR を作ってマージしているから。
+  staging にあるのは Deploy key だけで、Deploy key は ssh の git 操作専用。PR を作る GitHub API は呼べない。
+- Bypass list は「このルールを免除する相手」を**役割で**指定する。「Deploy keys」を選ぶと、鍵を 1 本ずつ選ぶのではなく
+  **「Deploy key という種類の認証で来た push は通す」**という設定になる。人が自分のアカウント(個人の ssh 鍵・gh の token)で
+  push した場合は Deploy key ではないので、今までどおり PR が必須のまま。
+- このリポジトリの Deploy key は 2 本: `supercom-web`(2026-08-07・staging web の `/home/kaz/.ssh/deploy_thinkx-system`・書き込み可)と
+  `thinkx-system-rw`(2026-07-19・旧箱の鍵・未使用 → 削除推奨)。
+- **守りが一段弱くなる点**: D-50 の「PR がゲート」は staging の鍵に対しては外れる。staging の箱を乗っ取られたら production に
+  push できる。受け入れる根拠は「押す=承認」(オーナー裁定 2026-09-06)と、staging の鍵が書き込み可な時点で develop/release は
+  既に同じ状態だったこと。
+- 確認結果(API): `rules: [deletion, non_fast_forward, pull_request]` / `bypass: [{actor_type: DeployKey, bypass_mode: always}]`(13:48 更新)。
+
 ## 3. AWS: 本番 web に staging 電源用の IAM ロール(1 回・terraform)
 
 リモコンの「staging を起動/停止」が使う。権限は staging(タグ Project=supercom, Env=staging)の describe / start / stop だけ。
@@ -91,3 +108,4 @@ ssh supercom-web1 "printf 'REMOTE_BASIC_AUTH_USER=%s\nREMOTE_BASIC_AUTH_PASS=%s\
 ## 変更履歴
 
 - 2026-09-17 新設。1(書き込み鍵)・2(ルールセットと Deploy keys のバイパス)・3(IAM ロール)・4(.env)・5(LB)。
+- 2026-09-17 2-補足(バイパスの意味・影響・確認結果)を追加。
