@@ -7,7 +7,7 @@ from os.path import abspath, join
 from urllib.parse import quote
 import atexit
 from jinja2 import TemplateNotFound
-from flask import abort, Flask, render_template, request, g, jsonify, url_for, redirect
+from flask import abort, Flask, render_template, request, g, jsonify, url_for, redirect, Response
 from libcommon.discord import send_discord
 
 # Config
@@ -849,6 +849,164 @@ def filedrop_handler():
         '/filedrop.html',
         files=[{'name': e.name, 'kb': max(1, e.stat().st_size // 1024)} for e in files],
     )
+
+
+#################### remote_control (本番専用・KOBITO リモコンの入口)
+# 計画: infra/docs/staging_power_plan_draft.md(P-3)。
+#  - 画面: infra/claude_connect/index.html をそのまま返す(本番 web の production checkout。画面のソースは 1 つ)
+#  - 接続 API(state/session/code/deploy): staging の /connect/ へ中継する。staging LB は本番 web の固定 IP を
+#    Basic 認証なしで通す(loadbalancer/conf.d/staging.thinkxinc.com.conf)ので、staging の認証情報は持たない
+#  - 電源(power/state|start|stop): EC2 の IAM ロール(iam.tf: staging-power)で、タグ Project=supercom & Env=staging の
+#    インスタンスだけを describe/start/stop する。.env の AWS キー(SES 用)は使わず、ロールの認証情報を明示的に取る
+#  - staging(ホスト名 -stg)では全部 404(filedrop の逆)。Basic 認証は .env の REMOTE_BASIC_AUTH_USER/PASS(未設定なら誰も通れない)
+import hmac
+from datetime import datetime, timezone
+
+REMOTE_INDEX = '/src/thinkx-system/infra/claude_connect/index.html'
+REMOTE_STAGING_CONNECT = 'https://staging.thinkxinc.com/connect/'
+REMOTE_RELAY_TIMEOUT = {'state': 20, 'deploy': 150, 'session': 120, 'code': 120}
+STAGING_INSTANCE_FILTERS = [
+    {'Name': 'tag:Project', 'Values': ['supercom']},
+    {'Name': 'tag:Env', 'Values': ['staging']},
+]
+STAGING_UNREACHABLE = ({'error': 'staging が応答しません(停止中)'}, 503)
+
+
+def remote_control_guard():
+    """本番以外は 404。Basic 認証が合わなければ 401 を返す(合えば None)。"""
+    if socket.gethostname().endswith('-stg'):
+        abort(404)
+    user = os.environ.get('REMOTE_BASIC_AUTH_USER', '')
+    password = os.environ.get('REMOTE_BASIC_AUTH_PASS', '')
+    auth = request.authorization
+    ok = (bool(user) and bool(password) and auth is not None and auth.type == 'basic'
+          and hmac.compare_digest(auth.username or '', user)
+          and hmac.compare_digest(auth.password or '', password))
+    if not ok:
+        return Response('認証が必要です', 401, {'WWW-Authenticate': 'Basic realm="KOBITO remote control"'})
+    return None
+
+
+def remote_ec2_client():
+    """EC2 の IAM ロールの認証情報だけで boto3 クライアントを作る(.env の AWS キーを拾わないため)。"""
+    import boto3
+    from botocore.credentials import InstanceMetadataProvider, InstanceMetadataFetcher
+    provider = InstanceMetadataProvider(iam_role_fetcher=InstanceMetadataFetcher(timeout=2, num_attempts=2))
+    creds = provider.load()
+    if creds is None:
+        raise RuntimeError('EC2 の IAM ロールから認証情報を取れません(iam.tf の web ロールが付いていない)')
+    return boto3.client('ec2', region_name='ap-northeast-1',
+                        aws_access_key_id=creds.access_key, aws_secret_access_key=creds.secret_key,
+                        aws_session_token=creds.token)
+
+
+def staging_instances(ec2):
+    found = []
+    for r in ec2.describe_instances(Filters=STAGING_INSTANCE_FILTERS)['Reservations']:
+        for i in r['Instances']:
+            name = next((tg['Value'] for tg in i.get('Tags', []) if tg['Key'] == 'Name'), i['InstanceId'])
+            found.append({'id': i['InstanceId'], 'name': name, 'state': i['State']['Name'],
+                          'launched_at': i.get('LaunchTime').isoformat(timespec='seconds') if i.get('LaunchTime') else None})
+    return sorted(found, key=lambda x: x['name'])
+
+
+def staging_reachable():
+    import requests
+    try:
+        return requests.get(REMOTE_STAGING_CONNECT + 'state', timeout=4).status_code == 200
+    except requests.RequestException:
+        return False
+
+
+def staging_power_state(ec2):
+    instances = staging_instances(ec2)
+    states = {i['state'] for i in instances}
+    if not instances:
+        overall = 'none'
+    elif states == {'running'}:
+        overall = 'running'
+    elif states == {'stopped'}:
+        overall = 'stopped'
+    elif 'pending' in states:
+        overall = 'pending'
+    elif 'stopping' in states or 'shutting-down' in states:
+        overall = 'stopping'
+    else:
+        overall = 'mixed'
+    return {
+        'state': overall,
+        'reachable': overall == 'running' and staging_reachable(),
+        'instances': [{'name': i['name'], 'state': i['state']} for i in instances],
+        'observed_at': datetime.now(timezone.utc).isoformat(timespec='seconds'),
+    }
+
+
+@app.route('/remote_control/', methods=['GET'])
+def remote_control_index():
+    denied = remote_control_guard()
+    if denied:
+        return denied
+    logger.info(magenta('=> /remote_control/'))
+    with open(REMOTE_INDEX, 'rb') as f:
+        body = f.read()
+    return Response(body, 200, {'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache'})
+
+
+@app.route('/remote_control/power/state', methods=['GET'])
+def remote_control_power_state():
+    denied = remote_control_guard()
+    if denied:
+        return denied
+    try:
+        return jsonify(staging_power_state(remote_ec2_client()))
+    except Exception as e:
+        logger.error(red(f'remote_control power/state: {e}'))
+        return jsonify({'error': f'{type(e).__name__}: {e}'}), 500
+
+
+@app.route('/remote_control/power/<action>', methods=['POST'])
+def remote_control_power_action(action):
+    denied = remote_control_guard()
+    if denied:
+        return denied
+    if action not in ('start', 'stop'):
+        abort(404)
+    try:
+        ec2 = remote_ec2_client()
+        ids = [i['id'] for i in staging_instances(ec2)]
+        if not ids:
+            return jsonify({'error': 'staging のインスタンスが見つかりません'}), 500
+        logger.info(magenta(f'=> /remote_control/power/{action} {ids} by {request.authorization.username}'))
+        if action == 'start':
+            ec2.start_instances(InstanceIds=ids)
+        else:
+            ec2.stop_instances(InstanceIds=ids)
+        return jsonify(staging_power_state(ec2))
+    except Exception as e:
+        logger.error(red(f'remote_control power/{action}: {e}'))
+        return jsonify({'error': f'{type(e).__name__}: {e}'}), 500
+
+
+@app.route('/remote_control/<api>', methods=['GET', 'POST'])
+def remote_control_relay(api):
+    """接続 API を staging の /connect/<api> へそのまま中継する。中継先は 4 つに固定(オープンプロキシにしない)。"""
+    denied = remote_control_guard()
+    if denied:
+        return denied
+    if api not in REMOTE_RELAY_TIMEOUT:
+        abort(404)
+    import requests
+    try:
+        if request.method == 'POST':
+            upstream = requests.post(REMOTE_STAGING_CONNECT + api, json=request.get_json(silent=True) or {},
+                                     timeout=REMOTE_RELAY_TIMEOUT[api])
+        else:
+            upstream = requests.get(REMOTE_STAGING_CONNECT + api, timeout=REMOTE_RELAY_TIMEOUT[api])
+    except requests.RequestException as e:
+        logger.info(f'remote_control relay {api}: staging unreachable ({type(e).__name__})')
+        return jsonify(STAGING_UNREACHABLE[0]), STAGING_UNREACHABLE[1]
+    return Response(upstream.content, upstream.status_code,
+                    {'Content-Type': upstream.headers.get('Content-Type', 'application/json; charset=utf-8'), 'Cache-Control': 'no-store'})
 
 
 # Register a function to run after the app closes

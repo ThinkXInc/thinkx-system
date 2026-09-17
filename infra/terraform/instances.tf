@@ -59,6 +59,14 @@ resource "aws_instance" "web" {
   private_ip             = local.web_ip
   vpc_security_group_ids = [aws_security_group.web.id]
   key_name               = var.key_name
+  iam_instance_profile   = local.is_prod ? aws_iam_instance_profile.web[0].name : null # staging 電源用(iam.tf)。prod のみ
+
+  # IMDSv2 必須(prod)。Web アプリ経由でインスタンスの認証情報を抜かれる手口(SSRF)への対策。
+  # in-place 変更で再作成は起きない。staging は既定(optional)のまま = 差分なし
+  metadata_options {
+    http_endpoint = "enabled"
+    http_tokens   = local.is_prod ? "required" : "optional"
+  }
 
   # AMI 差分での破壊再作成を禁止(理由は lb 側の同名ブロック参照)
   lifecycle {
