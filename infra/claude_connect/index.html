@@ -246,7 +246,8 @@
     deploy: {
       host: "deploy_progress", list: "deploy_steps",
       labels: ["内容を確認", "release を作成", "production へ送信", "本番サーバーが取り込み(約 60 秒)", "本番の応答を確認"],
-      phase: { deploy_fetch: 0, deploy_release: 1, deploy_push: 2, deploy_wait: 3, deploy_check: 4 }
+      phase: { deploy_fetch: 0, deploy_release: 1, deploy_push: 2, deploy_wait: 3, deploy_check: 4 },
+      doneWhen: function (d) { return d.deploy && !d.deploy.running && (d.deploy.result || d.deploy.error); }
     },
     power_on: {
       host: "power_progress", list: "power_steps", source: "power/state",
@@ -308,7 +309,11 @@
     drawSteps();
     progress.hidden = false;
     clearInterval(progressTimer);
+    var inFlight = false;
     progressTimer = setInterval(function () {
+      drawSteps();
+      if (inFlight) return;  // 前の問い合わせが返るまで重ねない(本番の Flask は同時に 1 件しか捌けない)
+      inFlight = true;
       fetch(flow.source || "state", { cache: "no-store" })
         .then(function (r) { return r.json(); })
         .then(function (d) {
@@ -317,9 +322,10 @@
           if (idx !== undefined) advanceTo(idx);
           moveElapsed();
           drawSteps();
-          if (flow.doneWhen && flow.doneWhen(d) && progressDone) { var cb = progressDone; progressDone = null; finishProgress(cb); }
+          if (flow.doneWhen && flow.doneWhen(d) && progressDone) { var cb = progressDone; progressDone = null; finishProgress(function () { cb(d); }); }
         })
-        .catch(function () { drawSteps(); });
+        .catch(function () { drawSteps(); })
+        .then(function () { inFlight = false; });
     }, 1000);
   }
 
@@ -531,20 +537,21 @@
     deployConfirm.hidden = true;
     openProduction.hidden = true;
     deployNote.textContent = "本番に反映しています";
-    startProgress("deploy");
+    // POST は受け付け(202)で即返る。完了はサーバーの state.deploy(running が false・result か error あり)で判断する
+    startProgress("deploy", function (d) {
+      var job = d.deploy || {};
+      var r = job.result || {};
+      deployBusy = false;
+      deployCard.classList.remove("done"); void deployCard.offsetWidth; deployCard.classList.add("done");
+      if (job.error) { resetDeploy(); deployError.textContent = job.error; return; }
+      if (r.result === "already") {
+        resetDeploy("本番は staging と同じ内容でした。反映するものはありません");
+      } else {
+        resetDeploy(r.release + " を本番に出しました。本番の応答: " + (r.production_http === 200 ? "正常(200)" : "確認できません(" + r.production_http + ")。少し待って本番を開いてください"));
+      }
+      openProduction.hidden = false;
+    });
     post("deploy")
-      .then(function (r) {
-        finishProgress(function () {
-          deployBusy = false;
-          deployCard.classList.remove("done"); void deployCard.offsetWidth; deployCard.classList.add("done");
-          if (r.result === "already") {
-            resetDeploy("本番は staging と同じ内容でした。反映するものはありません");
-          } else {
-            resetDeploy(r.release + " を本番に出しました。本番の応答: " + (r.production_http === 200 ? "正常(200)" : "確認できません(" + r.production_http + ")。少し待って本番を開いてください"));
-          }
-          openProduction.hidden = false;
-        });
-      })
       .catch(function (e) {
         stopProgress();
         deployBusy = false;

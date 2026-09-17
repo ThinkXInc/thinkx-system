@@ -1792,3 +1792,19 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
 - 教訓: 秘密ファイルを書き換える処理は「読む → 差し替える → 原子的に置く」の 1 プロセスで行い、シェルの `;` 連結と
   /tmp 経由の受け渡しを使わない。**本番の .env を触るスクリプトは staging で先に流す**(今回は staging で試していなかった)。
   復旧経路(Mac の thinkx/.env + push_env.sh)が生きていたので 10 分で戻せた。
+
+## 2026-09-17 「本番に反映」を非同期に(受け付けて即返す)— 本番 LB の 60 秒と本番 uwsgi の 1 プロセスに塞がれていた
+
+- 本番入口 /remote_control/ から押した「本番に反映する」は、staging 側では成功(production 22d72bf)したが、画面は
+  「内容を確認 0 秒」のまま。原因は 2 つ: (1) 本番 Flask の中継が staging の応答(110 秒)を待つ間、本番 LB の nginx が
+  60 秒で切断(uwsgi ログ `SIGPIPE … POST /remote_control/deploy … generated 0 bytes in 110489 ms`)。
+  (2) 本番 thinkx の uwsgi は `processes = 1` / `threads = 1  # for debug`(uwsgi.ini)。中継中は本番サイト全体が
+  応答待ちになり、画面の 1 秒ごとの進捗取得も詰まった。
+- 対処: staging server.py の POST /connect/deploy は裏でスレッドを起こして即 202 `{result: started}` を返し、
+  進み具合と結果は GET /connect/state の `deploy`(running / result / error)に載せる。ページは state を見て完了を判断。
+  経過秒はローカルの時計で毎秒進め、問い合わせは前の応答が返るまで重ねない。本番の中継タイムアウト(deploy)は 30 秒に。
+- **オーナー判断**: 本番 thinkx の uwsgi が 1 プロセス 1 スレッド("for debug")のままなのは、リモコン以前からの
+  設定で、1 リクエストが遅いとサイト全体が待たされる。`threads = 4` 程度に戻すかは thinkx 側の判断(本トラックでは触らない)。
+- 注意: 本番の /remote_control/ が返す index.html は production checkout のもの。この修正が本番に出るまでは、
+  本番入口から押すと古い JS が 202 を「完了」と誤解して `undefined を本番に出しました` と出る。今回の反映は
+  staging の /connect/ から押す。

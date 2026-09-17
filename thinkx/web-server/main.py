@@ -864,7 +864,7 @@ from datetime import datetime, timezone
 
 REMOTE_INDEX = '/src/thinkx-system/infra/claude_connect/index.html'
 REMOTE_STAGING_CONNECT = 'https://staging.thinkxinc.com/connect/'
-REMOTE_RELAY_TIMEOUT = {'state': 20, 'deploy': 150, 'session': 120, 'code': 120}
+REMOTE_RELAY_TIMEOUT = {'state': 20, 'deploy': 30, 'session': 120, 'code': 120}  # deploy は staging 側が即 202 を返す(裏で進む)
 STAGING_INSTANCE_FILTERS = [
     {'Name': 'tag:Project', 'Values': ['supercom']},
     {'Name': 'tag:Env', 'Values': ['staging']},
