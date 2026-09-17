@@ -99,19 +99,12 @@ ssh supercom-web1 'TOKEN=$(curl -s -X PUT "http://169.254.169.254/latest/api/tok
 ## 4. 本番 web の .env: リモコン入口の Basic 認証(1 回)
 
 `https://<本番ドメイン>/remote_control/` を開くときのユーザー名とパスワード。staging の Basic 認証とは別にする。
+書き先は thinkx の clone ルートの `.env`(`/src/thinkx/.env`。`web-server/.env` ではない)。スクリプトが対話で聞き、
+既存の値は置き換え、thinkx を再起動し、本番 URL に認証つきで 200 が返ることまで確認する。
 
-1. ユーザー名を入力する(例: kobito)
 ```
 cd ~/Sources/thinkx-system
-read -r REMOTE_USER
-```
-2. パスワードを入力する(画面には出ない)
-```
-read -rs REMOTE_PASS
-```
-3. 本番 web の .env に書き、thinkx を再起動する(最後に `active` が出ること)
-```
-ssh supercom-web1 "printf 'REMOTE_BASIC_AUTH_USER=%s\nREMOTE_BASIC_AUTH_PASS=%s\n' '$REMOTE_USER' '$REMOTE_PASS' | sudo tee -a /src/thinkx/web-server/.env > /dev/null && sudo systemctl restart uwsgi_thinkx && sleep 2 && systemctl is-active uwsgi_thinkx"
+bash infra/etc/push_remote_auth.sh supercom-web1
 ```
 
 ## 5. staging LB: 本番 web からの中継を通す(リポジトリ内・自動)
@@ -130,3 +123,4 @@ ssh supercom-web1 "printf 'REMOTE_BASIC_AUTH_USER=%s\nREMOTE_BASIC_AUTH_PASS=%s\
 
 - 2026-09-17 新設。1(書き込み鍵)・2(ルールセットと Deploy keys のバイパス)・3(IAM ロール)・4(.env)・5(LB)。
 - 2026-09-17 2-補足を Evernote の説明の原文どおりに置き換え(圧縮しない・オーナー指示)。
+- 2026-09-17 4 を push_remote_auth.sh に置き換え(宛先の誤り `/src/thinkx/web-server/.env` → `/src/thinkx/.env`・貼り付けの折り返し対策)。

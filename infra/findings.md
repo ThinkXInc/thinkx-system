@@ -1762,3 +1762,16 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   (b) staging に GitHub の fine-grained token(contents/pull_requests: write)を置き、server.py が API で PR 作成→merge。秘密が 1 つ増える。
   (a) ボタンは release の push と PR の URL 提示まで(= L2b)にして、マージはオーナーが GitHub アプリで行う。ただし PR 作成にも API が要るため
       結局 (b) のトークンが必要。
+
+## 2026-09-17 「本番に反映」初回成功(バイパス後)/ 画面は nginx の 60 秒で 504 / .env の宛先を誤った
+
+- バイパス追加後の「本番に反映」で production が ae4e994(develop 0606c4c の内容)に進み、本番 `/remote_control/` が 401 を返す
+  (= コードが出ている)。**ボタン経由の本番反映は成立。**
+- ただし画面には `Unexpected token '<', "<html> <h"... is not valid JSON`。POST /connect/deploy は本番の取り込みを 75 秒待つが、
+  staging LB の `proxy_read_timeout` 既定 60 秒で切れて 504 の HTML が返った(LB error.log: `upstream timed out … POST /connect/deploy`)。
+  → location /connect/ に `proxy_read_timeout 300s`。
+- 手順書 4 の .env の宛先 `/src/thinkx/web-server/.env` は誤り。thinkx の config.py は `PRJ_ROOT/.env` = **`/src/thinkx/.env`**
+  (clone ルート・kaz:serveradmins 0640)を読む。誤った宛先に root 所有の新規ファイル(REMOTE_ 行 4 行だけ)ができ、本物は無傷。
+  さらにオーナーの端末で長いコマンドが貼り付け時に折り返され 3 行に分割実行された。
+  → `infra/etc/push_remote_auth.sh <host>`(対話でユーザー名・パスワードを受け、正しい .env の REMOTE_ 行を置き換え、
+  誤ファイルが REMOTE_ 行だけなら削除、uwsgi 再起動、本番 URL で 200/401 を確認)に置き換え。手順書 4 も差し替え。
