@@ -374,7 +374,7 @@
     if (data.state === "connected") {
       // セッションの URL が拾えていれば、そのままチャット画面へ飛べるリンクを出す(リモコン化の第一歩)
       if (data.session_url) {
-        setStatus("connected", "接続中", "ボタンを押すと Claude のチャット画面が開きます");
+        setStatus("connected", "接続中", "");
         openClaude.href = data.session_url;
         openClaude.hidden = false;
       } else {

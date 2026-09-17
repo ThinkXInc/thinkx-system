@@ -50,6 +50,8 @@ URL: https://staging.thinkxinc.com/connect/ (Basic 認証は staging と同じ)�
   `Paste code here` / 空行 / 行頭空白の手前までを連結する。
 - `claude auth status`(既定 `--json`)は `{"loggedIn": true|false, "authMethod": ..., ...}` を返す。
 - `tmux list-panes -t claude -F '#{pane_current_command}'` は接続中 `claude`、claude 終了後 `bash`。
+- 「Claude を開く」の URL は `~/.claude/sessions/<pane_pid>.json` の `bridgeSessionId`(例 `session_01HQ…`)から
+  `https://claude.ai/code/<bridgeSessionId>` で組む(2.1.223 実測 2026-09-17)。pane の文言は予備。
 
 ## 4. ページが動かないときの手動手順(PC から)
 
