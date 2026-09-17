@@ -10,6 +10,10 @@ v1(`docs/archive/approval_cases/v1.md`・事例 A〜M・凍結 2026-09-17)の構
 - **層の割り当て(D-53)**: settings / hook 判定 / 固定 wrapper の 3 層。割り当て表は下に転記(v1 から引き継ぎ・現行の規則)。
 - **稼働中の構築物(v1)**: `hooks/check_git_command.py`(git add / commit / push 非 force を無承認)、`infra/scripts/stg.py`(staging 観測)。
 
+**収録の意味(オーナー指示 2026-09-17)**: ここに載っているのは「承認が必要だった(プロンプトが出た)」という事実の記録であり、
+**スキップすべきかどうかは別判断**。各事例の「正しい形」は実行者の分析であって決定ではない。無承認化するかは割り当て表(3 問)と
+`DEPLOY_APPROVAL_LEVELS.md` の判定基準で決め、変更系は何回出ても削減しない。
+
 ## 追記のしかた(v1 と同じ)
 
 承認が出たコマンドに当たったら 1 ケース足す。想像で先に書かない(実例のみ)。フィールドは 5 つ:
@@ -170,6 +174,33 @@ ask と deny のルールは hook の allow に勝つ。
 - **同型カウント**: staging claude_connect のログ/state 観測は **A・T・U で 3 回目**(wrapper は既にある。使われていないのが問題)。
   本番 journalctl は **T・U で 2 回目、本番 ssh 観測としては Q を含め 3 回目 → 昇格条件に達した**。
 
+### V. claude_connect の index.html と mock を python heredoc でパッチ → mock 再起動 → localhost curl(v1 事例 M と同型・2 回目)
+- **生**: `python3 - <<'EOF' ... p = pathlib.Path("infra/claude_connect/index.html"); t = p.read_text(); old = '''...'''; new = '''...'''; assert old in t; t = t.replace(old, new, 1)`(3 箇所)` ... p.write_text(t) EOF; S=<scratchpad>; python3 - <<'EOF' ... mock_server.py を同様に置換 ... EOF; (lsof -i :8008 -sTCP:LISTEN -t | xargs -r kill); sleep 1; nohup python3 "$S/mock_server.py" ... > "$S/mock.log" 2>&1 & sleep 1; curl -s "http://127.0.0.1:8008/..." | head -c 200`
+- **引き金**: `curl`(ask・localhost)。`python3 -` は settings.local の allow にある。lsof / xargs kill / nohup は止まらない。
+- **クラス**: 編集(index.html 3 箇所・mock_server.py 2 箇所)+ ローカル mock のプロセス管理 + 観測。
+- **問題**: 編集を python の `t.replace(old, new)` で書いている = **Edit ツールの再発明**(v1 事例 C/D/M と同じ)。old/new が heredoc の中に
+  埋まり、変更が diff として見えない。3 箇所の置換を 1 コマンドに詰めたので、1 箇所でも `assert` が落ちると全部が止まり原因も見えない。
+  Edit なら 3 回の Edit がそれぞれ diff で見え、失敗も 1 箇所ずつ分かる。
+- **正しい形**:
+  - index.html / mock_server.py の書き換え → **Edit ツール**(scratchpad のファイルでも同じ)。
+  - mock の停止・起動・localhost 確認 → 固定スクリプト(例 `infra/claude_connect/dev_mock.sh restart`)。ポート 8008 固定、任意 PID を受けない、
+    確認 URL は固定リテラル。事例 M の結論そのまま。**M で「build スクリプトにする」と書いてから同じ形が再発した** = 結論を書いただけで
+    スクリプトを作っていなかった。
+- **残るゲート**: 生成物の見た目 OK + 公開。mock の起動/停止は可逆で承認不要。
+- **同型カウント**: M・V で **2 回目**(同じ対象ファイル・同じ mock・同じ curl)。次に出たら dev_mock.sh を作る。
+
+### W. push_assets_podcast.sh の構文チェック → staging の selftest 残骸を ssh で削除 → 配布実行(変更系)
+- **生**: `bash -n infra/scripts/push_assets_podcast.sh && ssh -o ConnectTimeout=8 supercom-web1-stg 'sudo rm -r /src/podcast/data/_selftest 2>/dev/null; true' && bash infra/scripts/push_assets_podcast.sh staging 2>&1 | tail -6`
+- **引き金**: `ssh`(ask)。`bash -n` と `bash infra/scripts/...` は止まらない。ssh の中の `sudo rm -r` はローカルの `Bash(rm -r:*)` / `Bash(sudo:*)` deny に
+  前置一致しない(deny は可視コマンドの先頭語しか見ない。Q/T と同じ注意点で、**リモート側の削除は settings では止まらない**)。
+- **クラス**: 変更(リモートのディレクトリ削除 + データ配布)。**承認が出るのは正しく、配布そのものは削減対象ではない。**
+- **問題**: `_selftest` はスクリプト自身が作ったテスト用ディレクトリ。その後片付けを手で ssh して消しているのは、スクリプトの selftest が
+  自分の残骸を消していないから。削除を「ssh で 1 行」に書くと、その 1 行が対象パスを変えれば任意削除になる。
+- **正しい形**: selftest の作成と削除を `push_assets_podcast.sh` 自身に閉じる(固定パス `_selftest` をスクリプト内リテラルで作って消す)。
+  手で消す必要をなくす。配布の実行は wrapper を素で叩き承認 1 回(変更系。yes/対話入力を流し込まない = 事例 P の規律)。
+- **残るゲート**: 配布の実行承認(人間)。
+- **同型カウント**: 変更系につきカウント対象外。selftest の後片付け漏れとしては 1 回目。
+
 ---
 
 ## 状態と次の一手(2026-09-17)
@@ -185,6 +216,11 @@ ask と deny のルールは hook の allow に勝つ。
 - T・U で **既存 wrapper(stg.py)があるのに生 ssh を書いた**ことが判明(A・T・U で 3 回)。wrapper を増やすだけでは減らない。カタログ
   (`infra/scripts/README.md` の観測 wrapper 一覧 + CLAUDE.md からの参照)の整備が、verify_deploy.py と並ぶ次の一手。
 - 本番 ssh 観測は Q・T・U で 3 回 → 昇格条件に達した。環境を必須引数にした観測 wrapper(固定 unit・固定 grep・範囲つき数値のみ)を新設する。
-- 収録済みの承認引き金(v2 時点): ssh(N/P/Q/S/T/U)・curl 本番(O/Q)・`$(...)`/バッククォート のコマンド置換(O/Q/R/T)・変更系 wrapper への yes 流し込み(P)。
+- V は M の再発(2 回目)。「Edit を使う」「mock の再起動は固定スクリプト」という結論を書いただけで実装していなかった。次に出たら `dev_mock.sh`。
+- W は変更系(削減しない)。selftest の後片付けは配布スクリプト自身に閉じる。
+- **リモート側の rm / sudo はローカルの deny に当たらない**(Q/T/W)。ssh の中身は settings では止まらないことを前提に、変更系の ssh は
+  必ずレビュー済みスクリプト経由にする。
+- 収録済みの承認引き金(v2 時点): ssh(N/P/Q/S/T/U/W)・curl 本番(O/Q)・curl localhost(V)・`$(...)`/バッククォート のコマンド置換(O/Q/R/T)・
+  変更系 wrapper への yes 流し込み(P)。
 - 未着手(v1 から持ち越し): WebFetch ドメイン allow の恒久化、`make_favicons.sh`(事例 E)、curl localhost wrapper。
 - `.claude/settings.json` の hooks 登録(オーナー編集)は 2026-09-17 時点で未コミット。
