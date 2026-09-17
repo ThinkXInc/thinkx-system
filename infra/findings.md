@@ -1744,3 +1744,21 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   「ストレージ容量と中身」に改名。月額側(cost-estimate.sh)は「インフラ月額概算」
   「稼働率60%(computeのみ稼働率に比例。EBS/EIP/Route53は固定)」。コミット b400be5 / 280dae0 / e415ab0。
 - 未整理: ストレージ節の「コールドデータ(売却SSD分 約37TB)…」と `docs/architecture.md` の supercom3a / Cisco 表。
+
+## 2026-09-17 【不具合】「本番に反映」の production への push は GitHub ルールセットで拒否される(初回実行で判明)
+
+- 事象: オーナーが staging の /connect/ で「本番に反映する」→ release/2026-09-17 の push は成功、
+  `git push origin <sha>:production` が失敗。ページのエラーは LFS の案内(`Locking support detected …`)だけで理由が見えなかった。
+- 本当の理由(staging で再実行して取得):
+  `remote: error: GH013: Repository rule violations found for refs/heads/production.` / `- Changes must be made through a pull request.`
+- 原因: ルールセット **`production protection`(id 20539430・2026-08-07 作成・D-50 の L2b 設定)** が production に
+  `deletion` / `non_fast_forward` / `pull_request` を強制。bypass_actors は空。9/6 に「production に保護なし」と判断したのは
+  旧方式の branch protection API(`/branches/production/protection` → 404)を見たためで、ルールセット(`/rules/branches/production`)を
+  見ていなかった。**ボタンの直接 push は最初から通らない設計だった。** Mac の deploy_production_from_staging.sh は gh で PR→merge するので通る。
+- 直したこと(4c40367): server.py が git の stderr を返す / 同じコミットを指す release があれば使い回す(release/2026-09-17 はそのまま次回に使われる)。
+- 選択肢(オーナー判断):
+  (c) ルールセットの bypass に「Deploy keys」を加える → staging の鍵(supercom-web)は PR なしで production に push できる。
+      トークン不要・最小変更。D-50 の「PR がゲート」は staging の鍵に対しては外れる(押す=承認の裁定と整合)。
+  (b) staging に GitHub の fine-grained token(contents/pull_requests: write)を置き、server.py が API で PR 作成→merge。秘密が 1 つ増える。
+  (a) ボタンは release の push と PR の URL 提示まで(= L2b)にして、マージはオーナーが GitHub アプリで行う。ただし PR 作成にも API が要るため
+      結局 (b) のトークンが必要。
