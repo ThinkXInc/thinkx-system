@@ -176,6 +176,10 @@ video { width: 100%; max-width: 860px; display: block; border-radius: 6px;
 .seg { scroll-margin-top:42px; }
 /* 全編セグメントは枠で区別する（オーナー指示・2026-08-08） */
 .seg.fullep { border: 3px solid #68000044; border-radius: 12px; }
+/* 本番使用にチェックした切り出しは背景を黄にする（オーナー指示・2026-09-17）。
+   指定色 #fff9e4 はライト用。ダークは同系の暗い黄で沈ませる */
+.seg.production { background-color:#3a3410; }
+:root[data-theme="light"] .seg.production { background-color:#fff9e4; }
 .editlink { font-size:13px; color:#6b7280; }
 """
 
@@ -1149,6 +1153,16 @@ def page(title, body):
         # 「この編集で書き出す」: 完了したらそのままダウンロードが落ちてくる
         "function nrToggle(cb){localStorage.setItem('nr_on',cb.checked?'1':'0');"
         "document.querySelectorAll('.nrtoggle').forEach(function(c){c.checked=cb.checked;});}"
+        # 本番使用: segments.json に保存し、その場で背景を黄に切り替える
+        "function prodToggle(sid,idx,cb){var idv=new URLSearchParams(location.search).get('id');"
+        "fetch(window.APP+'/production?id='+encodeURIComponent(idv)"
+        "+'&sid='+encodeURIComponent(sid)+'&on='+(cb.checked?'1':'0'))"
+        ".then(function(r){if(!r.ok){cb.checked=!cb.checked;"
+        "document.getElementById('rst'+idx).textContent='本番使用の保存に失敗しました';return;}"
+        "var seg=document.getElementById('seg'+idx);"
+        "if(seg)seg.classList.toggle('production',cb.checked);})"
+        ".catch(function(){cb.checked=!cb.checked;"
+        "document.getElementById('rst'+idx).textContent='サーバーに接続できません';});}"
         "document.addEventListener('DOMContentLoaded',function(){"
         "var on=localStorage.getItem('nr_on')==='1';"
         "document.querySelectorAll('.nrtoggle').forEach(function(c){c.checked=on;});});"
@@ -1785,7 +1799,8 @@ def render_id(idv):
                 if g.get("flag") != "likely_dropped" and g.get("duration", 0) >= 1.5]
 
         _full = "全編" in (title or "")
-        parts.append(f"<div class='seg{' fullep' if _full else ''}' id='seg{idx}'>")
+        _prod = " production" if sg.get("production") else ""
+        parts.append(f"<div class='seg{' fullep' if _full else ''}{_prod}' id='seg{idx}'>")
         rank = cand.get("rank") if cand else None
         # オーナー評価（★5段階＋根拠の発言を併記。分割したら評価はリセットされる）
         rt = d["ratings_by_index"].get(idx)
@@ -1824,6 +1839,8 @@ def render_id(idv):
         parts.append(
             f"<p class='meta'><button onclick=\"renderSeg('{_sid}',{idx})\">この編集で書き出す（m4a）</button>"
             f"　<label><input type='checkbox' class='nrtoggle' onchange='nrToggle(this)'> ノイズ除去</label>"
+            f"　<label><input type='checkbox'{' checked' if sg.get('production') else ''}"
+            f" onchange=\"prodToggle('{_sid}',{idx},this)\"> 本番使用</label>"
             f"　<span id='rst{idx}' class='meta'></span></p>")
 
         # 要約: segments.json の summary（現在の切り出し内容から作り直したもの）を優先。
@@ -1893,6 +1910,43 @@ def apply_decision(idv, cid, action, status_only=False):
     with open(seg_path, "w", encoding="utf-8") as f:
         json.dump(seg, f, ensure_ascii=False, indent=2)
     _queue_for_sync(dec_path, seg_path)
+    return True
+
+
+def set_production(idv, sid, on):
+    """本番使用フラグの保存（オーナー指示 2026-09-17）。segments.json の該当セグメントに
+    production: true を立てる/外す。編集データなので他の保存と同じ作法で扱う
+    （受信ジャーナル→履歴退避→書き込み→同期キュー）。"""
+    import datetime
+    if idv not in list_ids() or not sid:
+        return False
+    base = os.path.join(DATA_DIR, idv)
+    try:
+        journal = os.path.join(idpaths.edit_dir(base), "edit_save_journal.jsonl")
+        with open(journal, "a", encoding="utf-8") as f:
+            f.write(json.dumps({"at": datetime.datetime.now().isoformat(timespec="milliseconds"),
+                                "payload": {"op": "production", "id": idv, "sid": sid, "on": on}},
+                               ensure_ascii=False) + "\n")
+            f.flush()
+            os.fsync(f.fileno())
+    except Exception:
+        pass
+    seg_path = idpaths.find(base, "segments.json")
+    seg = _load_json(seg_path, {})
+    changed = False
+    for sg in seg.get("segments", []):
+        if sg.get("sid") == sid:
+            if on:
+                sg["production"] = True
+            else:
+                sg.pop("production", None)
+            changed = True
+    if not changed:
+        return False
+    _append_history(base, seg_path)
+    with open(seg_path, "w", encoding="utf-8") as f:
+        json.dump(seg, f, ensure_ascii=False, indent=2)
+    _queue_for_sync(seg_path, os.path.join(idpaths.edit_dir(base), "segments_history.jsonl"))
     return True
 
 
@@ -2039,6 +2093,14 @@ def route_decide():
                         request.args.get("cid") or "",
                         request.args.get("action") or "",
                         request.args.get("status_only") == "1")
+    return _text("ok" if ok else "ng", 200 if ok else 400)
+
+
+@app.get("/production")
+def route_production():
+    ok = set_production(request.args.get("id") or "",
+                        request.args.get("sid") or "",
+                        request.args.get("on") == "1")
     return _text("ok" if ok else "ng", 200 if ok else 400)
 
 
