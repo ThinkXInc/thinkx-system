@@ -105,8 +105,8 @@ deploy_production_from_staging() {
     return 1
   fi
 
-  # podcast の編集用データは例外規則の別スクリプトで配る(D-52。汎用規則に混ぜない)。
-  # 引数なし = 本番に公開済みの ID だけ差分同期(本番に podcast が居ない間は素通り)
+  # podcast の data は例外規則の別スクリプトで配る(D-52 改定 2026-09-17)。
+  # 引数なし = ローカル data/ 全体を本番へ完全同期(削除なし・edit/ は git が正)
   banner "アセット(podcast データ)を確かめる"
   if ! bash infra/scripts/push_assets_podcast.sh prod; then
     printf '%b\n' "${R}FAIL: podcast データの配布に失敗しました${Z}"
