@@ -59,12 +59,12 @@ resource "aws_security_group" "web" {
   description = "web: nginx(static) + uwsgi backends"
   vpc_id      = aws_vpc.main.id
 
-  # LB の SG からのみ 8000-8009 を許可
-  #   8005 thinkx / 8006 transformism / 8007 kazukiotsuka / 8000 quantz(載せる場合)
+  # LB の SG からのみ 8000-8099 を許可(サイト追加のたびに広げない。オーナー指示 2026-09-17)
+  #   8005 thinkx / 8006 transformism / 8007 kazukiotsuka / 8010 podcast / 8000 quantz(載せる場合)
   ingress {
     description     = "backend ports from LB SG only"
     from_port       = 8000
-    to_port         = 8009
+    to_port         = 8099
     protocol        = "tcp"
     security_groups = [aws_security_group.lb.id]
   }
