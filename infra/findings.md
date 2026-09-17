@@ -1775,3 +1775,20 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   さらにオーナーの端末で長いコマンドが貼り付け時に折り返され 3 行に分割実行された。
   → `infra/etc/push_remote_auth.sh <host>`(対話でユーザー名・パスワードを受け、正しい .env の REMOTE_ 行を置き換え、
   誤ファイルが REMOTE_ 行だけなら削除、uwsgi 再起動、本番 URL で 200/401 を確認)に置き換え。手順書 4 も差し替え。
+
+## 2026-09-17 【事故】push_remote_auth.sh が本番 thinkx の .env を空にし、本番サイトが約 10 分 500(復旧済み)
+
+- 経緯: 手順書 4 の .env 書き込みを `infra/etc/push_remote_auth.sh`(初版)で行った。スクリプトは
+  `sudo install /dev/null /tmp/remote_auth.env`(kaz 所有の空ファイル)を作り、`sudo bash -c "grep -v … > /tmp/remote_auth.env; cat >> …;
+  install /tmp/remote_auth.env /src/thinkx/.env"` と `;` 区切りで続けていた。Ubuntu 22.04 の **fs.protected_regular=2** により、
+  sticky な /tmp にある他人所有のファイルへは root でも O_CREAT で書けず、grep と cat の書き込みが `Permission denied`。
+  `;` 区切りのため止まらず、空のままの /tmp/remote_auth.env が **/src/thinkx/.env(728 バイト・12 行)を 0 バイトで上書き**。
+  uwsgi 再起動で `no python application found` → 08:43〜08:53 頃まで thinkxinc.com 全ルートが 500。
+- 復旧: Mac の `thinkx/.env`(配布元の正)を `push_env.sh supercom-web1 thinkx` で `/tmp/thinkx.env` に送り、
+  `install -o kaz -g serveradmins -m 640` で設置 → `systemctl restart uwsgi_thinkx` → `/` `/about` `/products/KOBITO` 200、`/remote_control/` 401。
+- 直したこと: (1) /tmp の中間ファイルを使わない。root の python が .env を読み、REMOTE_ 行を差し替え、同じ所有者・権限で
+  `os.replace` により原子的に置く。**元が空なら書かずに止まる。** (2) `;` 連結をやめ、失敗したら何もせず終了。
+  (3) verify にトップの 200 を加える(認証の確認だけでなく本番が生きていることを見る)。
+- 教訓: 秘密ファイルを書き換える処理は「読む → 差し替える → 原子的に置く」の 1 プロセスで行い、シェルの `;` 連結と
+  /tmp 経由の受け渡しを使わない。**本番の .env を触るスクリプトは staging で先に流す**(今回は staging で試していなかった)。
+  復旧経路(Mac の thinkx/.env + push_env.sh)が生きていたので 10 分で戻せた。
