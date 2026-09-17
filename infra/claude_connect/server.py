@@ -177,8 +177,24 @@ def find_session_url(lines: list[str]) -> str | None:
     return None
 
 
+SESSIONS_DIR = Path.home() / ".claude" / "sessions"  # claude が自分の pid 名で書く(2.1.223 実測: bridgeSessionId が URL の末尾)
+
+
+def session_url_from_sessions_file() -> str | None:
+    """tmux の pane の pid(= claude 本体)に対応する ~/.claude/sessions/<pid>.json の bridgeSessionId から URL を組む。"""
+    rc, out = tmux("list-panes", "-t", SESSION, "-F", "#{pane_pid}")
+    if rc != 0 or not out.strip():
+        return None
+    try:
+        data = json.loads((SESSIONS_DIR / f"{out.strip().splitlines()[0]}.json").read_text())
+    except (OSError, ValueError):
+        return None
+    bridge = data.get("bridgeSessionId")
+    return f"https://claude.ai/code/{bridge}" if isinstance(bridge, str) and bridge.startswith("session_") else None
+
+
 def session_url(lines: list[str]) -> str | None:
-    seen = find_session_url(lines)
+    seen = session_url_from_sessions_file() or find_session_url(lines)
     if not seen and not remembered["session_url"]:
         # 画面外に流れていたら scrollback(履歴)から拾う(起動直後の一度だけ重い)
         rc, out = tmux("capture-pane", "-p", "-S", "-", "-t", SESSION)
