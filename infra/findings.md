@@ -1914,4 +1914,10 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   services_for は thinkx/transformism/kazukiotsukacom/nginx-web-root/loadbalancer のみで、
   server.py を変えても claude_connect.service は再起動されない(index.html はリクエストごとに
   読むため配布だけで反映)。今回は手動で restart。恒久化するなら services_for への追加が要る
-  (デプロイ経路の変更なのでオーナー判断待ち)。
+  (デプロイ経路の変更なのでオーナー判断待ち)。- 2026-09-18 health check Mac(launchd)側の仕上がりまでの実測: (1) チャットからの貼り付けで webhook URL が
+  2 行に割れて .env に入った(検知は --fail 追加後。修正はオーナーが perl で入れ直し)。(2) launchd 実行時のみ
+  aws が失敗 — /usr/local/bin/aws が shebang /usr/bin/python(不存在)を指す残骸で bad interpreter 126。
+  plist の PATH 順変更でも launchd 実プロセスには効かなかったため、設定 YAML の aws_cli キーで
+  フルパス指定に変更(既定 PATH だけの最小環境で WARN なしを実測)。壊れた /usr/local/bin/aws の削除は
+  オーナー任意。最終状態: LB timer 60 秒(5 サイト up)・Mac launchd 5 分(lb + staging ゲート)・
+  実弾テスト 🔴/🟢 送達(--fail で 2xx 確認)。

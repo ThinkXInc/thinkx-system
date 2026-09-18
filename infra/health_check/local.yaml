@@ -4,5 +4,6 @@
 sites:
   lb: https://thinkxinc.com/
 staging_gated_url: https://staging.thinkxinc.com/
+aws_cli: /Library/Frameworks/Python.framework/Versions/3.6/bin/aws
 state_dir: /Users/K00TSUKA/.supercom-health-state
 webhook_env: /Users/K00TSUKA/Sources/thinkx-system/thinkx/web-server/.env

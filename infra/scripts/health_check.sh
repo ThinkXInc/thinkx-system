@@ -80,10 +80,11 @@ __health_report() {
 }
 
 # staging の EC2 が running かどうか。running=0 / stopped 等=1 / 分からない=2
+# aws の場所は設定の aws_cli で固定できる(launchd は PATH が素で、壊れた残骸を拾う事故もあった — 2026-09-18 実測)
 __health_staging_running() {
-  local states
-  command -v aws >/dev/null 2>&1 || return 2
-  states="$(aws ec2 describe-instances \
+  local states awsbin="${AWS_CLI:-aws}"
+  command -v "$awsbin" >/dev/null 2>&1 || return 2
+  states="$("$awsbin" ec2 describe-instances \
     --filters "Name=tag:Project,Values=supercom" "Name=tag:Env,Values=staging" \
     --query "Reservations[].Instances[].State.Name" --output text 2>/dev/null || true)"
   [ -n "$states" ] || return 2
@@ -112,6 +113,7 @@ __health_load_config() {
           staging_gated_url) STAGING_GATED_URL="$val" ;;
           state_dir)         STATE_DIR="$val" ;;
           renotify_sec)      RENOTIFY_SEC="$val" ;;
+          aws_cli)           AWS_CLI="$val" ;;
           *) echo "WARN: 知らない設定キー: $key($file)" ;;
         esac ;;
     esac
