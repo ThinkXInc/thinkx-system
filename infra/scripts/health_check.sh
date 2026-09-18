@@ -2,16 +2,22 @@
 # thinkx-system/infra/scripts/health_check.sh
 # 【分類: 観測系(サイトの死活を見て Discord に通知する。変えるのは自前の状態ファイルと通知だけ)】
 #
-#   使い方: HEALTH_ENV=/etc/supercom-health.env bash infra/scripts/health_check.sh
-#           (HEALTH_ENV 省略時は /etc/supercom-health.env)
+#   使い方: HEALTH_CONFIG=infra/health_check/loadbalancer.yaml bash infra/scripts/health_check.sh
+#           (HEALTH_CONFIG 省略時は同リポジトリの infra/health_check/loadbalancer.yaml)
 #
-# 設定は env ファイルに置く(git に入れない。置き方は infra/runbooks/health-check.md):
-#   DISCORD_WEBHOOK_URL  通知先 webhook(専用チャンネル。他と混ぜない — オーナー指示 2026-09-18)
-#   SITES                "名前=URL" の空白区切り。例: "thinkxinc=https://thinkxinc.com/ nntm=https://nntmapp.com/"
-#   STAGING_GATED_URL    任意。EC2 の staging が running のときだけ死活を見る URL
+# 設定はリポジトリ内の YAML(infra/health_check/loadbalancer.yaml / local.yaml)に置く
+# (オーナー指示 2026-09-18「なるべくレポジトリに入れる」「.envとは秘密情報を意味する」)。
+# **秘密の webhook URL だけは git に入れず**、設定の webhook_env が指す既存の .env に相乗りする
+# (新しい秘密ファイルは作らない — オーナー指示 2026-09-18。置き方は infra/runbooks/health-check.md)。
+# YAML のキー:
+#   sites:               監視対象。「  名前: URL」を並べる
+#   webhook_env          HEALTH_DISCORD_WEBHOOK_URL=... を含む git 管理外の .env のパス。
+#                        LB は /src/loadbalancer/.env(LB の .env はこれが最初)、local は thinkx/web-server/.env。
+#                        webhook 先は専用チャンネル。他と混ぜない(オーナー指示 2026-09-18)
+#   staging_gated_url    任意。EC2 の staging が running のときだけ死活を見る URL
 #                        (stopped は意図した停止なので正常扱い。aws CLI と権限が要る)
-#   STATE_DIR            状態ファイルの置き場(既定 /var/lib/supercom-health)
-#   RENOTIFY_SEC         落ち続けている間の再通知間隔秒(既定 3600)
+#   state_dir            状態ファイルの置き場(既定 /var/lib/supercom-health)
+#   renotify_sec         落ち続けている間の再通知間隔秒(既定 3600)
 #
 # 判定: curl 15 秒 timeout を 5 秒空けて 2 回。2 回とも 2xx/3xx/401 以外なら down
 #       (401 は Basic 認証つきサイトの「生きている」応答)。
@@ -85,11 +91,49 @@ __health_staging_running() {
   return 1
 }
 
-health_check() {
-  local env_file="${HEALTH_ENV:-/etc/supercom-health.env}" entry name url
+# 設定 YAML を読む。sites: の下の「  名前: URL」を SITES("名前=URL" の空白区切り)に、
+# トップレベルの「キー: 値」を対応する変数に入れる(素朴な行パース。ネストは sites の 1 段だけ)
+__health_load_config() {
+  local file="$1" section="" line key val
+  while IFS= read -r line; do
+    case "$line" in
+      "#"*|"") ;;
+      "sites:") section=sites ;;
+      "  "*)
+        [ "$section" = sites ] || continue
+        line="${line#"${line%%[![:space:]]*}"}"
+        key="${line%%:*}"; val="${line#*: }"
+        SITES="$SITES $key=$val" ;;
+      *": "*)
+        section=""
+        key="${line%%:*}"; val="${line#*: }"
+        case "$key" in
+          webhook_env)       WEBHOOK_ENV="$val" ;;
+          staging_gated_url) STAGING_GATED_URL="$val" ;;
+          state_dir)         STATE_DIR="$val" ;;
+          renotify_sec)      RENOTIFY_SEC="$val" ;;
+          *) echo "WARN: 知らない設定キー: $key($file)" ;;
+        esac ;;
+    esac
+  done < "$file"
+}
 
-  [ -f "$env_file" ] || { echo "WARN: env ファイルが無い: $env_file(runbooks/health-check.md を見て作る)"; return 0; }
-  . "$env_file"
+health_check() {
+  local here config entry name url
+  here="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+  config="${HEALTH_CONFIG:-$here/../health_check/loadbalancer.yaml}"
+
+  [ -f "$config" ] || { echo "WARN: 設定 YAML が無い: $config(runbooks/health-check.md を見て作る)"; return 0; }
+  SITES=""
+  __health_load_config "$config"
+  if [ -n "${WEBHOOK_ENV:-}" ]; then
+    if [ -f "$WEBHOOK_ENV" ]; then
+      DISCORD_WEBHOOK_URL="$(grep -E '^HEALTH_DISCORD_WEBHOOK_URL=' "$WEBHOOK_ENV" 2>/dev/null | tail -1 | cut -d= -f2- | tr -d "\"'")"
+      [ -n "$DISCORD_WEBHOOK_URL" ] || echo "WARN: $WEBHOOK_ENV に HEALTH_DISCORD_WEBHOOK_URL が無い(通知は標準出力のみ。runbooks/health-check.md)"
+    else
+      echo "WARN: webhook_env が無い: $WEBHOOK_ENV(通知は標準出力のみ。runbooks/health-check.md を見て作る)"
+    fi
+  fi
   STATE_DIR="${STATE_DIR:-/var/lib/supercom-health}"
   mkdir -p "$STATE_DIR" 2>/dev/null || { echo "WARN: STATE_DIR を作れない: $STATE_DIR"; return 0; }
 

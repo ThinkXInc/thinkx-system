@@ -349,6 +349,19 @@ ask と deny のルールは hook の allow に勝つ。
 - **同型カウント**: デプロイ着地確認は F・G・O・Q・Y・AF・AI で **7 回目**。AH(dev)→ AI(staging)→ AF(本番)と同じ編集を 3 環境で順に確認する
   流れが 1 セッションで揃った = 「env を引数に取る 1 本の観測 wrapper」がそのまま要件。
 
+### AJ. ローカルの ls(議事録ディレクトリの更新順一覧)
+- **生**: `ls -t /Users/K00TSUKA/Sources/thinkx-system/infra/docs/discussion/ | head -10`
+- **引き金**: **不明**。ask 語なし・`$(...)` なし・リダイレクトなし。ルートと podcast の両 settings とも allow に素の `Bash` があるので、
+  settings の規則からはプロンプトが出る理由が無い(実測: `.claude/settings.json` と `podcast/.claude/settings.json` の allow を確認)。
+  AG(`cd ... && du`)と同じ「ask 語の無いローカル観測が止まる」型で、共通点は絶対パス(`/Users/K00TSUKA/...`)を含むこと。
+  出ているセッションが Chrome 側(claude-in-chrome)なら、そちらの許可セットがこのワークスペースの settings と違う可能性がある。
+- **クラス**: 観測(ローカル・読み取り)。
+- **正しい形**: 引き金が確定するまで保留。確定の手順: 止まったのと同じセッションで (1) `ls infra/docs/discussion/ | head -10`(相対パス)、
+  (2) `ls -t /Users/K00TSUKA/Sources/thinkx-system/infra/docs/discussion/`(絶対パス・パイプなし)を分けて打ち、どちらで出るかを記録する。
+  ワークスペース側なら Glob ツール(`infra/docs/discussion/*.md`)で同じ結果が承認なしで取れる。
+- **残るゲート**: なし。
+- **同型カウント**: 引き金不明のローカル観測は AG・AJ で 2 件。次に出たら実測を先にやる。
+
 ---
 
 ## 状態と次の一手(2026-09-17)
