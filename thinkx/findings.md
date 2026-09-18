@@ -433,3 +433,18 @@
   「OK なら ok でコミットする」と聞いてある場合のみ実行依頼と読む。
 - 反映: monorepo ae487e4 / 15322f3 / 1f6e989 / e36843f → develop → staging(実測済み)。本番は未反映(オーナーの引き金待ち)。
 - 記事 JSON `locales/articles/2025-12-11-talk.json` に別作業の未コミット差分(28 行)が残っている。今回のコミットには含めていない。
+
+## 2026-09-18 remote_control 中継の接続タイムアウトを 2 秒に分離(本番 504 障害の再発防止)
+
+- 2026-09-18 の本番 504 障害(infra/findings.md 同日参照)を受け、state 中継の requests timeout を
+  `20` → `(REMOTE_RELAY_CONNECT_TIMEOUT=2, 読み取り上限は従来値)` に分離。staging 停止中は接続段階で
+  2 秒で諦めて 503 を返すため、古いリモコン画面が開きっぱなしでも 1 プロセスの uwsgi が長時間塞がれない。
+- 検証: py_compile OK・pytest 15 passed(route_sweep の 1 失敗は下記の既存問題で本変更と無関係。
+  変更前のコードでも同一失敗を実測)。
+
+## 2026-09-18 既存問題: tests/test_route_sweep.py の golden がホスト名依存で Mac では常に 1 件失敗
+
+- golden は `/filedrop: 200` を期待するが、filedrop は staging 専用(ホスト名が `-stg` で終わるときだけ 200)。
+  Mac やオーナー機で pytest を流すと `/filedrop: 404` になり必ず golden mismatch になる。
+- 対処案(人間判断): テストで gethostname をモックするか、golden を環境別に分けるか、filedrop 行を
+  sweep から除外する。本セッションでは記録のみ(計画外のため未修正)。
