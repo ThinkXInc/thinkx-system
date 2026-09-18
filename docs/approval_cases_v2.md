@@ -262,6 +262,16 @@ ask と deny のルールは hook の allow に勝つ。
   裁定の範囲(記録ファイル)に書き戻し、settings の変え方は選択肢として出し直した。
 - **同型カウント**: 記録操作は毎セッション複数回。頻度最高の文書系。
 
+### AB. 本番サイトの外形観測(http code・接続時間・total・接続先 IP)を複数 URL に curl
+- **生**: `curl -sS -o /dev/null -w "HTTP %{http_code} / connect %{time_connect}s / total %{time_total}s / remote %{remote_ip}\n" --max-time 15 https://thinkxinc.com/ ; echo "---" ; curl ... (同形を複数 URL に繰り返し)`
+- **引き金**: `curl`(ask・本番 URL)。
+- **クラス**: 観測(GET のみ・書き込みなし。応答時間と到達先 IP は障害切り分けの材料)。
+- **正しい形**: 「本番 URL の http code」観測は **F・G・O・Q・Y・AB で 6 回目**。これまでの事例は code だけだったが、AB は時間と IP も見ている
+  = `verify_deploy.py`(未着手)の本番確認部分は「code / connect / total / remote IP」を一緒に出す仕様にする。URL は固定リテラル
+  (thinkxinc.com 配下・staging は Basic 認証込み)、メソッドは GET、urllib で畳む。時間は `time.perf_counter` で測れば curl の `-w` 相当。
+- **残るゲート**: なし。
+- **同型カウント**: 6 回目。最頻の観測型で、wrapper 未着手のまま。
+
 ---
 
 ## 状態と次の一手(2026-09-17)
