@@ -1891,3 +1891,27 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   Mac=thinkx/web-server/.env)。スクリプトは HEALTH_CONFIG で YAML を読む(素朴な行パース・
   未知キーは WARN)。実測: sites パース・相乗り .env からの抽出・キー欠落 WARN・down 検知まで確認。
   原則は coding_guides に規範化(オーナー指示)・GUIDELINES に原文記録。
+- 2026-09-18 「Claude を開く」が Session already archived(P-4 通しで発覚)。原因は 2 つの合わせ技。
+  (1) server.py の記憶ファイル ~/.claude_connect_remembered.json は EBS に残るため staging を
+  停止→起動しても前回起動時の古いセッション URL を持ち越す。消すのは server.py 自身の
+  start_session() だけで、boot 時の claude-session.service 経由では消えない。起動直後、claude が
+  ~/.claude/sessions/<pid>.json を書くまでの約 10 秒間(実測 08:24:57 プロセス起動→08:25:07 書き込み)、
+  /connect/state は state=connected + 古い URL を返す。古いセッションは停止時に archive 済みなので
+  開くと「archived」。
+  (2) 画面は案 A(2026-09-18 裁定)で state が一度取れるとポーリングを止めるため、この窓で取った
+  古い URL が openClaude.href に固定され、リロードするまで直らない。journal 実測: 停止前の旧起動の
+  state 応答が 08:22:34 まで、新 boot 後の state 取得は 08:25:06〜08(ちょうど書き込み前後の窓)。
+  現時点のサーバーは正しい URL(sessions ファイル由来)を返しており、pane の表示とも一致 —
+  画面をリロードすれば今の URL で開ける(自己修復済み。壊れているのは表示の固定だけ)。
+  同日 08:52 の停止→起動でも同型を再現(オーナー実測: リロードするか、しばらく後に押し直すと開けた)。
+  恒久対処は 2 つとも同日実装: (a) server.py — 記憶ファイルに pane の pid を添えて保存し、現在の
+  pane pid と違えば無効化(「server.py 再起動を跨ぐ」という 9/17 の本来の目的だけ残る。旧形式の
+  記憶ファイルは無効扱いで自己移行)、(b) index.html — connected でも session_url が無い間だけ
+  POLL_GIVEUP 回を上限に追い、URL が出たら止める(案 A の「確定したら止まる」原則は維持)。
+  ロジックはモック tmux の機能テスト 9 件で確認(通常取得・server 再起動持ち越し・boot 窓で None・
+  新 URL 更新・旧形式無効・画面フォールバック・クリア)。
+- 2026-09-18 デプロイの自動再起動対象に infra/claude_connect が無い: sync_from_origin.sh の
+  services_for は thinkx/transformism/kazukiotsukacom/nginx-web-root/loadbalancer のみで、
+  server.py を変えても claude_connect.service は再起動されない(index.html はリクエストごとに
+  読むため配布だけで反映)。今回は手動で restart。恒久化するなら services_for への追加が要る
+  (デプロイ経路の変更なのでオーナー判断待ち)。
