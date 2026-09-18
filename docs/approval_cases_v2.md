@@ -304,6 +304,26 @@ ask と deny のルールは hook の allow に勝つ。
 - **残るゲート**: なし。
 - **同型カウント**: 本番 ssh 観測は **Q・T・U・AE で 4 回目**(昇格条件超過のまま)。容量観測としては 1 回目。
 
+### AF. 本番 web1 のデプロイ着地確認(git log・新コードの grep・symlink・uwsgi 再起動時刻・容量)
+- **生**: `ssh ... supercom-web1 'git -C /src/thinkx-system log --oneline -3; grep -c "POLL_GIVEUP" /src/thinkx-system/infra/claude_connect/index.html; grep -c "REMOTE_RELAY_CONNECT_TIMEOUT" /src/thinkx-system/thinkx/web-server/main.py; ls -la /src/thinkx | head -2; systemctl show uwsgi_thinkx -p ActiveEnterTimestamp; df -h / | tail -1; sudo du -sh /src/podcast/data'`
+- **引き金**: `ssh`(ask・本番)。
+- **クラス**: 観測(本番に新コードが乗ったか・サービスが再起動したか・容量)。
+- **正しい形**: `verify_deploy.py` の本番側に「サーバーの先端コミット・指定ファイルに指定文字列があるか・unit の ActiveEnterTimestamp」を
+  持たせる。grep の対象ファイルと文字列は**値引数**で受けてよい(文字列を探すだけで実行しない)が、対象パスは `/src/thinkx-system` 配下に固定。
+  容量は AE と同じサブコマンド。
+- **残るゲート**: なし。
+- **同型カウント**: 本番 ssh 観測 **5 回目**(Q・T・U・AE・AF)。デプロイ着地確認としては F・G・O・Q・Y・AF で **6 回目**。
+
+### AG. ローカル podcast/data の容量内訳(du)
+- **生**: `cd /Users/K00TSUKA/Sources/thinkx-system/podcast/data && du -sh . && echo "=== by type ===" && du -sh -c */backup */archive */generated */contents 2>/dev/null | tail -1 && du -sh -c */backup ... && du -sh -c */edit 2>/dev/null | tail -1`
+- **引き金**: ask 語(ssh / curl 等)も `$(...)` も無い。**引き金を断定できない**。候補は先頭の `cd`(Claude Code は cd 先を検査する)か、`&&` で 8 段に
+  連結した各断片のいずれかが allow に当たらなかったこと。要実測(単独の `du -sh .` と `cd ... && du` を分けて試す)。
+- **クラス**: 観測(ローカル・読み取り)。
+- **正しい形**: 引き金が確定するまで保留。cd が原因なら `du -sh /abs/path`(cd を使わず絶対パス)で消える。AE と対にして「ローカルとサーバーの
+  容量を並べて出す」サブコマンドにすれば、ssh 側と同じ wrapper に畳める。
+- **残るゲート**: なし。
+- **同型カウント**: 1 回目。
+
 ---
 
 ## 状態と次の一手(2026-09-17)
