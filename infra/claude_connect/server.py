@@ -311,7 +311,7 @@ def now_iso() -> str:
 
 
 # ---- 本番への反映(押す=承認・オーナー指示 2026-09-06) --------------------------------------
-# infra/scripts/deploy_production_from_staging.sh の git 部分と同じことを staging 上で行う。
+# infra/scripts/deploy_production_from_develop.sh の git 部分と同じことを staging 上で行う。
 # origin/develop(= staging で見えている内容)から release/<日付> を切って push し、production へ
 # fast-forward で push する。取り込みは本番の deploy-timer(60 秒ごと・sync_from_origin.sh prod)。
 # PR は作らない(staging に gh が無く、production に branch protection も無い)。
@@ -409,7 +409,7 @@ def deploy_to_production() -> dict:
         rel = sha
         if git("merge-base", "--is-ancestor", prod, sha)[0] != 0:
             # release が squash merge されると production の履歴が develop から切れる。production を第2親に
-            # 持つ merge commit を release の先頭に置いて繋ぐ(tree は sha と同一。deploy_production_from_staging.sh と同じ)
+            # 持つ merge commit を release の先頭に置いて繋ぐ(tree は sha と同一。deploy_production_from_develop.sh と同じ)
             rel = git_out("commit-tree", f"{sha}^{{tree}}", "-p", sha, "-p", prod,
                           "-m", f"release: production の履歴を繋ぐ(tree は origin/develop {sha} と同一)")
         release = next_release_name(rel)

@@ -76,7 +76,7 @@ L3 に戻すこと。**
    (`https://staging.thinkxinc.com/...`)を必ず添える。見ていないものをマージさせない。
 5. **release ブランチを切ってからマージ URL を出す。** develop を直接マージ対象にしない。
    凍結と巻き戻しの単位が失われるため(オーナー機の
-   `deploy_production_from_staging.sh` と同じ形にそろえる)。
+   `deploy_production_from_develop.sh` と同じ形にそろえる)。
    **URL は markdown のリンクで出す。コードブロックに入れない**
    (コードブロックの中はコピー用でタップできない。オーナーはスマホで開く)。
    staging・本番の確認 URL も同じ。
@@ -99,7 +99,7 @@ L3 に戻すこと。**
 ## L2b の経路(staging から)
 
 `gh` も ssh も要らない。既存の `pr_develop_and_merge_to_monorepo.sh` /
-`deploy_production_from_staging.sh` は冒頭の `command -v gh` で FAIL し、かつ本番へ
+`deploy_production_from_develop.sh` は冒頭の `command -v gh` で FAIL し、かつ本番へ
 ssh する前提だが(staging から `supercom-web1` は名前解決できない)、本番には
 `deploy-timer@prod.timer` が 60 秒ごとに `origin/production` を追う仕組みがあるため、
 **origin/production さえ進めば ssh は不要**である。

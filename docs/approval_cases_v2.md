@@ -294,6 +294,50 @@ ask と deny のルールは hook の allow に勝つ。
 - **残るゲート**: なし(localhost のみ)。
 - **同型カウント**: H・AD で 2 回目(ポート別)。
 
+### AE. 本番 web1 のディスク使用量と podcast データの内訳(df / du / find)
+- **生**: `ssh -o BatchMode=yes -o ConnectTimeout=8 supercom-web1 'df -h /; echo "=== podcast data total ==="; sudo du -sh /src/podcast/data 2>/dev/null; echo "=== breakdown by type ==="; sudo find /src/podcast/data -maxdepth 2 -type d \( -name backup -o -name generated -o -name ... \) ...'`
+- **引き金**: `ssh`(ask・本番)。中の `sudo du` / `sudo find` はローカルの deny に当たらない(Q/T/W と同じ)。
+- **クラス**: 観測(容量の読み取りのみ。podcast の完全同期(D-52 改定)後にサーバー側の容量が心配になった場面)。
+- **正しい形**: 本番向け観測 wrapper(環境必須引数)に「容量」サブコマンドを持つ。対象パス(`/`・`/src/podcast/data`)と内訳ディレクトリ名
+  (backup / generated / ...)は固定リテラル、`-maxdepth` も固定。`sudo` はサーバー側 wrapper の中で固定コマンドにだけ付ける。
+  podcast の容量は「デプロイのたびにローカル data/ を完全同期」する設計上、繰り返し見る値になるので昇格の価値がある。
+- **残るゲート**: なし。
+- **同型カウント**: 本番 ssh 観測は **Q・T・U・AE で 4 回目**(昇格条件超過のまま)。容量観測としては 1 回目。
+
+### AF. 本番 web1 のデプロイ着地確認(git log・新コードの grep・symlink・uwsgi 再起動時刻・容量)
+- **生**: `ssh ... supercom-web1 'git -C /src/thinkx-system log --oneline -3; grep -c "POLL_GIVEUP" /src/thinkx-system/infra/claude_connect/index.html; grep -c "REMOTE_RELAY_CONNECT_TIMEOUT" /src/thinkx-system/thinkx/web-server/main.py; ls -la /src/thinkx | head -2; systemctl show uwsgi_thinkx -p ActiveEnterTimestamp; df -h / | tail -1; sudo du -sh /src/podcast/data'`
+- **引き金**: `ssh`(ask・本番)。
+- **クラス**: 観測(本番に新コードが乗ったか・サービスが再起動したか・容量)。
+- **正しい形**: `verify_deploy.py` の本番側に「サーバーの先端コミット・指定ファイルに指定文字列があるか・unit の ActiveEnterTimestamp」を
+  持たせる。grep の対象ファイルと文字列は**値引数**で受けてよい(文字列を探すだけで実行しない)が、対象パスは `/src/thinkx-system` 配下に固定。
+  容量は AE と同じサブコマンド。
+- **残るゲート**: なし。
+- **同型カウント**: 本番 ssh 観測 **5 回目**(Q・T・U・AE・AF)。デプロイ着地確認としては F・G・O・Q・Y・AF で **6 回目**。
+
+### AG. ローカル podcast/data の容量内訳(du)
+- **生**: `cd /Users/K00TSUKA/Sources/thinkx-system/podcast/data && du -sh . && echo "=== by type ===" && du -sh -c */backup */archive */generated */contents 2>/dev/null | tail -1 && du -sh -c */backup ... && du -sh -c */edit 2>/dev/null | tail -1`
+- **引き金**: ask 語(ssh / curl 等)も `$(...)` も無い。**引き金を断定できない**。候補は先頭の `cd`(Claude Code は cd 先を検査する)か、`&&` で 8 段に
+  連結した各断片のいずれかが allow に当たらなかったこと。要実測(単独の `du -sh .` と `cd ... && du` を分けて試す)。
+- **クラス**: 観測(ローカル・読み取り)。
+- **正しい形**: 引き金が確定するまで保留。cd が原因なら `du -sh /abs/path`(cd を使わず絶対パス)で消える。AE と対にして「ローカルとサーバーの
+  容量を並べて出す」サブコマンドにすれば、ssh 側と同じ wrapper に畳める。
+- **残るゲート**: なし。
+- **同型カウント**: 1 回目。
+
+### AH. ローカル dev サーバーの起動待ち(127.0.0.1:5050 に curl を最大 10 回)+ ログ末尾
+- **生**: `for i in 1 2 3 4 5 6 7 8 9 10; do code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5050/products/KOBITO --max-time 2); if [ "$code" != "000" ]; then echo "HTTP $code"; break; fi; sleep 1; done; tail -5 <scratchpad>/thinkx-dev.log`
+- **引き金**: `curl`(ask・localhost)+ `$(curl ...)` のコマンド置換。sleep / tail / for は止まらない。
+- **クラス**: 観測(自分のマシンの dev サーバーが応答し始めるのを待つ。GET のみ)。
+- **正しい形**: localhost の GET 観測は v1 事例 C・E・M と v2 の V に続く **5 回目**で、v1 で「localhost への GET は安全(GET 限定・URL 固定)」と
+  裁定済み。dev サーバーの起動スクリプト(thinkx の開発サーバーを立てる固定スクリプト)に「readiness 待ち」を畳む: ポートとパスは
+  スクリプト内リテラル(5000 / 5050 のどちらを使うかも固定)、試行回数と間隔は範囲つき数値、urllib で叩く。ログ末尾も同じスクリプトで出す。
+  可視コマンドが `python3 <script>` か `bash <script>` になり curl の ask に当たらない。
+- **残るゲート**: なし。
+- **同型カウント**: localhost curl 観測 5 回目(C・E・M・V・AH)。dev サーバー起動待ちとしては 1 回目。
+- **直後の再発(6 回目)**: `code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5050/products/KOBITO --max-time 5); echo "HTTP $code"; curl -s http://127.0.0.1:5050/products/KOBITO --max-time 5 | grep -n "合計\|50万\|既存サイト" | head`
+  今度は http code に加えてページ本文の文字列(合計 / 50万 / 既存サイト)の有無を見ている = Z の「ページを取ってきて要素の有無を一覧で出す」と
+  同じ型。dev サーバー用の観測スクリプトは「code + 指定文字列の有無(値引数・複数可)」を出す 1 本にすれば AH とこれの両方を畳める。
+
 ---
 
 ## 状態と次の一手(2026-09-17)
