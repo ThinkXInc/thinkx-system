@@ -11,8 +11,8 @@
   </array>
   <key>EnvironmentVariables</key>
   <dict>
-    <key>HEALTH_ENV</key>
-    <string>/Users/K00TSUKA/.supercom-health.env</string>
+    <key>HEALTH_CONFIG</key>
+    <string>/Users/K00TSUKA/Sources/thinkx-system/infra/health_check/local.yaml</string>
     <key>PATH</key>
     <string>/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin</string>
   </dict>

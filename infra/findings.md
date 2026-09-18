@@ -1885,3 +1885,9 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   401=生存扱い。lb1 から自分の公開 URL への curl(hairpin)は 4 サイトとも 200 で成立することを実測済み。
   残りはオーナー作業: Discord 専用チャンネル+webhook 作成 → 本番 release → LB env+timer 投入 → Mac launchd 投入
   (手順は infra/runbooks/health-check.md)。
+- 2026-09-18 health check の設定を再構成(オーナー指示): 設定は git 管理の YAML
+  infra/health_check/loadbalancer.yaml / local.yaml(旧 infra/health/*.env を廃止)、webhook は
+  既存 .env に相乗り(キー HEALTH_DISCORD_WEBHOOK_URL。LB=/src/loadbalancer/.env を新設・
+  Mac=thinkx/web-server/.env)。スクリプトは HEALTH_CONFIG で YAML を読む(素朴な行パース・
+  未知キーは WARN)。実測: sites パース・相乗り .env からの抽出・キー欠落 WARN・down 検知まで確認。
+  原則は coding_guides に規範化(オーナー指示)・GUIDELINES に原文記録。

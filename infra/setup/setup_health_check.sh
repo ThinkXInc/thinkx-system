@@ -4,15 +4,16 @@
 #   使い方: ssh supercom-lb1 'sudo bash -s' < infra/setup/setup_health_check.sh
 #
 # 前提: /src/thinkx-system(production checkout)に infra/scripts/health_check.sh がある。
-# 実行後に /etc/supercom-health.env へ DISCORD_WEBHOOK_URL と SITES を書く
-# (中身と手順は infra/runbooks/health-check.md)。env が空の間は通知せず標準出力に出るだけ。
+# 設定はリポジトリ内 infra/health_check/loadbalancer.yaml が正。実行後に /src/loadbalancer/.env へ
+# HEALTH_DISCORD_WEBHOOK_URL=... の行を書く(手順は infra/runbooks/health-check.md)。
+# 書くまでは通知せず標準出力に出るだけ。
 
 set -euo pipefail
 
 mkdir -p /var/lib/supercom-health
 
-touch /etc/supercom-health.env
-chmod 600 /etc/supercom-health.env
+touch /src/loadbalancer/.env
+chmod 600 /src/loadbalancer/.env
 
 cat > /etc/systemd/system/health-check.service <<'UNIT'
 [Unit]
@@ -20,7 +21,7 @@ Description=site health check -> Discord (thinkx-system)
 
 [Service]
 Type=oneshot
-Environment=HEALTH_ENV=/etc/supercom-health.env
+Environment=HEALTH_CONFIG=/src/thinkx-system/infra/health_check/loadbalancer.yaml
 ExecStart=/usr/bin/bash /src/thinkx-system/infra/scripts/health_check.sh
 UNIT
 

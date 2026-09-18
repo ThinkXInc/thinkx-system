@@ -4,6 +4,11 @@
 チャンネルに通知する(up→down 1 回・復旧 1 回・落ち続けは 1 時間ごと)。LB 自身の死角は
 Mac の launchd が 5 分ごとに LB(thinkxinc.com)と staging(EC2 が running のときだけ)を見る。
 本体は `infra/scripts/health_check.sh` 1 本(LB と Mac で env だけ違う)。
+設定(監視対象など)はリポジトリ内 `infra/health_check/loadbalancer.yaml` / `local.yaml` が正
+(変更は普通のコミット+デプロイで流れる。設定は YAML — .env は秘密情報を意味するので使わない)。
+**git に入れないのは webhook URL の 1 行だけ**で、新しい秘密ファイルは作らず既存の .env に
+相乗りする(キー名 `HEALTH_DISCORD_WEBHOOK_URL`。LB は `/src/loadbalancer/.env`
+(LB の .env はこれが最初)、Mac は `thinkx/web-server/.env`)。
 
 前提1: Discord に専用チャンネルを作る(他と混ぜない・mute しない)。
 チャンネル設定 → 連携サービス → ウェブフック → 新しいウェブフック → URL をコピー。
@@ -25,12 +30,11 @@ curl -sS -m 10 -H 'Content-Type: application/json' -d '{"content":"test"}' "$WEB
 
 ## LB に入れる(Mac のローカル端末から)
 
-設定を書く:
+webhook を書く(LB の .env に 1 行追記。監視対象はリポジトリの infra/health_check/loadbalancer.yaml が正):
 
 ```
-ssh supercom-lb1 "sudo tee /etc/supercom-health.env >/dev/null && sudo chmod 600 /etc/supercom-health.env" <<EOF
-DISCORD_WEBHOOK_URL="$WEBHOOK"
-SITES="thinkxinc=https://thinkxinc.com/ nntm=https://nntmapp.com/ truetech=https://truetechjapan.com/ transformism=https://transformism.art/ kazukiotsuka=https://kazukiotsuka.com/"
+ssh supercom-lb1 "sudo touch /src/loadbalancer/.env && sudo chmod 600 /src/loadbalancer/.env && sudo tee -a /src/loadbalancer/.env >/dev/null" <<EOF
+HEALTH_DISCORD_WEBHOOK_URL="$WEBHOOK"
 EOF
 ```
 
@@ -44,28 +48,22 @@ ssh supercom-lb1 'sudo bash -s' < infra/setup/setup_health_check.sh
 1 回手で流して動きを見る(全サイト正常なら何も通知されず、静かに終わる):
 
 ```
-ssh supercom-lb1 'sudo HEALTH_ENV=/etc/supercom-health.env bash /src/thinkx-system/infra/scripts/health_check.sh'
+ssh supercom-lb1 'sudo HEALTH_CONFIG=/src/thinkx-system/infra/health_check/loadbalancer.yaml bash /src/thinkx-system/infra/scripts/health_check.sh'
 ```
 
 ## Mac に入れる(Mac のローカル端末で)
 
-設定を書く:
+webhook を書く(既存の thinkx/web-server/.env に 1 行追記。監視対象はリポジトリの infra/health_check/local.yaml が正):
 
 ```
-cat > ~/.supercom-health.env <<EOF
-DISCORD_WEBHOOK_URL="$WEBHOOK"
-SITES="lb=https://thinkxinc.com/"
-STAGING_GATED_URL="https://staging.thinkxinc.com/"
-STATE_DIR="$HOME/.supercom-health-state"
-EOF
-chmod 600 ~/.supercom-health.env
+printf 'HEALTH_DISCORD_WEBHOOK_URL="%s"\n' "$WEBHOOK" >> ~/Sources/thinkx-system/thinkx/web-server/.env
 ```
 
 launchd に載せる(5 分ごと):
 
 ```
 cd ~/Sources/thinkx-system
-cp infra/health/com.thinkx.health-check.plist ~/Library/LaunchAgents/
+cp infra/health_check/com.thinkx.health-check.plist ~/Library/LaunchAgents/
 launchctl unload ~/Library/LaunchAgents/com.thinkx.health-check.plist 2>/dev/null
 launchctl load ~/Library/LaunchAgents/com.thinkx.health-check.plist
 ```
