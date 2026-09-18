@@ -152,21 +152,28 @@ def screen_has(lines: list[str], *needles: str) -> bool:
 
 # 接続中の画面に出る「/remote-control is active · … https://claude.ai/code/session_…」の URL。
 # 会話が進むと画面外に流れるので、見えたときに覚えておき、セッションを作り直したら忘れる。
+# どの claude(pane の pid)の URL かを一緒に覚え、claude が替わっていたら返さない — このファイルは
+# EBS に残るため、staging の停止→起動を跨いで前回の(archive 済み)URL を返した(2026-09-18 実測)。
 SESSION_URL_PREFIX = "https://claude.ai/code/session_"
 REMEMBER_FILE = Path.home() / ".claude_connect_remembered.json"  # server.py を再起動しても URL を持ち越す(2026-09-17)
-remembered = {"session_url": None}
+remembered = {"session_url": None, "pane_pid": None}
 try:
     remembered.update(json.loads(REMEMBER_FILE.read_text()))
 except (OSError, ValueError):
     pass
 
 
-def remember_session_url(url: str | None) -> None:
-    remembered["session_url"] = url
+def remember_session_url(url: str | None, pid: str | None) -> None:
+    remembered.update(session_url=url, pane_pid=pid)
     try:
         REMEMBER_FILE.write_text(json.dumps(remembered))
     except OSError:
         pass
+
+
+def pane_pid() -> str | None:
+    rc, out = tmux("list-panes", "-t", SESSION, "-F", "#{pane_pid}")
+    return out.strip().splitlines()[0] if rc == 0 and out.strip() else None
 
 
 def find_session_url(lines: list[str]) -> str | None:
@@ -180,13 +187,12 @@ def find_session_url(lines: list[str]) -> str | None:
 SESSIONS_DIR = Path.home() / ".claude" / "sessions"  # claude が自分の pid 名で書く(2.1.223 実測: bridgeSessionId が URL の末尾)
 
 
-def session_url_from_sessions_file() -> str | None:
-    """tmux の pane の pid(= claude 本体)に対応する ~/.claude/sessions/<pid>.json の bridgeSessionId から URL を組む。"""
-    rc, out = tmux("list-panes", "-t", SESSION, "-F", "#{pane_pid}")
-    if rc != 0 or not out.strip():
+def session_url_from_sessions_file(pid: str | None) -> str | None:
+    """pane の pid(= claude 本体)に対応する ~/.claude/sessions/<pid>.json の bridgeSessionId から URL を組む。"""
+    if not pid:
         return None
     try:
-        data = json.loads((SESSIONS_DIR / f"{out.strip().splitlines()[0]}.json").read_text())
+        data = json.loads((SESSIONS_DIR / f"{pid}.json").read_text())
     except (OSError, ValueError):
         return None
     bridge = data.get("bridgeSessionId")
@@ -194,15 +200,18 @@ def session_url_from_sessions_file() -> str | None:
 
 
 def session_url(lines: list[str]) -> str | None:
-    seen = session_url_from_sessions_file() or find_session_url(lines)
-    if not seen and not remembered["session_url"]:
+    pid = pane_pid()
+    known = remembered["session_url"] if remembered.get("pane_pid") == pid else None
+    seen = session_url_from_sessions_file(pid) or find_session_url(lines)
+    if not seen and not known:
         # 画面外に流れていたら scrollback(履歴)から拾う(起動直後の一度だけ重い)
         rc, out = tmux("capture-pane", "-p", "-S", "-", "-t", SESSION)
         if rc == 0:
             seen = find_session_url(out.splitlines())
-    if seen and seen != remembered["session_url"]:
-        remember_session_url(seen)
-    return remembered["session_url"]
+    if seen and seen != known:
+        remember_session_url(seen, pid)
+        known = seen
+    return known
 
 
 def disk_free_gb() -> int:
@@ -231,7 +240,7 @@ def observe() -> dict:
 
 def start_session() -> None:
     """claude-session.service の ExecStart と同じ形で tmux を立てる。"""
-    remember_session_url(None)
+    remember_session_url(None, None)
     tmux("new-session", "-d", "-s", SESSION, "-c", REPO, CLAUDE_COMMAND)
 
 
