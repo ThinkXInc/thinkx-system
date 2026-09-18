@@ -294,6 +294,16 @@ ask と deny のルールは hook の allow に勝つ。
 - **残るゲート**: なし(localhost のみ)。
 - **同型カウント**: H・AD で 2 回目(ポート別)。
 
+### AE. 本番 web1 のディスク使用量と podcast データの内訳(df / du / find)
+- **生**: `ssh -o BatchMode=yes -o ConnectTimeout=8 supercom-web1 'df -h /; echo "=== podcast data total ==="; sudo du -sh /src/podcast/data 2>/dev/null; echo "=== breakdown by type ==="; sudo find /src/podcast/data -maxdepth 2 -type d \( -name backup -o -name generated -o -name ... \) ...'`
+- **引き金**: `ssh`(ask・本番)。中の `sudo du` / `sudo find` はローカルの deny に当たらない(Q/T/W と同じ)。
+- **クラス**: 観測(容量の読み取りのみ。podcast の完全同期(D-52 改定)後にサーバー側の容量が心配になった場面)。
+- **正しい形**: 本番向け観測 wrapper(環境必須引数)に「容量」サブコマンドを持つ。対象パス(`/`・`/src/podcast/data`)と内訳ディレクトリ名
+  (backup / generated / ...)は固定リテラル、`-maxdepth` も固定。`sudo` はサーバー側 wrapper の中で固定コマンドにだけ付ける。
+  podcast の容量は「デプロイのたびにローカル data/ を完全同期」する設計上、繰り返し見る値になるので昇格の価値がある。
+- **残るゲート**: なし。
+- **同型カウント**: 本番 ssh 観測は **Q・T・U・AE で 4 回目**(昇格条件超過のまま)。容量観測としては 1 回目。
+
 ---
 
 ## 状態と次の一手(2026-09-17)
