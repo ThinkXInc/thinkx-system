@@ -48,7 +48,7 @@ gh api "repos/ThinkXInc/thinkx-system/rulesets/$(gh api repos/ThinkXInc/thinkx-s
 
 <u>GitHub の production ブランチには「production protection」というルールセットが効いています(2026-08-07 作成)。中身は 3 つで、「削除禁止」「履歴の巻き戻し禁止」「変更は Pull Request 経由でなければならない」です</u>。
 このルールは「誰が push しても」適用されます。<u>人が git push しても、staging の鍵で push しても、**PR を通さない限り拒否されます**</u>。今回「本番に反映」ボタンが `GH013: Changes must be made through a pull request` で失敗したのはこれが理由です。
-Mac から動かす <u>deploy_production_from_staging.sh が通るのは、直接 push ではなく gh コマンドで PR を作ってマージしているからです。</u>
+Mac から動かす <u>deploy_production_from_develop.sh が通るのは、直接 push ではなく gh コマンドで PR を作ってマージしているからです。</u>
 
 **ボタンが通らない理由**
 

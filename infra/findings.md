@@ -1873,3 +1873,10 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   本番の既存除外対象(ディレクトリ 434M + wav 560M ≒ 1G)はオーナー承認のうえ削除済み
   (data 2.2G→1.2G・全ファイルはローカルに原本あり)。push_assets.sh(views/video)は
   対象パターンが無いため未接続 — 除外したい video が出たときに接続する。
+- 2026-09-18 D-79 実施: deploy_production_from_staging.sh → deploy_production_from_develop.sh に改名。
+  現役の参照(deploy_staging.sh・request_production_release.sh・server.py・sync_from_origin.sh・
+  デプロイ手順書・運用.md・runbooks/claude-connect.md・KOBITO_セットアップ手順.md・
+  DEPLOY_APPROVAL_LEVELS.md)は機械的に置換。歴史記録(議事録・findings 過去分・GUIDELINES・
+  引き継ぎ・DECISIONS 過去行)は原文のまま。CLAUDE.md(ワークスペース制御文書・75/77 行目)と
+  docs/PODCAST_TRACK.md(計画書・65 行目)にも旧名の参照が残るが、実行者は書き換え禁止のため
+  オーナーの書き換え待ち。

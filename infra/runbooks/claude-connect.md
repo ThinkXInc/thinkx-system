@@ -84,13 +84,13 @@ python3 infra/scripts/stg.py doctor
 1. 「本番に反映」→ `GET /connect/deploy` で本番との差(コミット一覧・再起動されるサービス)を出す。まだ何も変えない。
    差が無ければ「本番は staging と同じ内容です」で終わり。
 2. 「本番に反映する」→ `POST /connect/deploy`。**押した時点が承認。** server.py が staging 上で
-   `deploy_production_from_staging.sh` の git 部分と同じことをする: `git fetch` → origin/develop と origin/production の
+   `deploy_production_from_develop.sh` の git 部分と同じことをする: `git fetch` → origin/develop と origin/production の
    tree 比較 → `release/<日付>`(既存なら `-2`…)を切って push → production が develop の祖先でなければ production を
    第2親に持つ merge commit で履歴を繋ぐ → `production` へ push(fast-forward)。作業ツリーには触れない。
 3. 取り込みは本番の deploy-timer(60 秒ごと・sync_from_origin.sh prod が再起動まで行う)。75 秒待って本番 URL の
    HTTP 応答を確認し、release 名と応答コードを表示。「本番を開く」で https://thinkxinc.com/。
 4. 出ないもの: git 管理外のアセット(views/video 等)。staging から本番 web に届かないので、従来どおり Mac から
-   `deploy_production_from_staging.sh` か `push_assets.sh supercom-web1 …` で配る。PR は作らない(staging に gh が無い・
+   `deploy_production_from_develop.sh` か `push_assets.sh supercom-web1 …` で配る。PR は作らない(staging に gh が無い・
    production に branch protection が無い)。履歴の手元コピー(D-55②)はこのボタンでは取れない(別メニュー予定)。
 5. 前提: staging の deploy key `supercom-web`(GitHub 上・read_only=false)。write が外されると release の push で失敗し、
    赤字で理由が出る(本番には何も起きない)。
