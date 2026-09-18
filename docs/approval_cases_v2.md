@@ -334,6 +334,9 @@ ask と deny のルールは hook の allow に勝つ。
   可視コマンドが `python3 <script>` か `bash <script>` になり curl の ask に当たらない。
 - **残るゲート**: なし。
 - **同型カウント**: localhost curl 観測 5 回目(C・E・M・V・AH)。dev サーバー起動待ちとしては 1 回目。
+- **直後の再発(6 回目)**: `code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5050/products/KOBITO --max-time 5); echo "HTTP $code"; curl -s http://127.0.0.1:5050/products/KOBITO --max-time 5 | grep -n "合計\|50万\|既存サイト" | head`
+  今度は http code に加えてページ本文の文字列(合計 / 50万 / 既存サイト)の有無を見ている = Z の「ページを取ってきて要素の有無を一覧で出す」と
+  同じ型。dev サーバー用の観測スクリプトは「code + 指定文字列の有無(値引数・複数可)」を出す 1 本にすれば AH とこれの両方を畳める。
 
 ---
 
