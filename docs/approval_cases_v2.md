@@ -272,6 +272,16 @@ ask と deny のルールは hook の allow に勝つ。
 - **残るゲート**: なし。
 - **同型カウント**: 6 回目。最頻の観測型で、wrapper 未着手のまま。
 
+### AC. EC2 インスタンス一覧(Name / State / IP / Id / LaunchTime)を aws cli で表形式に
+- **生**: `aws ec2 describe-instances --query 'Reservations[].Instances[].{Name:Tags[?Key==\`Name\`]|[0].Value,State:State.Name,IP:PublicIpAddress,Id:InstanceId,LaunchTime:LaunchTime}' --output table 2>&1 | head -40`
+- **引き金**: JMESPath の **バッククォート** `` `Name` `` がコマンド置換と見なされる。`aws ec2 describe-*` 自体は ask/deny に無い(deny は `aws iam` と `terminate-instances` のみ)。
+- **クラス**: 観測(読み取りのみ)。
+- **正しい形**: T の EC2 部分と同じで **2 回目**。(1) `infra/scripts/status.sh <env>`(既存・見るだけ)で足りるなら使う。(2) 生で打つなら
+  バッククォートを避ける: シェルを二重引用符にして JMESPath 側を `Key=='Name'`(JMESPath の生文字列は単引用符でも書ける)にすれば
+  可視コマンドに `` ` `` が出ず止まらない。(3) 列(Name/State/IP/Id/LaunchTime)が固定なら status.sh にこの表を足す。
+- **残るゲート**: なし。
+- **同型カウント**: バッククォート起因の aws 観測は T・AC で 2 回目。
+
 ---
 
 ## 状態と次の一手(2026-09-17)
