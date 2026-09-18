@@ -234,3 +234,40 @@ http://{staging LBのEIP}/podcast/ に Basic 認証（editor）で到達でき�
 編集の自動 git 記録・退役規則・NFC 正準化まで運用ルールが揃った。
 残りは Phase 4（本番常設。production ブランチへのデータ push と release 運用の整合を
 冒頭で設計）と Phase 5（fabula）。切り抜きの新方式は別途指示待ち。
+
+## 追記（クローズ後のやり取り）
+
+> **stagingで今後編集するとして編集をネットに繋がっていない時にするとどうなる？ローカルブラウザに蓄えられてちゃんと繋がってから同期する？編集が飛ぶのは絶対避けたい**
+
+実装を根拠に回答: 操作の瞬間にまず localStorage へ完全な編集状態を同期的に記録 →
+サーバー保存失敗時は3秒間隔で自動再送(各保存は全カット状態なので1回成功すれば追いつく) →
+ページを閉じても再訪時に「未保存の編集があります」+「復元」ボタンで回収 →
+サーバー到達後は受信ジャーナル(fsync)・履歴退避・5分毎 git commit の三重記録。
+限界も明示: ブラウザ内の保険は端末・ブラウザ・URLごと。長時間オフライン編集後は
+「保存済み」表示を確認してから閉じる。同一エピソードの同時編集は後勝ち(1エピソード=1担当)。
+
+---
+
+> **ローカルサーバーystem % podcast/web-server/venv/bin/python main.py**  
+> **…: can't open file '/Users/K00TSUKA/Sources/thinkx-system/main.py': [Errno 2] No such file or directory**  
+
+main.py の相対パスが cwd 依存だったのが原因。cd してから起動する正しい2行を提示。
+
+---
+
+> **cd ~/Sources/thinkx-system/podcast**  
+> **. ./run_local_server.py**  
+>
+> **でできるように**  
+>
+> **. ./run_local_server.sh**（拡張子 .sh を了承）
+
+`podcast/run_local_server.sh` を新設(8bf9447)。source 対応のため exit / set -e /
+裸の cd なし・venv 未構築時は作り方を表示して何もしない・PORT で変更可(既定 8010)。
+拡張子は source でシェルに読ませるため .sh(Python では書けない)。
+
+---
+
+> **追記して終わる**
+
+本追記をもってセッションを閉じた。
