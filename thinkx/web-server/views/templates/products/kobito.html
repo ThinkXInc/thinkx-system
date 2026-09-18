@@ -152,6 +152,7 @@
     .running table { margin-top: 12px; width: 100%; border-collapse: collapse; font-size: 15px; }
     .running td { padding: 8px 0; border-bottom: 1px solid var(--line); }
     .running td:last-child { text-align: right; font-weight: 700; white-space: nowrap; }
+    .running tr.total td { border-top: 2px solid var(--navy); border-bottom: none; font-weight: 700; color: var(--navy); }
     .running p { margin-top: 12px; font-size: 13px; color: var(--ink-soft); }
 
     /* 何をするのか: 図 + 3ステップ */
@@ -466,12 +467,12 @@
       <div class="running">
         <h3>別途かかる費用(お客様所有のクラウド・AI利用料)</h3>
         <table>
-          <tr><td>AWS(サーバー一式。ステージングの稼働量による)</td><td>月 6,000〜9,000円程度</td></tr>
-          <tr><td>Claude 有料プラン(コビトの頭脳。お客様のアカウント)</td><td>月 $20〜</td></tr>
+          <tr><td>AWSサーバーインフラ一式。(ステージングの稼働量による)</td><td>月 6,000〜9,000円程度</td></tr>
+          <tr><td>Claude 有料プラン(お客様のアカウント。他の業務と併用可)</td><td>月 $20〜</td></tr>
           <tr><td>ドメイン</td><td>年 1,500円程度</td></tr>
-          <tr><td>既存サイトの移行(導入サービス・個別見積)</td><td>目安 50万〜100万円</td></tr>
+          <tr class="total"><td>合計(月額の目安)</td><td>月 9,000〜12,000円程度</td></tr>
         </table>
-        <p>AWSとClaudeの利用料は、お客様のアカウントでお客様が直接お支払いになります(当社を経由しません)。既存サイトの移行費用は、サイトの規模・使われている技術・データベースの有無によって変わります。50万円は当社の構成との差が小さく、変更がほとんど要らない場合の目安です。</p>
+        <p>AWSとClaudeの利用料は、お客様のアカウントでお客様が直接お支払いになります(当社を経由しません)。既存サイトを移行する場合別途費用がかかります。サイトの規模・使われている技術・データベースの有無によって変わります。当社の構成との差が小さく、変更がほとんど要らない場合の目安として50万円~です。</p>
       </div>
     </section>
     <!-- ↑↑↑↑ END 料金 ↑↑↑↑ -->
