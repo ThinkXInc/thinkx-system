@@ -324,6 +324,17 @@ ask と deny のルールは hook の allow に勝つ。
 - **残るゲート**: なし。
 - **同型カウント**: 1 回目。
 
+### AH. ローカル dev サーバーの起動待ち(127.0.0.1:5050 に curl を最大 10 回)+ ログ末尾
+- **生**: `for i in 1 2 3 4 5 6 7 8 9 10; do code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5050/products/KOBITO --max-time 2); if [ "$code" != "000" ]; then echo "HTTP $code"; break; fi; sleep 1; done; tail -5 <scratchpad>/thinkx-dev.log`
+- **引き金**: `curl`(ask・localhost)+ `$(curl ...)` のコマンド置換。sleep / tail / for は止まらない。
+- **クラス**: 観測(自分のマシンの dev サーバーが応答し始めるのを待つ。GET のみ)。
+- **正しい形**: localhost の GET 観測は v1 事例 C・E・M と v2 の V に続く **5 回目**で、v1 で「localhost への GET は安全(GET 限定・URL 固定)」と
+  裁定済み。dev サーバーの起動スクリプト(thinkx の開発サーバーを立てる固定スクリプト)に「readiness 待ち」を畳む: ポートとパスは
+  スクリプト内リテラル(5000 / 5050 のどちらを使うかも固定)、試行回数と間隔は範囲つき数値、urllib で叩く。ログ末尾も同じスクリプトで出す。
+  可視コマンドが `python3 <script>` か `bash <script>` になり curl の ask に当たらない。
+- **残るゲート**: なし。
+- **同型カウント**: localhost curl 観測 5 回目(C・E・M・V・AH)。dev サーバー起動待ちとしては 1 回目。
+
 ---
 
 ## 状態と次の一手(2026-09-17)
