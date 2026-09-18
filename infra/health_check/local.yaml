@@ -1,0 +1,8 @@
+# health check の local(オーナー機 Mac)用設定(正本・git 管理)。秘密は入れない。
+# LB 自身の死角を外から見る: LB(thinkxinc.com)と、EC2 が running のときだけ staging。
+# webhook は既存の thinkx/web-server/.env に相乗り(HEALTH_DISCORD_WEBHOOK_URL)。
+sites:
+  lb: https://thinkxinc.com/
+staging_gated_url: https://staging.thinkxinc.com/
+state_dir: /Users/K00TSUKA/.supercom-health-state
+webhook_env: /Users/K00TSUKA/Sources/thinkx-system/thinkx/web-server/.env

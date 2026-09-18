@@ -1,0 +1,9 @@
+# health check の loadbalancer(prod LB)用設定(正本・git 管理)。秘密は入れない。
+# webhook は webhook_env の .env 内の HEALTH_DISCORD_WEBHOOK_URL(git 管理外)。
+sites:
+  thinkxinc: https://thinkxinc.com/
+  nntm: https://nntmapp.com/
+  truetech: https://truetechjapan.com/
+  transformism: https://transformism.art/
+  kazukiotsuka: https://kazukiotsuka.com/
+webhook_env: /src/loadbalancer/.env
