@@ -250,11 +250,49 @@ ask と deny のルールは hook の allow に勝つ。
   `podcast/.claude/settings.json` には docs の ask が無いのに `podcast/docs/` で止まった = ルートの `docs/**` は下位ディレクトリの `podcast/docs/` にも当たる(実測)。
 - **クラス**: 文書系(判定基準の表の 2 行目)。危険はなく、git で戻せる。
 - **オーナー裁定(2026-09-17・原文)**: 「セッションの記録書くのにいちいち承認を得てくる 危険なことはないから書いて最後にまとめて見せて だめなら戻す方がいい この記録操作は頻繁にするからやる価値がある」
-- **正しい形**: 判定基準の表で未決だった「保存時の承認を commit 前のレビューに移す(allow に変える)か現状維持か」を **allow に確定**。
-  実行者は記録を書き、最後に「何を書いたか」をまとめて見せる。だめなら `git checkout -- <file>` / `git revert` で戻す。
-  settings 側: 上の 6 行の ask を外す(settings は実行者が編集禁止のためオーナー作業)。層は **settings**(パスの前置一致で書ける)。
-- **残るゲート**: なし(記録の内容はコミット前の diff とまとめで見る)。`*_PLAN.md` と `docs/coding_guides/` の deny は変えない(規範は人間のみ)。
+- **正しい形(裁定された範囲)**: **記録ファイル**(議事録・findings・DECISIONS・GUIDELINES・approval_cases)は書いてから最後に
+  「何を書いたか」をまとめて見せ、だめなら `git checkout -- <file>` / `git revert` で戻す。手順書・runbooks・計画文書は裁定に含まれない。
+- **settings の変え方(未決・オーナー選択)**: ask は allow より優先されるため「記録ファイルだけ allow を足す」では効かず、**ask の側を狭める**しかない。
+  (a) `docs/**` の ask だけ外す(infra/docs・runbooks の ask は残す)。docs/ 直下の計画文書(ROADMAP・*_TRACK 等)も一緒に allow になる。
+  infra/docs/discussion の議事録は引き続き止まる。(b) 6 行全部外す(手順書・runbooks も allow。裁定より広い)。
+  (c) ask を「記録でない文書」の列挙に置き換える(例 `infra/runbooks/**`・`infra/docs/*手順書*.md`・`docs/ROADMAP.md`・`docs/*_TRACK.md`)。
+  裁定どおりの範囲になるが列挙の保守が要る。層はいずれも **settings**。
+- **残るゲート**: 記録の内容はコミット前の diff とまとめで見る。`*_PLAN.md` と `docs/coding_guides/` の deny は変えない(規範は人間のみ)。
+- **実行者の誤り**: 当初 (b) を決定として D-54 に書き、settings 変更コマンドまで提示した。オーナーに「こんな決定したか？」と指摘され、
+  裁定の範囲(記録ファイル)に書き戻し、settings の変え方は選択肢として出し直した。
 - **同型カウント**: 記録操作は毎セッション複数回。頻度最高の文書系。
+
+### AB. 本番サイトの外形観測(http code・接続時間・total・接続先 IP)を複数 URL に curl
+- **生**: `curl -sS -o /dev/null -w "HTTP %{http_code} / connect %{time_connect}s / total %{time_total}s / remote %{remote_ip}\n" --max-time 15 https://thinkxinc.com/ ; echo "---" ; curl ... (同形を複数 URL に繰り返し)`
+- **引き金**: `curl`(ask・本番 URL)。
+- **クラス**: 観測(GET のみ・書き込みなし。応答時間と到達先 IP は障害切り分けの材料)。
+- **正しい形**: 「本番 URL の http code」観測は **F・G・O・Q・Y・AB で 6 回目**。これまでの事例は code だけだったが、AB は時間と IP も見ている
+  = `verify_deploy.py`(未着手)の本番確認部分は「code / connect / total / remote IP」を一緒に出す仕様にする。URL は固定リテラル
+  (thinkxinc.com 配下・staging は Basic 認証込み)、メソッドは GET、urllib で畳む。時間は `time.perf_counter` で測れば curl の `-w` 相当。
+- **残るゲート**: なし。
+- **同型カウント**: 6 回目。最頻の観測型で、wrapper 未着手のまま。
+- **直後の再発(7 回目)**: `for i in 1 2 3; do curl -sS -o /dev/null -w "try$i: HTTP %{http_code} total %{time_total}s\n" --max-time 70 https://thinkxinc.com/; done`
+  同じ本番 URL を 3 回続けて測る(応答の揺れを見る)。wrapper 側は「回数」を範囲つき数値引数(1..10)で受ければこの形も畳める。
+
+### AC. EC2 インスタンス一覧(Name / State / IP / Id / LaunchTime)を aws cli で表形式に
+- **生**: `aws ec2 describe-instances --query 'Reservations[].Instances[].{Name:Tags[?Key==\`Name\`]|[0].Value,State:State.Name,IP:PublicIpAddress,Id:InstanceId,LaunchTime:LaunchTime}' --output table 2>&1 | head -40`
+- **引き金**: JMESPath の **バッククォート** `` `Name` `` がコマンド置換と見なされる。`aws ec2 describe-*` 自体は ask/deny に無い(deny は `aws iam` と `terminate-instances` のみ)。
+- **クラス**: 観測(読み取りのみ)。
+- **正しい形**: T の EC2 部分と同じで **2 回目**。(1) `infra/scripts/status.sh <env>`(既存・見るだけ)で足りるなら使う。(2) 生で打つなら
+  バッククォートを避ける: シェルを二重引用符にして JMESPath 側を `Key=='Name'`(JMESPath の生文字列は単引用符でも書ける)にすれば
+  可視コマンドに `` ` `` が出ず止まらない。(3) 列(Name/State/IP/Id/LaunchTime)が固定なら status.sh にこの表を足す。
+- **残るゲート**: なし。
+- **同型カウント**: バッククォート起因の aws 観測は T・AC で 2 回目。
+
+### AD. Claude in Chrome の localhost サイト許可(ポート 8765)
+- **生**: 「Claude in Chrome wants to navigate on 127.0.0.1:8765」
+- **引き金**: settings ではなく **Chrome 拡張のサイト許可**(v1 事例 H と同じ別系統)。ポートが違うと別サイト扱いで再度聞かれる
+  (H は 127.0.0.1:5000、今回は 8765)。
+- **クラス**: 観測(自分のマシンのローカルサーバー)。
+- **正しい形**: 拡張の設定 → Permissions →「Always allow actions on this site」でポートごとに恒久許可。settings / hook / スクリプトでは触れない。
+  ローカルの開発ポート(5000 = thinkx dev・8008 = claude_connect mock・8765 = 今回)は増えるたびに 1 回ずつ出る。
+- **残るゲート**: なし(localhost のみ)。
+- **同型カウント**: H・AD で 2 回目(ポート別)。
 
 ---
 

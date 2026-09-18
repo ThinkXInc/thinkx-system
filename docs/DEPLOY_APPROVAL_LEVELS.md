@@ -127,7 +127,7 @@ Claude Code の承認プロンプト(`.claude/settings.json` の `ask`)を減ら
 | 分類 | 例 | 処方 |
 |---|---|---|
 | **観測系**(高頻度・失敗しても状態を変えない) | staging への ssh 観測、curl での外形確認 | **固定リテラルのスクリプトに落とす → レビュー → Edit/Write deny で保護 → 承認対象から外れる。** リモートで走る文字列を引数で受けない(任意コマンド引数は作らない)。第1号: `infra/scripts/stg.py`(`infra/docs/STG_OBSERVE_PLAN.md`) |
-| **文書系**(`docs/` `runbooks/` の Edit/Write) | findings の追記、runbook の更新、議事録 | ask の理由は危険だからでなく内容を見たいから。**オーナー裁定 2026-09-17(D-54): 承認のタイミングを保存時から事後レビューに移す(allow)。** 実行者は書いてから何を書いたかをまとめて見せ、だめなら git で戻す。settings の docs/runbooks の ask を外す(オーナー作業)。`*_PLAN.md`・`coding_guides/` の deny は維持。スクリプト化はしない |
+| **文書系**(`docs/` `runbooks/` の Edit/Write) | findings の追記、runbook の更新、議事録 | ask の理由は危険だからでなく内容を見たいから。**記録ファイル(議事録・findings・DECISIONS・GUIDELINES・approval_cases)はオーナー裁定 2026-09-17(D-54)で事後レビューに移す**: 書いてからまとめて見せ、だめなら git で戻す。手順書・runbooks・計画文書は未決(現状 ask)。settings の変え方はオーナー選択待ち。`*_PLAN.md`・`coding_guides/` の deny は維持。スクリプト化はしない |
 | **変更系**(不可逆・状態を変える) | terraform apply/destroy、git restore、本番反映、send-keys | **減らさない。** 頻度が低く、承認コストとして払うのが正しい |
 
 - 昇格の入口は「同じ形の ssh/curl を **3回** 書いたら観測系スクリプトのサブコマンドにする」。1回きりの調査は素の ssh を書いて承認1回で済ませる。

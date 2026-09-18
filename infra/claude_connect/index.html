@@ -160,6 +160,7 @@
     <p class="error" id="power_error"></p>
   </section>
   <p class="note offline" id="offline_note" hidden>staging が起動すると、接続と本番への反映の操作がここに現れます</p>
+  <button class="button quiet" id="recheck" type="button" hidden>再確認</button>
 
   <section class="card" id="connect_card">
     <div class="status"><span class="dot checking" id="dot"></span><span id="status_text">確認中</span></div>
@@ -209,7 +210,9 @@
 <script>
 (function () {
   var POLL_MS = 5000;
+  var POLL_GIVEUP = 5;  // 連続失敗の上限。開きっぱなしのタブが永久に叩き続けない(2026-09-18 障害: 停止中の staging への中継が本番を塞いだ)
   var dot = document.getElementById("dot");
+  var recheck = document.getElementById("recheck");
   var statusText = document.getElementById("status_text");
   var note = document.getElementById("note");
   var actions = document.getElementById("actions");
@@ -407,6 +410,19 @@
     }
   }
 
+  // state は答えが出たら止まる: 取れたら表示して終了、503(staging 停止)も答えなので終了。
+  // 取れないときだけ POLL_MS 間隔で追い、連続 POLL_GIVEUP 回で諦めて再確認ボタンに切り替える。
+  var pollTimer = null;
+  var pollFails = 0;
+
+  function refreshState() {
+    clearTimeout(pollTimer);
+    pollTimer = null;
+    pollFails = 0;
+    recheck.hidden = true;
+    poll();
+  }
+
   function poll() {
     fetch("state", { cache: "no-store" })
       .then(function (r) {
@@ -414,8 +430,21 @@
         setOffline(false);
         return r.json();
       })
-      .then(function (d) { if (d) render(d); })
-      .catch(function () { if (!busy) setStatus("checking", "確認中", "サーバーに届きません。少し待って再読み込みしてください"); });
+      .then(function (d) {
+        if (d) render(d);
+        pollFails = 0;
+        recheck.hidden = true;
+      })
+      .catch(function () {
+        pollFails += 1;
+        if (pollFails >= POLL_GIVEUP) {
+          if (!busy) setStatus("disconnected", "状態を取得できませんでした", "サーバーが停止しているか、応答がありません");
+          recheck.hidden = false;
+          return;
+        }
+        if (!busy) setStatus("checking", "確認中", "サーバーに届きません(" + pollFails + "/" + POLL_GIVEUP + ")");
+        pollTimer = setTimeout(poll, POLL_MS);
+      });
   }
 
   function post(path, body) {
@@ -449,7 +478,7 @@
         reconnect.removeAttribute("aria-disabled");
         stopProgress();
         error.textContent = e.message;
-        poll();
+        refreshState();
       });
   });
 
@@ -482,7 +511,7 @@
         codeInput.disabled = false;
         stopProgress();
         error.textContent = e.message;
-        poll();
+        refreshState();
       });
   });
 
@@ -583,6 +612,8 @@
     connectCard.hidden = on;
     deployCard.hidden = on;
     offlineNote.hidden = !on;
+    if (on) recheck.hidden = true;  // 「停止中」は答えが出た状態。再確認ではなく電源カードの起動で戻す
+    else refreshState();            // staging が使えるようになった瞬間に接続状態を取り直す
   }
 
   function renderPower(d) {
@@ -602,6 +633,22 @@
     setOffline(!(s === "running" && d.reachable));
   }
 
+  // 電源も変化しうる間だけ追う: 起動完了(reachable)か停止で確定したら止まる。
+  // 失敗も state と同じく POLL_GIVEUP 回で諦める。
+  var powerTimer = null;
+  var powerFails = 0;
+
+  function powerSettled(d) {
+    return (d.state === "running" && d.reachable) || d.state === "stopped" || d.state === "none";
+  }
+
+  function refreshPower() {
+    clearTimeout(powerTimer);
+    powerTimer = null;
+    powerFails = 0;
+    pollPower();
+  }
+
   function pollPower() {
     if (powerAvailable === false) return;
     fetch("power/state", { cache: "no-store" })
@@ -611,8 +658,26 @@
         powerAvailable = true; powerCard.hidden = false;
         return r.json();
       })
-      .then(function (d) { if (d) renderPower(d); })
-      .catch(function (e) { if (powerAvailable) powerError.textContent = e.message; });
+      .then(function (d) {
+        if (!d) return;
+        powerFails = 0;
+        renderPower(d);
+        if (!powerSettled(d)) powerTimer = setTimeout(pollPower, POLL_MS);
+      })
+      .catch(function (e) {
+        powerFails += 1;
+        if (powerFails >= POLL_GIVEUP) {
+          if (powerAvailable) {
+            powerDot.className = "dot disconnected";
+            powerText.textContent = "状態を取得できませんでした";
+            powerNote.textContent = "サーバーが応答していません";
+          }
+          recheck.hidden = false;
+          return;
+        }
+        if (powerAvailable) powerError.textContent = e.message;
+        powerTimer = setTimeout(pollPower, POLL_MS);
+      });
   }
 
   function powerAction(path, kind, doneText) {
@@ -625,20 +690,22 @@
       powerBusy = false;
       powerCard.classList.remove("done"); void powerCard.offsetWidth; powerCard.classList.add("done");
       powerNote.textContent = doneText;
-      pollPower();
-      poll();
+      refreshPower();  // 起動完了なら renderPower → setOffline(false) が接続状態も取り直す
     });
-    post(path).catch(function (e) { stopProgress(); powerBusy = false; powerError.textContent = e.message; pollPower(); });
+    post(path).catch(function (e) { stopProgress(); powerBusy = false; powerError.textContent = e.message; refreshPower(); });
   }
 
   powerStart.addEventListener("click", function () { powerAction("power/start", "power_on", "起動しました。下の操作が使えます"); });
   powerStop.addEventListener("click", function () { powerAction("power/stop", "power_off", "停止しました。データと IP は保持されています"); });
 
-  pollPower();
-  setInterval(pollPower, POLL_MS);
+  recheck.addEventListener("click", function () {
+    recheck.hidden = true;
+    refreshPower();
+    refreshState();
+  });
 
-  poll();
-  setInterval(poll, POLL_MS);
+  refreshPower();
+  refreshState();
 })();
 </script>
 </body>

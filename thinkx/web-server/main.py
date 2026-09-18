@@ -864,7 +864,8 @@ from datetime import datetime, timezone
 
 REMOTE_INDEX = '/src/thinkx-system/infra/claude_connect/index.html'
 REMOTE_STAGING_CONNECT = 'https://staging.thinkxinc.com/connect/'
-REMOTE_RELAY_TIMEOUT = {'state': 20, 'deploy': 30, 'session': 120, 'code': 120}  # deploy は staging 側が即 202 を返す(裏で進む)
+REMOTE_RELAY_CONNECT_TIMEOUT = 2  # staging 停止中は接続で即諦める。20 秒待つと 1 プロセスの uwsgi が塞がり本番全体が 504 になる(2026-09-18 障害)
+REMOTE_RELAY_TIMEOUT = {'state': 20, 'deploy': 30, 'session': 120, 'code': 120}  # 読み取りの上限。deploy は staging 側が即 202 を返す(裏で進む)
 STAGING_INSTANCE_FILTERS = [
     {'Name': 'tag:Project', 'Values': ['supercom']},
     {'Name': 'tag:Env', 'Values': ['staging']},
@@ -999,9 +1000,10 @@ def remote_control_relay(api):
     try:
         if request.method == 'POST':
             upstream = requests.post(REMOTE_STAGING_CONNECT + api, json=request.get_json(silent=True) or {},
-                                     timeout=REMOTE_RELAY_TIMEOUT[api])
+                                     timeout=(REMOTE_RELAY_CONNECT_TIMEOUT, REMOTE_RELAY_TIMEOUT[api]))
         else:
-            upstream = requests.get(REMOTE_STAGING_CONNECT + api, timeout=REMOTE_RELAY_TIMEOUT[api])
+            upstream = requests.get(REMOTE_STAGING_CONNECT + api,
+                                    timeout=(REMOTE_RELAY_CONNECT_TIMEOUT, REMOTE_RELAY_TIMEOUT[api]))
     except requests.RequestException as e:
         logger.info(f'remote_control relay {api}: staging unreachable ({type(e).__name__})')
         return jsonify(STAGING_UNREACHABLE[0]), STAGING_UNREACHABLE[1]

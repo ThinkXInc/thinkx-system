@@ -1814,3 +1814,43 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
 - 直前の反映(release/2026-09-17-4)で本番の /remote_control/ が非同期版の画面になった。この行はその画面から
   「本番に反映」を押す試験のための差分(文書のみ・サービス再起動なし)。結果はこの下に追記する。
 - 再試験 2 回目(2026-09-17): この行が本番入口からの「本番に反映」で production に入れば成功(文書のみ・再起動なし)。
+
+## 2026-09-17 セッション終了時点の状態(KOBITO リモコン)
+
+- 完了: N-0〜N-7(staging の /connect/)、P-0〜P-3(本番入口 /remote_control/: IAM ロール・IMDSv2・Flask・中継・電源カード・
+  Basic 認証・staging LB の satisfy any)、本番反映ボタンの非同期化、セッション URL の sessions.json 由来化、セットアップ手順書。
+  本番反映ボタンは release/2026-09-17 系で複数回成功。本番の /remote_control/ は認証つき 200。
+- 未完: P-4(本番入口からの staging 停止→起動→Claude を開く の通し・所要時間)、P-5(SECURITY.md の web ロール行・運用.md の URL・
+  runbook の入口更新は人間)。最後の「本番に反映」(文書のみ 3 件)はオーナーの押下待ちで終了。
+- オーナー判断待ち(別件): 本番 thinkx の uwsgi `processes=1 / threads=1  # for debug`(1 リクエストが遅いとサイト全体が待つ)、
+  GitHub の未使用 Deploy key `thinkx-system-rw` の削除、`infra/terraform/terraform.tfvars.bak` の git 管理、settings.json の Write ルール、
+  `infra/setup/nginx/` の古い複製、staging の discord_webhook 未配布。
+- 計画の正本化: `infra/docs/staging_power_plan_draft.md` は下書きのまま(採用時に `STAGING_POWER_PLAN.md` へ改名・人間)。
+
+## 2026-09-18 thinkxinc.com が 504 でダウン — staging 停止中に KOBITO リモコン画面のポーリングが本番 uwsgi(1 プロセス)を占有
+
+- 事象: thinkxinc.com が全応答 504(本番 LB の nginx が 60 秒待って切断)。staging を停止した昨日夜から継続。
+  lb1・web1 のインスタンスと nginx・uwsgi サービスはすべて生存(active running)。transformism(8006)・
+  kazukiotsukacom(8007)は正常 200。詰まっていたのは thinkx の uwsgi(8005 経由)だけ。
+- 原因の連鎖: (1) KOBITO リモコン画面(/remote_control/)が開いたままのブラウザが 5 秒ごと(POLL_MS=5000)に
+  /remote_control/state と /remote_control/power/state をポーリング。(2) /remote_control/state の中継は
+  staging.thinkxinc.com へ timeout=20 秒(REMOTE_RELAY_TIMEOUT['state'])で requests.get する(main.py)。
+  (3) staging は停止中なので毎回 20 秒フルに SYN-SENT で待って ConnectTimeout(uwsgi ログに
+  `remote_control relay state: staging unreachable (ConnectTimeout)` が 20 秒間隔で連続)。
+  (4) 本番 thinkx の uwsgi は processes=1 / threads=1 のため、この 20 秒間サイト全体の要求が後ろに並ぶ。
+  ポーリングは 5 秒間隔で次が積まれるので worker はほぼ 100% 中継待ちで占有され、/ は 60 秒待ちきれず LB が 504。
+- 実測: web1 の `ss -tnp` で uwsgi(pid 831875)が 52.68.142.190:443(停止中の staging LB)へ SYN-SENT。
+  journal では / が 2ms で 200 を作るのに客(LB)がもう居らず SIGPIPE — 処理能力ではなく順番待ちが原因。
+- 「stagingを停止するまでは生きていた」の説明: staging 稼働中は state 中継が即応答しポーリングは無害。
+  停止した瞬間から毎ポーリングが 20 秒詰まる構造に変わる。
+- 復旧(即時): リモコン画面を開いているタブを閉じる(ポーリングが止まれば数十秒で自然回復)。
+  または staging を起動すれば中継が即応答に戻る。uwsgi_thinkx の再起動は不要(ハングではなく渋滞)。
+- 恒久対処の選択肢(オーナー判断): (a) state 中継のタイムアウトを (connect=2s, read=…) に分けて短縮、
+  (b) 画面側で power/state が stopped の間は state ポーリングを止める(staging_reachable() と同型の 4 秒でも可)、
+  (c) 本番 thinkx uwsgi の threads を戻す(既出のオーナー判断待ち項目・2026-09-17 findings 参照)。
+- 採用(2026-09-18 オーナー裁定): 画面=案A(一度取れたら自動ポーリング停止・操作時のみ再取得・連続 5 回失敗で
+  「状態を取得できませんでした」に固定し「再確認」ボタンで手動再開・電源も状態確定で停止) + サーバー側の
+  接続タイムアウト 2 秒(thinkx main.py。thinkx/findings.md 同日参照)。
+- 試験(ローカル実測): claude_connect を静的配信(127.0.0.1:8765)して開くと /state はちょうど 5 回・
+  /power/state は 1 回で止まり、諦め表示と再確認ボタンが出る。再確認を押すと 5 回だけ再試行して再び止まる
+  (旧版は 5 秒ごとに無限)。node --check で構文 OK。
