@@ -284,6 +284,16 @@ ask と deny のルールは hook の allow に勝つ。
 - **残るゲート**: なし。
 - **同型カウント**: バッククォート起因の aws 観測は T・AC で 2 回目。
 
+### AD. Claude in Chrome の localhost サイト許可(ポート 8765)
+- **生**: 「Claude in Chrome wants to navigate on 127.0.0.1:8765」
+- **引き金**: settings ではなく **Chrome 拡張のサイト許可**(v1 事例 H と同じ別系統)。ポートが違うと別サイト扱いで再度聞かれる
+  (H は 127.0.0.1:5000、今回は 8765)。
+- **クラス**: 観測(自分のマシンのローカルサーバー)。
+- **正しい形**: 拡張の設定 → Permissions →「Always allow actions on this site」でポートごとに恒久許可。settings / hook / スクリプトでは触れない。
+  ローカルの開発ポート(5000 = thinkx dev・8008 = claude_connect mock・8765 = 今回)は増えるたびに 1 回ずつ出る。
+- **残るゲート**: なし(localhost のみ)。
+- **同型カウント**: H・AD で 2 回目(ポート別)。
+
 ---
 
 ## 状態と次の一手(2026-09-17)
