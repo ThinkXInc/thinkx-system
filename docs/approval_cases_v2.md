@@ -338,6 +338,17 @@ ask と deny のルールは hook の allow に勝つ。
   今度は http code に加えてページ本文の文字列(合計 / 50万 / 既存サイト)の有無を見ている = Z の「ページを取ってきて要素の有無を一覧で出す」と
   同じ型。dev サーバー用の観測スクリプトは「code + 指定文字列の有無(値引数・複数可)」を出す 1 本にすれば AH とこれの両方を畳める。
 
+### AI. staging への着地確認(サーバーの先端コミット + テンプレート内の文字列 grep)
+- **生**: `ssh -o ConnectTimeout=8 -o BatchMode=yes supercom-web1-stg "cd /src/thinkx-system && git log --oneline -1 && grep -n '合計(月額の目安)\|AWSサーバーインフラ一式\|他の業務と併用可\|目安として50万円' thinkx/web-server/views/templates/products/kobito.html"`
+- **引き金**: `ssh`(ask・staging)。
+- **クラス**: 観測(staging に編集が乗ったかを、先端コミットとファイル内の文字列で確認)。
+- **正しい形**: AF(本番)の staging 版。`verify_deploy.py <env>` の「サーバーの先端コミット + 指定ファイルに指定文字列があるか」で同じ 1 本に
+  畳める(env は必須引数、ファイルパスは `/src/thinkx-system` 配下に固定、文字列は値引数)。`stg.py` には「ファイル内 grep」が無いので、
+  stg.py に足すか verify_deploy.py に寄せるかは 1 本にまとめる時に決める(2 つに散らさない)。
+- **残るゲート**: なし。
+- **同型カウント**: デプロイ着地確認は F・G・O・Q・Y・AF・AI で **7 回目**。AH(dev)→ AI(staging)→ AF(本番)と同じ編集を 3 環境で順に確認する
+  流れが 1 セッションで揃った = 「env を引数に取る 1 本の観測 wrapper」がそのまま要件。
+
 ---
 
 ## 状態と次の一手(2026-09-17)

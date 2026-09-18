@@ -1880,3 +1880,8 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   引き継ぎ・DECISIONS 過去行)は原文のまま。CLAUDE.md(ワークスペース制御文書・75/77 行目)と
   docs/PODCAST_TRACK.md(計画書・65 行目)にも旧名の参照が残るが、実行者は書き換え禁止のため
   オーナーの書き換え待ち。
+- 2026-09-18 health check(D-80)実装完了。前セッション(ロールバック)で作られた 4 ファイルを引き継ぎ、
+  機能試験で確認: down 検知(HTTP コードと checker ホスト名つき)・1 時間の再通知抑制・復旧通知(ダウン分数つき)・
+  401=生存扱い。lb1 から自分の公開 URL への curl(hairpin)は 4 サイトとも 200 で成立することを実測済み。
+  残りはオーナー作業: Discord 専用チャンネル+webhook 作成 → 本番 release → LB env+timer 投入 → Mac launchd 投入
+  (手順は infra/runbooks/health-check.md)。
