@@ -378,10 +378,18 @@
     if (busy) return;
 
     if (data.state === "connected") {
-      // セッションの URL が拾えていれば、そのままチャット画面へ飛べるリンクを出す(リモコン化の第一歩)
+      // セッションの URL が拾えていれば、そのままチャット画面へ飛べるリンクを出す(リモコン化の第一歩)。
+      // 起動直後は URL が十数秒遅れて出るので、ボタンは最初から出して押せなくしておき、
+      // URL が出たら有効にする(隠すと「ボタンが消えた」に見える・オーナー指示 2026-09-18)
       if (data.session_url) {
         setStatus("connected", "接続中", "");
         openClaude.href = data.session_url;
+        openClaude.removeAttribute("aria-disabled");
+        openClaude.hidden = false;
+      } else if (urlWaits < POLL_GIVEUP) {
+        setStatus("connected", "接続中", "セッションの URL を準備しています。準備ができるとこのボタンが押せるようになります(十数秒)");
+        openClaude.removeAttribute("href");
+        openClaude.setAttribute("aria-disabled", "true");
         openClaude.hidden = false;
       } else {
         setStatus("connected", "接続中", "Claude アプリのセッション一覧から開いてください");
@@ -480,6 +488,7 @@
           busy = false;
           reconnect.removeAttribute("aria-disabled");
           render(data);
+          if (data.state === "connected" && !data.session_url) refreshState();
           if (data.url) note.textContent = "もう一度「セッションを再接続」を押すと認証画面が別タブで開きます。認証後に表示されたコードを下に貼ってください";
         });
       })
@@ -512,6 +521,7 @@
           codeInput.disabled = false;
           codeInput.value = "";
           render(data);
+          if (data.state === "connected" && !data.session_url) refreshState();
           if (data.state !== "connected") error.textContent = "まだ接続中になっていません。コードが違う場合は「セッションを再接続」からやり直してください";
         });
       })
