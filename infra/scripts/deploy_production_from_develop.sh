@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-# thinkx-system/infra/scripts/deploy_production_from_staging.sh
+# thinkx-system/infra/scripts/deploy_production_from_develop.sh
 #
-# 今 staging で動いているもの(origin/develop)を、そのまま凍結して本番へ出す。
-# staging で目視確認した状態と、本番に出るものが同一であることを保証する。
+# origin/develop を凍結して本番へ出す。staging は origin/develop を動かしている環境なので、
+# staging が追従済みなら「staging で目視確認した状態」と本番に出るものが同一になる
+# (staging には触れない。停止中でも完走する — 2026-09-18 改名の経緯は DECISIONS D-79)。
 #
-#   使い方: bash infra/scripts/deploy_production_from_staging.sh
+#   使い方: bash infra/scripts/deploy_production_from_develop.sh
 #
 # これを実行することが「承認」である。実行した瞬間の origin/develop が release として
 # 凍結され、以後 develop がどう動いても本番に出るのはこの一点だけになる。
@@ -16,7 +17,7 @@ set -euo pipefail
 
 . "$(dirname "${BASH_SOURCE[0]:-$0}")/lib/banner.sh"
 
-deploy_production_from_staging() {
+deploy_production_from_develop() {
   local G=$'\033[32m' R=$'\033[31m' Y=$'\033[33m' Z=$'\033[0m'
   local sha day br n svc ans host rel pr_url fail=0
   local -a targets=()
@@ -151,4 +152,4 @@ deploy_production_from_staging() {
   printf '%b\n' "${G}OK: deployed to production${Z}"
 }
 
-deploy_production_from_staging "$@"
+deploy_production_from_develop "$@"

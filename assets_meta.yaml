@@ -1,0 +1,22 @@
+# 配布しないアセットの指定(正本・オーナー指示 2026-09-18)
+#
+# asset 配布スクリプトがこのファイルを参照し、該当するファイルを送らない。
+# 現在の参照元: infra/scripts/push_assets_podcast.sh
+# (push_assets.sh の views/video は対象パターンが無いため未接続)
+#
+# パターンは thinkx-system ルートからの相対パスの glob。
+# 「*」は「/」をまたいで一致する(例: podcast/data/*.wav は data 配下のどの階層の .wav にも当たる)。
+#
+# local:         どこにも配らない(ローカルのみ)
+# local_staging: staging には配る・本番(prod)には配らない
+
+local:
+  - "podcast/data/_*"
+  - "podcast/data/*/experiments/*"
+
+local_staging:
+  - "podcast/data/*/backup/*"
+  - "podcast/data/*/archive/*"
+  - "podcast/data/*/generated/*"
+  - "podcast/data/*.wav"
+  - "podcast/data/*.pkf"

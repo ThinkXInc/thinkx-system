@@ -9,11 +9,11 @@
 # (同じ処理を2箇所に置いたせいで、ビルド漏れの修正を両方に当てる羽目になった。2026-07-21)。
 #
 # 「デプロイ」ではなくその一部分。デプロイの入口は
-# infra/scripts/deploy_production_from_staging.sh 1本だけである。
+# infra/scripts/deploy_production_from_develop.sh 1本だけである。
 #
 # 呼ばれ方は2つ。どちらも同じこの実装を通る(経路を増やさないため):
 #   - systemd timer(deploy-timer@<env>.timer)から60秒ごと
-#   - Mac から infra/scripts/deploy_production_from_staging.sh 経由で ssh
+#   - Mac から infra/scripts/deploy_production_from_develop.sh 経由で ssh
 # 直接実行前提(source しない)。実体は setup_deploy_timer.sh が /usr/local/bin へ複製する
 # (実行中に git がスクリプト自身を書き換えると bash が壊れるため、必ず複製側を動かす)。
 #

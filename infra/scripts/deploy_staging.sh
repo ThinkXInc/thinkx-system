@@ -68,7 +68,7 @@ deploy_staging() {
   printf '%b\n' "${G}OK: deployed to staging${Z}"
   echo
   echo "If you deploy to production, run:"
-  echo "bash infra/scripts/deploy_production_from_staging.sh"
+  echo "bash infra/scripts/deploy_production_from_develop.sh"
 }
 
 deploy_staging "$@"

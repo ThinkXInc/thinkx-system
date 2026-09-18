@@ -9,11 +9,11 @@
 #   使い方: bash infra/scripts/request_production_release.sh
 #
 # オーナー機から本番反映まで一気に完走させる経路は、これではなく
-# deploy_production_from_staging.sh を使う(実行そのものが承認で、マージまで行う)。
+# deploy_production_from_develop.sh を使う(実行そのものが承認で、マージまで行う)。
 # 2つの経路は独立した別スクリプトである(オーナー指示 2026-08-12)。
 #
 # 注意: この経路で本番に出るのは git 管理物だけである。views/video などの
-# git 管理外アセットを含む変更は、オーナー機から deploy_production_from_staging.sh で
+# git 管理外アセットを含む変更は、オーナー機から deploy_production_from_develop.sh で
 # 出す(staging から本番 web へは名前解決できず届かない。2026-08-07 実測)。
 
 set -euo pipefail
