@@ -1915,3 +1915,17 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   server.py を変えても claude_connect.service は再起動されない(index.html はリクエストごとに
   読むため配布だけで反映)。今回は手動で restart。恒久化するなら services_for への追加が要る
   (デプロイ経路の変更なのでオーナー判断待ち)。
+- 2026-09-18 「Claude を開く」の続き(オーナー指示): URL 準備中はボタンを隠すのでなく
+  disable で最初から見せ、URL が出たら有効化する(隠すと「ボタンが消えた」に見える)。
+  再接続・コード送信の直後に connected で URL 未取得の場合も追いかけを再開するようにした。
+  ローカルのモック state(2 回 null → 3 回目 URL)+Chrome 実測で、リロードなしに
+  disable → 有効化 + href 差し替えを確認。画面 JS はページ内蔵なので、画面修正を配った後の
+  開きっぱなしタブには効かず初回のみリロードが要る(オーナーの「まだリロードが必要」の正体)。
+  オーナーの動作確認は常に本番入口(/remote_control/)で行う — staging 直の /connect/ は使わない
+  (オーナー指示 2026-09-18)。画面変更は本番に出るまで意味がない前提で段取りする。- 2026-09-18 health check Mac(launchd)側の仕上がりまでの実測: (1) チャットからの貼り付けで webhook URL が
+  2 行に割れて .env に入った(検知は --fail 追加後。修正はオーナーが perl で入れ直し)。(2) launchd 実行時のみ
+  aws が失敗 — /usr/local/bin/aws が shebang /usr/bin/python(不存在)を指す残骸で bad interpreter 126。
+  plist の PATH 順変更でも launchd 実プロセスには効かなかったため、設定 YAML の aws_cli キーで
+  フルパス指定に変更(既定 PATH だけの最小環境で WARN なしを実測)。壊れた /usr/local/bin/aws の削除は
+  オーナー任意。最終状態: LB timer 60 秒(5 サイト up)・Mac launchd 5 分(lb + staging ゲート)・
+  実弾テスト 🔴/🟢 送達(--fail で 2xx 確認)。
