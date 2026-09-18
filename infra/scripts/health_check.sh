@@ -31,9 +31,9 @@ __health_notify() {
     echo "NOTIFY(未設定のため標準出力のみ): $msg"
     return 0
   fi
-  curl -sS -m 10 -H 'Content-Type: application/json' \
+  curl -sS --fail -m 10 -H 'Content-Type: application/json' \
     -d "$(printf '{"content":"%s"}' "$msg")" "$DISCORD_WEBHOOK_URL" >/dev/null 2>&1 ||
-    echo "WARN: Discord への送信に失敗: $msg"
+    echo "WARN: Discord への送信に失敗(URL 誤りか到達不能): $msg"
 }
 
 # $1=URL。生きていれば 0。2 回試す(瞬断で騒がないため)
