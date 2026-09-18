@@ -271,6 +271,8 @@ ask と deny のルールは hook の allow に勝つ。
   (thinkxinc.com 配下・staging は Basic 認証込み)、メソッドは GET、urllib で畳む。時間は `time.perf_counter` で測れば curl の `-w` 相当。
 - **残るゲート**: なし。
 - **同型カウント**: 6 回目。最頻の観測型で、wrapper 未着手のまま。
+- **直後の再発(7 回目)**: `for i in 1 2 3; do curl -sS -o /dev/null -w "try$i: HTTP %{http_code} total %{time_total}s\n" --max-time 70 https://thinkxinc.com/; done`
+  同じ本番 URL を 3 回続けて測る(応答の揺れを見る)。wrapper 側は「回数」を範囲つき数値引数(1..10)で受ければこの形も畳める。
 
 ### AC. EC2 インスタンス一覧(Name / State / IP / Id / LaunchTime)を aws cli で表形式に
 - **生**: `aws ec2 describe-instances --query 'Reservations[].Instances[].{Name:Tags[?Key==\`Name\`]|[0].Value,State:State.Name,IP:PublicIpAddress,Id:InstanceId,LaunchTime:LaunchTime}' --output table 2>&1 | head -40`
