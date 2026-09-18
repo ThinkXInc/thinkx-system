@@ -1854,3 +1854,22 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
 - 試験(ローカル実測): claude_connect を静的配信(127.0.0.1:8765)して開くと /state はちょうど 5 回・
   /power/state は 1 回で止まり、諦め表示と再確認ボタンが出る。再確認を押すと 5 回だけ再試行して再び止まる
   (旧版は 5 秒ごとに無限)。node --check で構文 OK。
+- 命名の不一致(2026-09-18 オーナー指摘): deploy_production_from_staging.sh は staging に一切触れず
+  origin/develop を凍結して本番へ出す。実態は「develop から出す」で、"from_staging" は
+  「staging=develop を動かす環境で目視確認した」という運用前提の表現。staging 停止中でも完走するため、
+  その前提が崩れたまま出せる(今回実際にそうした)。規約(操作で命名・唯一の値は名前に書かない)に
+  照らすと deploy_production.sh が整合。改名はオーナー判断待ち。
+- 2026-09-18 本番反映(release/2026-09-18)の途中中断: PR #123 マージ後、podcast データ配布の途中で
+  オーナーが Ctrl+C。コード反映は deploy-timer が完了済み(uwsgi_thinkx 07:43 UTC 再起動・新コード実測)。
+  中断の影響は podcast データの部分コピーのみ(サイズ照合方式なので次回実行で続きから再送される)。
+- push_assets_podcast.sh に「配らないデータの指定」は無い(オーナー指摘 2026-09-18)。除外は固定の
+  `_*`/experiments//edit//隠しファイルのみで、それ以外は D-52 改定(2026-09-17「ローカルを完全にコピー」)で
+  意図的に全部送る。ローカル data は 10G(backup 308M・archive 777M・generated 792M・contents 1.1G・
+  直下の生音源約 7G)。本番は残 34G に 2.2G 転送済み。本番はまだ /podcast/ を配信していない(Phase 4 未着手)。
+  絞る場合は D-52 の変更になるためオーナー裁定待ち(選択肢は本セッション提示)。
+- 2026-09-18 D-78 実装: assets_meta.yaml(正本・リポジトリ直下)+ push_assets_podcast.sh の接続。
+  送る判定と差分照合の両側に同じ除外を掛けるため、除外対象が箱に残っていても再送ループは起きない。
+  ユニットテスト 20 ケース合格(prod: backup/archive/generated/wav/pkf 除外・staging: 従来通り)。
+  本番の既存除外対象(ディレクトリ 434M + wav 560M ≒ 1G)はオーナー承認のうえ削除済み
+  (data 2.2G→1.2G・全ファイルはローカルに原本あり)。push_assets.sh(views/video)は
+  対象パターンが無いため未接続 — 除外したい video が出たときに接続する。
