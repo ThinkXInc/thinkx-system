@@ -412,13 +412,17 @@
 
   // state は答えが出たら止まる: 取れたら表示して終了、503(staging 停止)も答えなので終了。
   // 取れないときだけ POLL_MS 間隔で追い、連続 POLL_GIVEUP 回で諦めて再確認ボタンに切り替える。
+  // 例外: 起動直後は connected でもセッション URL が十数秒遅れて出る(claude が sessions ファイルを
+  // 書くまで)。URL が無い間だけ POLL_GIVEUP 回を上限に追い、出たら止まる(2026-09-18)。
   var pollTimer = null;
   var pollFails = 0;
+  var urlWaits = 0;
 
   function refreshState() {
     clearTimeout(pollTimer);
     pollTimer = null;
     pollFails = 0;
+    urlWaits = 0;
     recheck.hidden = true;
     poll();
   }
@@ -434,6 +438,12 @@
         if (d) render(d);
         pollFails = 0;
         recheck.hidden = true;
+        if (d && d.state === "connected" && !d.session_url && urlWaits < POLL_GIVEUP) {
+          urlWaits += 1;
+          pollTimer = setTimeout(poll, POLL_MS);
+        } else {
+          urlWaits = 0;
+        }
       })
       .catch(function () {
         pollFails += 1;
