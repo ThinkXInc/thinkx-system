@@ -40,8 +40,6 @@
       --gold: #8a6d3b;
       --gold-bright: #c2a35c;
       --line: #d8d2c6;
-      --placeholder-bg: #e6e2da;
-      --placeholder-text: #9a938a;
       --serif: "Hiragino Mincho ProN", "Yu Mincho", "YuMincho", "Noto Serif JP", serif;
     }
 
@@ -309,7 +307,6 @@
       font-weight: 600;
       letter-spacing: .14em;
     }
-    .performer-name.preparing { color: var(--placeholder-text); font-weight: 400; font-size: 19px; }
 
     /* 写真つきの出演者(写真 左・氏名と略歴 右) */
     .performer-detail {
@@ -330,19 +327,6 @@
       font-size: 15px;
       line-height: 1.95;
     }
-    /* 未確定の出演者: 写真枠は薄い茶色の矩形に「準備中」を中央置き */
-    .performer-photo-placeholder {
-      aspect-ratio: 230 / 238; /* 実写真(nakanokei2.jpg)と同じ縦横比 */
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: #d5d5d5;
-      color: #ffffff;
-      font-size: 14px;
-      letter-spacing: .18em;
-      text-indent: .18em;
-    }
-
     /* ---- 開催概要 ---- */
     .overview-list { margin-top: 34px; }
     .overview-item {
@@ -526,7 +510,6 @@
       <span class="section-label">GUESTS</span>
       <hr class="section-rule">
 
-      {# 出演者確定まで「準備中」表示。確定後に氏名(永井　照明 / Jonathan Katz)へ戻す #}
       <div class="performer">
         <p class="performer-role">司会</p>
         <div class="performer-detail">
@@ -557,19 +540,6 @@
           <div class="performer-body">
             <p class="performer-name">中野圭</p>
             <p class="performer-bio">大阪芸術大学芸術学部准教授、理化学研究所生命医科学研究センター開放情報科学特別チーム客員研究員。<br>東京芸術大学や武蔵野美術大学での講師、産総研研究員等を経て、シュルレアリストとしてコンピューターやAIを使った芸術表現、音楽情報処理、映像表現や批評に従事。</p>
-          </div>
-        </div>
-        {# 残り2名は確定まで「準備中」表示(写真枠も含めて実物と同じレイアウトで置く) #}
-        <div class="performer-detail">
-          <div class="performer-photo performer-photo-placeholder">準備中</div>
-          <div class="performer-body">
-            <p class="performer-name preparing">準備中</p>
-          </div>
-        </div>
-        <div class="performer-detail">
-          <div class="performer-photo performer-photo-placeholder">準備中</div>
-          <div class="performer-body">
-            <p class="performer-name preparing">準備中</p>
           </div>
         </div>
       </div>
