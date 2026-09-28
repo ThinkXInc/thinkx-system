@@ -1,0 +1,33 @@
+{
+  "_note": "切り抜き動画のスタイル定義(CLIP_PLAN C-7)。スタイルはコードに埋め込まずここに足す(原文 L53)。寸法はすべて動画の高さに対する % で持ち、生成側(make_clip_video.py)が px に変換する。根拠: Meta Ads Guide のリールセーフゾーン(上14%/下35%/左右6%)と X の推奨規格(2026-09 Web 調査。findings.md 参照)。",
+  "sizes": [
+    { "key": "1080x1920", "w": 1080, "h": 1920, "default_on": true,
+      "label": "9:16 縦長（IGリール・ストーリーズ・TikTok・Shorts）" },
+    { "key": "1080x1080", "w": 1080, "h": 1080, "default_on": true,
+      "label": "1:1 正方形（X・IGフィード）" },
+    { "key": "1080x1350", "w": 1080, "h": 1350, "default_on": false,
+      "label": "4:5 縦長フィード（IG）" }
+  ],
+  "safe_zones": {
+    "1080x1920": { "top_pct": 14, "bottom_pct": 35, "side_pct": 6 },
+    "1080x1080": { "top_pct": 5, "bottom_pct": 8, "side_pct": 5 },
+    "1080x1350": { "top_pct": 8, "bottom_pct": 12, "side_pct": 5 }
+  },
+  "subtitle_styles": [
+    { "key": "reel_center", "label": "リール標準（中央やや下・大きめ白字黒縁）",
+      "font_size_pct": 4.7, "bold": true,
+      "primary_colour": "&H00FFFFFF", "outline_colour": "&H00000000",
+      "outline_pct": 0.35, "shadow_pct": 0.15,
+      "center_y_pct": { "1080x1920": 62, "1080x1080": 72, "default": 66 },
+      "margin_x_pct": 7, "max_lines": 2 }
+  ],
+  "title_styles": [
+    { "key": "top_bold_white", "label": "上部・太字白（標準）",
+      "font_size_pct": 3.6, "bold": true,
+      "primary_colour": "&H00FFFFFF", "outline_colour": "&H00000000",
+      "outline_pct": 0.25, "shadow_pct": 0.1,
+      "top_y_pct": { "1080x1920": 16, "1080x1080": 8, "default": 11 },
+      "margin_x_pct": 8, "max_lines": 3 }
+  ],
+  "subtitle_size_step_pct": 0.3
+}
