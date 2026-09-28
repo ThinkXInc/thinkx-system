@@ -216,6 +216,7 @@
       <button class="button quiet" id="update_go" type="button" hidden>実行</button>
       <button class="button quiet" id="update_cancel" type="button" hidden>やめる</button>
     </span>
+    <button class="button quiet" id="update_stop" type="button" hidden>staging を停止</button>
     <button class="button quiet" id="update_check" type="button">Claudeをアップデート</button>
   </div>
   </div>
@@ -635,6 +636,7 @@
   var updateButton = document.getElementById("update_check");
   var updateGo = document.getElementById("update_go");
   var updateCancel = document.getElementById("update_cancel");
+  var updateStop = document.getElementById("update_stop");
   var updateTimer = null;
 
   function resetUpdate(infoText) {
@@ -642,6 +644,7 @@
     updateTimer = null;
     updateGo.hidden = true;
     updateCancel.hidden = true;
+    updateStop.hidden = true;
     updateButton.hidden = false;
     updateButton.disabled = false;
     updateInfo.textContent = infoText || "";
@@ -686,13 +689,27 @@
           if (job.running || !(job.result || job.error)) return;
           if (job.error) { resetUpdate(job.error); return; }
           var r = job.result;
-          resetUpdate(r.result === "already" ? "すでに最新でした(" + r.after + ")"
-            : r.before + " → " + r.after + " に更新しました(次にセッションを作り直したときから新版)");
+          if (r.result === "already") {
+            resetUpdate("すでに最新でした(" + r.after + ")");
+            return;
+          }
+          // 動作中のセッションは旧版のまま。反映は staging の停止→起動(電源カードと同じ操作)で行う。
+          // 電源が使える入口では、直後の操作は「staging を停止」だけにする(更新ボタンは引っ込める)
+          resetUpdate(r.before + " → " + r.after + " に更新しました。staging を停止→起動すると反映されます");
+          if (powerAvailable === true) {
+            updateStop.hidden = false;
+            updateButton.hidden = true;
+          }
         })
         .catch(function () {})
         .then(function () { updateInFlight = false; });
     }, 2000);
     post("update").catch(function (e) { resetUpdate(e.message); });
+  });
+
+  updateStop.addEventListener("click", function () {
+    resetUpdate();  // 次に staging が起動して戻ってきたときは通常の「Claudeをアップデート」に戻す
+    powerStop.click();  // 電源カードの「staging を停止」と同じ操作(進行は電源カードに出る)
   });
 
   // ---- staging の電源(本番の入口 /remote_control/ でだけ。staging 直開きでは power/state が 404 なので隠れる) ----
