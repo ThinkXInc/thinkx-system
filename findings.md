@@ -301,3 +301,15 @@ staging で commit 済みの内容は `git format-patch` で取り出してオ�
   観測は production/develop 比較 5 回・本番 ssh 3 回・staging claude_connect 3 回(wrapper 既存だが未使用)で昇格条件超過のまま。
   リモートの sudo/rm はローカル deny に当たらない(Q/T/W/X)。同じ index.html の heredoc 編集 3 回(Edit を使えば消える)。
   → wrapper を増やすより先に「既存 wrapper と Edit を使わせるカタログ」が無いことが再発の原因。
+
+## 2026-09-28 事故記録: 並行セッションが同一 index を共有し、stage 済み変更が他セッションのコミットに混入
+
+- 現象: sitemap セッション(本セッション)が `git rm thinkx/web-server/generate_sitemap.py` を stage した直後、
+  並行して動いていた infra 記録セッションのコミット 84496f4(docs(infra): リモコン再接続 PATH 断絶の解決記録)が
+  この削除を巻き込んでコミット・push した。削除の意図・根拠(T-1)と実際のコミットメッセージが食い違う履歴になった。
+- 影響: ツリーの最終状態は正しい(削除は意図どおり)。履歴の帰属だけが濁った。force push 禁止のため書き換えず記録のみ。
+- 原因: 同一の作業コピー(~/Sources/thinkx-system)で複数の Claude セッションが同時に git 操作をしており、
+  index(stage 領域)が共有されるため。`git commit`(パス指定なし)は他セッションが stage したものも全て拾う。
+- 対処案(人間判断): (a) 並行セッションは SITE_EDIT_WORKFLOW の staging 常駐と同様に worktree で隔離する、
+  (b) 共有作業コピーでは「stage は commit 直前にまとめて行い、stage したまま他ツールを待たない」
+  「commit は常にパス指定(`git commit -- <paths>`)にする」を規約化する、のいずれか。規範化はオーナー判断。
