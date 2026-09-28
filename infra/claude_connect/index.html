@@ -124,11 +124,13 @@
   .note.offline[hidden] { display: none; }
   .card[hidden] { display: none; }
 
-  /* 本番への反映(押す=承認) */
-  .card.deploy { margin-top: 16px; width: 50%; }
-  .card.deploy h2 { font-size: 16px; font-weight: 600; letter-spacing: 0.04em; margin: 0; }
-  .card.deploy .note { margin-top: 6px; }
-  .card.deploy > .button { margin-top: 14px; }
+  /* 下段(左: 本番への反映(押す=承認) / 右: Claude の更新) */
+  .bottom { margin-top: 16px; display: flex; gap: 16px; align-items: flex-start; }
+  .bottom .card { flex: 1 1 0; min-width: 0; }
+  .card.deploy h2, .card.update h2 { font-size: 16px; font-weight: 600; letter-spacing: 0.04em; margin: 0; }
+  .card.update .note:empty { display: none; }
+  .card.deploy .note, .card.update .note { margin-top: 6px; }
+  .card.deploy > .button, .card.update > .button { margin-top: 14px; }
   .button.quiet { color: var(--ink); background: #fff; border: 1px solid var(--line); }
   .button.quiet:active { background: #f1efe9; }
   .confirm { margin-top: 12px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; background: #fbfaf7; }
@@ -136,7 +138,7 @@
   .confirm .summary { margin: 0; font-size: 14px; }
   .confirm .commits { margin: 8px 0 0; padding-left: 18px; font-size: 12px; color: var(--ink-soft); max-height: 120px; overflow: auto; }
   .confirm .row { display: flex; gap: 8px; margin-top: 12px; }
-  .confirm .row .button { margin: 0; }
+  .confirm .row .button { margin: 0; flex: 1; padding-left: 0; padding-right: 0; white-space: nowrap; }
 
   footer { margin-top: 16px; font-size: 12px; color: var(--ink-soft); display: flex; justify-content: space-between; gap: 12px; }
   footer span { white-space: nowrap; }
@@ -185,6 +187,7 @@
     </div>
   </section>
 
+  <div class="bottom">
   <section class="card deploy" id="deploy_card">
     <h2>本番への反映</h2>
     <p class="note" id="deploy_note">staging で確認した内容を、そのまま本番に出します</p>
@@ -203,6 +206,24 @@
     <a class="button open" id="open_production" href="https://thinkxinc.com/" target="_blank" rel="noopener" hidden>本番を開く</a>
     <p class="error" id="deploy_error"></p>
   </section>
+
+  <section class="card update" id="update_card">
+    <h2>Claudeをアップデート</h2>
+    <p class="note" id="update_note"></p>
+    <div class="progress" id="update_progress" hidden>
+      <ol class="steps" id="update_steps"></ol>
+    </div>
+    <div class="confirm" id="update_confirm" hidden>
+      <p class="summary" id="update_summary"></p>
+      <div class="row">
+        <button class="button" id="update_go" type="button">実行</button>
+        <button class="button quiet" id="update_cancel" type="button">やめる</button>
+      </div>
+    </div>
+    <button class="button" id="update_check" type="button">更新</button>
+    <p class="error" id="update_error"></p>
+  </section>
+  </div>
 
   <footer><span id="disk"></span><span id="observed"></span></footer>
 </main>
@@ -253,6 +274,12 @@
       labels: ["内容を確認", "release を作成", "production へ送信", "本番サーバーが取り込み(約 60 秒)", "本番の応答を確認"],
       phase: { deploy_fetch: 0, deploy_release: 1, deploy_push: 2, deploy_wait: 3, deploy_check: 4 },
       doneWhen: function (d) { return d.deploy && !d.deploy.running && (d.deploy.result || d.deploy.error); }
+    },
+    update: {
+      host: "update_progress", list: "update_steps",
+      labels: ["claude update を実行(1〜2 分)", "版を確認"],
+      phase: { update_run: 0, update_verify: 1 },
+      doneWhen: function (d) { return d.update && !d.update.running && (d.update.result || d.update.error); }
     },
     power_on: {
       host: "power_progress", list: "power_steps", source: "power/state",
@@ -612,6 +639,75 @@
       });
   });
 
+  // ---- Claude の更新(押す=実行・オーナー指示 2026-09-28) ----
+  // 1 回目: 今の版と最新版を見せるだけ(まだ何も変えない)。2 回目(実行)が更新。
+  var updateCard = document.getElementById("update_card");
+  var updateNote = document.getElementById("update_note");
+  var updateButton = document.getElementById("update_check");
+  var updateConfirm = document.getElementById("update_confirm");
+  var updateSummary = document.getElementById("update_summary");
+  var updateGo = document.getElementById("update_go");
+  var updateCancel = document.getElementById("update_cancel");
+  var updateError = document.getElementById("update_error");
+  var updateBusy = false;
+
+  function resetUpdate(noteText) {
+    updateConfirm.hidden = true;
+    updateButton.hidden = false;
+    updateButton.disabled = false;
+    updateNote.textContent = noteText || "";
+  }
+
+  updateButton.addEventListener("click", function () {
+    if (updateBusy) return;
+    updateError.textContent = "";
+    updateButton.disabled = true;
+    updateNote.textContent = "版を調べています";
+    fetch("update", { cache: "no-store" })
+      .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || ("HTTP " + r.status)); return j; }); })
+      .then(function (p) {
+        updateButton.disabled = false;
+        if (p.same) {
+          resetUpdate("最新です(" + p.current + ")");
+          return;
+        }
+        updateSummary.textContent = p.current + " → " + p.latest;
+        updateButton.hidden = true;
+        updateConfirm.hidden = false;
+        updateNote.textContent = "";
+      })
+      .catch(function (e) { updateButton.disabled = false; updateError.textContent = e.message; });
+  });
+
+  updateCancel.addEventListener("click", function () { resetUpdate(); });
+
+  updateGo.addEventListener("click", function () {
+    if (updateBusy) return;
+    updateBusy = true;
+    updateConfirm.hidden = true;
+    updateNote.textContent = "更新しています";
+    // POST は受け付け(202)で即返る。完了はサーバーの state.update(running が false・result か error あり)で判断する
+    startProgress("update", function (d) {
+      var job = d.update || {};
+      var r = job.result || {};
+      updateBusy = false;
+      updateCard.classList.remove("done"); void updateCard.offsetWidth; updateCard.classList.add("done");
+      if (job.error) { resetUpdate(); updateError.textContent = job.error; return; }
+      if (r.result === "already") {
+        resetUpdate("すでに最新でした(" + r.after + ")");
+      } else {
+        resetUpdate(r.before + " → " + r.after + " に更新しました。今のセッションは旧版のまま動きます(次にセッションを作り直したときから新版)");
+      }
+    });
+    post("update")
+      .catch(function (e) {
+        stopProgress();
+        updateBusy = false;
+        resetUpdate();
+        updateError.textContent = e.message;
+      });
+  });
+
   // ---- staging の電源(本番の入口 /remote_control/ でだけ。staging 直開きでは power/state が 404 なので隠れる) ----
   var powerCard = document.getElementById("power_card");
   var powerDot = document.getElementById("power_dot");
@@ -631,6 +727,7 @@
     offline = on;
     connectCard.hidden = on;
     deployCard.hidden = on;
+    updateCard.hidden = on;
     offlineNote.hidden = !on;
     if (on) recheck.hidden = true;  // 「停止中」は答えが出た状態。再確認ではなく電源カードの起動で戻す
     else refreshState();            // staging が使えるようになった瞬間に接続状態を取り直す

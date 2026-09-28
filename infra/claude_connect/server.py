@@ -13,6 +13,8 @@ kaz で動かす(tmux も claude も kaz のもの)。bind は web の private I
   GET  /connect/deploy   本番に出る内容(コミット一覧・再起動されるサービス)。何も変えない
   POST /connect/deploy   origin/develop から release を切って production へ push(押す=承認)。裏で進め 202 {result: started}。
                          進み具合と結果は GET /connect/state の phase / deploy に載る
+  GET  /connect/update   claude の今の版と最新版 {"current", "latest", "same"}。何も変えない
+  POST /connect/update   claude update を実行(押す=実行)。裏で進め 202。進み具合と結果は state の phase / update に載る
 
 state:
   connected        tmux あり・pane が claude・ログイン済み
@@ -439,6 +441,78 @@ def deploy_to_production() -> dict:
         set_phase("idle")
 
 
+# ---- Claude Code の更新(押す=実行・オーナー指示 2026-09-28) --------------------------------
+# claude の実体は kaz の ~/.npm-global だけ(root install 廃止・docs/GUIDELINES.md 2026-09-28)なので sudo は不要。
+# GET は今の版と最新版を見せるだけで何も変えない。POST が更新の実行。
+# 更新しても動作中のセッション(tmux 内の claude)は旧版のまま — 次にセッションを作り直したときから新版。
+
+INSTALL_CJS = Path.home() / ".npm-global/lib/node_modules/@anthropic-ai/claude-code/install.cjs"
+VERSION_PATTERN = re.compile(r"\d+\.\d+\.\d+")
+
+
+def claude_version() -> str:
+    rc, out = run(["claude", "--version"], timeout=30)
+    found = VERSION_PATTERN.search(out)
+    if rc != 0 or not found:
+        raise RuntimeError(f"claude --version が失敗: {out.strip()[:200]}")
+    return found.group(0)
+
+
+def latest_version() -> str:
+    rc, out = run(["npm", "view", "@anthropic-ai/claude-code", "version"], timeout=30)
+    found = VERSION_PATTERN.search(out)
+    if rc != 0 or not found:
+        raise RuntimeError(f"npm view が失敗: {out.strip()[:200]}")
+    return found.group(0)
+
+
+def update_preview() -> dict:
+    current, latest = claude_version(), latest_version()
+    return {"current": current, "latest": latest, "same": current == latest}
+
+
+update_job = {"running": False, "started_at": None, "finished_at": None, "result": None, "error": None}
+
+
+def start_update_job() -> bool:
+    """更新を裏で始める。既に何かの操作中なら False。結果は /connect/state の update に載る(deploy と同型)。"""
+    if not action_lock.acquire(blocking=False):
+        return False
+    update_job.update(running=True, started_at=now_iso(), finished_at=None, result=None, error=None)
+
+    def work() -> None:
+        try:
+            update_job["result"] = update_claude()
+        except Exception as e:  # スレッド内で落とさない
+            update_job["error"] = f"{type(e).__name__}: {e}"
+        finally:
+            update_job["running"] = False
+            update_job["finished_at"] = now_iso()
+            action_lock.release()
+
+    threading.Thread(target=work, daemon=True).start()
+    return True
+
+
+def update_claude() -> dict:
+    try:
+        set_phase("update_run")
+        before = claude_version()
+        rc, out = run(["claude", "update"], timeout=300)
+        if rc != 0:
+            raise RuntimeError(f"claude update が失敗: {out.strip()[:300]}")
+        set_phase("update_verify")
+        try:
+            after = claude_version()
+        except RuntimeError:
+            # 「更新成功」表示でも postinstall(native binary 取得)が走らないことがある(2026-09-28 実測)。install.cjs で直る
+            run(["node", str(INSTALL_CJS)], timeout=300)
+            after = claude_version()
+        return {"result": "already" if after == before else "updated", "before": before, "after": after}
+    finally:
+        set_phase("idle")
+
+
 class Handler(BaseHTTPRequestHandler):
     server_version = "claude_connect/1"
 
@@ -488,9 +562,11 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_index()
             elif path == "/connect/state":
                 self.send_json(200, {**observe(), "phase": progress["phase"], "deploy": dict(deploy_job),
-                                     "disk_free_gb": disk_free_gb(), "observed_at": now_iso()})
+                                     "update": dict(update_job), "disk_free_gb": disk_free_gb(), "observed_at": now_iso()})
             elif path == "/connect/deploy":
                 self.send_json(200, {**deploy_preview(), "observed_at": now_iso()})
+            elif path == "/connect/update":
+                self.send_json(200, {**update_preview(), "observed_at": now_iso()})
             else:
                 self.send_json(404, {"error": "not found"})
         except Exception as e:  # ハンドラで落とさない
@@ -519,6 +595,14 @@ class Handler(BaseHTTPRequestHandler):
                     self.send_json(409, {"error": "別の操作が進行中です。終わってからもう一度押してください"})
                     return
                 self.send_json(202, {"result": "started", "started_at": deploy_job["started_at"], "observed_at": now_iso()})
+            elif path == "/connect/update":
+                if update_job["running"]:
+                    self.send_json(202, {"result": "started", "started_at": update_job["started_at"], "observed_at": now_iso()})
+                    return
+                if not start_update_job():
+                    self.send_json(409, {"error": "別の操作が進行中です。終わってからもう一度押してください"})
+                    return
+                self.send_json(202, {"result": "started", "started_at": update_job["started_at"], "observed_at": now_iso()})
             else:
                 self.send_json(404, {"error": "not found"})
         except ValueError as e:
