@@ -346,6 +346,7 @@ function X(R,t){ return (t-R.t0)*pxPerSec; }
 function T(R,x){ return R.t0 + x/pxPerSec; }
 function clipAt(t){ for(var i=0;i<clips.length;i++){ if(clips[i][0]<=t&&t<clips[i][1]) return i; } return -1; }
 function setStatus(s){ if(elStat) elStat.textContent=s; }
+function scheduleSave(){ setStatus('未保存'); }   /* C-5 で本実装に置き換える */
 
 function build(){
   host.innerHTML=''; rows=[];
@@ -501,6 +502,116 @@ function closeMenu(){ if(pbox){ pbox.remove(); pbox=null; } }
 function esc(t){ return String(t).replace(/[&<>]/g,function(c){
   return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; }); }
 
+/* ---- 編集操作（C-3）。すべて Undo できる ---- */
+function snapshot(){ return JSON.stringify({c:clips,u:units,p:pendingStart}); }
+function restore(s){ var d=JSON.parse(s); clips=d.c; units=d.u; pendingStart=d.p; }
+function pushUndo(){ undoStack.push(snapshot()); if(undoStack.length>200)undoStack.shift(); redoStack=[]; }
+function undo(){ if(!undoStack.length){ setStatus('取り消す操作がありません'); return; }
+  redoStack.push(snapshot()); restore(undoStack.pop()); selCi=-1; lastOp='undo'; afterEdit(true); }
+function redo(){ if(!redoStack.length) return;
+  undoStack.push(snapshot()); restore(redoStack.pop()); selCi=-1; lastOp='redo'; afterEdit(true); }
+function afterEdit(rebuildRows){
+  clips.sort(function(a,b){return a[0]-b[0];});
+  if(rebuildRows){ build(); } else { renderBars(); styleUnits(); movePlayhead(); }
+  scheduleSave();
+}
+function normalizeClips(){
+  /* 重なりは1本に統合する */
+  clips.sort(function(a,b){return a[0]-b[0];});
+  var out=[];
+  clips.forEach(function(c){
+    if(out.length&&c[0]<=out[out.length-1][1]+EPS){
+      out[out.length-1][1]=Math.max(out[out.length-1][1],c[1]);
+    }else out.push([c[0],c[1]]);
+  });
+  clips=out;
+}
+function markStart(t){
+  var ci=clipAt(t);
+  if(ci>=0){
+    /* 切り抜きの中で S ＝ その時点で分割（原文 L17） */
+    var c=clips[ci];
+    if(t-c[0]<MINW||c[1]-t<MINW){ setStatus('端に近すぎて分割できません'); return; }
+    pushUndo(); lastOp='split@'+t.toFixed(1);
+    clips.splice(ci,1,[c[0],t],[t,c[1]]); selCi=-1; afterEdit();
+    setStatus('切り抜きを分割しました');
+  }else{
+    pushUndo(); lastOp='start@'+t.toFixed(1);
+    pendingStart=t; afterEdit();
+    setStatus('開始を指定しました（終了位置で E）');
+  }
+}
+function markEnd(t){
+  if(pendingStart!=null){
+    if(t<=pendingStart+MINW){ setStatus('終了は開始より後にしてください'); return; }
+    pushUndo(); lastOp='clip@'+pendingStart.toFixed(1)+'-'+t.toFixed(1);
+    clips.push([pendingStart,t]); pendingStart=null;
+    normalizeClips(); selCi=-1; afterEdit();
+    setStatus('切り抜きを追加しました');
+    return;
+  }
+  var ci=clipAt(t);
+  if(ci>=0){
+    if(t-clips[ci][0]<MINW){ setStatus('終了は開始より後にしてください'); return; }
+    pushUndo(); lastOp='end@'+t.toFixed(1);
+    clips[ci][1]=t; selCi=-1; afterEdit();
+    setStatus('終了を指定しました（外側は空白になります）');
+  }else setStatus('先に S で開始を指定してください');
+}
+function joinGap(t){
+  /* 空白で「この間を詰める」＝前後の切り抜きを1本に結合する（原文 L23） */
+  if(clipAt(t)>=0){ setStatus('ここは切り抜きの中です'); return; }
+  var prev=null, next=null;
+  clips.forEach(function(c,i){
+    if(c[1]<=t&&(prev===null||c[1]>clips[prev][1])) prev=i;
+    if(c[0]>=t&&(next===null||c[0]<clips[next][0])) next=i;
+  });
+  if(prev===null||next===null){ setStatus('この空白の前後に切り抜きがありません'); return; }
+  pushUndo(); lastOp='join@'+t.toFixed(1);
+  var a=clips[prev][0], b=clips[next][1];
+  clips=clips.filter(function(c,i){return i!==prev&&i!==next;});
+  clips.push([a,b]); pendingStart=null;
+  normalizeClips(); selCi=-1; afterEdit();
+  setStatus('つなげて1つの切り抜きにしました');
+}
+function deleteSel(){
+  if(selCi<0){ setStatus('切り抜きをクリックして選択してから Delete'); return; }
+  pushUndo(); lastOp='unclip';
+  clips.splice(selCi,1); selCi=-1; afterEdit();
+  setStatus('切り抜きを解除しました（音は消えていません。S/E で指定し直せます）');
+}
+
+/* 端のドラッグ調整 */
+var dragging=null;
+function edgesAt(R,x){
+  var out=[];
+  clips.forEach(function(c,ci){
+    if(c[1]<=R.t0||c[0]>=R.t1) return;
+    if(c[0]>=R.t0-1e-9&&Math.abs(x-X(R,c[0]))<8) out.push({ci:ci,which:0});
+    if(c[1]<=R.t1+1e-9&&Math.abs(x-X(R,c[1]))<8) out.push({ci:ci,which:1});
+  });
+  return out;
+}
+document.addEventListener('mousemove',function(ev){
+  if(!dragging) return;
+  var R=dragging.R;
+  var t=T(R, ev.clientX-R.strip.getBoundingClientRect().left);
+  var c=clips[dragging.ci]; if(!c) return;
+  if(dragging.which===0){
+    var lo=0;
+    clips.forEach(function(o,i){ if(i!==dragging.ci&&o[1]<=c[1]&&o[1]>lo) lo=o[1]; });
+    c[0]=Math.min(Math.max(t,lo),c[1]-MINW);
+  }else{
+    var hi=D.duration;
+    clips.forEach(function(o,i){ if(i!==dragging.ci&&o[0]>=c[0]&&o[0]<hi) hi=o[0]; });
+    c[1]=Math.max(Math.min(t,hi),c[0]+MINW);
+  }
+  renderBars(); styleUnits(); movePlayhead();
+});
+document.addEventListener('mouseup',function(){
+  if(dragging){ dragging=null; lastOp='trim'; scheduleSave(); }
+});
+
 function bindStrip(R){
   R.strip.addEventListener('mousemove',function(ev){
     var x=ev.clientX-R.strip.getBoundingClientRect().left;
@@ -520,9 +631,15 @@ function bindStrip(R){
     var t=T(R, ev.clientX-R.strip.getBoundingClientRect().left);
     openCtx(t, ev.clientX, ev.clientY, ev.target.closest('.cu'));
   });
+  R.strip.addEventListener('mousemove',function(ev){
+    var x=ev.clientX-R.strip.getBoundingClientRect().left;
+    R.strip.style.cursor=edgesAt(R,x).length?'ew-resize':'crosshair';
+  });
   R.strip.addEventListener('mousedown',function(ev){
     ev.preventDefault(); closeMenu();
     var x=ev.clientX-R.strip.getBoundingClientRect().left;
+    var cand=edgesAt(R,x);
+    if(cand.length){ pushUndo(); dragging={R:R,ci:cand[0].ci,which:cand[0].which}; return; }
     playhead=T(R,x);
     selCi=clipAt(playhead);
     renderBars(); movePlayhead();
@@ -537,15 +654,18 @@ host.addEventListener('click',function(ev){
   if(playing) audio.currentTime=playhead;
 });
 
-/* メニュー（C-3/C-4 で項目が増える） */
+/* 右クリックメニュー。即実行しない作法は1次編集と同じ（オーナー指示 2026-08-05） */
 function openCtx(t,cx,cy,cuEl){
   closeMenu();
   pbox=document.createElement('div'); pbox.className='pbox';
   pbox.style.left=Math.min(cx,window.innerWidth-280)+'px';
-  pbox.style.top=Math.min(cy+8,window.innerHeight-220)+'px';
-  var items=window.clipMenuItems?window.clipMenuItems(t,cuEl):[];
+  pbox.style.top=Math.min(cy+8,window.innerHeight-260)+'px';
+  var items=[{a:'play',label:'ここから再生'},
+             {a:'start',label:'ここを開始にする（S）'},
+             {a:'end',label:'ここを終了にする（E）'}];
+  if(clipAt(t)<0) items.push({a:'join',label:'この間を詰める（前後をつなげる）'});
+  if(window.clipTextMenu) items=items.concat(window.clipTextMenu(t,cuEl));
   var html='<b>'+fmtAbs(t)+'</b><div class="btns" style="flex-direction:column;align-items:stretch">';
-  html+='<button data-a="play">ここから再生</button>';
   items.forEach(function(it){ html+='<button data-a="'+it.a+'">'+esc(it.label)+'</button>'; });
   html+='<button data-a="close">閉じる</button></div>';
   pbox.innerHTML=html;
@@ -554,8 +674,11 @@ function openCtx(t,cx,cy,cuEl){
     b.onclick=function(){
       var act=b.dataset.a; closeMenu();
       if(act==='play'){ playhead=t; movePlayhead(); play(); }
+      else if(act==='start'){ markStart(t); }
+      else if(act==='end'){ markEnd(t); }
+      else if(act==='join'){ joinGap(t); }
       else if(act==='close'){ }
-      else if(window.clipMenuRun){ window.clipMenuRun(act,t,cuEl); }
+      else if(window.clipTextRun){ window.clipTextRun(act,t,cuEl); }
     };
   });
 }
@@ -566,9 +689,17 @@ document.addEventListener('mousedown',function(ev){
 document.addEventListener('keydown',function(e){
   if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA') return;
   if(e.code==='Space'){ e.preventDefault(); playing?stop():play(); }
+  else if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='z'){ e.preventDefault(); e.shiftKey?redo():undo(); }
   else if((e.metaKey||e.ctrlKey)&&(e.key==='='||e.key==='+')){ e.preventDefault(); setZoom(pxPerSec*1.4); }
   else if((e.metaKey||e.ctrlKey)&&e.key==='-'){ e.preventDefault(); setZoom(pxPerSec/1.4); }
-  else if(window.clipKeys){ window.clipKeys(e); }
+  /* S＝開始・E＝終了（原文 L17-18）。現在時刻バーの位置に効く。
+     マウスが行の上にあるときはその位置を優先する（⌘D と同じ考え方） */
+  else if(!e.metaKey&&!e.ctrlKey&&!e.altKey&&e.key.toLowerCase()==='s'){
+    e.preventDefault(); markStart(hoverT!=null?hoverT:playhead); }
+  else if(!e.metaKey&&!e.ctrlKey&&!e.altKey&&e.key.toLowerCase()==='e'){
+    e.preventDefault(); markEnd(hoverT!=null?hoverT:playhead); }
+  else if(e.key==='Delete'||e.key==='Backspace'){ e.preventDefault(); deleteSel(); }
+  else if(e.key==='Escape'&&pendingStart!=null){ pendingStart=null; renderBars(); setStatus('開始指定を取り消しました'); }
 });
 
 function setZoom(v){
@@ -580,6 +711,9 @@ if(elBtn) elBtn.onclick=function(){ playing?stop():play(); };
 var zi=root.querySelector('.tlzin'), zo=root.querySelector('.tlzout');
 if(zi) zi.onclick=function(){ setZoom(pxPerSec*1.4); };
 if(zo) zo.onclick=function(){ setZoom(pxPerSec/1.4); };
+var ub=root.querySelector('.tlundo'), rb=root.querySelector('.tlredo');
+if(ub) ub.onclick=undo;
+if(rb) rb.onclick=redo;
 var sp=root.querySelector('.tlspeed');
 if(sp){
   sp.value=localStorage.getItem('tl_rate')||'1';
