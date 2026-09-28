@@ -3145,6 +3145,103 @@ def render_clip_videos(idv, key):
     return page(f"動画の作成 {idv}", "".join(parts))
 
 
+# セグメント参考(C-12)の生成プロセス。key=(ID, clipkey) → subprocess.Popen
+CLIP_SUGGESTS = {}
+
+
+def start_clip_suggest(idv, key):
+    """セグメント参考（AI 候補）の生成を開始する。再実行＝再生成で丸ごと差し替え（原文 L95）。"""
+    import subprocess
+    if idv not in list_ids() or not re.fullmatch(r"[0-9a-f]{12}_[0-9a-f]{8}", key or ""):
+        return "bad_id"
+    k = (idv, key)
+    p = CLIP_SUGGESTS.get(k)
+    if p is not None and p.poll() is None:
+        return "already_running"
+    root = os.path.dirname(HERE)
+    # openai SDK は README 規約の .venv-openai を優先（無ければ他で試し、
+    # スクリプト側が明示エラーを出す）
+    cands = [os.path.join(root, ".venv-openai", "bin", "python"),
+             os.path.join(root, "venv", "bin", "python"), _sys.executable]
+    py = next((c for c in cands if os.path.isfile(c)), _sys.executable)
+    base = os.path.join(DATA_DIR, idv)
+    gen = idpaths.gen_dir(base)
+    logf = open(os.path.join(gen, f"clip_{key}_suggest.log"), "w", encoding="utf-8")
+    CLIP_SUGGESTS[k] = subprocess.Popen(
+        [py, os.path.join(root, "scripts", "suggest_clips.py"), idv, "--key", key],
+        cwd=root, stdout=logf, stderr=subprocess.STDOUT)
+    return "started"
+
+
+def clip_suggest_status(idv, key):
+    p = CLIP_SUGGESTS.get((idv, key))
+    if p is None:
+        return "none"
+    if p.poll() is None:
+        return "running"
+    if p.returncode != 0:
+        # 失敗理由（キー無し・SDK無し等）はログの最終行をそのまま UI に見せる
+        try:
+            gen = idpaths.gen_dir(os.path.join(DATA_DIR, idv))
+            with open(os.path.join(gen, f"clip_{key}_suggest.log"), encoding="utf-8") as f:
+                lines = [ln for ln in f.read().splitlines() if ln.strip()]
+            return "failed:" + (lines[-1][-200:] if lines else str(p.returncode))
+        except Exception:
+            return f"failed({p.returncode})"
+    return "done"
+
+
+def render_clip_suggestions(idv, key):
+    """切り抜き編集画面の見出し直下に出す「セグメント参考」（C-12・原文 L86-95）。"""
+    base = os.path.join(DATA_DIR, idv)
+    sug = _load_json(idpaths.find(base, f"clip_{key}_suggestions.json"), None)
+
+    def ts2(t):
+        m3 = int(t // 60)
+        return f"{m3}:{t - m3 * 60:05.2f}"
+
+    items = []
+    for it in (sug or {}).get("suggestions", []):
+        try:
+            s3, e3 = float(it["s"]), float(it["e"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        dm, ds = divmod(int(round(e3 - s3)), 60)
+        items.append(
+            "<div class='sugitem'>"
+            f"<div class='sugtitle'>・{esc(it.get('title'))}</div>"
+            f"<div class='sugtime'><a onclick='window.clipTL&&clipTL.setPlayhead({s3:.3f})'>"
+            f"{ts2(s3)}〜{ts2(e3)}（{dm}分{ds:02d}秒）</a></div>"
+            f"<div class='sugtext'>{esc(it.get('text'))}</div></div>")
+    label = "再生成" if items else "セグメント参考を生成"
+    body = "".join(items) if items else (
+        "<div class='meta'>AI による切り抜き候補（5〜10件・見出し/範囲/全文）をここに出します。</div>")
+    js = (
+        "<script>"
+        "function clipSuggest(){var q=new URLSearchParams(location.search);"
+        "var el=document.getElementById('sugstat');var b=document.getElementById('sugbtn');"
+        "b.disabled=true;el.textContent='生成中…（1分前後かかります）';"
+        "fetch(window.APP+'/clip_suggest?id='+encodeURIComponent(q.get('id'))"
+        "+'&key='+encodeURIComponent(q.get('key')),{method:'POST'})"
+        ".then(function(r){return r.text();}).then(function(st){"
+        "if(st!=='started'&&st!=='already_running'){b.disabled=false;"
+        "el.textContent='開始できません: '+st;return;}"
+        "var iv=setInterval(function(){"
+        "fetch(window.APP+'/clip_suggest_status?id='+encodeURIComponent(q.get('id'))"
+        "+'&key='+encodeURIComponent(q.get('key')))"
+        ".then(function(r){return r.text();}).then(function(s){"
+        "if(s==='done'){clearInterval(iv);location.reload();}"
+        "else if(s.indexOf('failed')===0){clearInterval(iv);b.disabled=false;"
+        "el.textContent='生成できません: '+s.slice(7);}});},3000);})"
+        ".catch(function(){b.disabled=false;el.textContent='サーバーに接続できません';});}"
+        "</script>")
+    return (
+        "<div class='sugbox'><div class='sughd'><b>セグメント参考</b>"
+        f"<button class='gbtn' id='sugbtn' onclick='clipSuggest()'>{label}</button>"
+        "<span id='sugstat' class='meta'></span></div>"
+        f"{body}</div>{js}")
+
+
 def render_clip(idv, key):
     """切り抜き編集画面（CLIP_PLAN C-2〜C-4）。機能はセグメント決定とテキスト修正の
     2つだけに絞る（原文 L64）。タイムラインは凍結版の編集後時間軸で隙間なく連続。"""
@@ -3166,6 +3263,8 @@ def render_clip(idv, key):
         f"　尺 {m}分{s2:02d}秒"
         f"　<a class='gbtn' href='{approot()}/clip_videos?id={urllib.parse.quote(idv)}"
         f"&key={urllib.parse.quote(key)}'>動画の作成 →</a></p>",
+        # 見出し直下に AI のセグメント参考（C-12・原文 L86-95）
+        render_clip_suggestions(idv, key),
     ]
     if not audio_ok:
         parts.append("<p class='meta' id='srcwait'>凍結音源を生成中です…（できあがると自動で表示が変わります）</p>")
@@ -3381,6 +3480,18 @@ def route_clip():
     if content is None:
         return _html(page("404", f"<h1>404</h1><a href='{approot()}/'>一覧へ</a>"), 404)
     return _html(content)
+
+
+@app.post("/clip_suggest")
+def route_clip_suggest():
+    st = start_clip_suggest(request.args.get("id") or "", request.args.get("key") or "")
+    return _text(st)
+
+
+@app.get("/clip_suggest_status")
+def route_clip_suggest_status():
+    return _text(clip_suggest_status(request.args.get("id") or "",
+                                     request.args.get("key") or ""))
 
 
 @app.post("/clip_render")
