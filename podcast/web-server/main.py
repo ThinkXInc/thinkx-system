@@ -1176,6 +1176,15 @@ def page(title, body):
         "document.addEventListener('DOMContentLoaded',function(){"
         "var on=localStorage.getItem('nr_on')==='1';"
         "document.querySelectorAll('.nrtoggle').forEach(function(c){c.checked=on;});});"
+        # 「切り抜きを作成」: 現在の編集状態を凍結して切り抜き編集画面へ（CLIP_PLAN C-1）
+        "function clipCreate(sid,idx){var idv=new URLSearchParams(location.search).get('id');"
+        "var el=document.getElementById('rst'+idx);el.textContent='凍結中…';"
+        "fetch(window.APP+'/clip_create?id='+encodeURIComponent(idv)+'&sid='+encodeURIComponent(sid),"
+        "{method:'POST'}).then(function(r){return r.text();}).then(function(t){"
+        "if(t.indexOf('ok:')!==0){el.textContent='切り抜きを作成できません: '+t;return;}"
+        "location.href=window.APP+'/clip?id='+encodeURIComponent(idv)"
+        "+'&key='+encodeURIComponent(t.slice(3));})"
+        ".catch(function(){el.textContent='サーバーに接続できません';});}"
         "function renderSeg(sid,idx){var idv=new URLSearchParams(location.search).get('id');"
         "var el=document.getElementById('rst'+idx);"
         "var st=window.tlState?window.tlState(sid):null;"
@@ -1849,6 +1858,9 @@ def render_id(idv):
         # ボタンは1つ。完了したらブラウザのダウンロードとして自動で落ちてくる
         # （リンク列・プレーヤーは出さない。オーナー指示・2026-08-08）
         _sid = sg.get("sid") or ""
+        # 「切り抜きを作成」は本番使用チェックが付いたものにだけ出す（CLIP_PLAN・原文 L08-09）
+        _clip_btn = (f"　<button onclick=\"clipCreate('{_sid}',{idx})\">切り抜きを作成</button>"
+                     if sg.get("production") else "")
         parts.append(
             f"<p class='meta'><button onclick=\"renderSeg('{_sid}',{idx})\">この編集で書き出す（m4a）</button>"
             f"　<label><input type='checkbox' class='nrtoggle' onchange='nrToggle(this)'> ノイズ除去</label>"
@@ -1856,7 +1868,17 @@ def render_id(idv):
             f" onchange=\"segFlag('production',{idx},'{_sid}',this)\"> 本番使用</label>"
             f"　<label><input type='checkbox'{' checked' if sg.get('delivered') else ''}"
             f" onchange=\"segFlag('delivered',{idx},'{_sid}',this)\"> 配信済み</label>"
+            f"{_clip_btn}"
             f"　<span id='rst{idx}' class='meta'></span></p>")
+        # 凍結版の一覧。1次編集を変えた後でも古い切り抜き編集へここから到達できる
+        if sg.get("production"):
+            vers = list_clip_versions(idv, _sid)
+            if vers:
+                links = "　".join(
+                    f"<a href='{approot()}/clip?id={urllib.parse.quote(idv)}&key={urllib.parse.quote(v['key'])}'>"
+                    f"切り抜き編集 {esc((v['created_at'] or '')[:16].replace('T', ' '))}"
+                    f"（{v['nclips']}本）</a>" for v in vers)
+                parts.append(f"<p class='meta editlink'>{links}</p>")
 
         # 要約: segments.json の summary（現在の切り出し内容から作り直したもの）を優先。
         # レビューは表示しない。見出しラベルも付けず本文だけ。
@@ -1967,6 +1989,216 @@ def set_seg_flag(idv, sid, field, on):
         json.dump(seg, f, ensure_ascii=False, indent=2)
     _queue_for_sync(seg_path, os.path.join(idpaths.edit_dir(base), "segments_history.jsonl"))
     return True
+
+
+# ---------- 切り抜き（CLIP_PLAN）----------
+# 設計の正本は podcast/CLIP_PLAN.md、仕様原文は docs/CLIP_SPEC_20260928_原文.md。
+# 「切り抜きを作成」を押した瞬間の1次編集状態（区間+drops）を凍結し、
+# clipkey = <sid>_<hash8> に紐づける。1次編集を後から変えても既存の切り抜き編集には
+# 影響しない（別の clipkey = 別の切り抜き編集画面になる。原文 L73-78）。
+# 既存の segments.json には一切書き込まない（大原則1）。
+
+CLIP_UNIT_GAP = 0.8        # 字幕ユニットの区切り: この秒数以上の間隔（オーナー裁定 2026-09-28）
+CLIP_UNIT_PUNCT = "。．！？!?"
+
+
+def clip_key_of(sg):
+    """凍結キー。1次編集の状態（区間+drops）が変わると別のキーになる。"""
+    import hashlib
+    canon = json.dumps({"segStart": round(float(sg["start_sec"]), 3),
+                        "segEnd": round(float(sg["end_sec"]), 3),
+                        "drops": sorted([round(float(a), 3), round(float(b), 3)]
+                                        for a, b in (sg.get("drops") or []))},
+                       sort_keys=True)
+    h8 = hashlib.sha256(canon.encode("utf-8")).hexdigest()[:8]
+    return f"{sg.get('sid')}_{h8}"
+
+
+def build_clip_source(idv, sg):
+    """凍結スナップショット（clip_<key>_source.json の中身）を作る。
+    transcript の単語を drops で間引き、編集後時間軸（カットを詰めた連続時間）へ再配置し、
+    字幕ユニット（0.8秒以上の間隔または句読点で区切った文字のまとまり）にまとめる。"""
+    import datetime
+    base = os.path.join(DATA_DIR, idv)
+    tr = _load_json(idpaths.find(base, "transcript.json"), {})
+    s, e = float(sg["start_sec"]), float(sg["end_sec"])
+    drops = sorted([[max(s, float(a)), min(e, float(b))] for a, b in (sg.get("drops") or [])
+                    if float(b) > s and float(a) < e])
+    # keep 区間と、各 keep の編集後開始オフセット
+    keeps, t = [], s
+    for a, b in drops:
+        if a - t > 0.01:
+            keeps.append([t, a])
+        t = max(t, b)
+    if e - t > 0.01:
+        keeps.append([t, e])
+    kmap, acc = [], 0.0
+    for a, b in keeps:
+        kmap.append((a, b, acc))
+        acc += b - a
+
+    def remap(t0):
+        for a, b, off in kmap:
+            if a <= t0 <= b:
+                return off + (t0 - a)
+        return None
+
+    words = []
+    for tseg in tr.get("segments", []):
+        for w in (tseg.get("words") or []):
+            st, en = w.get("start"), w.get("end")
+            if st is None or en is None or not (s <= st < e):
+                continue
+            tok = (w.get("word") or "").strip()
+            if not tok:
+                continue
+            mid = (float(st) + float(en)) / 2
+            if remap(mid) is None:      # カットされた単語は落とす
+                continue
+            ns, ne = remap(float(st)), remap(float(en))
+            if ns is None:
+                ns = remap(mid) - (mid - float(st))
+            if ne is None:
+                ne = ns + (float(en) - float(st))
+            words.append({"t": tok, "s": round(max(0.0, ns), 3), "e": round(max(0.0, ne), 3)})
+    words.sort(key=lambda w: w["s"])
+    units, cur = [], None
+    for w in words:
+        if cur is not None and w["s"] - cur["e"] >= CLIP_UNIT_GAP:
+            units.append(cur)
+            cur = None
+        if cur is None:
+            cur = {"s": w["s"], "e": w["e"], "t": w["t"]}
+        else:
+            cur["t"] += w["t"]
+            cur["e"] = w["e"]
+        if cur["t"] and cur["t"][-1] in CLIP_UNIT_PUNCT:
+            units.append(cur)
+            cur = None
+    if cur is not None:
+        units.append(cur)
+    return {"id": idv, "sid": sg.get("sid") or "", "key": clip_key_of(sg),
+            "created_at": datetime.datetime.now().isoformat(timespec="seconds"),
+            "seg": {"index": sg.get("index"), "title": sg.get("title") or "",
+                    "start_sec": s, "end_sec": e, "drops": drops},
+            "duration": round(acc, 3), "units": units}
+
+
+# 凍結音源の生成プロセス。key=(ID, clipkey) → subprocess.Popen
+CLIP_SOURCE_RENDERS = {}
+
+
+def start_clip_source_render(idv, key):
+    """凍結音源（generated/clip_<key>_source.m4a）をバックグラウンド生成する。"""
+    import subprocess
+    base = os.path.join(DATA_DIR, idv)
+    if os.path.isfile(idpaths.find(base, f"clip_{key}_source.m4a")):
+        return "done"
+    k = (idv, key)
+    p = CLIP_SOURCE_RENDERS.get(k)
+    if p is not None and p.poll() is None:
+        return "already_running"
+    root = os.path.dirname(HERE)
+    py = os.path.join(root, "venv", "bin", "python")
+    if not os.path.isfile(py):
+        py = _sys.executable
+    gen = idpaths.gen_dir(base)
+    logf = open(os.path.join(gen, f"clip_{key}_source.log"), "w", encoding="utf-8")
+    CLIP_SOURCE_RENDERS[k] = subprocess.Popen(
+        [py, os.path.join(root, "scripts", "make_clip_source.py"), idv, "--key", key],
+        cwd=root, stdout=logf, stderr=subprocess.STDOUT)
+    return "started"
+
+
+def create_clip(idv, sid):
+    """「切り抜きを作成」。現在の1次編集状態を凍結して clipkey を返す。
+    同じ状態の凍結が既にあればそれをそのまま使う（再凍結しない）。"""
+    import datetime
+    if idv not in list_ids() or not sid:
+        return None
+    base = os.path.join(DATA_DIR, idv)
+    seg = _load_json(idpaths.find(base, "segments.json"), {})
+    sg = next((x for x in seg.get("segments", []) if x.get("sid") == sid), None)
+    # ボタンは本番使用にしか出ないが、サーバー側でも守る（原文 L08-09）
+    if sg is None or not sg.get("production"):
+        return None
+    key = clip_key_of(sg)
+    src_path = idpaths.find(base, f"clip_{key}_source.json")
+    if not os.path.isfile(src_path):
+        try:
+            journal = os.path.join(idpaths.edit_dir(base), "edit_save_journal.jsonl")
+            with open(journal, "a", encoding="utf-8") as f:
+                f.write(json.dumps({"at": datetime.datetime.now().isoformat(timespec="milliseconds"),
+                                    "payload": {"op": "clip_create", "id": idv, "sid": sid,
+                                                "key": key}}, ensure_ascii=False) + "\n")
+                f.flush()
+                os.fsync(f.fileno())
+        except Exception:
+            pass
+        source = build_clip_source(idv, sg)
+        sp = idpaths.save(base, f"clip_{key}_source.json")
+        with open(sp, "w", encoding="utf-8") as f:
+            json.dump(source, f, ensure_ascii=False, indent=2)
+        # 編集の現在状態。units は source のコピーから修正していく
+        cur = {"id": idv, "key": key, "sid": source["sid"], "title": source["seg"]["title"],
+               "created_at": source["created_at"], "clips": [],
+               "units": source["units"], "video": {}}
+        cp = idpaths.save(base, f"clip_{key}.json")
+        with open(cp, "w", encoding="utf-8") as f:
+            json.dump(cur, f, ensure_ascii=False, indent=2)
+        _queue_for_sync(sp, cp)
+    start_clip_source_render(idv, key)
+    return key
+
+
+def list_clip_versions(idv, sid):
+    """このセグメントの凍結版一覧（新しい順）。1次編集を変えた後でも古い切り抜き編集へ
+    ここから到達できる（原文 L76-77 の「版ごとに別画面」の入口）。"""
+    base = os.path.join(DATA_DIR, idv)
+    ed = os.path.join(base, idpaths.EDIT_DIR)
+    if not os.path.isdir(ed):
+        return []
+    out = []
+    for n in sorted(os.listdir(ed)):
+        if n.startswith(f"clip_{sid}_") and n.endswith("_source.json"):
+            key = n[len("clip_"):-len("_source.json")]
+            src = _load_json(os.path.join(ed, n), {})
+            cur = _load_json(os.path.join(ed, f"clip_{key}.json"), {})
+            out.append({"key": key, "created_at": src.get("created_at") or "",
+                        "nclips": len(cur.get("clips") or [])})
+    out.sort(key=lambda v: v["created_at"], reverse=True)
+    return out
+
+
+def render_clip(idv, key):
+    """切り抜き編集画面。C-1 時点では凍結内容の確認ページ（タイムラインは C-2 で実装）。"""
+    if idv not in list_ids():
+        return None
+    base = os.path.join(DATA_DIR, idv)
+    src = _load_json(idpaths.find(base, f"clip_{key}_source.json"), None)
+    if not src:
+        return None
+    cur = _load_json(idpaths.find(base, f"clip_{key}.json"), {})
+    audio = idpaths.find(base, f"clip_{key}_source.m4a")
+    audio_ok = os.path.isfile(audio)
+    dur = src.get("duration") or 0
+    m, s2 = divmod(int(round(dur)), 60)
+    parts = [
+        f"<div class='crumb'><a href='{approot()}/id?id={urllib.parse.quote(idv)}'>← 1次編集（{esc(idv)}）</a></div>",
+        f"<h1>切り抜き編集　{esc(src['seg'].get('title') or '')}</h1>",
+        f"<p class='meta'>凍結版 {esc(key)}（{esc(src.get('created_at') or '')} 作成）"
+        f"　尺 {m}分{s2:02d}秒　字幕ユニット {len(cur.get('units') or [])}"
+        f"　切り抜き {len(cur.get('clips') or [])}本</p>",
+    ]
+    if audio_ok:
+        rel = os.path.relpath(audio, DATA_DIR)
+        parts.append(f"<audio id='orig' src='{approot()}/media/{urllib.parse.quote(rel)}'"
+                     " preload='metadata' style='display:none'></audio>")
+        parts.append("<p class='meta'>凍結音源: 準備できています。</p>")
+    else:
+        parts.append("<p class='meta'>凍結音源を生成中です…（数分かかります。リロードで更新）</p>")
+    parts.append("<p class='meta'>タイムライン編集（S/E・テキスト修正）はここに実装されます（C-2〜C-4）。</p>")
+    return page(f"切り抜き編集 {idv}", "".join(parts))
 
 
 # 書き出し中のプロセス。key=(ID, index) → subprocess.Popen
@@ -2127,6 +2359,36 @@ def route_delivered():
     ok = set_seg_flag(request.args.get("id") or "", request.args.get("sid") or "",
                       "delivered", request.args.get("on") == "1")
     return _text("ok" if ok else "ng", 200 if ok else 400)
+
+
+@app.post("/clip_create")
+def route_clip_create():
+    key = create_clip(request.args.get("id") or "", request.args.get("sid") or "")
+    return _text("ok:" + key if key else "ng", 200 if key else 400)
+
+
+@app.get("/clip")
+def route_clip():
+    content = render_clip(request.args.get("id") or "", request.args.get("key") or "")
+    if content is None:
+        return _html(page("404", f"<h1>404</h1><a href='{approot()}/'>一覧へ</a>"), 404)
+    return _html(content)
+
+
+@app.get("/clip_source_status")
+def route_clip_source_status():
+    idv, key = request.args.get("id") or "", request.args.get("key") or ""
+    if idv not in list_ids() or not key:
+        return _text("ng", 400)
+    base = os.path.join(DATA_DIR, idv)
+    if os.path.isfile(idpaths.find(base, f"clip_{key}_source.m4a")):
+        return _text("done")
+    p = CLIP_SOURCE_RENDERS.get((idv, key))
+    if p is not None and p.poll() is None:
+        return _text("running")
+    if p is not None and p.returncode != 0:
+        return _text(f"failed({p.returncode})")
+    return _text("none")
 
 
 @app.get("/render_status")
