@@ -62,6 +62,15 @@
         "fr": "Nos produits",
         "ar": "منتجاتنا"
     },
+    "menu_content_kobito": {
+        "ja": "KOBITOサーバークラウド",
+        "en": "KOBITO Server Cloud",
+        "zh": "KOBITO Server Cloud",
+        "es": "KOBITO Server Cloud",
+        "ru": "KOBITO Server Cloud",
+        "fr": "KOBITO Server Cloud",
+        "ar": "KOBITO Server Cloud"
+    },
     "menu_title_blog": {
         "ja": "ブログニュース",
         "en": "Blog",
