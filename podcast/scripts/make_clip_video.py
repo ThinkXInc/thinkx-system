@@ -191,10 +191,12 @@ def main():
     ap.add_argument("--sizes", required=True,
                     help="例 1080x1920,1080x1080（clip_styles.json の key をカンマ区切り）")
     ap.add_argument("--out", default=None, help="出力パス（単一サイズのときのみ）")
+    ap.add_argument("--export", action="store_true",
+                    help="contents/clip/<KEY>/ にファイル名規則（タイトル_長さ_規格）で書き出す（C-9）")
     args = ap.parse_args()
     size_keys = [s for s in args.sizes.split(",") if s]
-    if args.out and len(size_keys) != 1:
-        sys.exit("[clipvid] --out は単一サイズのときだけ指定できます")
+    if args.out and (len(size_keys) != 1 or args.export):
+        sys.exit("[clipvid] --out は単一サイズ・--export なしのときだけ指定できます")
 
     paths = load_conf("config/paths.conf")
     root = os.environ.get("SITE_DATA_DIR") or paths.get("PODCAST_ROOT") or str(HERE / "data")
@@ -232,8 +234,16 @@ def main():
         if size is None:
             sys.exit(f"[clipvid] 未知のサイズ規格: {size_key}")
         w, h = int(size["w"]), int(size["h"])
-        out = pathlib.Path(args.out) if args.out else pathlib.Path(
-            idpaths.save(str(base), f"clip_{args.key}_preview_{args.seg}_{size_key}.mp4"))
+        if args.export:
+            # ファイル名はタイトル・長さ・サイズ規格から（原文 L71）
+            title = (cfg.get("title") or f"クリップ{args.seg + 1}").strip()
+            name = f"{safe_name(title)}_{int(dur // 60)}m{int(dur % 60):02d}s_{size_key}.mp4"
+            out = base / "contents" / "clip" / args.key / name
+        elif args.out:
+            out = pathlib.Path(args.out)
+        else:
+            out = pathlib.Path(
+                idpaths.save(str(base), f"clip_{args.key}_preview_{args.seg}_{size_key}.mp4"))
         out.parent.mkdir(parents=True, exist_ok=True)
 
         ass_path = gen / f"clip_{args.key}_{args.seg}_{size_key}.ass"
