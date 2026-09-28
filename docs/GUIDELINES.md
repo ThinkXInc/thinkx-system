@@ -458,3 +458,16 @@ Rules（records と同じ形式）
   root 側 install の削除は sudo が要るためオーナー実行(settings で sudo は deny)。
 - **再発時の確認手順**: `command -v claude` と `npm ls -g --depth=0` の版が一致するか。
   食い違えば PATH か install の二重化。`claude --version` が「native binary not installed」なら上記 install.cjs を手で実行。
+
+
+## ページを追加したら sitemap 更新をオーナーに提案する。priority は確認を仰ぐ(オーナー指示 2026-09-28)
+
+- **原文**: 「ただしページが追加されたらsitemapの更新をオーナーに提案する（優先度は確認を仰ぐ）フローを定型化しろ」
+- **解釈**: サイトにページ(ルート)を追加・公開したら、その作業のうちに sitemap.xml への追記を
+  オーナーに提案する(黙って追記もしないし、忘れもしない)。提案には URL と priority の案を添えるが、
+  priority は実行者が決めずオーナーの確認を得てから xml に書く。generate_sitemap.py は廃止済み(thinkx/docs/DECISIONS.md T-1)のため、
+  更新は sitemap.xml の直接編集で行う。対象は thinkx の sitemap.xml / sitemap_NNTM.xml / sitemap_truetechjapan.xml など
+  各サイトの sitemap 全て。
+- **文脈**: 2026-09-28、KOBITO 製品ページ(2026-09-04 公開)が sitemap に未掲載のままオーナーの指摘で追加になった。
+  同セッションで generator 廃止(xml 直接編集へ一本化)を決めた際、「ページ追加と sitemap 更新が自動で結びつかなくなる」
+  ことへの手当としてこのフローを定型化する指示が出た。
