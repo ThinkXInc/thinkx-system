@@ -1949,3 +1949,16 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   絶対パス化(/home/kaz/.npm-global/bin/claude)。あわせて setup_claude_code.sh は今も
   `sudo npm install -g`(root 導入)のままで実態と乖離(D-32: 手作業の埋めは setup へ反映が必要。
   オーナーの user 導入手順の原文待ち)。
+- 2026-09-28 上記の修正 = 案 a で同日復旧(74589cc・PR #138 → staging)。両 unit に
+  Environment=PATH=/home/kaz/.npm-global/bin:… を追記し daemon-reload + 両 unit restart。
+  実測: tmux `claude` 復活(pane pid 3957)・/connect/state = connected + session_url(pid 一致)・
+  claude 2.1.283。再ログイン・コード入力は不要だった(見込み通り)。補正: 消えていた root 側は
+  /usr/local/bin/claude(symlink)と /usr/local/lib/node_modules/@anthropic-ai 配下(/usr/bin ではない。
+  空ディレクトリ @anthropic-ai だけ残存・実害なし)。setup も同コミットで実態に合わせた:
+  setup_claude_code.sh = kaz の user install(--allow-scripts + install.cjs 復旧手順を注記)、
+  setup_webserver.sh = PATH を .bashrc 先頭挿入 + .profile 追記(末尾追記は非対話シェルに効かない)。
+  user 導入手順の原文は staging セッション記録(2026-09-28)から取得済みで原文待ちは解消。
+  staging に未コミットで残っていた docs/GUIDELINES.md +17 行(同日のオーナー指示記録)は
+  バイト一致でオーナー機へ取り込み(8821f08)、staging の deploy checkout は clean に戻した。
+  なお claude-session / claude_connect はデプロイの自動再起動対象外(2026-09-18 既知)のため、
+  unit 変更時は手動で daemon-reload + restart が要る点は変わらず。
