@@ -30,6 +30,9 @@ for lang in languages:
 for lang in languages:
     sitemap_entries.append((f"    <url>\n        <loc>https://quantz.thinkxinc.com/{lang}</loc>\n        <priority>1.0</priority>\n    </url>", 1.0))
 
+# KOBITO product page (standalone route, no language prefix)
+sitemap_entries.append((f"    <url>\n        <loc>{base_url}/products/KOBITO</loc>\n        <priority>1.0</priority>\n    </url>", 1.0))
+
 # Sort entries by priority, highest first
 sitemap_entries.sort(key=lambda x: x[1], reverse=True)
 

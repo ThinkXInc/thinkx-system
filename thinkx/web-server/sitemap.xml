@@ -19,6 +19,9 @@
         <loc>https://quantz.thinkxinc.com/ja</loc>
         <priority>1.0</priority>
     </url>    <url>
+        <loc>https://thinkxinc.com/products/KOBITO</loc>
+        <priority>1.0</priority>
+    </url>    <url>
         <loc>https://thinkxinc.com/en/mission</loc>
         <priority>0.8</priority>
     </url>    <url>
