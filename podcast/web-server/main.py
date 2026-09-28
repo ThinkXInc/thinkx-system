@@ -346,7 +346,33 @@ function X(R,t){ return (t-R.t0)*pxPerSec; }
 function T(R,x){ return R.t0 + x/pxPerSec; }
 function clipAt(t){ for(var i=0;i<clips.length;i++){ if(clips[i][0]<=t&&t<clips[i][1]) return i; } return -1; }
 function setStatus(s){ if(elStat) elStat.textContent=s; }
-function scheduleSave(){ setStatus('未保存'); }   /* C-5 で本実装に置き換える */
+
+/* ---- 保存（C-5）。1次編集と同じ三重の作法:
+   操作の瞬間に localStorage へ同期的に記録 → サーバー送信は後追い（失敗は3秒再送）→
+   サーバー側で受信ジャーナル・履歴退避・git 同期キュー ---- */
+function journalNow(){
+  try{ var k='clip_journal_'+D.key, j=JSON.parse(localStorage.getItem(k)||'[]');
+       j.push({at:Date.now(),op:lastOp,clips:clips,units:units});
+       try{ localStorage.setItem(k,JSON.stringify(j)); }
+       catch(qe){ j=j.slice(Math.floor(j.length/2));
+                  try{ localStorage.setItem(k,JSON.stringify(j)); }catch(e2){} }
+       localStorage.setItem('clip_dirty_'+D.key,'1');
+  }catch(e){}
+}
+function scheduleSave(){ journalNow(); setStatus('未保存'); clearTimeout(saveTimer); saveTimer=setTimeout(doSave,0); }
+function doSave(){
+  setStatus('保存中…');
+  var rec={id:D.id,key:D.key,op:lastOp,clips:clips,units:units};
+  lastOp='';
+  fetch(window.APP+'/clip_save',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(rec)})
+  .then(function(r){
+    if(r.ok){ setStatus('保存済み'); try{ localStorage.removeItem('clip_dirty_'+D.key); }catch(e){} }
+    else{ setStatus('保存失敗（3秒後に再送します）'); clearTimeout(saveTimer); saveTimer=setTimeout(doSave,3000); }
+  })
+  .catch(function(){ setStatus('サーバーに接続できません（3秒後に再送します）');
+    clearTimeout(saveTimer); saveTimer=setTimeout(doSave,3000); });
+}
 
 function build(){
   host.innerHTML=''; rows=[];
@@ -647,12 +673,66 @@ function bindStrip(R){
   });
 }
 
+/* ---- テキスト修正（C-4・原文 L25-29）。字幕の元になるので直せなければならない ---- */
+function editUnit(el){
+  var ui=+el.dataset.ui, u=units[ui]; if(!u) return;
+  if(el.querySelector('input')) return;
+  var inp=document.createElement('input');
+  inp.value=u.t; inp.size=Math.max(u.t.length+2,8);
+  el.textContent=''; el.appendChild(inp); inp.focus();
+  var closed=false;
+  var done=function(commit){
+    if(closed) return; closed=true;
+    var v=inp.value;
+    if(commit&&v!==u.t){
+      pushUndo(); lastOp='text@'+u.s.toFixed(1);
+      if(v.trim()===''){ units.splice(ui,1); setStatus('テキストを削除しました'); }
+      else { u.t=v; setStatus('テキストを修正しました'); }
+      afterEdit(true);
+    }else{
+      /* 取り消し。挿入直後の空ユニットはゴミになるので消す */
+      if(u.t===''){ units.splice(ui,1); }
+      build();
+    }
+  };
+  inp.addEventListener('keydown',function(ev){
+    ev.stopPropagation();
+    if(ev.key==='Enter'){ done(true); }
+    else if(ev.key==='Escape'){ done(false); }
+  });
+  inp.addEventListener('blur',function(){ done(true); });
+}
 host.addEventListener('click',function(ev){
-  var el=ev.target.closest('.cu'); if(!el||el.querySelector('input')) return;
-  var u=units[+el.dataset.ui]; if(!u) return;
-  playhead=u.s; movePlayhead();
-  if(playing) audio.currentTime=playhead;
+  var el=ev.target.closest('.cu'); if(!el) return;
+  editUnit(el);
 });
+function insertUnit(t){
+  pushUndo(); lastOp='instext@'+t.toFixed(1);
+  var next=null; units.forEach(function(u){ if(u.s>t&&(next===null||u.s<next)) next=u.s; });
+  var e=Math.min(t+3, next!==null?next:D.duration, D.duration);
+  if(e-t<0.3) e=Math.min(t+0.5,D.duration);
+  var nu={s:+t.toFixed(3),e:+e.toFixed(3),t:''};
+  units.push(nu); units.sort(function(a,b){return a.s-b.s;});
+  build();
+  var idx=units.indexOf(nu);
+  var el=root.querySelector(".cu[data-ui='"+idx+"']");
+  if(el) editUnit(el);
+}
+window.clipTextMenu=function(t,cuEl){
+  var items=[];
+  if(cuEl) items.push({a:'delunit',label:'このテキストを削除'});
+  items.push({a:'insunit',label:'ここにテキストを挿入'});
+  return items;
+};
+window.clipTextRun=function(act,t,cuEl){
+  if(act==='delunit'&&cuEl){
+    var ui=+cuEl.dataset.ui;
+    if(!units[ui]) return;
+    pushUndo(); lastOp='deltext@'+t.toFixed(1);
+    units.splice(ui,1); afterEdit(true);
+    setStatus('テキストを削除しました');
+  }else if(act==='insunit'){ insertUnit(t); }
+};
 
 /* 右クリックメニュー。即実行しない作法は1次編集と同じ（オーナー指示 2026-08-05） */
 function openCtx(t,cx,cy,cuEl){
@@ -725,6 +805,30 @@ window.addEventListener('resize',function(){
   clearTimeout(rsz); rsz=setTimeout(function(){ if(built) build(); },200);
 });
 build();
+
+/* 未保存の編集の検知と復元（1次編集と同じ作法。自動では書き換えない） */
+(function(){
+  var has=false;
+  try{ has=!!(localStorage.getItem('clip_dirty_'+D.key)
+        && JSON.parse(localStorage.getItem('clip_journal_'+D.key)||'[]').length); }catch(e){}
+  if(!has) return;
+  setStatus('未保存の編集があります');
+  var rb2=document.createElement('button');
+  rb2.textContent='未保存の編集を復元';
+  rb2.onclick=function(){
+    try{
+      var jj=JSON.parse(localStorage.getItem('clip_journal_'+D.key)||'[]');
+      if(!jj.length){ setStatus('復元できる編集がありません'); return; }
+      pushUndo(); lastOp='restore-unsaved';
+      var last=jj[jj.length-1];
+      clips=(last.clips||[]).map(function(c){return [+c[0],+c[1]];});
+      units=(last.units||[]).map(function(u){return {s:+u.s,e:+u.e,t:String(u.t)};});
+      selCi=-1; afterEdit(true); rb2.remove();
+    }catch(e){ setStatus('復元に失敗しました'); }
+  };
+  var bar=root.querySelector('.tlbar');
+  if(bar) bar.appendChild(rb2);
+})();
 
 /* C-3〜C-5 が使う内部状態への窓口 */
 window.clipTL={
@@ -2602,6 +2706,78 @@ def create_clip(idv, sid):
     return key
 
 
+def apply_clip_save(payload):
+    """/clip_save: 切り抜き編集（セグメント・テキスト・動画設定）の全量保存。
+    作法は apply_timeline_save と同型: 受信ジャーナル(fsync) → 履歴退避 → 全量書き →
+    同期キュー（大原則3）。既存の segments.json には触れない。"""
+    import datetime
+    idv = str(payload.get("id") or "")
+    key = str(payload.get("key") or "")
+    if idv not in list_ids() or not re.fullmatch(r"[0-9a-f]{12}_[0-9a-f]{8}", key):
+        return False
+    base = os.path.join(DATA_DIR, idv)
+    try:
+        journal = os.path.join(idpaths.edit_dir(base), f"clip_{key}_journal.jsonl")
+        with open(journal, "a", encoding="utf-8") as f:
+            f.write(json.dumps({"at": datetime.datetime.now().isoformat(timespec="milliseconds"),
+                                "payload": payload}, ensure_ascii=False) + "\n")
+            f.flush()
+            os.fsync(f.fileno())
+    except Exception:
+        pass
+    path = idpaths.find(base, f"clip_{key}.json")
+    if not os.path.isfile(path):
+        return False
+    cur = _load_json(path, {})
+    changed = False
+    if "clips" in payload:
+        clean = []
+        for c in payload.get("clips") or []:
+            try:
+                a, b = float(c[0]), float(c[1])
+            except (TypeError, ValueError, IndexError):
+                return False
+            if b > a:
+                clean.append([round(a, 3), round(b, 3)])
+        cur["clips"] = sorted(clean)
+        changed = True
+    if "units" in payload:
+        clean_u = []
+        for u in payload.get("units") or []:
+            try:
+                s, e = float(u["s"]), float(u["e"])
+                t = str(u.get("t") or "")
+            except (TypeError, ValueError, KeyError):
+                return False
+            clean_u.append({"s": round(s, 3), "e": round(e, 3), "t": t})
+        cur["units"] = sorted(clean_u, key=lambda u: u["s"])
+        changed = True
+    if "video" in payload and isinstance(payload.get("video"), dict):
+        cur["video"] = payload["video"]
+        changed = True
+    if not changed:
+        return False
+    # 上書き前の内容を履歴へ退避（segments_history と同じ考え方・200件）
+    try:
+        with open(path, encoding="utf-8") as f:
+            prev = f.read()
+        hist = os.path.join(idpaths.edit_dir(base), f"clip_{key}_history.jsonl")
+        lines = []
+        if os.path.isfile(hist):
+            with open(hist, encoding="utf-8") as f:
+                lines = f.read().splitlines()
+        lines.append(json.dumps({"at": datetime.datetime.now().isoformat(timespec="seconds"),
+                                 "clip_json": prev}, ensure_ascii=False))
+        with open(hist, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines[-200:]) + "\n")
+    except Exception:
+        pass
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(cur, f, ensure_ascii=False, indent=2)
+    _queue_for_sync(path, os.path.join(idpaths.edit_dir(base), f"clip_{key}_history.jsonl"))
+    return True
+
+
 def list_clip_versions(idv, sid):
     """このセグメントの凍結版一覧（新しい順）。1次編集を変えた後でも古い切り抜き編集へ
     ここから到達できる（原文 L76-77 の「版ごとに別画面」の入口）。"""
@@ -2855,6 +3031,15 @@ def route_clip():
     if content is None:
         return _html(page("404", f"<h1>404</h1><a href='{approot()}/'>一覧へ</a>"), 404)
     return _html(content)
+
+
+@app.post("/clip_save")
+def route_clip_save():
+    try:
+        ok = apply_clip_save(request.get_json(force=True) or {})
+    except Exception:
+        ok = False
+    return _text("ok" if ok else "ng", 200 if ok else 400)
 
 
 @app.get("/clip_source_status")

@@ -854,7 +854,7 @@ def filedrop_handler():
 #################### remote_control (本番専用・KOBITO リモコンの入口)
 # 計画: infra/docs/staging_power_plan_draft.md(P-3)。
 #  - 画面: infra/claude_connect/index.html をそのまま返す(本番 web の production checkout。画面のソースは 1 つ)
-#  - 接続 API(state/session/code/deploy): staging の /connect/ へ中継する。staging LB は本番 web の固定 IP を
+#  - 接続 API(state/session/code/deploy/update): staging の /connect/ へ中継する。staging LB は本番 web の固定 IP を
 #    Basic 認証なしで通す(loadbalancer/conf.d/staging.thinkxinc.com.conf)ので、staging の認証情報は持たない
 #  - 電源(power/state|start|stop): EC2 の IAM ロール(iam.tf: staging-power)で、タグ Project=supercom & Env=staging の
 #    インスタンスだけを describe/start/stop する。.env の AWS キー(SES 用)は使わず、ロールの認証情報を明示的に取る
@@ -865,7 +865,7 @@ from datetime import datetime, timezone
 REMOTE_INDEX = '/src/thinkx-system/infra/claude_connect/index.html'
 REMOTE_STAGING_CONNECT = 'https://staging.thinkxinc.com/connect/'
 REMOTE_RELAY_CONNECT_TIMEOUT = 2  # staging 停止中は接続で即諦める。20 秒待つと 1 プロセスの uwsgi が塞がり本番全体が 504 になる(2026-09-18 障害)
-REMOTE_RELAY_TIMEOUT = {'state': 20, 'deploy': 30, 'session': 120, 'code': 120}  # 読み取りの上限。deploy は staging 側が即 202 を返す(裏で進む)
+REMOTE_RELAY_TIMEOUT = {'state': 20, 'deploy': 30, 'session': 120, 'code': 120, 'update': 30}  # 読み取りの上限。deploy / update は staging 側が即 202 を返す(裏で進む)
 STAGING_INSTANCE_FILTERS = [
     {'Name': 'tag:Project', 'Values': ['supercom']},
     {'Name': 'tag:Env', 'Values': ['staging']},
@@ -990,7 +990,7 @@ def remote_control_power_action(action):
 
 @app.route('/remote_control/<api>', methods=['GET', 'POST'])
 def remote_control_relay(api):
-    """接続 API を staging の /connect/<api> へそのまま中継する。中継先は 4 つに固定(オープンプロキシにしない)。"""
+    """接続 API を staging の /connect/<api> へそのまま中継する。中継先は 5 つに固定(オープンプロキシにしない)。"""
     denied = remote_control_guard()
     if denied:
         return denied
