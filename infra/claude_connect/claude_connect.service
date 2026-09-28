@@ -7,6 +7,9 @@ Wants=network-online.target
 Type=simple
 User=kaz
 Environment=HOME=/home/kaz
+# claude は kaz の ~/.npm-global 配下のみ(root install 廃止 2026-09-28)。systemd の既定 PATH には無い。
+# server.py の subprocess(claude auth status)と「再接続」が作る tmux の子孫の両方がこの PATH を継ぐ
+Environment=PATH=/home/kaz/.npm-global/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 WorkingDirectory=/src/thinkx-system/infra/claude_connect
 ExecStart=/usr/bin/python3 server.py
 Restart=always
