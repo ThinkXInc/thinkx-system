@@ -261,3 +261,31 @@ web-server/main.py:33  from libcommon.web.http_successes import OKAPISuccessForm
 - `2026refactor` へ push 完了（origin と同期・作業ツリー clean）＝ 達成
 - **→ 計画の完了判定を全て満たす。**
 - 残: ROADMAP のチェック更新・I-STEP2 の transformism 注記削除は**人間が行う**（計画明記・実行者は触らない）。
+
+---
+
+## 2026-09-23: 本番 /video/BWVFHDPromo1.14_compress.mp4 が 404（背景動画アセット未配布）
+
+- 事象: `https://transformism.art/video/BWVFHDPromo1.14_compress.mp4` が 404
+  （`www.transformism.com` 経由も同一）。トップページ `web-server/views/templates/index.html:135`
+  が参照する背景動画。サイト本体 `/` は 200。staging はローカルから接続不可（curl 000）で未確認。
+- 原因（3点の連鎖）:
+  1. 旧リポジトリ `.gitignore:34` の `web-server/views/video/*` により動画は git 管理外だった。
+  2. monorepo 取り込み（M-2 / ARCHIVE.md: ref `2026refactor` のツリーコピー）は git 管理の
+     ファイルだけを運んだため、`views/video/` ごと monorepo に存在しない。
+  3. `infra/scripts/push_assets.sh` は「transformism / kazukiotsukacom は動画を持たない。
+     これは正常な状態」と注記して views/video 不在サイトを黙ってスキップする。
+     実際には transformism は動画を 1 本持つ（注記が実態と食い違い）。
+- 実体の所在: 旧リポジトリ（凍結） `~/Sources/transformism/web-server/views/video/BWVFHDPromo1.14_compress.mp4`
+  （11,613,690 bytes / sha256 `4cdafd37879783f43f2cb0afc56d6f8584ce4946df129644e5d52ad4d0f1296e`）。
+- 是正経路（thinkx と同型・スクリプト変更不要）: 旧リポジトリから monorepo の
+  `transformism/web-server/views/video/` へコピーするだけで配布経路が繋がる。
+  monorepo の `transformism/.gitignore:34` に同じ除外があるので git 管理外のまま（thinkx 方式）。
+  deploy_staging.sh / deploy_production_from_develop.sh は既に push_assets.sh へ
+  transformism を渡しており、views/video が存在すれば自動で配られる。
+- 付随修正候補（人間判断）: push_assets.sh の「transformism は動画を持たない」注記の文言修正。
+- **[解決済 2026-09-28]** オーナーが旧リポジトリ→monorepo コピー + push_assets.sh を実行し本番反映。
+  実測: `https://transformism.art/video/BWVFHDPromo1.14_compress.mp4` HEAD 200 / Range 206。
+  途中経過: staging の箱(57.182.107.57:22)が停止中で初回の staging 配布は ssh timeout で失敗
+  → オーナーが staging を起動後に完走(staging LB は起動後 401=Basic 認証で正常応答を実測)。
+  付随修正候補(push_assets.sh の注記文言)は未対応のまま残る。
