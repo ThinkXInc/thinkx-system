@@ -2799,6 +2799,63 @@ def list_clip_versions(idv, sid):
 
 ASSETS_DIR = os.path.join(os.path.dirname(HERE), "assets")
 
+# 動画の生成・書き出しは当面ローカル(mac)のみ（オーナー裁定 2026-09-28。
+# フォントのライセンスとサーバー負荷のため）。サーバー機は hostname で見分ける
+# （web1-stg = staging / web1 = 本番。workspace CLAUDE.md の規約）。
+CLIP_RENDER_ENABLED = os.uname().nodename.split(".")[0] not in ("web1", "web1-stg")
+
+# 切り抜き動画の生成プロセス。key=(ID, clipkey, seg) → subprocess.Popen
+CLIP_VID_RENDERS = {}
+
+
+def start_clip_video_render(idv, key, seg, sizes, out=None):
+    """make_clip_video.py をバックグラウンドで走らせる（C-8/C-9 共用）。"""
+    import subprocess
+    if not CLIP_RENDER_ENABLED:
+        return "disabled"
+    if idv not in list_ids() or not re.fullmatch(r"[0-9a-f]{12}_[0-9a-f]{8}", key or ""):
+        return "bad_id"
+    try:
+        seg = int(seg)
+    except (TypeError, ValueError):
+        return "bad_seg"
+    if not sizes:
+        return "no_sizes"
+    k = (idv, key, seg, bool(out))
+    p = CLIP_VID_RENDERS.get(k)
+    if p is not None and p.poll() is None:
+        return "already_running"
+    root = os.path.dirname(HERE)
+    py = os.path.join(root, "venv", "bin", "python")
+    if not os.path.isfile(py):
+        py = _sys.executable
+    base = os.path.join(DATA_DIR, idv)
+    gen = idpaths.gen_dir(base)
+    logf = open(os.path.join(gen, f"clip_{key}_render_{seg}{'_export' if out else ''}.log"),
+                "w", encoding="utf-8")
+    cmd = [py, os.path.join(root, "scripts", "make_clip_video.py"), idv,
+           "--key", key, "--seg", str(seg), "--sizes", ",".join(sizes)]
+    if out:
+        cmd += ["--out", out]
+    CLIP_VID_RENDERS[k] = subprocess.Popen(cmd, cwd=root, stdout=logf,
+                                           stderr=subprocess.STDOUT)
+    return "started"
+
+
+def clip_video_render_status(idv, key, seg, export=False):
+    try:
+        seg = int(seg)
+    except (TypeError, ValueError):
+        return "bad_seg"
+    p = CLIP_VID_RENDERS.get((idv, key, seg, export))
+    if p is None:
+        return "none"
+    if p.poll() is None:
+        return "running"
+    if p.returncode != 0:
+        return f"failed({p.returncode})"
+    return "done"
+
 
 def load_clip_styles():
     """スタイル定義の正本 config/clip_styles.json（C-7）。コードにスタイル値を埋め込まない
@@ -2905,10 +2962,28 @@ def render_clip_videos(idv, key):
             f" style='width:60px' onchange='cvSave({n})'>"
             f"<button onclick='cvStep({n},1)'>＋</button>（高さ%）"
             f"　背景 <select class='cvbg' onchange='cvSave({n})'>{bg_opts}</select></p>"
-            f"<p class='meta'>書き出しサイズ {size_boxes}</p>"
-            f"<p class='meta'><button disabled title='C-8 で有効になります'>生成</button>"
+            f"<p class='meta'>書き出しサイズ {size_boxes}</p>")
+        # 生成済みプレビュー（動画の再生ウインドウ。原文 L68）。生成のたびに ?v= で更新
+        previews = []
+        for s in sizes:
+            pv = os.path.join(base, "generated", f"clip_{key}_preview_{n}_{s['key']}.mp4")
+            if os.path.isfile(pv):
+                rel = f"{idv}/generated/clip_{key}_preview_{n}_{s['key']}.mp4"
+                previews.append(
+                    f"<div style='flex:1;min-width:200px;max-width:320px'>"
+                    f"<div class='meta'>{esc(s['key'])}</div>"
+                    f"<video class='cvpv' data-size='{esc(s['key'])}' controls preload='metadata'"
+                    f" style='width:100%;max-width:320px'"
+                    f" src='{approot()}/media/{urllib.parse.quote(rel)}?v={int(os.path.getmtime(pv))}'>"
+                    "</video></div>")
+        gen_btn = (f"<button onclick='cvRender({n})'>生成</button>" if CLIP_RENDER_ENABLED
+                   else "<button disabled title='動画の生成はローカル(mac)で行います"
+                        "（オーナー裁定 2026-09-28）'>生成</button>")
+        parts.append(
+            f"<p class='meta'>{gen_btn}"
             f"　<button disabled title='C-9 で有効になります'>書き出し</button>"
             f"　<span class='cvstat meta'></span></p>"
+            f"<div class='cvpvs' style='display:flex;gap:12px;flex-wrap:wrap'>{''.join(previews)}</div>"
             "</div>")
     step = styles.get("subtitle_size_step_pct") or 0.3
     parts.append(
@@ -2935,6 +3010,31 @@ def render_clip_videos(idv, key):
         "function cvStep(n,d){var card=document.getElementById('cv'+n);"
         "var inp=card.querySelector('.cvsizepct');"
         "inp.value=(Math.round(((parseFloat(inp.value)||4.7)+d*CV_STEP)*10)/10);cvSave(n);}"
+        # 生成: 設定を保存 → make_clip_video をバックグラウンド実行 → 完了でリロード
+        # （プレビューの <video> はサーバー側がファイルの有無で組むため）
+        "function cvRender(n){var q=new URLSearchParams(location.search);"
+        "var card=document.getElementById('cv'+n);var el=card.querySelector('.cvstat');"
+        "var sizes=[].slice.call(card.querySelectorAll('.cvsize:checked')).map(function(c){return c.value;});"
+        "if(!sizes.length){el.textContent='書き出しサイズを選んでください';return;}"
+        "el.textContent='設定を保存中…';"
+        "fetch(window.APP+'/clip_save',{method:'POST',headers:{'Content-Type':'application/json'},"
+        "body:JSON.stringify({id:q.get('id'),key:q.get('key'),op:'video-settings',"
+        "video:{clips:cvCollect()}})}).then(function(){"
+        "el.textContent='生成を開始しています…';"
+        "return fetch(window.APP+'/clip_render',{method:'POST',"
+        "headers:{'Content-Type':'application/json'},"
+        "body:JSON.stringify({id:q.get('id'),key:q.get('key'),seg:n,sizes:sizes})});})"
+        ".then(function(r){return r.text();}).then(function(st){"
+        "if(st!=='started'&&st!=='already_running'){el.textContent='開始できません: '+st;return;}"
+        "el.textContent='生成中…（サイズごとに数十秒〜数分）';"
+        "var iv=setInterval(function(){"
+        "fetch(window.APP+'/clip_render_status?id='+encodeURIComponent(q.get('id'))"
+        "+'&key='+encodeURIComponent(q.get('key'))+'&seg='+n)"
+        ".then(function(r){return r.text();}).then(function(s){"
+        "if(s==='done'){clearInterval(iv);location.reload();}"
+        "else if(s.indexOf('failed')===0){clearInterval(iv);"
+        "el.textContent='生成失敗（generated/clip_…_render_'+n+'.log を確認）';}});},3000);})"
+        ".catch(function(){el.textContent='サーバーに接続できません';});}"
         "</script>")
     return page(f"動画の作成 {idv}", "".join(parts))
 
@@ -3175,6 +3275,25 @@ def route_clip():
     if content is None:
         return _html(page("404", f"<h1>404</h1><a href='{approot()}/'>一覧へ</a>"), 404)
     return _html(content)
+
+
+@app.post("/clip_render")
+def route_clip_render():
+    try:
+        d = request.get_json(force=True) or {}
+        st = start_clip_video_render(str(d.get("id") or ""), str(d.get("key") or ""),
+                                     d.get("seg"), [str(s) for s in (d.get("sizes") or [])])
+    except Exception:
+        st = "bad_request"
+    return _text(st)
+
+
+@app.get("/clip_render_status")
+def route_clip_render_status():
+    return _text(clip_video_render_status(request.args.get("id") or "",
+                                          request.args.get("key") or "",
+                                          request.args.get("seg"),
+                                          request.args.get("export") == "1"))
 
 
 @app.get("/clip_videos")
