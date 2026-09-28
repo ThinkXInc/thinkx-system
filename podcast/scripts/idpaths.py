@@ -40,6 +40,13 @@ GENERATED_FILES = {
 GENERATED_SUFFIX = ("_全文.pdf", "_校正用.pdf")
 GENERATED_CONTAINS = ("_校正用",)
 
+# 切り抜き編集(CLIP_PLAN)のファイル。clipkey を含むため名前が可変で、接頭辞+接尾辞で振り分ける。
+#   edit/      clip_<clipkey>.json / clip_<clipkey>_source.json (凍結スナップショット)
+#              clip_<clipkey>_history.jsonl / clip_<clipkey>_journal.jsonl(git 外)
+#   generated/ clip_<clipkey>_source.m4a(凍結音源) / clip_<clipkey>_preview_*.mp4
+CLIP_PREFIX = "clip_"
+CLIP_EDIT_SUFFIX = (".json", "_history.jsonl", "_journal.jsonl")
+
 EDIT_DIR = "edit"
 GEN_DIR = "generated"
 # experiments/ … 試行の産物（A/B試聴サンプル等）。generated を散らかさないための置き場
@@ -49,6 +56,8 @@ EXP_DIR = "experiments"
 
 def subdir_for(name):
     """そのファイルが入るべきサブディレクトリ名を返す。直下なら空文字。"""
+    if name.startswith(CLIP_PREFIX):
+        return EDIT_DIR if name.endswith(CLIP_EDIT_SUFFIX) else GEN_DIR
     if name in EDIT_FILES:
         return EDIT_DIR
     if name in GENERATED_FILES:

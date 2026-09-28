@@ -11,6 +11,7 @@ data/**
 !data/*/edit/
 !data/*/edit/*.json
 !data/*/edit/segments_history.jsonl
+!data/*/edit/clip_*_history.jsonl
 *.mp4
 *.m4a
 *.wav
@@ -25,6 +26,16 @@ id_*
 # OS
 .DS_Store
 .claude/worktrees/
+
+# 編集データのバックアップ(CLIP_PLAN C-0。git 外・ローカル保険)
+backup/
+
+# 切り抜き用資産(CLIP_PLAN)。フォントは大容量+ライセンス上リポジトリ配布不可がありうる。
+# 背景動画は大容量。README だけ追跡して置き場の説明を残す
+assets/fonts/*
+!assets/fonts/README.md
+assets/clip_backgrounds/*
+!assets/clip_backgrounds/README.md
 
 # ブラウザ再生用の派生音源（元音源から再生成できる）
 preview_audio.m4a
