@@ -109,7 +109,12 @@ def main():
         if e - s < 5:
             continue
         text = "".join(u["t"] for u in units if float(u["e"]) > s and float(u["s"]) < e)
-        out.append({"title": str(sg.get("title") or "").strip() or "（無題）",
+        # 見出し候補は3つ(「AはBである」形式優先。オーナー指示 2026-09-28・原文 L100)。
+        # 旧形式 title 単数も受ける
+        titles = [str(t).strip() for t in (sg.get("titles") or []) if str(t).strip()][:3]
+        if not titles:
+            titles = [str(sg.get("title") or "").strip() or "（無題）"]
+        out.append({"titles": titles, "title": titles[0],
                     "s": round(s, 3), "e": round(e, 3), "text": text})
     if not out:
         sys.exit("[clipsug] 有効な候補が得られませんでした")
