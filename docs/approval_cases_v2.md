@@ -362,9 +362,31 @@ ask と deny のルールは hook の allow に勝つ。
 - **残るゲート**: なし。
 - **同型カウント**: 引き金不明のローカル観測は AG・AJ で 2 件。次に出たら実測を先にやる。
 
+### AK. staging の再起動時刻と claude_connect の時間窓ログ(sudo bash -c で 3 コマンド)
+- **生**: `ssh supercom-web1-stg 'sudo bash -c "uptime -s; systemctl show claude-session.service -p ActiveEnterTimestamp -p ExecMainStartTimestamp; journalctl -u claude_connect.service --since \"2026-09-18 08:20\" --until \"2026-09-18 08:35\" -o cat | head -40"'`
+- **引き金**: `ssh`(ask・staging)。中の `sudo bash -c` はローカルの deny に当たらない。
+- **クラス**: 観測(サーバーが再起動した時刻・unit が上がった時刻・その前後の claude_connect の要求ログ。KOBITO リモコンの「停止→起動」の
+  通し(P-4)がいつ何をしたかの追跡)。
+- **正しい形**: `stg.py` の守備範囲。`stg.py check` は unit の状態を、`stg.py log --unit claude_connect --since-min N` は相対時刻のログを出す。
+  足りないのは (1) `uptime -s` と unit の ActiveEnterTimestamp(= 「いつ再起動したか」)、(2) `--since/--until` の絶対時刻窓。
+  この 2 つを `stg.py` に足す(時刻は `YYYY-MM-DD HH:MM` の固定書式だけ受け、それ以外は拒否。unit 名は LOG_UNITS の固定集合)。
+  wrapper があるのに生 ssh を書いたのは T・U と同じ(カタログ未整備)。
+- **残るゲート**: なし。
+- **同型カウント**: staging claude_connect の観測は **A・T・U・AK で 4 回目**。stg.py に無い項目(再起動時刻・絶対時刻窓)は 1 回目。
+
 ---
 
-## 状態と次の一手(2026-09-17)
+## 状態と次の一手(2026-09-18 セッション終了時・クローズ記録 2026-09-28)
+
+- 事例 N〜AK の 24 件。同型の回数: 本番 URL curl 7(AB 系)・着地確認 7(F/G/O/Q/Y/AF/AI)・localhost curl 6(C/E/M/V/AH)・本番 ssh 5(Q/T/U/AE/AF)・
+  staging claude_connect 4(A/T/U/AK)。全て昇格条件超過のまま wrapper 未着手、または wrapper(stg.py)があるのに未使用。
+- 要件が揃った wrapper: env 必須引数の観測 1 本(サーバーの先端コミット + 指定ファイルに指定文字列 + URL の http code / 接続時間 / IP + 容量 +
+  unit の起動時刻 + 絶対時刻窓のログ)。AH→AI→AF の 3 環境で同じ確認をしている。
+- 未決(オーナー選択待ち): 記録ファイルを無承認にする settings の変え方(事例 AA の案 1〜3)。
+- 引き金不明のローカル観測(AG・AJ)は次に出たら同じセッションで分けて実測してから記録する。
+- 議事録: `docs/discussion/discussion-2026-09-17-approval-reduction-v2.md`、`discussion-2026-09-18-approval-reduction-v2.md`。
+
+## 状態と次の一手(2026-09-17・v2 開始時)
 
 - v1 構築物は稼働中(複数行 commit の dry-run が無承認で通ることを 2026-09-17 に実測)。
 - N・O・Q は観測 wrapper の材料。O は 3 回目、「本番 URL の http code」断片は Q で 4 回目 → `verify_deploy.py` 新設が次の一手
