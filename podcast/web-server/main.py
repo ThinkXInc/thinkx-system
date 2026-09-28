@@ -2478,8 +2478,10 @@ def render_id(idv):
         # ボタンは1つ。完了したらブラウザのダウンロードとして自動で落ちてくる
         # （リンク列・プレーヤーは出さない。オーナー指示・2026-08-08）
         _sid = sg.get("sid") or ""
-        # 「切り抜きを作成」は本番使用チェックが付いたものにだけ出す（CLIP_PLAN・原文 L08-09）
-        _clip_btn = (f"　<button onclick=\"clipCreate('{_sid}',{idx})\">切り抜きを作成</button>"
+        # 切り抜きボタンは本番使用チェックが付いたものにだけ出す（CLIP_PLAN・原文 L08-09。
+        # 文言とスタイルはオーナー指示 2026-09-28・原文 L96-97）
+        _clip_btn = (f"　<button class='gbtn' onclick=\"clipCreate('{_sid}',{idx})\">"
+                     "このバージョンの切り抜き編集画面へ</button>"
                      if sg.get("production") else "")
         parts.append(
             f"<p class='meta'><button onclick=\"renderSeg('{_sid}',{idx})\">この編集で書き出す（m4a）</button>"
@@ -3042,12 +3044,12 @@ def render_clip_videos(idv, key):
                     f" src='{approot()}/media/{urllib.parse.quote(rel)}?v={int(os.path.getmtime(pv))}'>"
                     "</video></div>")
         if CLIP_RENDER_ENABLED:
-            gen_btn = f"<button onclick='cvRender({n})'>生成</button>"
-            exp_btn = f"<button onclick='cvExport({n})'>書き出し</button>"
+            gen_btn = f"<button class='gbtn' onclick='cvRender({n})'>生成</button>"
+            exp_btn = f"<button class='gbtn' onclick='cvExport({n})'>書き出し</button>"
         else:
             note = "動画の生成・書き出しはローカル(mac)で行います（オーナー裁定 2026-09-28）"
-            gen_btn = f"<button disabled title='{note}'>生成</button>"
-            exp_btn = f"<button disabled title='{note}'>書き出し</button>"
+            gen_btn = f"<button class='gbtn' disabled title='{note}'>生成</button>"
+            exp_btn = f"<button class='gbtn' disabled title='{note}'>書き出し</button>"
         # 書き出し済みファイル（このカードのタイトルで始まるもの）
         exp_dir = os.path.join(base, "contents", "clip", key)
         prefix = safe_name((cfg.get("title") or f"クリップ{n + 1}").strip())
@@ -3162,8 +3164,8 @@ def render_clip(idv, key):
         f"<h1>切り抜き編集　{esc(src['seg'].get('title') or '')}</h1>",
         f"<p class='meta'>凍結版 {esc((src.get('created_at') or '')[:16].replace('T', ' '))}"
         f"　尺 {m}分{s2:02d}秒"
-        f"　<a href='{approot()}/clip_videos?id={urllib.parse.quote(idv)}&key={urllib.parse.quote(key)}'>"
-        f"<button>動画の作成 →</button></a></p>",
+        f"　<a class='gbtn' href='{approot()}/clip_videos?id={urllib.parse.quote(idv)}"
+        f"&key={urllib.parse.quote(key)}'>動画の作成 →</a></p>",
     ]
     if not audio_ok:
         parts.append("<p class='meta' id='srcwait'>凍結音源を生成中です…（できあがると自動で表示が変わります）</p>")
