@@ -24,6 +24,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 import sys as _sys
 _sys.path.insert(0, os.path.join(os.path.dirname(HERE), "scripts"))
 import idpaths  # data/<ID>/ のファイル配置は idpaths が唯一の定義（D-002 改定）
+from render import safe_name  # 書き出しファイル名（タイトル部）の正規化を生成側と揃える
 DATA_DIR = os.path.realpath(
     os.environ.get("SITE_DATA_DIR") or os.path.join(os.path.dirname(HERE), "data")
 )
@@ -304,18 +305,50 @@ CLIP_CSS = """
 .cu:hover { background:#2563eb14; box-shadow:0 0 0 2px #2563eb22; }
 .cu input { font:inherit; color:inherit; background:#2563eb18;
             border:1px solid #2563eb88; border-radius:3px; padding:0 2px; }
-/* 切り抜きセグメント＝開始から終了までグラデーション（原文 L21） */
-.clipz { position:absolute; top:0; height:16px;
-         background-image:linear-gradient(90deg,#3f8fbf,#8a4dd8); background-repeat:no-repeat; }
-/* S（開始指定）の保留マーカー */
-.startline { position:absolute; top:-26px; bottom:-2px; width:2px; background:#22c55e;
+/* 切り抜きセグメント＝開始から終了までグラデーション（原文 L21）。
+   開始側が明るい（開始と終了を色で見分ける。オーナー指示 2026-09-28・原文 L98） */
+.clipz { position:absolute; top:0; height:24px;
+         background-image:linear-gradient(90deg,#4fb3ff,#5b39c9); background-repeat:no-repeat; }
+/* 切り抜きの間（空白）は黒（原文 L98） */
+.gapz { position:absolute; top:0; height:24px; background:#141417; }
+/* 開始端＝太い白線 / 終了端＝細い白線 */
+.clipedge-s { position:absolute; top:-4px; height:32px; width:3px; background:#ffffff;
+              pointer-events:none; z-index:2; }
+.clipedge-e { position:absolute; top:-2px; height:28px; width:2px; background:#ffffffb0;
+              pointer-events:none; z-index:2; }
+/* S（開始指定）の保留マーカー。緑は土台と紛らわしいのでオレンジ（原文 L98） */
+.startline { position:absolute; top:-26px; bottom:-2px; width:3px; background:#ff9800;
              pointer-events:none; z-index:2; }
-.startlabel { position:absolute; top:-40px; font-size:10px; font-weight:700; color:#22c55e;
+.startlabel { position:absolute; top:-40px; font-size:10px; font-weight:700; color:#ff9800;
               pointer-events:none; }
-.clipsel { position:absolute; top:-2px; height:20px; pointer-events:none;
+.clipsel { position:absolute; top:-3px; height:30px; pointer-events:none;
            box-shadow:inset 0 0 0 2px #2563eb; }
+/* 切り抜き編集のタイムラインは少し太く(24px)・土台は青緑でなくグレー（原文 L98。
+   1次編集のタイムラインには影響させない） */
+.cliptl .strip { height:24px; }
+.cliptl .barbase { height:24px; background:#4c525c; }
+.cliptl .splitline { height:30px; }
+.cliptl .lane { height:84px; }
 /* コンテナ。既存 TIMELINE_JS が拾う .tl は使わない（同じ要素を二重に組んで壊れる） */
 .cliptl { border-left:3px solid #2563eb; padding-left:9px; margin-left:-12px; }
+/* 主要導線ボタン。Google 風（オーナー指示 2026-09-28・原文 L97） */
+.gbtn { display:inline-block; background:#1a73e8; color:#fff; border:none;
+        border-radius:6px; padding:7px 16px; font-size:13px; font-weight:600;
+        font-family:inherit; letter-spacing:.02em; cursor:pointer;
+        text-decoration:none; line-height:1.5; box-shadow:0 1px 2px #0003; }
+.gbtn:hover { background:#1765cc; box-shadow:0 1px 3px #0004; text-decoration:none; }
+.gbtn:disabled { background:#dadce0; color:#80868b; cursor:default; box-shadow:none; }
+:root:not([data-theme="light"]) .gbtn:disabled { background:#3c4043; color:#9aa0a6; }
+/* セグメント参考（AI 候補。C-12） */
+.sugbox { border:1px solid #ccc4; border-radius:12px; padding:14px 18px 16px;
+          margin:14px 0 22px; }
+.sughd { display:flex; align-items:center; gap:14px; margin-bottom:6px; }
+.sughd b { font-size:15px; }
+.sugitem { margin:12px 0 0; }
+.sugtitle { font-size:15px; font-weight:700; line-height:1.6; }
+.sugtime { font-size:13px; color:#6b7280; font-variant-numeric:tabular-nums; }
+.sugtime a { color:#2563eb; cursor:pointer; }
+.sugtext { font-size:13px; line-height:1.8; opacity:.9; margin-top:2px; }
 """
 
 CLIP_JS = r"""
@@ -419,7 +452,22 @@ function renderBars(){
     var W=X(R,R.t1);
     var base=document.createElement('div'); base.className='barbase';
     base.style.left='0px'; base.style.width=W+'px'; R.strip.appendChild(base);
-    /* 切り抜きセグメント。開始→終了で1本のグラデーション。行をまたいでも
+    /* 切り抜きの間（どの切り抜きにも入らない区間）は黒（原文 L98）。
+       まだ1本も無いときは全部黒にせず土台色のまま */
+    if(clips.length){
+      var t=0;
+      clips.slice().sort(function(a,b){return a[0]-b[0];}).concat([[D.duration,D.duration]])
+        .forEach(function(c){
+          var a=Math.max(t,R.t0), b=Math.min(c[0],R.t1);
+          if(b-a>0){
+            var g=document.createElement('div'); g.className='gapz';
+            g.style.left=X(R,a)+'px'; g.style.width=Math.max(1,X(R,b)-X(R,a))+'px';
+            R.strip.appendChild(g);
+          }
+          t=Math.max(t,c[1]);
+        });
+    }
+    /* 切り抜きセグメント。開始（明）→終了（暗）で1本のグラデーション。行をまたいでも
        background-position をずらして1本につながって見えるようにする */
     clips.forEach(function(c,ci){
       var a=Math.max(c[0],R.t0), b=Math.min(c[1],R.t1);
@@ -429,6 +477,23 @@ function renderBars(){
       d.style.backgroundSize=((c[1]-c[0])*pxPerSec)+'px 100%';
       d.style.backgroundPosition=(-(a-c[0])*pxPerSec)+'px 0';
       R.strip.appendChild(d);
+      /* (a) 結合で捨てた間（drops）は切り抜きの中でも黒 */
+      (c[2]||[]).forEach(function(dr){
+        var da=Math.max(dr[0],R.t0), db=Math.min(dr[1],R.t1);
+        if(db-da<=0) return;
+        var g2=document.createElement('div'); g2.className='gapz';
+        g2.style.left=X(R,da)+'px'; g2.style.width=Math.max(1,X(R,db)-X(R,da))+'px';
+        R.strip.appendChild(g2);
+      });
+      /* 開始端＝太い白線 / 終了端＝細い白線（開始が分かりにくい問題。原文 L98） */
+      if(c[0]>=R.t0-1e-9&&c[0]<=R.t1){
+        var es=document.createElement('div'); es.className='clipedge-s';
+        es.style.left=X(R,c[0])+'px'; R.strip.appendChild(es);
+      }
+      if(c[1]>=R.t0&&c[1]<=R.t1+1e-9){
+        var ee=document.createElement('div'); ee.className='clipedge-e';
+        ee.style.left=(X(R,c[1])-2)+'px'; R.strip.appendChild(ee);
+      }
       if(ci===selCi){
         var sel=document.createElement('div'); sel.className='clipsel';
         sel.style.left=X(R,a)+'px'; sel.style.width=Math.max(1,X(R,b)-X(R,a))+'px';
@@ -2413,8 +2478,10 @@ def render_id(idv):
         # ボタンは1つ。完了したらブラウザのダウンロードとして自動で落ちてくる
         # （リンク列・プレーヤーは出さない。オーナー指示・2026-08-08）
         _sid = sg.get("sid") or ""
-        # 「切り抜きを作成」は本番使用チェックが付いたものにだけ出す（CLIP_PLAN・原文 L08-09）
-        _clip_btn = (f"　<button onclick=\"clipCreate('{_sid}',{idx})\">切り抜きを作成</button>"
+        # 切り抜きボタンは本番使用チェックが付いたものにだけ出す（CLIP_PLAN・原文 L08-09。
+        # 文言とスタイルはオーナー指示 2026-09-28・原文 L96-97）
+        _clip_btn = (f"　<button class='gbtn' onclick=\"clipCreate('{_sid}',{idx})\">"
+                     "このバージョンの切り抜き編集画面へ</button>"
                      if sg.get("production") else "")
         parts.append(
             f"<p class='meta'><button onclick=\"renderSeg('{_sid}',{idx})\">この編集で書き出す（m4a）</button>"
@@ -2797,6 +2864,287 @@ def list_clip_versions(idv, sid):
     return out
 
 
+ASSETS_DIR = os.path.join(os.path.dirname(HERE), "assets")
+
+# 動画の生成・書き出しは当面ローカル(mac)のみ（オーナー裁定 2026-09-28。
+# フォントのライセンスとサーバー負荷のため）。サーバー機は hostname で見分ける
+# （web1-stg = staging / web1 = 本番。workspace CLAUDE.md の規約）。
+CLIP_RENDER_ENABLED = os.uname().nodename.split(".")[0] not in ("web1", "web1-stg")
+
+# 切り抜き動画の生成プロセス。key=(ID, clipkey, seg) → subprocess.Popen
+CLIP_VID_RENDERS = {}
+
+
+def start_clip_video_render(idv, key, seg, sizes, export=False):
+    """make_clip_video.py をバックグラウンドで走らせる（C-8 生成 / C-9 書き出し）。"""
+    import subprocess
+    if not CLIP_RENDER_ENABLED:
+        return "disabled"
+    if idv not in list_ids() or not re.fullmatch(r"[0-9a-f]{12}_[0-9a-f]{8}", key or ""):
+        return "bad_id"
+    try:
+        seg = int(seg)
+    except (TypeError, ValueError):
+        return "bad_seg"
+    if not sizes:
+        return "no_sizes"
+    k = (idv, key, seg, export)
+    p = CLIP_VID_RENDERS.get(k)
+    if p is not None and p.poll() is None:
+        return "already_running"
+    root = os.path.dirname(HERE)
+    py = os.path.join(root, "venv", "bin", "python")
+    if not os.path.isfile(py):
+        py = _sys.executable
+    base = os.path.join(DATA_DIR, idv)
+    gen = idpaths.gen_dir(base)
+    logf = open(os.path.join(gen, f"clip_{key}_render_{seg}{'_export' if export else ''}.log"),
+                "w", encoding="utf-8")
+    cmd = [py, os.path.join(root, "scripts", "make_clip_video.py"), idv,
+           "--key", key, "--seg", str(seg), "--sizes", ",".join(sizes)]
+    if export:
+        cmd.append("--export")
+    CLIP_VID_RENDERS[k] = subprocess.Popen(cmd, cwd=root, stdout=logf,
+                                           stderr=subprocess.STDOUT)
+    return "started"
+
+
+def clip_video_render_status(idv, key, seg, export=False):
+    try:
+        seg = int(seg)
+    except (TypeError, ValueError):
+        return "bad_seg"
+    p = CLIP_VID_RENDERS.get((idv, key, seg, export))
+    if p is None:
+        return "none"
+    if p.poll() is None:
+        return "running"
+    if p.returncode != 0:
+        return f"failed({p.returncode})"
+    return "done"
+
+
+def load_clip_styles():
+    """スタイル定義の正本 config/clip_styles.json（C-7）。コードにスタイル値を埋め込まない
+    （原文 L53）。make_clip_video.py も同じファイルを読む。"""
+    return _load_json(os.path.join(os.path.dirname(HERE), "config", "clip_styles.json"), {})
+
+
+def list_clip_fonts():
+    """assets/fonts/ のフォントファイル一覧（選択肢はフォルダの中身そのまま。原文 L41）。"""
+    d = os.path.join(ASSETS_DIR, "fonts")
+    if not os.path.isdir(d):
+        return []
+    return sorted(n for n in os.listdir(d)
+                  if n.lower().endswith((".otf", ".ttf", ".ttc")))
+
+
+def list_clip_backgrounds():
+    """assets/clip_backgrounds/ の背景動画一覧（原文 L61）。"""
+    d = os.path.join(ASSETS_DIR, "clip_backgrounds")
+    if not os.path.isdir(d):
+        return []
+    return sorted(n for n in os.listdir(d)
+                  if n.lower().endswith((".mp4", ".mov", ".m4v", ".webm")))
+
+
+def clip_full_text(units, cs, ce):
+    """切り抜き区間に重なる字幕ユニットのテキスト全文。"""
+    return "".join(u.get("t") or "" for u in units
+                   if float(u["e"]) > cs and float(u["s"]) < ce)
+
+
+def render_clip_videos(idv, key):
+    """動画作成画面（CLIP_PLAN C-6）。切り抜きが時系列順に並び、コンテンツごとに
+    テキスト全文・設定ウインドウ・生成・再生・書き出しを持つ（原文 L66-69）。
+    生成・書き出しの実処理は C-8/C-9。"""
+    if idv not in list_ids():
+        return None
+    base = os.path.join(DATA_DIR, idv)
+    src = _load_json(idpaths.find(base, f"clip_{key}_source.json"), None)
+    if not src:
+        return None
+    cur = _load_json(idpaths.find(base, f"clip_{key}.json"), {})
+    clips = sorted(cur.get("clips") or [])
+    units = cur.get("units") or []
+    styles = load_clip_styles()
+    fonts = list_clip_fonts()
+    bgs = list_clip_backgrounds()
+    video = cur.get("video") or {}
+    per = video.get("clips") or {}
+    sizes = styles.get("sizes") or []
+    sub_style = (styles.get("subtitle_styles") or [{}])[0]
+    title_styles = styles.get("title_styles") or []
+    parts = [
+        f"<div class='crumb'><a href='{approot()}/clip?id={urllib.parse.quote(idv)}&key={urllib.parse.quote(key)}'>"
+        f"← 切り抜き編集</a></div>",
+        f"<h1>動画の作成　{esc(src['seg'].get('title') or '')}</h1>",
+        f"<p class='meta'>凍結版 {esc((src.get('created_at') or '')[:16].replace('T', ' '))}"
+        f"　切り抜き {len(clips)}本（タイムラインの時系列順）</p>",
+    ]
+    if not fonts:
+        parts.append("<p class='meta'>フォントがありません。assets/fonts/ にフォントファイル"
+                     "（.otf/.ttf/.ttc）を置いてください。</p>")
+    if not bgs:
+        parts.append("<p class='meta'>背景動画がありません。assets/clip_backgrounds/ に動画"
+                     "（.mp4 等）を置いてください。</p>")
+    if not clips:
+        parts.append("<p class='meta'>切り抜きがまだありません。切り抜き編集画面で S / E で"
+                     "区間を指定してください。</p>")
+    default_sizes = [s["key"] for s in sizes if s.get("default_on")]
+    for n, (cs, ce) in enumerate(clips):
+        cfg = per.get(str(n)) or {}
+        dur = ce - cs
+        m2, s2 = divmod(int(round(dur)), 60)
+        text = clip_full_text(units, cs, ce)
+        checked_sizes = cfg.get("sizes") if cfg.get("sizes") is not None else default_sizes
+        size_boxes = "".join(
+            f"<label style='margin-right:14px'><input type='checkbox' class='cvsize' value='{esc(s['key'])}'"
+            f"{' checked' if s['key'] in checked_sizes else ''} onchange='cvSave({n})'> "
+            f"{esc(s['label'])}</label>"
+            for s in sizes)
+        font_opts = "".join(
+            f"<option value='{esc(f2)}'{' selected' if cfg.get('font') == f2 else ''}>{esc(f2)}</option>"
+            for f2 in fonts) or "<option value=''>（assets/fonts が空）</option>"
+        bg_opts = "".join(
+            f"<option value='{esc(b)}'{' selected' if cfg.get('background') == b else ''}>{esc(b)}</option>"
+            for b in bgs) or "<option value=''>（assets/clip_backgrounds が空）</option>"
+        tstyle_opts = "".join(
+            f"<option value='{esc(t['key'])}'{' selected' if cfg.get('title_style') == t['key'] else ''}>"
+            f"{esc(t.get('label') or t['key'])}</option>" for t in title_styles)
+        size_pct = cfg.get("size_pct") or sub_style.get("font_size_pct") or 4.7
+        parts.append(
+            f"<div class='seg' id='cv{n}' data-cs='{cs}' data-ce='{ce}'>"
+            f"<div class='seghd'><h2><span class='rank'>{n + 1}</span>　"
+            f"{fmt_time(cs)}〜{fmt_time(ce)}　{m2}分{s2:02d}秒</h2></div>"
+            f"<div class='box summary'>{esc(text) or '（この区間にテキストがありません）'}</div>"
+            "<p class='meta'>"
+            f"タイトル <input type='text' class='cvtitle' value=\"{esc(cfg.get('title') or '')}\""
+            f" placeholder='動画の見出し（全編表示）' style='width:340px' onchange='cvSave({n})'>"
+            f"　スタイル <select class='cvtstyle' onchange='cvSave({n})'>{tstyle_opts}</select></p>"
+            "<p class='meta'>"
+            f"フォント <select class='cvfont' onchange='cvSave({n})'>{font_opts}</select>"
+            f"　字幕サイズ <button onclick='cvStep({n},-1)'>−</button>"
+            f"<input type='number' class='cvsizepct' value='{size_pct}' step='0.1' min='1' max='12'"
+            f" style='width:60px' onchange='cvSave({n})'>"
+            f"<button onclick='cvStep({n},1)'>＋</button>（高さ%）"
+            f"　背景 <select class='cvbg' onchange='cvSave({n})'>{bg_opts}</select></p>"
+            f"<p class='meta'>書き出しサイズ {size_boxes}</p>")
+        # 生成済みプレビュー（動画の再生ウインドウ。原文 L68）。生成のたびに ?v= で更新
+        previews = []
+        for s in sizes:
+            pv = os.path.join(base, "generated", f"clip_{key}_preview_{n}_{s['key']}.mp4")
+            if os.path.isfile(pv):
+                rel = f"{idv}/generated/clip_{key}_preview_{n}_{s['key']}.mp4"
+                previews.append(
+                    f"<div style='flex:1;min-width:200px;max-width:320px'>"
+                    f"<div class='meta'>{esc(s['key'])}</div>"
+                    f"<video class='cvpv' data-size='{esc(s['key'])}' controls preload='metadata'"
+                    f" style='width:100%;max-width:320px'"
+                    f" src='{approot()}/media/{urllib.parse.quote(rel)}?v={int(os.path.getmtime(pv))}'>"
+                    "</video></div>")
+        if CLIP_RENDER_ENABLED:
+            gen_btn = f"<button class='gbtn' onclick='cvRender({n})'>生成</button>"
+            exp_btn = f"<button class='gbtn' onclick='cvExport({n})'>書き出し</button>"
+        else:
+            note = "動画の生成・書き出しはローカル(mac)で行います（オーナー裁定 2026-09-28）"
+            gen_btn = f"<button class='gbtn' disabled title='{note}'>生成</button>"
+            exp_btn = f"<button class='gbtn' disabled title='{note}'>書き出し</button>"
+        # 書き出し済みファイル（このカードのタイトルで始まるもの）
+        exp_dir = os.path.join(base, "contents", "clip", key)
+        prefix = safe_name((cfg.get("title") or f"クリップ{n + 1}").strip())
+        exports = []
+        if os.path.isdir(exp_dir):
+            for fn2 in sorted(os.listdir(exp_dir)):
+                if fn2.startswith(prefix) and fn2.endswith(".mp4"):
+                    rel = f"{idv}/contents/clip/{key}/{fn2}"
+                    exports.append(f"<a href='{approot()}/media/{urllib.parse.quote(rel)}'"
+                                   f" download>{esc(fn2)}</a>")
+        exp_html = ("<p class='meta dl'>書き出し済み: " + "　".join(exports) + "</p>") if exports else ""
+        parts.append(
+            f"<p class='meta'>{gen_btn}　{exp_btn}"
+            f"　<span class='cvstat meta'></span></p>"
+            f"<div class='cvpvs' style='display:flex;gap:12px;flex-wrap:wrap'>{''.join(previews)}</div>"
+            f"{exp_html}"
+            "</div>")
+    step = styles.get("subtitle_size_step_pct") or 0.3
+    parts.append(
+        "<script>"
+        f"var CV_STEP={step};"
+        "function cvCollect(){var out={};"
+        "document.querySelectorAll('[id^=cv]').forEach(function(card){"
+        "if(!/^cv\\d+$/.test(card.id))return;var n=card.id.slice(2);"
+        "out[n]={title:card.querySelector('.cvtitle').value,"
+        "title_style:card.querySelector('.cvtstyle').value,"
+        "font:card.querySelector('.cvfont').value,"
+        "size_pct:parseFloat(card.querySelector('.cvsizepct').value)||4.7,"
+        "background:card.querySelector('.cvbg').value,"
+        "sizes:[].slice.call(card.querySelectorAll('.cvsize:checked')).map(function(c){return c.value;})};});"
+        "return out;}"
+        "function cvSave(n){var q=new URLSearchParams(location.search);"
+        "var card=document.getElementById('cv'+n);"
+        "var el=card?card.querySelector('.cvstat'):null;if(el)el.textContent='保存中…';"
+        "fetch(window.APP+'/clip_save',{method:'POST',headers:{'Content-Type':'application/json'},"
+        "body:JSON.stringify({id:q.get('id'),key:q.get('key'),op:'video-settings',"
+        "video:{clips:cvCollect()}})})"
+        ".then(function(r){if(el)el.textContent=r.ok?'保存済み':'保存失敗';})"
+        ".catch(function(){if(el)el.textContent='サーバーに接続できません';});}"
+        "function cvStep(n,d){var card=document.getElementById('cv'+n);"
+        "var inp=card.querySelector('.cvsizepct');"
+        "inp.value=(Math.round(((parseFloat(inp.value)||4.7)+d*CV_STEP)*10)/10);cvSave(n);}"
+        # 生成: 設定を保存 → make_clip_video をバックグラウンド実行 → 完了でリロード
+        # （プレビューの <video> はサーバー側がファイルの有無で組むため）
+        "function cvRender(n){var q=new URLSearchParams(location.search);"
+        "var card=document.getElementById('cv'+n);var el=card.querySelector('.cvstat');"
+        "var sizes=[].slice.call(card.querySelectorAll('.cvsize:checked')).map(function(c){return c.value;});"
+        "if(!sizes.length){el.textContent='書き出しサイズを選んでください';return;}"
+        "el.textContent='設定を保存中…';"
+        "fetch(window.APP+'/clip_save',{method:'POST',headers:{'Content-Type':'application/json'},"
+        "body:JSON.stringify({id:q.get('id'),key:q.get('key'),op:'video-settings',"
+        "video:{clips:cvCollect()}})}).then(function(){"
+        "el.textContent='生成を開始しています…';"
+        "return fetch(window.APP+'/clip_render',{method:'POST',"
+        "headers:{'Content-Type':'application/json'},"
+        "body:JSON.stringify({id:q.get('id'),key:q.get('key'),seg:n,sizes:sizes})});})"
+        ".then(function(r){return r.text();}).then(function(st){"
+        "if(st!=='started'&&st!=='already_running'){el.textContent='開始できません: '+st;return;}"
+        "el.textContent='生成中…（サイズごとに数十秒〜数分）';"
+        "var iv=setInterval(function(){"
+        "fetch(window.APP+'/clip_render_status?id='+encodeURIComponent(q.get('id'))"
+        "+'&key='+encodeURIComponent(q.get('key'))+'&seg='+n)"
+        ".then(function(r){return r.text();}).then(function(s){"
+        "if(s==='done'){clearInterval(iv);location.reload();}"
+        "else if(s.indexOf('failed')===0){clearInterval(iv);"
+        "el.textContent='生成失敗（generated/clip_…_render_'+n+'.log を確認）';}});},3000);})"
+        ".catch(function(){el.textContent='サーバーに接続できません';});}"
+        # 書き出し: チェック済みの全規格を contents/clip/<key>/ へ（原文 L70-71）
+        "function cvExport(n){var q=new URLSearchParams(location.search);"
+        "var card=document.getElementById('cv'+n);var el=card.querySelector('.cvstat');"
+        "var sizes=[].slice.call(card.querySelectorAll('.cvsize:checked')).map(function(c){return c.value;});"
+        "if(!sizes.length){el.textContent='書き出しサイズを選んでください';return;}"
+        "el.textContent='設定を保存中…';"
+        "fetch(window.APP+'/clip_save',{method:'POST',headers:{'Content-Type':'application/json'},"
+        "body:JSON.stringify({id:q.get('id'),key:q.get('key'),op:'video-settings',"
+        "video:{clips:cvCollect()}})}).then(function(){"
+        "el.textContent='書き出しを開始しています…';"
+        "return fetch(window.APP+'/clip_render',{method:'POST',"
+        "headers:{'Content-Type':'application/json'},"
+        "body:JSON.stringify({id:q.get('id'),key:q.get('key'),seg:n,sizes:sizes,export:1})});})"
+        ".then(function(r){return r.text();}).then(function(st){"
+        "if(st!=='started'&&st!=='already_running'){el.textContent='開始できません: '+st;return;}"
+        "el.textContent='書き出し中…（サイズごとに数十秒〜数分）';"
+        "var iv=setInterval(function(){"
+        "fetch(window.APP+'/clip_render_status?id='+encodeURIComponent(q.get('id'))"
+        "+'&key='+encodeURIComponent(q.get('key'))+'&seg='+n+'&export=1')"
+        ".then(function(r){return r.text();}).then(function(s){"
+        "if(s==='done'){clearInterval(iv);location.reload();}"
+        "else if(s.indexOf('failed')===0){clearInterval(iv);"
+        "el.textContent='書き出し失敗（generated/clip_…_render_'+n+'_export.log を確認）';}});},3000);})"
+        ".catch(function(){el.textContent='サーバーに接続できません';});}"
+        "</script>")
+    return page(f"動画の作成 {idv}", "".join(parts))
+
+
 def render_clip(idv, key):
     """切り抜き編集画面（CLIP_PLAN C-2〜C-4）。機能はセグメント決定とテキスト修正の
     2つだけに絞る（原文 L64）。タイムラインは凍結版の編集後時間軸で隙間なく連続。"""
@@ -2815,7 +3163,9 @@ def render_clip(idv, key):
         f"<div class='crumb'><a href='{approot()}/id?id={urllib.parse.quote(idv)}'>← 1次編集（{esc(idv)}）</a></div>",
         f"<h1>切り抜き編集　{esc(src['seg'].get('title') or '')}</h1>",
         f"<p class='meta'>凍結版 {esc((src.get('created_at') or '')[:16].replace('T', ' '))}"
-        f"　尺 {m}分{s2:02d}秒</p>",
+        f"　尺 {m}分{s2:02d}秒"
+        f"　<a class='gbtn' href='{approot()}/clip_videos?id={urllib.parse.quote(idv)}"
+        f"&key={urllib.parse.quote(key)}'>動画の作成 →</a></p>",
     ]
     if not audio_ok:
         parts.append("<p class='meta' id='srcwait'>凍結音源を生成中です…（できあがると自動で表示が変わります）</p>")
@@ -3028,6 +3378,34 @@ def route_clip_create():
 @app.get("/clip")
 def route_clip():
     content = render_clip(request.args.get("id") or "", request.args.get("key") or "")
+    if content is None:
+        return _html(page("404", f"<h1>404</h1><a href='{approot()}/'>一覧へ</a>"), 404)
+    return _html(content)
+
+
+@app.post("/clip_render")
+def route_clip_render():
+    try:
+        d = request.get_json(force=True) or {}
+        st = start_clip_video_render(str(d.get("id") or ""), str(d.get("key") or ""),
+                                     d.get("seg"), [str(s) for s in (d.get("sizes") or [])],
+                                     export=bool(d.get("export")))
+    except Exception:
+        st = "bad_request"
+    return _text(st)
+
+
+@app.get("/clip_render_status")
+def route_clip_render_status():
+    return _text(clip_video_render_status(request.args.get("id") or "",
+                                          request.args.get("key") or "",
+                                          request.args.get("seg"),
+                                          request.args.get("export") == "1"))
+
+
+@app.get("/clip_videos")
+def route_clip_videos():
+    content = render_clip_videos(request.args.get("id") or "", request.args.get("key") or "")
     if content is None:
         return _html(page("404", f"<h1>404</h1><a href='{approot()}/'>一覧へ</a>"), 404)
     return _html(content)
