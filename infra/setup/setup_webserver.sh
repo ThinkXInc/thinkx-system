@@ -141,10 +141,13 @@ sudo chown kaz:serveradmins /src
 sudo apt install -y npm
 
 # npx npm-run-all … をsudoなしで実行できるようにする (kaz の ~/.npm-global)
+# PATH は .bashrc の先頭(非対話シェルの早期 return より前)と .profile の両方に置く。
+# 末尾追記だと ssh コマンドや bash -lc 等の非対話シェルに効かない(2026-09-28 実測・claude 版ずれの原因(2))
 
 sudo -u kaz -H mkdir -p /home/kaz/.npm-global
 sudo -u kaz -H npm config set prefix '/home/kaz/.npm-global'
-echo 'export PATH=/home/kaz/.npm-global/bin:$PATH' | sudo -u kaz tee -a /home/kaz/.bashrc > /dev/null
+sudo -u kaz -H sed -i '1i export PATH=/home/kaz/.npm-global/bin:$PATH' /home/kaz/.bashrc
+echo 'export PATH=/home/kaz/.npm-global/bin:$PATH' | sudo -u kaz tee -a /home/kaz/.profile > /dev/null
 
 # update npm
 

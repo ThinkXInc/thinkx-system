@@ -1929,3 +1929,36 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   フルパス指定に変更(既定 PATH だけの最小環境で WARN なしを実測)。壊れた /usr/local/bin/aws の削除は
   オーナー任意。最終状態: LB timer 60 秒(5 サイト up)・Mac launchd 5 分(lb + staging ゲート)・
   実弾テスト 🔴/🟢 送達(--fail で 2xx 確認)。
+- 2026-09-28 「セッションを再接続」が無反応(ボタンが出続けるだけ)。原因は claude の root→user
+  切替に伴う PATH 断絶。オーナーが root(npm -g)の claude を廃止し kaz の ~/.npm-global へ移行
+  (/usr/bin/claude・/usr/lib/node_modules/@anthropic-ai は消滅、
+  /home/kaz/.npm-global/bin/claude → ../lib/node_modules/@anthropic-ai/claude-code/bin/claude.exe・
+  2.1.283・symlink 作成 09:31 UTC)。~/.npm-global/bin は kaz の .profile/.bashrc でしか PATH に
+  乗らず、systemd の既定 PATH(/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin)には無い
+  (実測: env -i の systemd 同等 PATH で command -v claude → 見つからない)。影響は 2 unit とも:
+  (1) claude-session.service — boot の tmux new-session 内の `claude --remote-control` が
+  command not found で pane 即死 → tmux サーバーごと消滅(Type=forking+RemainAfterExit のため
+  unit は active のまま。journal は Started のみで無音)。09:38:44 boot 直後から
+  state=session_missing。(2) claude_connect.service(server.py)— ボタンの start_session() が作る
+  tmux も同じ理由で即死(POST /connect/session 09:39:09/31/50 の 3 回とも復旧せず)。
+  `claude auth status` も OSError で loggedIn=false 扱い。認証情報自体は無傷
+  (kaz のログインシェルでは claude --version=2.1.283、auth status --json は loggedIn:true・
+  形式も 2.1.223 と同じ)なので、PATH を通せば再ログイン不要で connected に戻る見込み。
+  修正候補: (a) 両 unit に Environment=PATH=/home/kaz/.npm-global/bin:... を追記(server.py 無変更で
+  subprocess と tmux 子孫の両方に効く)/(b) D-21 流に ExecStart と server.py の claude を
+  絶対パス化(/home/kaz/.npm-global/bin/claude)。あわせて setup_claude_code.sh は今も
+  `sudo npm install -g`(root 導入)のままで実態と乖離(D-32: 手作業の埋めは setup へ反映が必要。
+  オーナーの user 導入手順の原文待ち)。
+- 2026-09-28 上記の修正 = 案 a で同日復旧(74589cc・PR #138 → staging)。両 unit に
+  Environment=PATH=/home/kaz/.npm-global/bin:… を追記し daemon-reload + 両 unit restart。
+  実測: tmux `claude` 復活(pane pid 3957)・/connect/state = connected + session_url(pid 一致)・
+  claude 2.1.283。再ログイン・コード入力は不要だった(見込み通り)。補正: 消えていた root 側は
+  /usr/local/bin/claude(symlink)と /usr/local/lib/node_modules/@anthropic-ai 配下(/usr/bin ではない。
+  空ディレクトリ @anthropic-ai だけ残存・実害なし)。setup も同コミットで実態に合わせた:
+  setup_claude_code.sh = kaz の user install(--allow-scripts + install.cjs 復旧手順を注記)、
+  setup_webserver.sh = PATH を .bashrc 先頭挿入 + .profile 追記(末尾追記は非対話シェルに効かない)。
+  user 導入手順の原文は staging セッション記録(2026-09-28)から取得済みで原文待ちは解消。
+  staging に未コミットで残っていた docs/GUIDELINES.md +17 行(同日のオーナー指示記録)は
+  バイト一致でオーナー機へ取り込み(8821f08)、staging の deploy checkout は clean に戻した。
+  なお claude-session / claude_connect はデプロイの自動再起動対象外(2026-09-18 既知)のため、
+  unit 変更時は手動で daemon-reload + restart が要る点は変わらず。

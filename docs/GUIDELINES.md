@@ -441,3 +441,33 @@ Rules（records と同じ形式）
   議事録は対象リポジトリの docs/discussion/ に nosum 形式・セッション日付で置く(既存慣習)。
 - **文脈**: 2026-09-18 KOBITO 料金セクション編集セッションの終了時。実行者は findings.md への記録のみで
   「お疲れさまでした」と締めたため、オーナーが CLAUDE_GENERAL を見ろと指摘した。
+
+
+## Claude Code の更新は ssh に入らず Claude セッション内から完結させる(オーナー指示 2026-09-28)
+
+- **原文**: 「今後もスタージングのクロードセッション上でコマンドラインにsshで入らずバージョンアップできないと困る」
+- **解釈**: `claude update` はセッション内の Bash から sudo なしで完結すること。そのために claude の実体は
+  **ユーザー配下 `~/.npm-global`(npm prefix)の 1 つだけ**に保ち、root 所有の `/usr/local/lib/node_modules/@anthropic-ai/claude-code`
+  のような sudo が要る install を並存させない。PATH は `~/.npm-global/bin` が先に来るようにする。
+- **文脈**: 2026-09-28、`claude update` が「2.1.223 → 2.1.283 に更新成功」と出たのに `claude --version` が 2.1.223 のままだった。
+  原因は (1) PATH 上の `/usr/local/bin/claude`(root 所有 2.1.223)が user 配下の 2.1.283 より先だったこと、
+  (2) `~/.bashrc` の PATH 追記が非対話シェルの早期 return より後ろにあったこと、
+  (3) user 側 install の postinstall(native binary 取得)が走っておらず `claude native binary not installed` になっていたこと。
+  対処: PATH 追記を `.bashrc` の return より前へ移動 + `~/.profile` にも追加、
+  `node ~/.npm-global/lib/node_modules/@anthropic-ai/claude-code/install.cjs` で native binary を取得。
+  root 側 install の削除は sudo が要るためオーナー実行(settings で sudo は deny)。
+- **再発時の確認手順**: `command -v claude` と `npm ls -g --depth=0` の版が一致するか。
+  食い違えば PATH か install の二重化。`claude --version` が「native binary not installed」なら上記 install.cjs を手で実行。
+
+
+## ページを追加したら sitemap 更新をオーナーに提案する。priority は確認を仰ぐ(オーナー指示 2026-09-28)
+
+- **原文**: 「ただしページが追加されたらsitemapの更新をオーナーに提案する（優先度は確認を仰ぐ）フローを定型化しろ」
+- **解釈**: サイトにページ(ルート)を追加・公開したら、その作業のうちに sitemap.xml への追記を
+  オーナーに提案する(黙って追記もしないし、忘れもしない)。提案には URL と priority の案を添えるが、
+  priority は実行者が決めずオーナーの確認を得てから xml に書く。generate_sitemap.py は廃止済み(thinkx/docs/DECISIONS.md T-1)のため、
+  更新は sitemap.xml の直接編集で行う。対象は thinkx の sitemap.xml / sitemap_NNTM.xml / sitemap_truetechjapan.xml など
+  各サイトの sitemap 全て。
+- **文脈**: 2026-09-28、KOBITO 製品ページ(2026-09-04 公開)が sitemap に未掲載のままオーナーの指摘で追加になった。
+  同セッションで generator 廃止(xml 直接編集へ一本化)を決めた際、「ページ追加と sitemap 更新が自動で結びつかなくなる」
+  ことへの手当としてこのフローを定型化する指示が出た。
