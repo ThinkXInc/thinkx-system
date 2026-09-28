@@ -647,12 +647,66 @@ function bindStrip(R){
   });
 }
 
+/* ---- テキスト修正（C-4・原文 L25-29）。字幕の元になるので直せなければならない ---- */
+function editUnit(el){
+  var ui=+el.dataset.ui, u=units[ui]; if(!u) return;
+  if(el.querySelector('input')) return;
+  var inp=document.createElement('input');
+  inp.value=u.t; inp.size=Math.max(u.t.length+2,8);
+  el.textContent=''; el.appendChild(inp); inp.focus();
+  var closed=false;
+  var done=function(commit){
+    if(closed) return; closed=true;
+    var v=inp.value;
+    if(commit&&v!==u.t){
+      pushUndo(); lastOp='text@'+u.s.toFixed(1);
+      if(v.trim()===''){ units.splice(ui,1); setStatus('テキストを削除しました'); }
+      else { u.t=v; setStatus('テキストを修正しました'); }
+      afterEdit(true);
+    }else{
+      /* 取り消し。挿入直後の空ユニットはゴミになるので消す */
+      if(u.t===''){ units.splice(ui,1); }
+      build();
+    }
+  };
+  inp.addEventListener('keydown',function(ev){
+    ev.stopPropagation();
+    if(ev.key==='Enter'){ done(true); }
+    else if(ev.key==='Escape'){ done(false); }
+  });
+  inp.addEventListener('blur',function(){ done(true); });
+}
 host.addEventListener('click',function(ev){
-  var el=ev.target.closest('.cu'); if(!el||el.querySelector('input')) return;
-  var u=units[+el.dataset.ui]; if(!u) return;
-  playhead=u.s; movePlayhead();
-  if(playing) audio.currentTime=playhead;
+  var el=ev.target.closest('.cu'); if(!el) return;
+  editUnit(el);
 });
+function insertUnit(t){
+  pushUndo(); lastOp='instext@'+t.toFixed(1);
+  var next=null; units.forEach(function(u){ if(u.s>t&&(next===null||u.s<next)) next=u.s; });
+  var e=Math.min(t+3, next!==null?next:D.duration, D.duration);
+  if(e-t<0.3) e=Math.min(t+0.5,D.duration);
+  var nu={s:+t.toFixed(3),e:+e.toFixed(3),t:''};
+  units.push(nu); units.sort(function(a,b){return a.s-b.s;});
+  build();
+  var idx=units.indexOf(nu);
+  var el=root.querySelector(".cu[data-ui='"+idx+"']");
+  if(el) editUnit(el);
+}
+window.clipTextMenu=function(t,cuEl){
+  var items=[];
+  if(cuEl) items.push({a:'delunit',label:'このテキストを削除'});
+  items.push({a:'insunit',label:'ここにテキストを挿入'});
+  return items;
+};
+window.clipTextRun=function(act,t,cuEl){
+  if(act==='delunit'&&cuEl){
+    var ui=+cuEl.dataset.ui;
+    if(!units[ui]) return;
+    pushUndo(); lastOp='deltext@'+t.toFixed(1);
+    units.splice(ui,1); afterEdit(true);
+    setStatus('テキストを削除しました');
+  }else if(act==='insunit'){ insertUnit(t); }
+};
 
 /* 右クリックメニュー。即実行しない作法は1次編集と同じ（オーナー指示 2026-08-05） */
 function openCtx(t,cx,cy,cuEl){
