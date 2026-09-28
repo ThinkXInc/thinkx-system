@@ -2797,6 +2797,148 @@ def list_clip_versions(idv, sid):
     return out
 
 
+ASSETS_DIR = os.path.join(os.path.dirname(HERE), "assets")
+
+
+def load_clip_styles():
+    """スタイル定義の正本 config/clip_styles.json（C-7）。コードにスタイル値を埋め込まない
+    （原文 L53）。make_clip_video.py も同じファイルを読む。"""
+    return _load_json(os.path.join(os.path.dirname(HERE), "config", "clip_styles.json"), {})
+
+
+def list_clip_fonts():
+    """assets/fonts/ のフォントファイル一覧（選択肢はフォルダの中身そのまま。原文 L41）。"""
+    d = os.path.join(ASSETS_DIR, "fonts")
+    if not os.path.isdir(d):
+        return []
+    return sorted(n for n in os.listdir(d)
+                  if n.lower().endswith((".otf", ".ttf", ".ttc")))
+
+
+def list_clip_backgrounds():
+    """assets/clip_backgrounds/ の背景動画一覧（原文 L61）。"""
+    d = os.path.join(ASSETS_DIR, "clip_backgrounds")
+    if not os.path.isdir(d):
+        return []
+    return sorted(n for n in os.listdir(d)
+                  if n.lower().endswith((".mp4", ".mov", ".m4v", ".webm")))
+
+
+def clip_full_text(units, cs, ce):
+    """切り抜き区間に重なる字幕ユニットのテキスト全文。"""
+    return "".join(u.get("t") or "" for u in units
+                   if float(u["e"]) > cs and float(u["s"]) < ce)
+
+
+def render_clip_videos(idv, key):
+    """動画作成画面（CLIP_PLAN C-6）。切り抜きが時系列順に並び、コンテンツごとに
+    テキスト全文・設定ウインドウ・生成・再生・書き出しを持つ（原文 L66-69）。
+    生成・書き出しの実処理は C-8/C-9。"""
+    if idv not in list_ids():
+        return None
+    base = os.path.join(DATA_DIR, idv)
+    src = _load_json(idpaths.find(base, f"clip_{key}_source.json"), None)
+    if not src:
+        return None
+    cur = _load_json(idpaths.find(base, f"clip_{key}.json"), {})
+    clips = sorted(cur.get("clips") or [])
+    units = cur.get("units") or []
+    styles = load_clip_styles()
+    fonts = list_clip_fonts()
+    bgs = list_clip_backgrounds()
+    video = cur.get("video") or {}
+    per = video.get("clips") or {}
+    sizes = styles.get("sizes") or []
+    sub_style = (styles.get("subtitle_styles") or [{}])[0]
+    title_styles = styles.get("title_styles") or []
+    parts = [
+        f"<div class='crumb'><a href='{approot()}/clip?id={urllib.parse.quote(idv)}&key={urllib.parse.quote(key)}'>"
+        f"← 切り抜き編集</a></div>",
+        f"<h1>動画の作成　{esc(src['seg'].get('title') or '')}</h1>",
+        f"<p class='meta'>凍結版 {esc((src.get('created_at') or '')[:16].replace('T', ' '))}"
+        f"　切り抜き {len(clips)}本（タイムラインの時系列順）</p>",
+    ]
+    if not fonts:
+        parts.append("<p class='meta'>フォントがありません。assets/fonts/ にフォントファイル"
+                     "（.otf/.ttf/.ttc）を置いてください。</p>")
+    if not bgs:
+        parts.append("<p class='meta'>背景動画がありません。assets/clip_backgrounds/ に動画"
+                     "（.mp4 等）を置いてください。</p>")
+    if not clips:
+        parts.append("<p class='meta'>切り抜きがまだありません。切り抜き編集画面で S / E で"
+                     "区間を指定してください。</p>")
+    default_sizes = [s["key"] for s in sizes if s.get("default_on")]
+    for n, (cs, ce) in enumerate(clips):
+        cfg = per.get(str(n)) or {}
+        dur = ce - cs
+        m2, s2 = divmod(int(round(dur)), 60)
+        text = clip_full_text(units, cs, ce)
+        checked_sizes = cfg.get("sizes") if cfg.get("sizes") is not None else default_sizes
+        size_boxes = "".join(
+            f"<label style='margin-right:14px'><input type='checkbox' class='cvsize' value='{esc(s['key'])}'"
+            f"{' checked' if s['key'] in checked_sizes else ''} onchange='cvSave({n})'> "
+            f"{esc(s['label'])}</label>"
+            for s in sizes)
+        font_opts = "".join(
+            f"<option value='{esc(f2)}'{' selected' if cfg.get('font') == f2 else ''}>{esc(f2)}</option>"
+            for f2 in fonts) or "<option value=''>（assets/fonts が空）</option>"
+        bg_opts = "".join(
+            f"<option value='{esc(b)}'{' selected' if cfg.get('background') == b else ''}>{esc(b)}</option>"
+            for b in bgs) or "<option value=''>（assets/clip_backgrounds が空）</option>"
+        tstyle_opts = "".join(
+            f"<option value='{esc(t['key'])}'{' selected' if cfg.get('title_style') == t['key'] else ''}>"
+            f"{esc(t.get('label') or t['key'])}</option>" for t in title_styles)
+        size_pct = cfg.get("size_pct") or sub_style.get("font_size_pct") or 4.7
+        parts.append(
+            f"<div class='seg' id='cv{n}' data-cs='{cs}' data-ce='{ce}'>"
+            f"<div class='seghd'><h2><span class='rank'>{n + 1}</span>　"
+            f"{fmt_time(cs)}〜{fmt_time(ce)}　{m2}分{s2:02d}秒</h2></div>"
+            f"<div class='box summary'>{esc(text) or '（この区間にテキストがありません）'}</div>"
+            "<p class='meta'>"
+            f"タイトル <input type='text' class='cvtitle' value=\"{esc(cfg.get('title') or '')}\""
+            f" placeholder='動画の見出し（全編表示）' style='width:340px' onchange='cvSave({n})'>"
+            f"　スタイル <select class='cvtstyle' onchange='cvSave({n})'>{tstyle_opts}</select></p>"
+            "<p class='meta'>"
+            f"フォント <select class='cvfont' onchange='cvSave({n})'>{font_opts}</select>"
+            f"　字幕サイズ <button onclick='cvStep({n},-1)'>−</button>"
+            f"<input type='number' class='cvsizepct' value='{size_pct}' step='0.1' min='1' max='12'"
+            f" style='width:60px' onchange='cvSave({n})'>"
+            f"<button onclick='cvStep({n},1)'>＋</button>（高さ%）"
+            f"　背景 <select class='cvbg' onchange='cvSave({n})'>{bg_opts}</select></p>"
+            f"<p class='meta'>書き出しサイズ {size_boxes}</p>"
+            f"<p class='meta'><button disabled title='C-8 で有効になります'>生成</button>"
+            f"　<button disabled title='C-9 で有効になります'>書き出し</button>"
+            f"　<span class='cvstat meta'></span></p>"
+            "</div>")
+    step = styles.get("subtitle_size_step_pct") or 0.3
+    parts.append(
+        "<script>"
+        f"var CV_STEP={step};"
+        "function cvCollect(){var out={};"
+        "document.querySelectorAll('[id^=cv]').forEach(function(card){"
+        "if(!/^cv\\d+$/.test(card.id))return;var n=card.id.slice(2);"
+        "out[n]={title:card.querySelector('.cvtitle').value,"
+        "title_style:card.querySelector('.cvtstyle').value,"
+        "font:card.querySelector('.cvfont').value,"
+        "size_pct:parseFloat(card.querySelector('.cvsizepct').value)||4.7,"
+        "background:card.querySelector('.cvbg').value,"
+        "sizes:[].slice.call(card.querySelectorAll('.cvsize:checked')).map(function(c){return c.value;})};});"
+        "return out;}"
+        "function cvSave(n){var q=new URLSearchParams(location.search);"
+        "var card=document.getElementById('cv'+n);"
+        "var el=card?card.querySelector('.cvstat'):null;if(el)el.textContent='保存中…';"
+        "fetch(window.APP+'/clip_save',{method:'POST',headers:{'Content-Type':'application/json'},"
+        "body:JSON.stringify({id:q.get('id'),key:q.get('key'),op:'video-settings',"
+        "video:{clips:cvCollect()}})})"
+        ".then(function(r){if(el)el.textContent=r.ok?'保存済み':'保存失敗';})"
+        ".catch(function(){if(el)el.textContent='サーバーに接続できません';});}"
+        "function cvStep(n,d){var card=document.getElementById('cv'+n);"
+        "var inp=card.querySelector('.cvsizepct');"
+        "inp.value=(Math.round(((parseFloat(inp.value)||4.7)+d*CV_STEP)*10)/10);cvSave(n);}"
+        "</script>")
+    return page(f"動画の作成 {idv}", "".join(parts))
+
+
 def render_clip(idv, key):
     """切り抜き編集画面（CLIP_PLAN C-2〜C-4）。機能はセグメント決定とテキスト修正の
     2つだけに絞る（原文 L64）。タイムラインは凍結版の編集後時間軸で隙間なく連続。"""
@@ -2815,7 +2957,9 @@ def render_clip(idv, key):
         f"<div class='crumb'><a href='{approot()}/id?id={urllib.parse.quote(idv)}'>← 1次編集（{esc(idv)}）</a></div>",
         f"<h1>切り抜き編集　{esc(src['seg'].get('title') or '')}</h1>",
         f"<p class='meta'>凍結版 {esc((src.get('created_at') or '')[:16].replace('T', ' '))}"
-        f"　尺 {m}分{s2:02d}秒</p>",
+        f"　尺 {m}分{s2:02d}秒"
+        f"　<a href='{approot()}/clip_videos?id={urllib.parse.quote(idv)}&key={urllib.parse.quote(key)}'>"
+        f"<button>動画の作成 →</button></a></p>",
     ]
     if not audio_ok:
         parts.append("<p class='meta' id='srcwait'>凍結音源を生成中です…（できあがると自動で表示が変わります）</p>")
@@ -3028,6 +3172,14 @@ def route_clip_create():
 @app.get("/clip")
 def route_clip():
     content = render_clip(request.args.get("id") or "", request.args.get("key") or "")
+    if content is None:
+        return _html(page("404", f"<h1>404</h1><a href='{approot()}/'>一覧へ</a>"), 404)
+    return _html(content)
+
+
+@app.get("/clip_videos")
+def route_clip_videos():
+    content = render_clip_videos(request.args.get("id") or "", request.args.get("key") or "")
     if content is None:
         return _html(page("404", f"<h1>404</h1><a href='{approot()}/'>一覧へ</a>"), 404)
     return _html(content)
