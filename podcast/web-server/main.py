@@ -305,18 +305,50 @@ CLIP_CSS = """
 .cu:hover { background:#2563eb14; box-shadow:0 0 0 2px #2563eb22; }
 .cu input { font:inherit; color:inherit; background:#2563eb18;
             border:1px solid #2563eb88; border-radius:3px; padding:0 2px; }
-/* 切り抜きセグメント＝開始から終了までグラデーション（原文 L21） */
-.clipz { position:absolute; top:0; height:16px;
-         background-image:linear-gradient(90deg,#3f8fbf,#8a4dd8); background-repeat:no-repeat; }
-/* S（開始指定）の保留マーカー */
-.startline { position:absolute; top:-26px; bottom:-2px; width:2px; background:#22c55e;
+/* 切り抜きセグメント＝開始から終了までグラデーション（原文 L21）。
+   開始側が明るい（開始と終了を色で見分ける。オーナー指示 2026-09-28・原文 L98） */
+.clipz { position:absolute; top:0; height:24px;
+         background-image:linear-gradient(90deg,#4fb3ff,#5b39c9); background-repeat:no-repeat; }
+/* 切り抜きの間（空白）は黒（原文 L98） */
+.gapz { position:absolute; top:0; height:24px; background:#141417; }
+/* 開始端＝太い白線 / 終了端＝細い白線 */
+.clipedge-s { position:absolute; top:-4px; height:32px; width:3px; background:#ffffff;
+              pointer-events:none; z-index:2; }
+.clipedge-e { position:absolute; top:-2px; height:28px; width:2px; background:#ffffffb0;
+              pointer-events:none; z-index:2; }
+/* S（開始指定）の保留マーカー。緑は土台と紛らわしいのでオレンジ（原文 L98） */
+.startline { position:absolute; top:-26px; bottom:-2px; width:3px; background:#ff9800;
              pointer-events:none; z-index:2; }
-.startlabel { position:absolute; top:-40px; font-size:10px; font-weight:700; color:#22c55e;
+.startlabel { position:absolute; top:-40px; font-size:10px; font-weight:700; color:#ff9800;
               pointer-events:none; }
-.clipsel { position:absolute; top:-2px; height:20px; pointer-events:none;
+.clipsel { position:absolute; top:-3px; height:30px; pointer-events:none;
            box-shadow:inset 0 0 0 2px #2563eb; }
+/* 切り抜き編集のタイムラインは少し太く(24px)・土台は青緑でなくグレー（原文 L98。
+   1次編集のタイムラインには影響させない） */
+.cliptl .strip { height:24px; }
+.cliptl .barbase { height:24px; background:#4c525c; }
+.cliptl .splitline { height:30px; }
+.cliptl .lane { height:84px; }
 /* コンテナ。既存 TIMELINE_JS が拾う .tl は使わない（同じ要素を二重に組んで壊れる） */
 .cliptl { border-left:3px solid #2563eb; padding-left:9px; margin-left:-12px; }
+/* 主要導線ボタン。Google 風（オーナー指示 2026-09-28・原文 L97） */
+.gbtn { display:inline-block; background:#1a73e8; color:#fff; border:none;
+        border-radius:6px; padding:7px 16px; font-size:13px; font-weight:600;
+        font-family:inherit; letter-spacing:.02em; cursor:pointer;
+        text-decoration:none; line-height:1.5; box-shadow:0 1px 2px #0003; }
+.gbtn:hover { background:#1765cc; box-shadow:0 1px 3px #0004; text-decoration:none; }
+.gbtn:disabled { background:#dadce0; color:#80868b; cursor:default; box-shadow:none; }
+:root:not([data-theme="light"]) .gbtn:disabled { background:#3c4043; color:#9aa0a6; }
+/* セグメント参考（AI 候補。C-12） */
+.sugbox { border:1px solid #ccc4; border-radius:12px; padding:14px 18px 16px;
+          margin:14px 0 22px; }
+.sughd { display:flex; align-items:center; gap:14px; margin-bottom:6px; }
+.sughd b { font-size:15px; }
+.sugitem { margin:12px 0 0; }
+.sugtitle { font-size:15px; font-weight:700; line-height:1.6; }
+.sugtime { font-size:13px; color:#6b7280; font-variant-numeric:tabular-nums; }
+.sugtime a { color:#2563eb; cursor:pointer; }
+.sugtext { font-size:13px; line-height:1.8; opacity:.9; margin-top:2px; }
 """
 
 CLIP_JS = r"""
@@ -420,7 +452,22 @@ function renderBars(){
     var W=X(R,R.t1);
     var base=document.createElement('div'); base.className='barbase';
     base.style.left='0px'; base.style.width=W+'px'; R.strip.appendChild(base);
-    /* 切り抜きセグメント。開始→終了で1本のグラデーション。行をまたいでも
+    /* 切り抜きの間（どの切り抜きにも入らない区間）は黒（原文 L98）。
+       まだ1本も無いときは全部黒にせず土台色のまま */
+    if(clips.length){
+      var t=0;
+      clips.slice().sort(function(a,b){return a[0]-b[0];}).concat([[D.duration,D.duration]])
+        .forEach(function(c){
+          var a=Math.max(t,R.t0), b=Math.min(c[0],R.t1);
+          if(b-a>0){
+            var g=document.createElement('div'); g.className='gapz';
+            g.style.left=X(R,a)+'px'; g.style.width=Math.max(1,X(R,b)-X(R,a))+'px';
+            R.strip.appendChild(g);
+          }
+          t=Math.max(t,c[1]);
+        });
+    }
+    /* 切り抜きセグメント。開始（明）→終了（暗）で1本のグラデーション。行をまたいでも
        background-position をずらして1本につながって見えるようにする */
     clips.forEach(function(c,ci){
       var a=Math.max(c[0],R.t0), b=Math.min(c[1],R.t1);
@@ -430,6 +477,23 @@ function renderBars(){
       d.style.backgroundSize=((c[1]-c[0])*pxPerSec)+'px 100%';
       d.style.backgroundPosition=(-(a-c[0])*pxPerSec)+'px 0';
       R.strip.appendChild(d);
+      /* (a) 結合で捨てた間（drops）は切り抜きの中でも黒 */
+      (c[2]||[]).forEach(function(dr){
+        var da=Math.max(dr[0],R.t0), db=Math.min(dr[1],R.t1);
+        if(db-da<=0) return;
+        var g2=document.createElement('div'); g2.className='gapz';
+        g2.style.left=X(R,da)+'px'; g2.style.width=Math.max(1,X(R,db)-X(R,da))+'px';
+        R.strip.appendChild(g2);
+      });
+      /* 開始端＝太い白線 / 終了端＝細い白線（開始が分かりにくい問題。原文 L98） */
+      if(c[0]>=R.t0-1e-9&&c[0]<=R.t1){
+        var es=document.createElement('div'); es.className='clipedge-s';
+        es.style.left=X(R,c[0])+'px'; R.strip.appendChild(es);
+      }
+      if(c[1]>=R.t0&&c[1]<=R.t1+1e-9){
+        var ee=document.createElement('div'); ee.className='clipedge-e';
+        ee.style.left=(X(R,c[1])-2)+'px'; R.strip.appendChild(ee);
+      }
       if(ci===selCi){
         var sel=document.createElement('div'); sel.className='clipsel';
         sel.style.left=X(R,a)+'px'; sel.style.width=Math.max(1,X(R,b)-X(R,a))+'px';
