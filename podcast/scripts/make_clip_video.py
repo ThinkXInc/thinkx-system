@@ -21,7 +21,7 @@ import subprocess
 HERE = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(HERE / "scripts"))
 import idpaths
-from render import load_conf, safe_name
+from render import load_conf, safe_name, keep_ranges
 
 FONTS_DIR = HERE / "assets" / "fonts"
 BG_DIR = HERE / "assets" / "clip_backgrounds"
@@ -116,11 +116,23 @@ def pct_of(spec, size_key, default):
     return float(spec)
 
 
-def build_ass(w, h, size_key, styles, cfg, units, cs, ce, fontname):
+def build_ass(w, h, size_key, styles, cfg, units, keeps, fontname):
+    """keeps = 凍結音源時間での有効区間 [(a,b),...]（「間を詰める」の drops を除いた残り。
+    C-15）。字幕タイムは詰めた後の出力時間へ再配置する。"""
     sub = (styles.get("subtitle_styles") or [{}])[0]
     tstyles = {t.get("key"): t for t in (styles.get("title_styles") or [])}
     tstyle = tstyles.get(cfg.get("title_style")) or (styles.get("title_styles") or [{}])[0]
-    dur = ce - cs
+    kmap, acc = [], 0.0
+    for ka, kb in keeps:
+        kmap.append((ka, kb, acc))
+        acc += kb - ka
+    dur = acc
+
+    def remap(t):
+        for ka, kb, off in kmap:
+            if t <= kb:
+                return off + min(max(t, ka), kb) - ka
+        return dur
 
     sub_pct = float(cfg.get("size_pct") or sub.get("font_size_pct") or 4.7)
     sub_px = int(round(h * sub_pct / 100))
@@ -168,12 +180,15 @@ def build_ass(w, h, size_key, styles, cfg, units, cs, ce, fontname):
                      f"{{\\an8\\pos({w // 2},{ttl_y})}}{txt}")
     for u in units:
         us, ue = float(u["s"]), float(u["e"])
-        if ue <= cs or us >= ce:
+        # 有効区間と 0.2 秒以上重なる字幕だけ出す（端をまたぐユニットは音が流れるぶん
+        # 表示し、「詰めた間」に完全に入ったものは出さない）。時刻は remap が区間内に丸める
+        overlap = sum(max(0.0, min(ue, kb) - max(us, ka)) for ka, kb in keeps)
+        if overlap < 0.2:
             continue
         text = (u.get("t") or "").strip()
         if not text:
             continue
-        a, b = max(0.0, us - cs), min(dur, ue - cs)
+        a, b = remap(us), remap(ue)
         # 短すぎる表示は読めないので最低 0.8 秒は出す（次の字幕開始までに収める）
         if b - a < 0.8:
             b = min(dur, a + 0.8)
@@ -205,11 +220,17 @@ def main():
     styles = json.loads((HERE / "config" / "clip_styles.json").read_text(encoding="utf-8"))
     cur = json.loads(pathlib.Path(idpaths.find(str(base), f"clip_{args.key}.json"))
                      .read_text(encoding="utf-8"))
-    clips = sorted(cur.get("clips") or [])
+    clips = sorted(cur.get("clips") or [], key=lambda c: (c[0], c[1]))
     if not (0 <= args.seg < len(clips)):
         sys.exit(f"[clipvid] 切り抜き {args.seg} がありません（{len(clips)}本）")
-    cs, ce = float(clips[args.seg][0]), float(clips[args.seg][1])
-    dur = ce - cs
+    row = clips[args.seg]
+    cs, ce = float(row[0]), float(row[1])
+    # 「間を詰める」で捨てた区間（C-15・原文 L99）。音声は keep を連結し、尺は正味
+    row_drops = [tuple(map(float, d)) for d in (row[2] if len(row) > 2 else [])]
+    keeps = keep_ranges(cs, ce, row_drops)
+    if not keeps:
+        sys.exit("[clipvid] 有効区間がありません")
+    dur = sum(b - a for a, b in keeps)
     cfg = (cur.get("video") or {}).get("clips", {}).get(str(args.seg)) or {}
 
     audio = pathlib.Path(idpaths.find(str(base), f"clip_{args.key}_source.m4a"))
@@ -229,6 +250,31 @@ def main():
 
     ff = ffmpeg_with_subtitles()
     gen = pathlib.Path(idpaths.gen_dir(str(base)))
+
+    # 音声。drops が無ければ凍結音源を -ss/-t で直接切る。あれば keep を抽出して
+    # 無劣化連結した一時 wav を全サイズで使い回す（make_clip_source と同じ作法）
+    audio_in = audio
+    audio_seek = ["-ss", f"{cs:.3f}", "-t", f"{dur:.3f}"]
+    concat_wav = None
+    if row_drops:
+        import tempfile
+        concat_wav = gen / f"clip_{args.key}_{args.seg}_audio.part.wav"
+        with tempfile.TemporaryDirectory(dir=str(gen)) as td:
+            tdp = pathlib.Path(td)
+            listf = tdp / "list.txt"
+            with open(listf, "w") as lf:
+                for i, (ka, kb) in enumerate(keeps):
+                    part = tdp / f"p{i:04d}.wav"
+                    subprocess.run([ff, "-hide_banner", "-loglevel", "error", "-y",
+                                    "-ss", f"{ka:.3f}", "-to", f"{kb:.3f}", "-i", str(audio),
+                                    "-c:a", "pcm_s16le", str(part)], check=True)
+                    lf.write(f"file '{part.name}'\n")
+            subprocess.run([ff, "-hide_banner", "-loglevel", "error", "-y",
+                            "-f", "concat", "-safe", "0", "-i", str(listf),
+                            "-c", "copy", str(concat_wav)], check=True)
+        audio_in = concat_wav
+        audio_seek = []
+
     for size_key in size_keys:
         size = next((s for s in styles.get("sizes", []) if s["key"] == size_key), None)
         if size is None:
@@ -248,21 +294,21 @@ def main():
 
         ass_path = gen / f"clip_{args.key}_{args.seg}_{size_key}.ass"
         ass_path.write_text(
-            build_ass(w, h, size_key, styles, cfg, cur.get("units") or [], cs, ce, family),
+            build_ass(w, h, size_key, styles, cfg, cur.get("units") or [], keeps, family),
             encoding="utf-8")
 
         # フィルタ内のパス引用を避けるため、ass はファイル名だけ渡して cwd を generated/ にする
         vf = (f"scale={w}:{h}:force_original_aspect_ratio=increase,crop={w}:{h},setsar=1,fps=30,"
               f"subtitles=filename={ass_path.name}:fontsdir='{FONTS_DIR}'")
         tmp = out.with_name(out.name + ".part.mp4")
-        cmd = [ff, "-hide_banner", "-loglevel", "error", "-y",
-               "-stream_loop", "-1", "-i", str(bg),
-               "-ss", f"{cs:.3f}", "-t", f"{dur:.3f}", "-i", str(audio),
+        cmd = ([ff, "-hide_banner", "-loglevel", "error", "-y",
+                "-stream_loop", "-1", "-i", str(bg)]
+               + audio_seek + ["-i", str(audio_in),
                "-map", "0:v", "-map", "1:a", "-t", f"{dur:.3f}",
                "-vf", vf,
                "-c:v", "libx264", "-preset", "medium", "-crf", "20", "-pix_fmt", "yuv420p",
                "-c:a", "aac", "-b:a", "192k",
-               str(tmp)]
+               str(tmp)])
         subprocess.run(cmd, cwd=str(gen), check=True)
 
         probe = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration",
@@ -275,6 +321,9 @@ def main():
         tmp.replace(out)
         print(f"[clipvid] done {size_key} / {dur:.1f}s / 字幕フォント {family} -> {out}",
               flush=True)
+
+    if concat_wav is not None:
+        concat_wav.unlink(missing_ok=True)
 
 
 if __name__ == "__main__":
