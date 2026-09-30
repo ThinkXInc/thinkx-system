@@ -360,7 +360,13 @@ if(!root) return;
 var D=JSON.parse(root.querySelector('script[type="application/json"]').textContent);
 var audio=document.getElementById('orig');
 var pxPerSec=parseFloat(localStorage.getItem('tl_pps'))||140;
-var clips=(D.clips||[]).map(function(c){return [+c[0],+c[1]];});
+/* clips の要素は [開始, 終了] または [開始, 終了, drops]（drops = 「間を詰める」で
+   捨てた区間の列。C-15・原文 L99） */
+var clips=(D.clips||[]).map(function(c){
+  var o=[+c[0],+c[1]];
+  if(c[2]&&c[2].length) o.push(c[2].map(function(d){return [+d[0],+d[1]];}));
+  return o;
+});
 var units=(D.units||[]).map(function(u){return {s:+u.s,e:+u.e,t:String(u.t)};});
 var pendingStart=null, playhead=0, selCi=-1;
 var rows=[], laneW=0, built=false, playing=false;
@@ -378,6 +384,15 @@ function fmtAbs(t){
 function X(R,t){ return (t-R.t0)*pxPerSec; }
 function T(R,x){ return R.t0 + x/pxPerSec; }
 function clipAt(t){ for(var i=0;i<clips.length;i++){ if(clips[i][0]<=t&&t<clips[i][1]) return i; } return -1; }
+function inDrops(c,t){ return (c[2]||[]).some(function(d){return d[0]<=t&&t<d[1];}); }
+function clipNet(c){ return (c[1]-c[0])-(c[2]||[]).reduce(function(a,d){return a+(d[1]-d[0]);},0); }
+function clampDrops(c){
+  /* 端の移動・分割の後に drops を区間内へ収める。空になったら消す */
+  var ds=(c[2]||[]).map(function(d){return [Math.max(d[0],c[0]),Math.min(d[1],c[1])];})
+    .filter(function(d){return d[1]-d[0]>EPS;});
+  if(ds.length) c[2]=ds; else c.splice(2,1);
+  return c;
+}
 function setStatus(s){ if(elStat) elStat.textContent=s; }
 
 /* ---- 保存（C-5）。1次編集と同じ三重の作法:
@@ -520,7 +535,7 @@ function renderBars(){
     R.play=document.createElement('div'); R.play.className='playline'; R.strip.appendChild(R.play);
     R.tlab=document.createElement('div'); R.tlab.className='tlabel'; R.strip.appendChild(R.tlab);
   });
-  var kept=clips.reduce(function(a,c){return a+(c[1]-c[0]);},0);
+  var kept=clips.reduce(function(a,c){return a+clipNet(c);},0);
   var el=root.querySelector('.tlkeep');
   if(el){ var m=Math.floor(kept/60), s=Math.round(kept-m*60);
     el.textContent=clips.length+'本・計 '+m+'分'+(s<10?'0':'')+s+'秒'; }
@@ -531,8 +546,10 @@ function styleUnits(){
     R.els.forEach(function(el){
       var u=units[+el.dataset.ui]; if(!u) return;
       var mid=(u.s+u.e)/2;
-      /* まだ1本も指定していない段階では沈ませない（全部カット済みに見えるため） */
-      el.classList.toggle('out', clips.length>0 && clipAt(mid)<0);
+      /* まだ1本も指定していない段階では沈ませない（全部カット済みに見えるため）。
+         切り抜きの中でも「詰めた間」(drops) は沈ませる */
+      var ci2=clipAt(mid);
+      el.classList.toggle('out', clips.length>0 && (ci2<0 || inDrops(clips[ci2],mid)));
     });
   });
 }
@@ -607,24 +624,34 @@ function afterEdit(rebuildRows){
   scheduleSave();
 }
 function normalizeClips(){
-  /* 重なりは1本に統合する */
+  /* 重なりは1本に統合する（drops も持ち寄って区間内に収める） */
   clips.sort(function(a,b){return a[0]-b[0];});
   var out=[];
   clips.forEach(function(c){
-    if(out.length&&c[0]<=out[out.length-1][1]+EPS){
-      out[out.length-1][1]=Math.max(out[out.length-1][1],c[1]);
-    }else out.push([c[0],c[1]]);
+    var last=out[out.length-1];
+    if(last&&c[0]<=last[1]+EPS){
+      last[1]=Math.max(last[1],c[1]);
+      var ds=(last[2]||[]).concat(c[2]||[]);
+      if(ds.length){ last[2]=ds.sort(function(a,b){return a[0]-b[0];}); }
+      clampDrops(last);
+    }else{
+      var o=[c[0],c[1]];
+      if(c[2]&&c[2].length) o.push(c[2].slice());
+      out.push(clampDrops(o));
+    }
   });
   clips=out;
 }
 function markStart(t){
   var ci=clipAt(t);
   if(ci>=0){
-    /* 切り抜きの中で S ＝ その時点で分割（原文 L17） */
+    /* 切り抜きの中で S ＝ その時点で分割（原文 L17）。drops は位置で左右に配る */
     var c=clips[ci];
     if(t-c[0]<MINW||c[1]-t<MINW){ setStatus('端に近すぎて分割できません'); return; }
     pushUndo(); lastOp='split@'+t.toFixed(1);
-    clips.splice(ci,1,[c[0],t],[t,c[1]]); selCi=-1; afterEdit();
+    var L=[c[0],t,(c[2]||[]).slice()], R2=[t,c[1],(c[2]||[]).slice()];
+    clampDrops(L); clampDrops(R2);
+    clips.splice(ci,1,L,R2); selCi=-1; afterEdit();
     setStatus('切り抜きを分割しました');
   }else{
     pushUndo(); lastOp='start@'+t.toFixed(1);
@@ -645,25 +672,46 @@ function markEnd(t){
   if(ci>=0){
     if(t-clips[ci][0]<MINW){ setStatus('終了は開始より後にしてください'); return; }
     pushUndo(); lastOp='end@'+t.toFixed(1);
-    clips[ci][1]=t; selCi=-1; afterEdit();
+    clips[ci][1]=t; clampDrops(clips[ci]); selCi=-1; afterEdit();
     setStatus('終了を指定しました（外側は空白になります）');
   }else setStatus('先に S で開始を指定してください');
 }
-function joinGap(t){
-  /* 空白で「この間を詰める」＝前後の切り抜きを1本に結合する（原文 L23） */
-  if(clipAt(t)>=0){ setStatus('ここは切り抜きの中です'); return; }
+function gapNeighbors(t){
   var prev=null, next=null;
   clips.forEach(function(c,i){
     if(c[1]<=t&&(prev===null||c[1]>clips[prev][1])) prev=i;
     if(c[0]>=t&&(next===null||c[0]<clips[next][0])) next=i;
   });
-  if(prev===null||next===null){ setStatus('この空白の前後に切り抜きがありません'); return; }
+  return {prev:prev,next:next};
+}
+function joinGap(t){
+  /* (b)「間も含めて1本にする」＝ E が S まで伸びる。間の音も入る（原文 L99） */
+  if(clipAt(t)>=0){ setStatus('ここは切り抜きの中です'); return; }
+  var nb=gapNeighbors(t);
+  if(nb.prev===null||nb.next===null){ setStatus('この空白の前後に切り抜きがありません'); return; }
   pushUndo(); lastOp='join@'+t.toFixed(1);
-  var a=clips[prev][0], b=clips[next][1];
-  clips=clips.filter(function(c,i){return i!==prev&&i!==next;});
-  clips.push([a,b]); pendingStart=null;
+  var p=clips[nb.prev], q=clips[nb.next];
+  var merged=[p[0], q[1], (p[2]||[]).concat(q[2]||[])];
+  if(!merged[2].length) merged=[merged[0],merged[1]];
+  clips=clips.filter(function(c,i){return i!==nb.prev&&i!==nb.next;});
+  clips.push(merged); pendingStart=null;
   normalizeClips(); selCi=-1; afterEdit();
-  setStatus('つなげて1つの切り抜きにしました');
+  setStatus('間も含めて1つの切り抜きにしました（間の音は入ります）');
+}
+function dropGap(t){
+  /* (a)「間を詰めて1本にする」＝間の音は捨てて前後をつなぐ。間はこの切り抜きの
+     drops として除外され、動画では詰められる（原文 L99） */
+  if(clipAt(t)>=0){ setStatus('ここは切り抜きの中です'); return; }
+  var nb=gapNeighbors(t);
+  if(nb.prev===null||nb.next===null){ setStatus('この空白の前後に切り抜きがありません'); return; }
+  pushUndo(); lastOp='dropgap@'+t.toFixed(1);
+  var p=clips[nb.prev], q=clips[nb.next];
+  var drops=(p[2]||[]).concat([[p[1],q[0]]]).concat(q[2]||[]);
+  drops.sort(function(a,b){return a[0]-b[0];});
+  clips=clips.filter(function(c,i){return i!==nb.prev&&i!==nb.next;});
+  clips.push([p[0], q[1], drops]); pendingStart=null;
+  normalizeClips(); selCi=-1; afterEdit();
+  setStatus('間を詰めて1つの切り抜きにしました（間の音は捨てられ、動画では詰まります）');
 }
 function deleteSel(){
   if(selCi<0){ setStatus('切り抜きをクリックして選択してから Delete'); return; }
@@ -700,7 +748,8 @@ document.addEventListener('mousemove',function(ev){
   renderBars(); styleUnits(); movePlayhead();
 });
 document.addEventListener('mouseup',function(){
-  if(dragging){ dragging=null; lastOp='trim'; scheduleSave(); }
+  if(dragging){ if(clips[dragging.ci]) clampDrops(clips[dragging.ci]);
+    dragging=null; lastOp='trim'; afterEdit(); }
 });
 
 function bindStrip(R){
@@ -808,7 +857,11 @@ function openCtx(t,cx,cy,cuEl){
   var items=[{a:'play',label:'ここから再生'},
              {a:'start',label:'ここを開始にする（S）'},
              {a:'end',label:'ここを終了にする（E）'}];
-  if(clipAt(t)<0) items.push({a:'join',label:'この間を詰める（前後をつなげる）'});
+  /* 空白では結合を2種類に分ける（紛らわしい問題。原文 L99） */
+  if(clipAt(t)<0){
+    items.push({a:'dropgap',label:'間を詰めて1本にする（間の音は捨てる）'});
+    items.push({a:'join',label:'間も含めて1本にする（E を S まで伸ばす）'});
+  }
   if(window.clipTextMenu) items=items.concat(window.clipTextMenu(t,cuEl));
   var html='<b>'+fmtAbs(t)+'</b><div class="btns" style="flex-direction:column;align-items:stretch">';
   items.forEach(function(it){ html+='<button data-a="'+it.a+'">'+esc(it.label)+'</button>'; });
@@ -822,6 +875,7 @@ function openCtx(t,cx,cy,cuEl){
       else if(act==='start'){ markStart(t); }
       else if(act==='end'){ markEnd(t); }
       else if(act==='join'){ joinGap(t); }
+      else if(act==='dropgap'){ dropGap(t); }
       else if(act==='close'){ }
       else if(window.clipTextRun){ window.clipTextRun(act,t,cuEl); }
     };
@@ -2804,9 +2858,23 @@ def apply_clip_save(payload):
                 a, b = float(c[0]), float(c[1])
             except (TypeError, ValueError, IndexError):
                 return False
-            if b > a:
-                clean.append([round(a, 3), round(b, 3)])
-        cur["clips"] = sorted(clean)
+            if b <= a:
+                continue
+            row = [round(a, 3), round(b, 3)]
+            # 3要素目は「間を詰める」で捨てた区間（C-15・原文 L99）。区間内のみ受ける
+            drops = []
+            for d in (c[2] if len(c) > 2 else []) or []:
+                try:
+                    da, db = float(d[0]), float(d[1])
+                except (TypeError, ValueError, IndexError):
+                    return False
+                da, db = max(da, a), min(db, b)
+                if db > da:
+                    drops.append([round(da, 3), round(db, 3)])
+            if drops:
+                row.append(sorted(drops))
+            clean.append(row)
+        cur["clips"] = sorted(clean, key=lambda r: (r[0], r[1]))
         changed = True
     if "units" in payload:
         clean_u = []
@@ -2948,10 +3016,13 @@ def list_clip_backgrounds():
                   if n.lower().endswith((".mp4", ".mov", ".m4v", ".webm")))
 
 
-def clip_full_text(units, cs, ce):
-    """切り抜き区間に重なる字幕ユニットのテキスト全文。"""
+def clip_full_text(units, cs, ce, drops=None):
+    """切り抜き区間に重なる字幕ユニットのテキスト全文。「詰めた間」(drops) の中は除く。"""
+    def dropped(u):
+        mid = (float(u["s"]) + float(u["e"])) / 2
+        return any(d[0] <= mid < d[1] for d in (drops or []))
     return "".join(u.get("t") or "" for u in units
-                   if float(u["e"]) > cs and float(u["s"]) < ce)
+                   if float(u["e"]) > cs and float(u["s"]) < ce and not dropped(u))
 
 
 def render_clip_videos(idv, key):
@@ -2965,7 +3036,7 @@ def render_clip_videos(idv, key):
     if not src:
         return None
     cur = _load_json(idpaths.find(base, f"clip_{key}.json"), {})
-    clips = sorted(cur.get("clips") or [])
+    clips = sorted(cur.get("clips") or [], key=lambda c: (c[0], c[1]))
     units = cur.get("units") or []
     styles = load_clip_styles()
     fonts = list_clip_fonts()
@@ -2992,11 +3063,14 @@ def render_clip_videos(idv, key):
         parts.append("<p class='meta'>切り抜きがまだありません。切り抜き編集画面で S / E で"
                      "区間を指定してください。</p>")
     default_sizes = [s["key"] for s in sizes if s.get("default_on")]
-    for n, (cs, ce) in enumerate(clips):
+    for n, row in enumerate(clips):
+        cs, ce = float(row[0]), float(row[1])
+        row_drops = row[2] if len(row) > 2 else []
         cfg = per.get(str(n)) or {}
-        dur = ce - cs
+        # 尺は正味（「間を詰める」で捨てた drops を除く。C-15）
+        dur = (ce - cs) - sum(d[1] - d[0] for d in row_drops)
         m2, s2 = divmod(int(round(dur)), 60)
-        text = clip_full_text(units, cs, ce)
+        text = clip_full_text(units, cs, ce, row_drops)
         checked_sizes = cfg.get("sizes") if cfg.get("sizes") is not None else default_sizes
         size_boxes = "".join(
             f"<label style='margin-right:14px'><input type='checkbox' class='cvsize' value='{esc(s['key'])}'"
@@ -3145,6 +3219,105 @@ def render_clip_videos(idv, key):
     return page(f"動画の作成 {idv}", "".join(parts))
 
 
+# セグメント参考(C-12)の生成プロセス。key=(ID, clipkey) → subprocess.Popen
+CLIP_SUGGESTS = {}
+
+
+def start_clip_suggest(idv, key):
+    """セグメント参考（AI 候補）の生成を開始する。再実行＝再生成で丸ごと差し替え（原文 L95）。"""
+    import subprocess
+    if idv not in list_ids() or not re.fullmatch(r"[0-9a-f]{12}_[0-9a-f]{8}", key or ""):
+        return "bad_id"
+    k = (idv, key)
+    p = CLIP_SUGGESTS.get(k)
+    if p is not None and p.poll() is None:
+        return "already_running"
+    root = os.path.dirname(HERE)
+    # openai SDK は README 規約の .venv-openai を優先（無ければ他で試し、
+    # スクリプト側が明示エラーを出す）
+    cands = [os.path.join(root, ".venv-openai", "bin", "python"),
+             os.path.join(root, "venv", "bin", "python"), _sys.executable]
+    py = next((c for c in cands if os.path.isfile(c)), _sys.executable)
+    base = os.path.join(DATA_DIR, idv)
+    gen = idpaths.gen_dir(base)
+    logf = open(os.path.join(gen, f"clip_{key}_suggest.log"), "w", encoding="utf-8")
+    CLIP_SUGGESTS[k] = subprocess.Popen(
+        [py, os.path.join(root, "scripts", "suggest_clips.py"), idv, "--key", key],
+        cwd=root, stdout=logf, stderr=subprocess.STDOUT)
+    return "started"
+
+
+def clip_suggest_status(idv, key):
+    p = CLIP_SUGGESTS.get((idv, key))
+    if p is None:
+        return "none"
+    if p.poll() is None:
+        return "running"
+    if p.returncode != 0:
+        # 失敗理由（キー無し・SDK無し等）はログの最終行をそのまま UI に見せる
+        try:
+            gen = idpaths.gen_dir(os.path.join(DATA_DIR, idv))
+            with open(os.path.join(gen, f"clip_{key}_suggest.log"), encoding="utf-8") as f:
+                lines = [ln for ln in f.read().splitlines() if ln.strip()]
+            return "failed:" + (lines[-1][-200:] if lines else str(p.returncode))
+        except Exception:
+            return f"failed({p.returncode})"
+    return "done"
+
+
+def render_clip_suggestions(idv, key):
+    """切り抜き編集画面の見出し直下に出す「セグメント参考」（C-12・原文 L86-95）。"""
+    base = os.path.join(DATA_DIR, idv)
+    sug = _load_json(idpaths.find(base, f"clip_{key}_suggestions.json"), None)
+
+    def ts2(t):
+        m3 = int(t // 60)
+        return f"{m3}:{t - m3 * 60:05.2f}"
+
+    items = []
+    for it in (sug or {}).get("suggestions", []):
+        try:
+            s3, e3 = float(it["s"]), float(it["e"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        dm, ds = divmod(int(round(e3 - s3)), 60)
+        # 見出し候補は3つを「 / 」区切りで並べる(原文 L100)
+        titles = [t for t in (it.get("titles") or []) if str(t).strip()] or [it.get("title") or ""]
+        items.append(
+            "<div class='sugitem'>"
+            f"<div class='sugtitle'>・{esc(' / '.join(str(t) for t in titles))}</div>"
+            f"<div class='sugtime'><a onclick='window.clipTL&&clipTL.setPlayhead({s3:.3f})'>"
+            f"{ts2(s3)}〜{ts2(e3)}（{dm}分{ds:02d}秒）</a></div>"
+            f"<div class='sugtext'>{esc(it.get('text'))}</div></div>")
+    label = "再生成" if items else "セグメント参考を生成"
+    body = "".join(items) if items else (
+        "<div class='meta'>AI による切り抜き候補（5〜10件・見出し/範囲/全文）をここに出します。</div>")
+    js = (
+        "<script>"
+        "function clipSuggest(){var q=new URLSearchParams(location.search);"
+        "var el=document.getElementById('sugstat');var b=document.getElementById('sugbtn');"
+        "b.disabled=true;el.textContent='生成中…（1分前後かかります）';"
+        "fetch(window.APP+'/clip_suggest?id='+encodeURIComponent(q.get('id'))"
+        "+'&key='+encodeURIComponent(q.get('key')),{method:'POST'})"
+        ".then(function(r){return r.text();}).then(function(st){"
+        "if(st!=='started'&&st!=='already_running'){b.disabled=false;"
+        "el.textContent='開始できません: '+st;return;}"
+        "var iv=setInterval(function(){"
+        "fetch(window.APP+'/clip_suggest_status?id='+encodeURIComponent(q.get('id'))"
+        "+'&key='+encodeURIComponent(q.get('key')))"
+        ".then(function(r){return r.text();}).then(function(s){"
+        "if(s==='done'){clearInterval(iv);location.reload();}"
+        "else if(s.indexOf('failed')===0){clearInterval(iv);b.disabled=false;"
+        "el.textContent='生成できません: '+s.slice(7);}});},3000);})"
+        ".catch(function(){b.disabled=false;el.textContent='サーバーに接続できません';});}"
+        "</script>")
+    return (
+        "<div class='sugbox'><div class='sughd'><b>セグメント参考</b>"
+        f"<button class='gbtn' id='sugbtn' onclick='clipSuggest()'>{label}</button>"
+        "<span id='sugstat' class='meta'></span></div>"
+        f"{body}</div>{js}")
+
+
 def render_clip(idv, key):
     """切り抜き編集画面（CLIP_PLAN C-2〜C-4）。機能はセグメント決定とテキスト修正の
     2つだけに絞る（原文 L64）。タイムラインは凍結版の編集後時間軸で隙間なく連続。"""
@@ -3166,6 +3339,8 @@ def render_clip(idv, key):
         f"　尺 {m}分{s2:02d}秒"
         f"　<a class='gbtn' href='{approot()}/clip_videos?id={urllib.parse.quote(idv)}"
         f"&key={urllib.parse.quote(key)}'>動画の作成 →</a></p>",
+        # 見出し直下に AI のセグメント参考（C-12・原文 L86-95）
+        render_clip_suggestions(idv, key),
     ]
     if not audio_ok:
         parts.append("<p class='meta' id='srcwait'>凍結音源を生成中です…（できあがると自動で表示が変わります）</p>")
@@ -3381,6 +3556,18 @@ def route_clip():
     if content is None:
         return _html(page("404", f"<h1>404</h1><a href='{approot()}/'>一覧へ</a>"), 404)
     return _html(content)
+
+
+@app.post("/clip_suggest")
+def route_clip_suggest():
+    st = start_clip_suggest(request.args.get("id") or "", request.args.get("key") or "")
+    return _text(st)
+
+
+@app.get("/clip_suggest_status")
+def route_clip_suggest_status():
+    return _text(clip_suggest_status(request.args.get("id") or "",
+                                     request.args.get("key") or ""))
 
 
 @app.post("/clip_render")
