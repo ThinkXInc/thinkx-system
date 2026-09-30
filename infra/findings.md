@@ -1972,3 +1972,12 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   オーナーが触ると「staging を起動しかない」等の残留状態になる — モック再起動でリセット。
   (2) Chrome 自動操作の find の ref 経由クリックで隣の「やめる」を誤打し完了表示が出ない空振りを
   1 回起こした(コードの不具合ではない)。座標クリック+直前スクショで再実測して確認した。
+- 2026-10-01 リモコン「Claudeをアップデート」押下で 500: `claude --version が失敗: [Errno 8]
+  Exec format error`(オーナーが本番入口で実測)。原因は 9-28 と同じ postinstall 不発 —
+  9-28 以降に claude update が走り(2.1.283→2.1.286)、bin/claude が shebang 無しの
+  「native binary not installed」プレースホルダに戻っていた。bash は ENOEXEC 時に sh で
+  やり直すため対話では文言が出るだけだが、python の subprocess はやり直さず Errno 8 になる
+  (server.py の GET /connect/update が即死)。復旧は install.cjs 実行 → 2.1.286・endpoint
+  same:true を実測。恒久対処(8598ab8・staging 反映済み): claude_version() 自身が失敗時に
+  install.cjs を一度だけ実行してやり直す(GET でも自動復旧)。update_claude 側の個別復旧は
+  重複になるため削除。postinstall 不発はこれで実測 2 回目 — claude update の既知の癖として扱う。
