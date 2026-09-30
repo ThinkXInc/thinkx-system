@@ -442,23 +442,15 @@ def deploy_to_production() -> dict:
 
 
 # ---- Claude Code の更新(押す=実行・オーナー指示 2026-09-28) --------------------------------
-# claude の実体は kaz の ~/.npm-global だけ(root install 廃止・docs/GUIDELINES.md 2026-09-28)なので sudo は不要。
-# GET は今の版と最新版を見せるだけで何も変えない。POST が更新の実行。
-# 更新しても動作中のセッション(tmux 内の claude)は旧版のまま — 次にセッションを作り直したときから新版。
+# claude は kaz の native installer 管理 ~/.local/bin だけ(npm 方式は postinstall 不発で実体が壊れる
+# 事故が 2 回起きたため廃止・D-83)なので sudo は不要。GET は今の版と最新版を見せるだけで何も変えない。
+# POST が更新の実行。native 版は裏で自動更新も走るため、通常は押した時点で「最新です」になる。
+# 更新しても動作中のセッション(tmux 内の claude)は旧版のまま — staging の停止→起動で反映(D-82)。
 
-INSTALL_CJS = Path.home() / ".npm-global/lib/node_modules/@anthropic-ai/claude-code/install.cjs"
 VERSION_PATTERN = re.compile(r"\d+\.\d+\.\d+")
 
 
 def claude_version() -> str:
-    rc, out = run(["claude", "--version"], timeout=30)
-    found = VERSION_PATTERN.search(out)
-    if rc == 0 and found:
-        return found.group(0)
-    # update が「成功」でも postinstall が走らないと bin/claude が shebang 無しのプレースホルダになり、
-    # bash では文言が出るだけだが subprocess では Errno 8 になる(2026-10-01 実測・再発 2 回目)。
-    # install.cjs で native binary を取り直して一度だけやり直す
-    run(["node", str(INSTALL_CJS)], timeout=120)
     rc, out = run(["claude", "--version"], timeout=30)
     found = VERSION_PATTERN.search(out)
     if rc != 0 or not found:
@@ -467,6 +459,7 @@ def claude_version() -> str:
 
 
 def latest_version() -> str:
+    # 最新版の問い合わせ先は npm レジストリのまま(native 版と同じリリース列で公開が続いている)。npm 本体は /usr/local/bin
     rc, out = run(["npm", "view", "@anthropic-ai/claude-code", "version"], timeout=30)
     found = VERSION_PATTERN.search(out)
     if rc != 0 or not found:
