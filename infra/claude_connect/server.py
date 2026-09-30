@@ -453,6 +453,14 @@ VERSION_PATTERN = re.compile(r"\d+\.\d+\.\d+")
 def claude_version() -> str:
     rc, out = run(["claude", "--version"], timeout=30)
     found = VERSION_PATTERN.search(out)
+    if rc == 0 and found:
+        return found.group(0)
+    # update が「成功」でも postinstall が走らないと bin/claude が shebang 無しのプレースホルダになり、
+    # bash では文言が出るだけだが subprocess では Errno 8 になる(2026-10-01 実測・再発 2 回目)。
+    # install.cjs で native binary を取り直して一度だけやり直す
+    run(["node", str(INSTALL_CJS)], timeout=120)
+    rc, out = run(["claude", "--version"], timeout=30)
+    found = VERSION_PATTERN.search(out)
     if rc != 0 or not found:
         raise RuntimeError(f"claude --version が失敗: {out.strip()[:200]}")
     return found.group(0)
@@ -502,12 +510,7 @@ def update_claude() -> dict:
         if rc != 0:
             raise RuntimeError(f"claude update が失敗: {out.strip()[:300]}")
         set_phase("update_verify")
-        try:
-            after = claude_version()
-        except RuntimeError:
-            # 「更新成功」表示でも postinstall(native binary 取得)が走らないことがある(2026-09-28 実測)。install.cjs で直る
-            run(["node", str(INSTALL_CJS)], timeout=300)
-            after = claude_version()
+        after = claude_version()  # postinstall 不発の復旧は claude_version 自身が行う
         return {"result": "already" if after == before else "updated", "before": before, "after": after}
     finally:
         set_phase("idle")
