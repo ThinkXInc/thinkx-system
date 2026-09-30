@@ -6,9 +6,17 @@ function normalize(clips){
   clips.sort((a,b)=>a[0]-b[0]);
   const out=[];
   clips.forEach(c=>{
-    if(out.length&&c[0]<=out[out.length-1][1]+EPS){
-      out[out.length-1][1]=Math.max(out[out.length-1][1],c[1]);
-    }else out.push([c[0],c[1]]);
+    const last=out[out.length-1];
+    if(last&&c[0]<=last[1]+EPS){
+      last[1]=Math.max(last[1],c[1]);
+      const ds=(last[2]||[]).concat(c[2]||[]);
+      if(ds.length){ last[2]=ds.sort((a,b)=>a[0]-b[0]); }
+      clampDrops(last);
+    }else{
+      const o=[c[0],c[1]];
+      if(c[2]&&c[2].length) o.push(c[2].slice());
+      out.push(clampDrops(o));
+    }
   });
   return out;
 }
@@ -30,23 +38,47 @@ function markEnd(st,t){
   const ci=clipAt(st.clips,t);
   if(ci>=0){
     if(t-st.clips[ci][0]<MINW) return 'bad_order';
-    st.clips[ci][1]=t; return 'trim';
+    st.clips[ci][1]=t; clampDrops(st.clips[ci]); return 'trim';
   }
   return 'no_start';
 }
+function clampDrops(c){
+  const ds=(c[2]||[]).map(d=>[Math.max(d[0],c[0]),Math.min(d[1],c[1])])
+    .filter(d=>d[1]-d[0]>EPS);
+  if(ds.length) c[2]=ds; else c.splice(2,1);
+  return c;
+}
+function gapNeighbors(clips,t){
+  let prev=null,next=null;
+  clips.forEach((c,i)=>{
+    if(c[1]<=t&&(prev===null||c[1]>clips[prev][1])) prev=i;
+    if(c[0]>=t&&(next===null||c[0]<clips[next][0])) next=i;
+  });
+  return {prev,next};
+}
 function joinGap(st,t){
   if(clipAt(st.clips,t)>=0) return 'inside';
-  let prev=null,next=null;
-  st.clips.forEach((c,i)=>{
-    if(c[1]<=t&&(prev===null||c[1]>st.clips[prev][1])) prev=i;
-    if(c[0]>=t&&(next===null||c[0]<st.clips[next][0])) next=i;
-  });
-  if(prev===null||next===null) return 'no_pair';
-  const a=st.clips[prev][0], b=st.clips[next][1];
-  st.clips=st.clips.filter((c,i)=>i!==prev&&i!==next);
-  st.clips.push([a,b]); st.pending=null;
+  const nb=gapNeighbors(st.clips,t);
+  if(nb.prev===null||nb.next===null) return 'no_pair';
+  const p=st.clips[nb.prev], q=st.clips[nb.next];
+  let merged=[p[0], q[1], (p[2]||[]).concat(q[2]||[])];
+  if(!merged[2].length) merged=[merged[0],merged[1]];
+  st.clips=st.clips.filter((c,i)=>i!==nb.prev&&i!==nb.next);
+  st.clips.push(merged); st.pending=null;
   st.clips=normalize(st.clips); return 'joined';
 }
+function dropGap(st,t){
+  if(clipAt(st.clips,t)>=0) return 'inside';
+  const nb=gapNeighbors(st.clips,t);
+  if(nb.prev===null||nb.next===null) return 'no_pair';
+  const p=st.clips[nb.prev], q=st.clips[nb.next];
+  const drops=(p[2]||[]).concat([[p[1],q[0]]]).concat(q[2]||[]);
+  drops.sort((a,b)=>a[0]-b[0]);
+  st.clips=st.clips.filter((c,i)=>i!==nb.prev&&i!==nb.next);
+  st.clips.push([p[0], q[1], drops]); st.pending=null;
+  st.clips=normalize(st.clips); return 'dropped';
+}
+function clipNet(c){ return (c[1]-c[0])-(c[2]||[]).reduce((a,d)=>a+(d[1]-d[0]),0); }
 let ok=0,ng=0;
 function eq(name,got,want){
   const g=JSON.stringify(got),w=JSON.stringify(want);
@@ -82,5 +114,23 @@ console.log('== E で新規が既存と重なったら1本に統合 ==');
 st={clips:[[10,18]],pending:15};
 eq('確定できる', markEnd(st,22), 'clip');
 eq('統合される', st.clips, [[10,22]]);
+console.log('== 「間を詰めて1本にする」＝間は drops として捨てる（C-15・原文 L99） ==');
+st={clips:[[10,18],[20,25]],pending:null};
+eq('詰められる', dropGap(st,19), 'dropped');
+eq('1本+drops', st.clips, [[10,25,[[18,20]]]]);
+eq('正味尺は間を除く', clipNet(st.clips[0]), 13);
+eq('切り抜きの中では効かない', dropGap(st,15), 'inside');
+console.log('== 「間も含めて1本にする」は既存の drops を保つ ==');
+st={clips:[[10,18,[[12,13]]],[20,25]],pending:null};
+eq('結合できる', joinGap(st,19), 'joined');
+eq('drops が残る', st.clips, [[10,25,[[12,13]]]]);
+console.log('== 詰めた切り抜きをさらに詰める（drops が増える） ==');
+st={clips:[[10,25,[[18,20]]],[30,35]],pending:null};
+eq('詰められる', dropGap(st,27), 'dropped');
+eq('drops 2件', st.clips, [[10,35,[[18,20],[25,30]]]]);
+console.log('== E の指定で drops が区間内に収まる ==');
+st={clips:[[10,25,[[20,22]]]],pending:null};
+eq('終了を動かす', markEnd(st,21), 'trim');
+eq('drops が丸まる', st.clips, [[10,21,[[20,21]]]]);
 console.log(`\n合計 OK=${ok} NG=${ng}`);
 process.exit(ng?1:0);
