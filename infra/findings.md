@@ -1962,3 +1962,13 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   バイト一致でオーナー機へ取り込み(8821f08)、staging の deploy checkout は clean に戻した。
   なお claude-session / claude_connect はデプロイの自動再起動対象外(2026-09-18 既知)のため、
   unit 変更時は手動で daemon-reload + restart が要る点は変わらず。
+- 2026-09-28〜10-01 リモコン「Claudeをアップデート」実装の実測(D-82): staging の
+  GET /connect/update = {current: 2.1.283, latest: 2.1.283, same: true}(この場合ボタンは
+  「最新です」を出し実行は出ない)。claude_connect restart 後も tmux セッションは生存
+  (KillMode=process の狙い通り)。本番へは release/2026-09-30(PR #146)で反映済みを 10-01 に確認
+  — production..develop 差ゼロ・prod checkout に update_check / 中継許可 'update': 30・トップ 200・
+  /remote_control/ は Basic 認証 401 ガード作動。注意 2 点: (1) ローカル確認用モック
+  (scratchpad/mock_connect.py)は停止・更新済み等の状態をプロセス内に持つため、実測後に
+  オーナーが触ると「staging を起動しかない」等の残留状態になる — モック再起動でリセット。
+  (2) Chrome 自動操作の find の ref 経由クリックで隣の「やめる」を誤打し完了表示が出ない空振りを
+  1 回起こした(コードの不具合ではない)。座標クリック+直前スクショで再実測して確認した。
