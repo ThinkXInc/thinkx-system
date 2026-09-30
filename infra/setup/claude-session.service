@@ -7,8 +7,8 @@ Wants=network-online.target
 Type=forking
 User=kaz
 Environment=HOME=/home/kaz
-# claude は kaz の ~/.npm-global 配下のみ(root install 廃止 2026-09-28)。systemd の既定 PATH には無い
-Environment=PATH=/home/kaz/.npm-global/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+# claude は kaz の native installer 管理 ~/.local/bin のみ(npm 方式廃止 D-83)。systemd の既定 PATH には無い
+Environment=PATH=/home/kaz/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 WorkingDirectory=/src/thinkx-system
 ExecStart=/usr/bin/tmux new-session -d -s claude -c /src/thinkx-system "claude --remote-control"
 ExecStop=/usr/bin/tmux kill-session -t claude

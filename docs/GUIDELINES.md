@@ -458,6 +458,9 @@ Rules（records と同じ形式）
   root 側 install の削除は sudo が要るためオーナー実行(settings で sudo は deny)。
 - **再発時の確認手順**: `command -v claude` と `npm ls -g --depth=0` の版が一致するか。
   食い違えば PATH か install の二重化。`claude --version` が「native binary not installed」なら上記 install.cjs を手で実行。
+- **追記(2026-10-01)**: postinstall 不発が再発したため(実測 2 回目)、実装方式を npm user install から
+  **native installer(`curl -fsSL https://claude.ai/install.sh | bash`・`~/.local/bin/claude`・自動更新あり)へ移行**(infra D-83)。
+  「sudo なしでセッション内から更新を完結させる」という本指示の本義は不変。npm 固有の復旧手順(install.cjs)は以後不要。
 
 
 ## ページを追加したら sitemap 更新をオーナーに提案する。priority は確認を仰ぐ(オーナー指示 2026-09-28)
