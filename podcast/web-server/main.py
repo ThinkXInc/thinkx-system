@@ -3336,9 +3336,7 @@ def render_clip(idv, key):
         f"<div class='crumb'><a href='{approot()}/id?id={urllib.parse.quote(idv)}'>← 1次編集（{esc(idv)}）</a></div>",
         f"<h1>切り抜き編集　{esc(src['seg'].get('title') or '')}</h1>",
         f"<p class='meta'>凍結版 {esc((src.get('created_at') or '')[:16].replace('T', ' '))}"
-        f"　尺 {m}分{s2:02d}秒"
-        f"　<a class='gbtn' href='{approot()}/clip_videos?id={urllib.parse.quote(idv)}"
-        f"&key={urllib.parse.quote(key)}'>動画の作成 →</a></p>",
+        f"　尺 {m}分{s2:02d}秒</p>",
         # 見出し直下に AI のセグメント参考（C-12・原文 L86-95）
         render_clip_suggestions(idv, key),
     ]
@@ -3372,6 +3370,9 @@ def render_clip(idv, key):
         "<option value='1.35'>1.35x</option><option value='1.5'>1.5x</option></select>"
         "<span class='tlzoom'></span>"
         "<button class='tlundo'>↩ 元に戻す</button><button class='tlredo'>↪ やり直す</button>"
+        # 「動画の作成」はこのツールバー(再生〜やり直す)の並びに置く(オーナー指示・原文 L103)
+        f"<a class='gbtn' href='{approot()}/clip_videos?id={urllib.parse.quote(idv)}"
+        f"&key={urllib.parse.quote(key)}'>動画の作成 →</a>"
         "<span class='tlstat'>保存済み</span>"
         "</div>"
         "<div class='tlhelp'>Space 再生/停止・<b>S＝切り抜きの開始</b>・<b>E＝終了</b>・"
