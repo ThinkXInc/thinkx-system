@@ -1981,3 +1981,11 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   same:true を実測。恒久対処(8598ab8・staging 反映済み): claude_version() 自身が失敗時に
   install.cjs を一度だけ実行してやり直す(GET でも自動復旧)。update_claude 側の個別復旧は
   重複になるため削除。postinstall 不発はこれで実測 2 回目 — claude update の既知の癖として扱う。
+- 2026-10-01 claude を native installer へ移行(D-83)の実測: kaz で install.sh 実行 →
+  ~/.local/bin/claude(→ ~/.local/share/claude/versions/2.1.286)・auth は ~/.claude 共有で
+  再ログイン不要(loggedIn:true を実測)。.profile は Ubuntu 標準の ~/.local/bin ブロックが
+  既に効いており、.bashrc のみ先頭(非対話ガード前)に追記。npm 側は
+  `npm uninstall -g @anthropic-ai/claude-code`(removed 2 packages)。動作中の tmux claude
+  (npm 版バイナリ)はファイル削除後もプロセスは生存 — 次の staging 停止→起動から native 版。
+  両 unit の PATH を ~/.local/bin 先頭に変更し daemon-reload + claude_connect restart 後、
+  /connect/update = {current: 2.1.286, latest: 2.1.286, same: true} を実測。
