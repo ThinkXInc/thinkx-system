@@ -7,7 +7,13 @@
   "clips": [
     [
       10.0,
-      25.5
+      25.5,
+      [
+        [
+          15.0,
+          20.0
+        ]
+      ]
     ],
     [
       40.0,
@@ -639,10 +645,10 @@
   "video": {
     "clips": {
       "0": {
-        "title": "才能は遺伝か環境か",
+        "title": "才能は遺伝か環境",
         "title_style": "top_bold_white",
         "font": "ヒラギノ角ゴシック W8.ttc",
-        "size_pct": 5,
+        "size_pct": 5.9,
         "background": "テスト用グラデーション.mp4",
         "sizes": [
           "1080x1920",
