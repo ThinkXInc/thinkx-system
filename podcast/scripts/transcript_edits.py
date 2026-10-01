@@ -99,12 +99,16 @@ def apply_to_segments(tsegments, edits_doc):
             if e.get("orig") is not None and e["orig"] != orig:
                 words.append(w)          # 照合不一致 → 触らない（安全側）
                 continue
-            if e["op"] == "delete":
-                continue
             w2 = dict(w)
-            w2["word"] = e.get("text") or ""
             w2["edited"] = True
             w2["orig_word"] = orig   # 再修正時の照合キー(機械出力の原文)を失わない
+            if e["op"] == "delete":
+                # 位置は空白プレースホルダとして残す(原文 L112)。表示側はクリックで
+                # 再入力でき、出力側(字幕・候補・全文)は空テキストとして自然に除外される
+                w2["word"] = ""
+                w2["deleted"] = True
+            else:
+                w2["word"] = e.get("text") or ""
             words.append(w2)
         seg2 = dict(seg)
         seg2["words"] = words

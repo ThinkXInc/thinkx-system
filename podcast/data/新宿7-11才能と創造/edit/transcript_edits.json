@@ -1,4 +1,162 @@
 {
   "transcript_sha256": "ce46ec2c8f58346a34084b601612e7928cd41f29c32c0594b7b360e4a2932f7b",
-  "edits": []
+  "edits": [
+    {
+      "op": "replace",
+      "s": 84.24,
+      "orig": "継",
+      "text": "行き着"
+    },
+    {
+      "op": "replace",
+      "s": 84.42,
+      "orig": "じゃ",
+      "text": "ちゃ"
+    },
+    {
+      "op": "delete",
+      "s": 84.56,
+      "orig": "や"
+    },
+    {
+      "op": "delete",
+      "s": 84.76,
+      "orig": "ぶ"
+    },
+    {
+      "op": "delete",
+      "s": 85.34,
+      "orig": "い"
+    },
+    {
+      "op": "delete",
+      "s": 85.5,
+      "orig": "の"
+    },
+    {
+      "op": "delete",
+      "s": 85.64,
+      "orig": "か"
+    },
+    {
+      "op": "replace",
+      "s": 89.66,
+      "orig": "それは",
+      "text": "かまたはそれは"
+    },
+    {
+      "op": "replace",
+      "s": 95.38,
+      "orig": "う",
+      "text": "って"
+    },
+    {
+      "op": "replace",
+      "s": 105.92,
+      "orig": "肯",
+      "text": "後"
+    },
+    {
+      "op": "replace",
+      "s": 106.22,
+      "orig": "定",
+      "text": "天"
+    },
+    {
+      "op": "replace",
+      "s": 109.74,
+      "orig": "ってる",
+      "text": "ってるか"
+    },
+    {
+      "op": "delete",
+      "s": 111.58,
+      "orig": "よ"
+    },
+    {
+      "op": "replace",
+      "s": 127.6,
+      "orig": "別",
+      "text": "劣"
+    },
+    {
+      "op": "replace",
+      "s": 128.0,
+      "orig": "姓",
+      "text": "性"
+    },
+    {
+      "op": "replace",
+      "s": 136.92,
+      "orig": "遺",
+      "text": "劣性遺"
+    },
+    {
+      "op": "replace",
+      "s": 139.16,
+      "orig": "ない",
+      "text": "ないと"
+    },
+    {
+      "op": "delete",
+      "s": 140.28,
+      "orig": "さ"
+    },
+    {
+      "op": "replace",
+      "s": 142.06,
+      "orig": "そう",
+      "text": "現れる"
+    },
+    {
+      "op": "delete",
+      "s": 142.08,
+      "orig": "いう"
+    },
+    {
+      "op": "delete",
+      "s": 142.12,
+      "orig": "の"
+    },
+    {
+      "op": "delete",
+      "s": 142.48,
+      "orig": "そう"
+    },
+    {
+      "op": "delete",
+      "s": 142.62,
+      "orig": "の"
+    },
+    {
+      "op": "replace",
+      "s": 146.3,
+      "orig": "ゴ",
+      "text": "結局"
+    },
+    {
+      "op": "replace",
+      "s": 146.84,
+      "orig": "ゴ",
+      "text": "組み合わせが重要で"
+    },
+    {
+      "op": "replace",
+      "s": 154.28,
+      "orig": "ゴ",
+      "text": "ある"
+    },
+    {
+      "op": "replace",
+      "s": 154.58,
+      "orig": "ゴ",
+      "text": "遺伝子"
+    },
+    {
+      "op": "replace",
+      "s": 154.6,
+      "orig": "ゴ",
+      "text": "特異"
+    }
+  ]
 }

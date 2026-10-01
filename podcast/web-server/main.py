@@ -306,6 +306,10 @@ CLIP_CSS = """
 .cu:hover { background:#2563eb14; box-shadow:0 0 0 2px #2563eb22; }
 .cu input { font:inherit; color:inherit; background:#2563eb18;
             border:1px solid #2563eb88; border-radius:3px; padding:0 2px; }
+/* 削除済みテキストの空白プレースホルダ(原文 L112)。クリックで書き戻せる */
+.w.wdel, .cu.wdel { min-width:16px; border:1px dashed #9ca3af99; border-radius:3px;
+                    opacity:.6; cursor:text; }
+.w.wdel:hover, .cu.wdel:hover { background:#2563eb14; opacity:1; }
 /* 切り抜きセグメント＝開始から終了までグラデーション（原文 L21）。
    開始側が明るい（開始と終了を色で見分ける。オーナー指示 2026-09-28・原文 L98） */
 .clipz { position:absolute; top:0; height:24px;
@@ -373,6 +377,7 @@ var units=(D.units||[]).map(function(u){
   var w={s:+u.s,e:+u.e,t:String(u.t)};
   if(u.o!=null) w.o=String(u.o);
   if(u.insd) w.insd=1;
+  if(u.del) w.del=1;   /* 削除済み=空白プレースホルダ(原文 L112) */
   return w;
 });
 var keeps=(D.keeps||[]).map(function(k){return [+k[0],+k[1]];});
@@ -459,8 +464,8 @@ function build(){
         ts.textContent=fmtAbs(vs); ts.style.left=x+'px';
         lane.appendChild(ts); lastTsRight=x+ts.offsetWidth+8;
       }
-      var el=document.createElement('span'); el.className='cu';
-      el.textContent=u.t; el.style.left=x+'px';
+      var el=document.createElement('span'); el.className='cu'+(u.del?' wdel':'');
+      el.textContent=u.del?' ':u.t; el.style.left=x+'px';
       el.dataset.ui=ui;
       lane.appendChild(el); els.push(el);
       lastRight=x+el.offsetWidth+4; prevEndV=V(u.e); ui++;
@@ -843,13 +848,15 @@ function editUnit(el){
           build();
         });
     }else if(v.trim()===''){
+      /* 消しても位置は空白プレースホルダとして残す(原文 L112) */
       sendEdit({op:'delete', s:u.s, orig:(u.o!=null?u.o:u.t)},
-        function(){ units.splice(ui,1); build(); setStatus('テキストを削除しました（保存済み）'); });
+        function(){ if(u.o==null) u.o=u.t; u.t=''; u.del=1;
+          build(); setStatus('テキストを削除しました（空白をクリックで書き戻せます）'); });
     }else{
       sendEdit({op:'replace', s:u.s, orig:(u.o!=null?u.o:u.t), text:v},
         function(){
           if(u.o==null) u.o=u.t;
-          u.t=v;
+          u.t=v; delete u.del;
           if(v===u.o) delete u.o;
           build(); setStatus('テキストを修正しました（保存済み）');
         });
@@ -877,10 +884,14 @@ function insertUnit(t){
 }
 function deleteUnitEl(cuEl){
   var ui=+cuEl.dataset.ui, u=units[ui]; if(!u) return;
-  var op=(u.ins||u.insd)?{op:'insert', t:u.s, text:''}
-                        :{op:'delete', s:u.s, orig:(u.o!=null?u.o:u.t)};
-  sendEdit(op,
-    function(){ units.splice(ui,1); build(); setStatus('テキストを削除しました（保存済み）'); });
+  if(u.ins||u.insd){
+    sendEdit({op:'insert', t:u.s, text:''},
+      function(){ units.splice(ui,1); build(); setStatus('挿入テキストを取り消しました（保存済み）'); });
+  }else{
+    sendEdit({op:'delete', s:u.s, orig:(u.o!=null?u.o:u.t)},
+      function(){ if(u.o==null) u.o=u.t; u.t=''; u.del=1;
+        build(); setStatus('テキストを削除しました（空白をクリックで書き戻せます）'); });
+  }
 }
 
 /* 右クリックメニュー。即実行しない作法は1次編集と同じ（オーナー指示 2026-08-05） */
@@ -1156,8 +1167,8 @@ function makeTimeline(root){
         }
         var el=document.createElement('span');
         el.className='w'+((w.p&&w.p!==D.mainSpk)?(' s'+(w.p<=8?w.p:'x')):'')
-                        +(hlSet[wi]?' hl':'');
-        el.textContent=w.t; el.style.left=x+'px';
+                        +(hlSet[wi]?' hl':'')+(w.del?' wdel':'');
+        el.textContent=w.del?' ':w.t; el.style.left=x+'px';
         el.dataset.s=w.s; el.dataset.e=w.e; el.dataset.wi=wi;
         lane.appendChild(el); els.push(el);
         lastRight=x+el.offsetWidth; prevEnd=w.e; prevSpk=w.p; wi++;
@@ -1597,13 +1608,15 @@ function makeTimeline(root){
             build();
           });
       }else if(v.trim()===''){
+        /* 消しても位置は空白プレースホルダとして残し、クリックで書き戻せる(原文 L112) */
         sendEdit({op:'delete', s:w.s, orig:(w.o!=null?w.o:w.t)},
-          function(){ D.words.splice(wi,1); build(); setStatus('テキストを削除しました（保存済み）'); });
+          function(){ if(w.o==null) w.o=w.t; w.t=''; w.del=1;
+            build(); setStatus('テキストを削除しました（空白をクリックで書き戻せます）'); });
       }else{
         sendEdit({op:'replace', s:w.s, orig:(w.o!=null?w.o:w.t), text:v},
           function(){
             if(w.o==null) w.o=w.t;
-            w.t=v;
+            w.t=v; delete w.del;
             if(v===w.o) delete w.o;   /* 原文に戻した = 修正の取り消し */
             build(); setStatus('テキストを修正しました（保存済み）');
           });
@@ -1626,10 +1639,15 @@ function makeTimeline(root){
   }
   function deleteWordEl(el){
     var wi=+el.dataset.wi, w=D.words[wi]; if(!w) return;
-    var op = (w.ins||w.insd) ? {op:'insert', t:w.s, text:''}
-                             : {op:'delete', s:w.s, orig:(w.o!=null?w.o:w.t)};
-    sendEdit(op,
-      function(){ D.words.splice(wi,1); build(); setStatus('テキストを削除しました（保存済み）'); });
+    if(w.ins||w.insd){
+      /* 挿入した語の削除は本当に消える(元データに位置が無いため) */
+      sendEdit({op:'insert', t:w.s, text:''},
+        function(){ D.words.splice(wi,1); build(); setStatus('挿入テキストを取り消しました（保存済み）'); });
+    }else{
+      sendEdit({op:'delete', s:w.s, orig:(w.o!=null?w.o:w.t)},
+        function(){ if(w.o==null) w.o=w.t; w.t=''; w.del=1;
+          build(); setStatus('テキストを削除しました（空白をクリックで書き戻せます）'); });
+    }
   }
   host.addEventListener('click',function(ev){
     var el=ev.target.closest('.w'); if(!el) return;
@@ -1805,7 +1823,8 @@ def timeline_block(idv, sg, tsegments, silence, main_spk=1, cutdecs=None, quotes
             if st is None or en is None or not (s <= st < e):
                 continue
             tok = (w.get("word") or "").strip()
-            if not tok:
+            # 削除済みの語は空白プレースホルダとして残す(原文 L112)
+            if not tok and not w.get("deleted"):
                 continue
             spk = w.get("speaker") or tseg.get("speaker") or ""
             try:
@@ -1819,6 +1838,8 @@ def timeline_block(idv, sg, tsegments, silence, main_spk=1, cutdecs=None, quotes
                 wd["o"] = w["orig_word"]
             if w.get("inserted"):
                 wd["insd"] = 1
+            if w.get("deleted"):
+                wd["del"] = 1
             words.append(wd)
     words.sort(key=lambda w: w["s"])
     sil = [[max(a, s), min(b, e)] for a, b in silence if b > s and a < e]
@@ -2945,7 +2966,9 @@ def clip_tokens(idv, geometry):
                 continue
             st, en = float(st), float(en)
             tok = (w.get("word") or "").strip()
-            if not tok:
+            # 削除済みの語は空白プレースホルダとして残す(原文 L112)。字幕・候補・全文の
+            # 生成側は空テキストを拾わないので出力には乗らない
+            if not tok and not w.get("deleted"):
                 continue
             if sum(max(0.0, min(en, kb) - max(st, ka)) for ka, kb in keeps) < 0.2:
                 continue
@@ -2954,6 +2977,8 @@ def clip_tokens(idv, geometry):
                 wd["o"] = w["orig_word"]
             if w.get("inserted"):
                 wd["insd"] = 1
+            if w.get("deleted"):
+                wd["del"] = 1
             out.append(wd)
     out.sort(key=lambda w: w["s"])
     return out, est
