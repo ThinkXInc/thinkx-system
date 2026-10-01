@@ -323,6 +323,25 @@ CLIP_CSS = """
 .topicnote .tn-title:hover { text-decoration:underline; }
 .topicnote .tn-time { font-variant-numeric:tabular-nums; margin-bottom:4px; }
 .topicnote .tn-text { opacity:.85; }
+/* スタイル調整パネル(原文 L126)とライブプレビュー(位置ドラッグ。原文 L128) */
+.cvpanel { display:flex; gap:18px; align-items:flex-start; margin:8px 0 14px; }
+.cvprev { position:relative; width:250px; background:#111; border-radius:8px;
+          overflow:hidden; aspect-ratio:1080/1920; }
+.cvprevbg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.pvtext { position:absolute; transform:translate(-50%,-50%); max-width:90%;
+          text-align:center; line-height:1.3; white-space:pre-wrap; cursor:grab;
+          user-select:none; }
+.pvtext .pv-stroke { position:absolute; inset:0; color:transparent; z-index:0; }
+.pvtext .pv-fill { position:relative; z-index:1; }
+.pvguide { position:absolute; background:#7cd1ff; display:none; pointer-events:none; z-index:5; }
+.pvguide-v { left:50%; top:0; bottom:0; width:1px; }
+.pvguide-h { top:50%; left:0; right:0; height:1px; }
+.cvstyles { flex:1; min-width:380px; }
+.cvstrow { font-size:13px; line-height:2.4; margin-bottom:4px; }
+.cvstrow b { margin-right:6px; }
+.cvstrow input[type='color'] { width:26px; height:20px; padding:0; border:none;
+                               vertical-align:middle; background:none; }
+.cvstrow select { max-width:180px; }
 /* 動画作成画面: セグメント専用のタイトル候補チップ(原文 L123。3つ横並び・クリックで採用) */
 .cvtcands { display:flex; gap:10px; flex-wrap:wrap; margin:2px 0 10px 11px; }
 .cvtcand { font-size:13px; padding:4px 14px; cursor:pointer; background:transparent;
@@ -3351,6 +3370,31 @@ def list_clip_backgrounds():
                   if n.lower().endswith((".mp4", ".mov", ".m4v", ".webm")))
 
 
+def resolve_clip_style(cfg, sub_style, fonts):
+    """スタイル調整パネル(原文 L126)の実効値。保存済み cfg['style'] を既定値に重ねる。
+    make_clip_video.py 側の resolve と同じ既定を共有する。"""
+    legacy_font = cfg.get("font") or (fonts[0] if fonts else "")
+    base = {
+        "sub": {"color": ["#ffffff"], "outline": ["#000000"], "outline_w": 8,
+                "shadow_w": 3, "shadow_color": "#000000", "font": legacy_font,
+                "bold": True,
+                "size_pct": float(cfg.get("size_pct") or sub_style.get("font_size_pct") or 8.3),
+                "x_pct": 50, "y_pct": 62},
+        "title": {"color": ["#ffffff"], "outline": ["#000000"], "outline_w": 6,
+                  "shadow_w": 2, "shadow_color": "#000000", "font": legacy_font,
+                  "bold": True, "size_pct": 6.4, "x_pct": 50, "y_pct": 20},
+    }
+    st = cfg.get("style") or {}
+    out = {}
+    for k, d in base.items():
+        merged = dict(d)
+        for kk, vv in (st.get(k) or {}).items():
+            if vv is not None:
+                merged[kk] = vv
+        out[k] = merged
+    return out
+
+
 def render_clip_videos(idv, key):
     """動画作成画面（CLIP_PLAN C-6）。切り抜きが時系列順に並び、コンテンツごとに
     テキスト全文・設定ウインドウ・生成・再生・書き出しを持つ（原文 L66-69）。
@@ -3426,7 +3470,8 @@ def render_clip_videos(idv, key):
                 f"<button class='cvtcand' onclick='cvPick(this,{n})'>{esc(t)}</button>"
                 for t in cand_titles) + "</p>")
         parts.append(
-            f"<div class='seg' id='cv{n}' data-cs='{cs}' data-ce='{ce}'>"
+            f"<div class='seg' id='cv{n}' data-cs='{cs}' data-ce='{ce}'"
+            f" data-sample=\"{esc((text or 'サンプル字幕')[:16])}\">"
             f"<p><button class='gbtn' onclick='cvTitles({n})'>"
             f"{'タイトル候補生成' if not cand_titles else 'タイトル候補再生成'}</button>"
             f"　<span class='cvtstat meta'></span></p>"
@@ -3436,17 +3481,62 @@ def render_clip_videos(idv, key):
             f"<div class='box summary'>{esc(text) or '（この区間にテキストがありません）'}</div>"
             "<p class='meta'>"
             f"タイトル <input type='text' class='cvtitle' value=\"{esc(cfg.get('title') or '')}\""
-            f" placeholder='動画の見出し（全編表示）' style='width:340px' onchange='cvSave({n})'>"
-            f"　スタイル <select class='cvtstyle' onchange='cvSave({n})'>{tstyle_opts}</select></p>"
-            "<p class='meta'>"
-            f"フォント <select class='cvfont' onchange='cvSave({n})'>{font_opts}</select>"
-            f"　字幕サイズ <button onclick='cvStep({n},-1)'>−</button>"
-            f"<input type='number' class='cvsizepct' value='{size_pct}' step='0.1' min='1' max='12'"
-            f" style='width:60px' onchange='cvSave({n})'>"
-            f"<button onclick='cvStep({n},1)'>＋</button>（幅%）"
-            f"　背景 <select class='cvbg' onchange='cvSave({n})'>{bg_opts}</select></p>"
+            f" placeholder='動画の見出し（全編表示）' style='width:340px'"
+            f" oninput='cvApplyPrev({n})' onchange='cvSave({n})'>"
+            f"　背景 <select class='cvbg' onchange='cvBg({n});cvSave({n})'>{bg_opts}</select></p>"
             f"<p class='meta'>書き出しサイズ {size_boxes}</p>")
-        # 生成済みの動画（再生ウインドウ。原文 L68）。生成は毎回上書き・溜めない(原文 L124)。
+        # スタイル調整パネル(原文 L126)+ライブプレビュー(位置はドラッグ指定。原文 L128)。
+        # 書き出しに時間がかかるため、見た目は CSS で即時に確認し、書き出し時に ASS へ変換する
+        stl = resolve_clip_style(cfg, sub_style, fonts)
+        prev_bg = cfg.get("background") or (bgs[0] if bgs else "")
+
+        def _srow(el_key, label, d):
+            fo = "".join(
+                f"<option value='{esc(f3)}'{' selected' if d.get('font') == f3 else ''}>{esc(f3)}</option>"
+                for f3 in fonts) or "<option value=''>（fonts が空）</option>"
+            c = (d.get("color") or ["#ffffff"])
+            o = (d.get("outline") or ["#000000"])
+            c2_hide = "" if len(c) > 1 else " style='display:none'"
+            o2_hide = "" if len(o) > 1 else " style='display:none'"
+            return (
+                f"<div class='cvstrow' data-el='{el_key}'><b>{label}</b>"
+                f" 色<input type='color' class='cvst' data-k='c1' value='{c[0]}'>"
+                f"<input type='color' class='cvst cvst-c2' data-k='c2'"
+                f" value='{c[1] if len(c) > 1 else c[0]}'{c2_hide}>"
+                f"<label><input type='checkbox' class='cvst' data-k='grad'{' checked' if len(c) > 1 else ''}>グラデ</label>"
+                f"　縁<input type='color' class='cvst' data-k='o1' value='{o[0]}'>"
+                f"<input type='color' class='cvst cvst-o2' data-k='o2'"
+                f" value='{o[1] if len(o) > 1 else o[0]}'{o2_hide}>"
+                f"<label><input type='checkbox' class='cvst' data-k='ograd'{' checked' if len(o) > 1 else ''}>グラデ</label>"
+                f"　縁太<input type='number' class='cvst' data-k='ow' value='{d.get('outline_w')}'"
+                f" min='0' max='40' step='1' style='width:48px'>"
+                f"　影<input type='number' class='cvst' data-k='sw' value='{d.get('shadow_w')}'"
+                f" min='0' max='40' step='1' style='width:48px'>"
+                f"<input type='color' class='cvst' data-k='sc' value='{d.get('shadow_color')}'>"
+                f"　<select class='cvst' data-k='font'>{fo}</select>"
+                f"<label><input type='checkbox' class='cvst' data-k='bold'{' checked' if d.get('bold') else ''}>太字</label>"
+                f"　サイズ<input type='number' class='cvst' data-k='size' value='{d.get('size_pct')}'"
+                f" min='1' max='25' step='0.1' style='width:56px'>（幅%）"
+                f"<input type='hidden' class='cvst' data-k='x' value='{d.get('x_pct')}'>"
+                f"<input type='hidden' class='cvst' data-k='y' value='{d.get('y_pct')}'>"
+                "</div>")
+
+        bg_src = f"{approot()}/assets/clip_backgrounds/{urllib.parse.quote(prev_bg)}" if prev_bg else ""
+        parts.append(
+            "<div class='cvpanel'>"
+            "<div>"
+            f"<div class='cvprev' data-n='{n}'>"
+            f"<video class='cvprevbg' muted autoplay loop playsinline src='{bg_src}'></video>"
+            "<div class='pvguide pvguide-v'></div><div class='pvguide pvguide-h'></div>"
+            "<div class='pvtext' data-el='title'><span class='pv-stroke'></span><span class='pv-fill'></span></div>"
+            "<div class='pvtext' data-el='sub'><span class='pv-stroke'></span><span class='pv-fill'></span></div>"
+            "</div>"
+            "<div class='meta' style='font-size:11px'>テキストをドラッグで位置調整（中央に吸着）</div>"
+            "</div>"
+            f"<div class='cvstyles'>{_srow('title', 'タイトル', stl['title'])}{_srow('sub', '字幕', stl['sub'])}"
+            "<div class='meta' style='font-size:11px'>プレビューは CSS による近似。最終の見た目は書き出しで確認</div>"
+            "</div></div>")
+        # 書き出し済みの動画（再生ウインドウ。原文 L68）。毎回上書き・溜めない(原文 L124)。
         # その下に整形ファイル名(タイトル_尺_規格)での .mp4 ダウンロードリンクを出す
         nice_base = f"{safe_name((cfg.get('title') or f'クリップ{n + 1}').strip())}" \
                     f"_{int(dur // 60)}m{int(dur % 60):02d}s"
@@ -3467,28 +3557,38 @@ def render_clip_videos(idv, key):
                     f"<div class='dl'><a href='{url}' download=\"{esc(nice)}\">{esc(nice)}</a></div>"
                     "</div>")
         if CLIP_RENDER_ENABLED:
-            gen_btn = f"<button class='gbtn' onclick='cvRender({n})'>生成</button>"
+            gen_btn = f"<button class='gbtn' onclick='cvRender({n})'>書き出し</button>"
         else:
-            note = "動画の生成はローカル(mac)で行います（オーナー裁定 2026-09-28）"
-            gen_btn = f"<button class='gbtn' disabled title='{note}'>生成</button>"
+            note = "動画の書き出しはローカル(mac)で行います（オーナー裁定 2026-09-28）"
+            gen_btn = f"<button class='gbtn' disabled title='{note}'>書き出し</button>"
         parts.append(
             f"<p class='meta'>{gen_btn}"
             f"　<span class='cvstat meta'></span></p>"
             f"<div class='cvpvs' style='display:flex;gap:12px;flex-wrap:wrap'>{''.join(previews)}</div>"
             "</div>")
     step = styles.get("subtitle_size_step_pct") or 0.3
+    size_map = {s["key"]: [s["w"], s["h"]] for s in sizes}
     parts.append(
         "<script>"
-        f"var CV_STEP={step};"
+        f"var CV_SIZES={json.dumps(size_map)};"
+        # ---- スタイルの収集(保存形式は make_clip_video と共有) ----
+        "function cvStyleGet(card,el){var o={};"
+        "card.querySelectorAll(\".cvstrow[data-el='\"+el+\"'] .cvst\").forEach(function(i){"
+        "o[i.dataset.k]=(i.type==='checkbox')?i.checked:i.value;});"
+        "var st={color:o.grad?[o.c1,o.c2]:[o.c1],outline:o.ograd?[o.o1,o.o2]:[o.o1],"
+        "outline_w:parseFloat(o.ow)||0,shadow_w:parseFloat(o.sw)||0,shadow_color:o.sc,"
+        "font:o.font,bold:!!o.bold,size_pct:parseFloat(o.size)||8,"
+        "x_pct:parseFloat(o.x)||50,y_pct:parseFloat(o.y)||50};"
+        "return st;}"
         "function cvCollect(){var out={};"
         "document.querySelectorAll('[id^=cv]').forEach(function(card){"
         "if(!/^cv\\d+$/.test(card.id))return;var n=card.id.slice(2);"
+        "var sub=cvStyleGet(card,'sub');"
         "out[n]={title:card.querySelector('.cvtitle').value,"
-        "title_style:card.querySelector('.cvtstyle').value,"
-        "font:card.querySelector('.cvfont').value,"
-        "size_pct:parseFloat(card.querySelector('.cvsizepct').value)||4.7,"
+        "font:sub.font,size_pct:sub.size_pct,"
         "background:card.querySelector('.cvbg').value,"
-        "sizes:[].slice.call(card.querySelectorAll('.cvsize:checked')).map(function(c){return c.value;})};});"
+        "sizes:[].slice.call(card.querySelectorAll('.cvsize:checked')).map(function(c){return c.value;}),"
+        "style:{title:cvStyleGet(card,'title'),sub:sub}};});"
         "return out;}"
         "function cvSave(n){var q=new URLSearchParams(location.search);"
         "var card=document.getElementById('cv'+n);"
@@ -3498,9 +3598,84 @@ def render_clip_videos(idv, key):
         "video:{clips:cvCollect()}})})"
         ".then(function(r){if(el)el.textContent=r.ok?'保存済み':'保存失敗';})"
         ".catch(function(){if(el)el.textContent='サーバーに接続できません';});}"
-        "function cvStep(n,d){var card=document.getElementById('cv'+n);"
-        "var inp=card.querySelector('.cvsizepct');"
-        "inp.value=(Math.round(((parseFloat(inp.value)||8.3)+d*CV_STEP)*10)/10);cvSave(n);}"
+        # ---- フォント読み込み(/assets/fonts から @font-face 相当で) ----
+        "var CVF={};"
+        "function cvFontFamily(file){if(!file)return 'sans-serif';"
+        "if(CVF[file])return CVF[file];"
+        "var fam='cvf_'+file.replace(/[^a-zA-Z0-9]/g,'_');CVF[file]=fam;"
+        "try{var ff=new FontFace(fam,\"url('\"+window.APP+'/assets/fonts/'+encodeURIComponent(file)+\"')\");"
+        "ff.load().then(function(f){document.fonts.add(f);"
+        "document.querySelectorAll('.cvprev').forEach(function(p){cvApplyPrev(+p.dataset.n);});});}"
+        "catch(e){}return fam;}"
+        # ---- ライブプレビュー(原文 L126)。CSS 2層(縁=stroke層/本体=fill層)で近似 ----
+        "function cvApplyPrev(n){var card=document.getElementById('cv'+n);if(!card)return;"
+        "var prev=card.querySelector('.cvprev');"
+        "var szk=(card.querySelector('.cvsize:checked')||{}).value||Object.keys(CV_SIZES)[0];"
+        "var wh=CV_SIZES[szk]||[1080,1920];"
+        "prev.style.aspectRatio=wh[0]+' / '+wh[1];"
+        "var pw=prev.clientWidth||240;var scale=pw/wh[0];"
+        "['title','sub'].forEach(function(el){"
+        "var st=cvStyleGet(card,el);"
+        "var box=prev.querySelector(\".pvtext[data-el='\"+el+\"']\");"
+        "var txt=(el==='title')?(card.querySelector('.cvtitle').value||'タイトル')"
+        ":(card.dataset.sample||'サンプル字幕');"
+        "var fs=st.size_pct/100*pw;"
+        "box.style.left=st.x_pct+'%';box.style.top=st.y_pct+'%';"
+        "box.style.fontSize=fs+'px';"
+        "box.style.fontFamily=cvFontFamily(st.font);"
+        "box.style.fontWeight=st.bold?'700':'400';"
+        "var sk=box.querySelector('.pv-stroke'),fl=box.querySelector('.pv-fill');"
+        "sk.textContent=txt;fl.textContent=txt;"
+        "var ow=st.outline_w*scale;"
+        "sk.style.webkitTextStroke=(ow*2)+'px '+st.outline[0];"
+        "var sw=st.shadow_w*scale;"
+        "sk.style.textShadow=sw?(sw+'px '+sw+'px '+Math.max(1,sw/2)+'px '+st.shadow_color):'none';"
+        "if(st.color.length>1){fl.style.background='linear-gradient(90deg,'+st.color[0]+','+st.color[1]+')';"
+        "fl.style.webkitBackgroundClip='text';fl.style.backgroundClip='text';"
+        "fl.style.color='transparent';}"
+        "else{fl.style.background='none';fl.style.webkitBackgroundClip='initial';fl.style.color=st.color[0];}"
+        "});}"
+        "function cvBg(n){var card=document.getElementById('cv'+n);"
+        "var v=card.querySelector('.cvprevbg');"
+        "v.src=window.APP+'/assets/clip_backgrounds/'+encodeURIComponent(card.querySelector('.cvbg').value);}"
+        # ---- ドラッグで位置指定(原文 L128)。中央線はライトブルーで表示・±2%で吸着 ----
+        "var cvDrag=null;"
+        "document.addEventListener('mousedown',function(ev){"
+        "var box=ev.target.closest('.pvtext');if(!box)return;"
+        "var prev=box.closest('.cvprev');"
+        "cvDrag={n:+prev.dataset.n,el:box.dataset.el,prev:prev};"
+        "prev.querySelectorAll('.pvguide').forEach(function(g){g.style.display='block';});"
+        "ev.preventDefault();});"
+        "document.addEventListener('mousemove',function(ev){"
+        "if(!cvDrag)return;"
+        "var r=cvDrag.prev.getBoundingClientRect();"
+        "var x=(ev.clientX-r.left)/r.width*100,y=(ev.clientY-r.top)/r.height*100;"
+        "if(Math.abs(x-50)<2)x=50;if(Math.abs(y-50)<2)y=50;"
+        "x=Math.max(2,Math.min(98,x));y=Math.max(2,Math.min(98,y));"
+        "var card=document.getElementById('cv'+cvDrag.n);"
+        "var row=card.querySelector(\".cvstrow[data-el='\"+cvDrag.el+\"']\");"
+        "row.querySelector(\"[data-k='x']\").value=x.toFixed(1);"
+        "row.querySelector(\"[data-k='y']\").value=y.toFixed(1);"
+        "cvApplyPrev(cvDrag.n);});"
+        "document.addEventListener('mouseup',function(){"
+        "if(!cvDrag)return;"
+        "cvDrag.prev.querySelectorAll('.pvguide').forEach(function(g){g.style.display='none';});"
+        "var n=cvDrag.n;cvDrag=null;cvSave(n);});"
+        # 入力変更 → 即プレビュー + 保存。グラデのチェックで2色目の表示を切り替え
+        "document.addEventListener('change',function(ev){"
+        "var row=ev.target.closest('.cvstrow');if(!row)return;"
+        "var card=row.closest('.seg');var n=+card.id.slice(2);"
+        "if(ev.target.dataset.k==='grad')row.querySelector('.cvst-c2').style.display=ev.target.checked?'':'none';"
+        "if(ev.target.dataset.k==='ograd')row.querySelector('.cvst-o2').style.display=ev.target.checked?'':'none';"
+        "cvApplyPrev(n);cvSave(n);});"
+        "document.addEventListener('input',function(ev){"
+        "var row=ev.target.closest('.cvstrow');if(!row)return;"
+        "cvApplyPrev(+row.closest('.seg').id.slice(2));});"
+        "document.addEventListener('change',function(ev){"
+        "if(ev.target.classList.contains('cvsize')){"
+        "var card=ev.target.closest('.seg');cvApplyPrev(+card.id.slice(2));}});"
+        "document.addEventListener('DOMContentLoaded',function(){"
+        "document.querySelectorAll('.cvprev').forEach(function(p){cvApplyPrev(+p.dataset.n);});});"
         # タイトル候補(原文 L123): 生成→完了でリロード。候補クリックでタイトル欄に入れて保存
         "function cvTitles(n){var q=new URLSearchParams(location.search);"
         "var card=document.getElementById('cv'+n);var el=card.querySelector('.cvtstat');"
@@ -3518,9 +3693,8 @@ def render_clip_videos(idv, key):
         "el.textContent='生成できません: '+s.slice(7);}});},3000);})"
         ".catch(function(){el.textContent='サーバーに接続できません';});}"
         "function cvPick(el,n){var card=document.getElementById('cv'+n);"
-        "card.querySelector('.cvtitle').value=el.textContent;cvSave(n);}"
-        # 生成: 設定を保存 → make_clip_video をバックグラウンド実行 → 完了でリロード
-        # （プレビューの <video> はサーバー側がファイルの有無で組むため）
+        "card.querySelector('.cvtitle').value=el.textContent;cvApplyPrev(n);cvSave(n);}"
+        # 書き出し(表示名。原文 L129): 設定を保存 → make_clip_video 実行 → 完了でリロード
         "function cvRender(n){var q=new URLSearchParams(location.search);"
         "var card=document.getElementById('cv'+n);var el=card.querySelector('.cvstat');"
         "var sizes=[].slice.call(card.querySelectorAll('.cvsize:checked')).map(function(c){return c.value;});"
@@ -3529,20 +3703,20 @@ def render_clip_videos(idv, key):
         "fetch(window.APP+'/clip_save',{method:'POST',headers:{'Content-Type':'application/json'},"
         "body:JSON.stringify({id:q.get('id'),key:q.get('key'),op:'video-settings',"
         "video:{clips:cvCollect()}})}).then(function(){"
-        "el.textContent='生成を開始しています…';"
+        "el.textContent='書き出しを開始しています…';"
         "return fetch(window.APP+'/clip_render',{method:'POST',"
         "headers:{'Content-Type':'application/json'},"
         "body:JSON.stringify({id:q.get('id'),key:q.get('key'),seg:n,sizes:sizes})});})"
         ".then(function(r){return r.text();}).then(function(st){"
         "if(st!=='started'&&st!=='already_running'){el.textContent='開始できません: '+st;return;}"
-        "el.textContent='生成中…（サイズごとに数十秒〜数分）';"
+        "el.textContent='書き出し中…（サイズごとに数十秒〜数分）';"
         "var iv=setInterval(function(){"
         "fetch(window.APP+'/clip_render_status?id='+encodeURIComponent(q.get('id'))"
         "+'&key='+encodeURIComponent(q.get('key'))+'&seg='+n)"
         ".then(function(r){return r.text();}).then(function(s){"
         "if(s==='done'){clearInterval(iv);location.reload();}"
         "else if(s.indexOf('failed')===0){clearInterval(iv);"
-        "el.textContent='生成失敗（generated/clip_…_render_'+n+'.log を確認）';}});},3000);})"
+        "el.textContent='書き出し失敗（generated/clip_…_render_'+n+'.log を確認）';}});},3000);})"
         ".catch(function(){el.textContent='サーバーに接続できません';});}"
         "</script>")
     return page(f"動画の作成 {idv}", "".join(parts))

@@ -445,13 +445,48 @@
       "0": {
         "background": "テスト用グラデーション.mp4",
         "font": "ヒラギノ角ゴシック W8.ttc",
-        "size_pct": 10.1,
+        "size_pct": 8.3,
         "sizes": [
-          "1080x1920",
-          "1080x1080"
+          "1080x1920"
         ],
-        "title": "元時刻アンカー検証",
-        "title_style": "top_bold_white"
+        "style": {
+          "sub": {
+            "bold": true,
+            "color": [
+              "#ffffff",
+              "#ffd24d"
+            ],
+            "font": "ヒラギノ角ゴシック W8.ttc",
+            "outline": [
+              "#000000",
+              "#5500aa"
+            ],
+            "outline_w": 10,
+            "shadow_color": "#000000",
+            "shadow_w": 4,
+            "size_pct": 8.3,
+            "x_pct": 50,
+            "y_pct": 70
+          },
+          "title": {
+            "bold": true,
+            "color": [
+              "#4fd2ff",
+              "#ff4fa0"
+            ],
+            "font": "ヒラギノ角ゴシック W8.ttc",
+            "outline": [
+              "#000000"
+            ],
+            "outline_w": 6,
+            "shadow_color": "#000000",
+            "shadow_w": 2,
+            "size_pct": 6.4,
+            "x_pct": 50,
+            "y_pct": 18
+          }
+        },
+        "title": "グラデーション検証"
       }
     }
   }

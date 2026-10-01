@@ -102,22 +102,76 @@ def ass_time(t):
     return f"{h}:{m:02d}:{s:05.2f}"
 
 
-def wrap_lines(text, max_chars):
-    """CJK 前提の単純折り返し（文字数ベース）。必要なだけ行を増やす。
-    以前は行数上限の超過分を最終行へ詰め込んでいたため、その行が画面幅を超えて
-    端が切れていた（原文 L125 のバグの増幅要因）。"""
+def resolve_style(cfg, sub_style):
+    """スタイル調整パネル(原文 L126)の実効値。web-server/main.py の
+    resolve_clip_style と同じ既定を共有する(片方を変えたら両方直す)。"""
+    legacy_font = cfg.get("font") or ""
+    base = {
+        "sub": {"color": ["#ffffff"], "outline": ["#000000"], "outline_w": 8,
+                "shadow_w": 3, "shadow_color": "#000000", "font": legacy_font,
+                "bold": True,
+                "size_pct": float(cfg.get("size_pct") or sub_style.get("font_size_pct") or 8.3),
+                "x_pct": 50, "y_pct": 62},
+        "title": {"color": ["#ffffff"], "outline": ["#000000"], "outline_w": 6,
+                  "shadow_w": 2, "shadow_color": "#000000", "font": legacy_font,
+                  "bold": True, "size_pct": 6.4, "x_pct": 50, "y_pct": 20},
+    }
+    st = cfg.get("style") or {}
+    out = {}
+    for k, d in base.items():
+        merged = dict(d)
+        for kk, vv in (st.get(k) or {}).items():
+            if vv is not None:
+                merged[kk] = vv
+        out[k] = merged
+    return out
+
+
+def _hex_rgb(h):
+    h = (h or "#ffffff").lstrip("#")
+    if len(h) != 6:
+        h = "ffffff"
+    return int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+
+
+def ass_colour(h):
+    """#rrggbb → スタイル行用 &H00BBGGRR。"""
+    r, g, b = _hex_rgb(h)
+    return f"&H00{b:02X}{g:02X}{r:02X}"
+
+
+def _lerp_hex(a, b, t):
+    ra, ga, ba = _hex_rgb(a)
+    rb, gb, bb = _hex_rgb(b)
+    return (round(ra + (rb - ra) * t), round(ga + (gb - ga) * t),
+            round(ba + (bb - ba) * t))
+
+
+def styled_text(text, max_chars, fill, outline):
+    """折り返し + グラデーション。libass はグラデーションを持たないため、
+    2色指定のときは1文字ずつ色を補間した \\c / \\3c タグで焼く(原文 L126)。"""
     if max_chars < 4:
         max_chars = 4
-    return r"\N".join(text[i:i + max_chars] for i in range(0, len(text), max_chars))
-
-
-def pct_of(spec, size_key, default):
-    """{"1080x1920": 62, "default": 66} 形式の解決。"""
-    if isinstance(spec, dict):
-        return float(spec.get(size_key, spec.get("default", default)))
-    if spec is None:
-        return float(default)
-    return float(spec)
+    lines = [text[i:i + max_chars] for i in range(0, len(text), max_chars)]
+    if len(fill) < 2 and len(outline) < 2:
+        return r"\N".join(lines)
+    total = max(1, sum(len(ln) for ln in lines) - 1)
+    out_lines, idx = [], 0
+    for ln in lines:
+        buf = ""
+        for ch in ln:
+            t = idx / total
+            tags = ""
+            if len(fill) > 1:
+                r, g, b = _lerp_hex(fill[0], fill[1], t)
+                tags += rf"\c&H{b:02X}{g:02X}{r:02X}&"
+            if len(outline) > 1:
+                r, g, b = _lerp_hex(outline[0], outline[1], t)
+                tags += rf"\3c&H{b:02X}{g:02X}{r:02X}&"
+            buf += "{" + tags + "}" + ch
+            idx += 1
+        out_lines.append(buf)
+    return r"\N".join(out_lines)
 
 
 def token_in_keeps(st, en, keeps):
@@ -192,35 +246,32 @@ def build_captions(tokens, keeps, styles):
     return caps, dur
 
 
-def build_ass(w, h, size_key, styles, cfg, captions, dur, fontname):
-    sub = (styles.get("subtitle_styles") or [{}])[0]
-    tstyles = {t.get("key"): t for t in (styles.get("title_styles") or [])}
-    tstyle = tstyles.get(cfg.get("title_style")) or (styles.get("title_styles") or [{}])[0]
+def build_ass(w, h, stl, cfg, captions, dur, families):
+    """stl = resolve_style() の実効値(タイトル/字幕とも 色[1-2]・縁[1-2]・縁太・影・影色・
+    フォント・太字・サイズ(幅%)・位置(x/y %))。families = {"sub": family, "title": family}。
+    縁太・影は 1080 幅基準の px 指定を実寸へスケールする。位置は中央アンカー(\\an5)。"""
+    scale = w / 1080.0
 
-    # フォントサイズは**幅**に対する%で px 化する。高さ基準だと同じ指定でも
-    # 1:1 と 9:16 で物理サイズが変わり、幅が同じ 1080 なのに縦長だけ端が切れる
-    # （原文 L125 のバグ。実測: 10.1 指定で 1:1=109px / 9:16=194px になっていた）。
-    # 表示位置(center_y/top_y)は従来どおり高さ%のまま
-    sub_pct = float(cfg.get("size_pct") or sub.get("font_size_pct") or 8.3)
-    sub_px = int(round(w * sub_pct / 100))
-    sub_outline = max(1, int(round(sub_px * float(sub.get("outline_pct") or 0.35) / 4)))
-    sub_shadow = int(round(sub_px * float(sub.get("shadow_pct") or 0.15) / 4))
-    sub_cy = int(round(h * pct_of(sub.get("center_y_pct"), size_key, 65) / 100))
-    sub_mx = float(sub.get("margin_x_pct") or 7)
-    sub_max_chars = max(4, int((w * (1 - 2 * sub_mx / 100)) // sub_px))
+    def px_of(d):
+        return max(1, int(round(w * float(d["size_pct"]) / 100)))
 
-    ttl_px = int(round(w * float(tstyle.get("font_size_pct") or 6.4) / 100))
-    ttl_outline = max(1, int(round(ttl_px * float(tstyle.get("outline_pct") or 0.25) / 4)))
-    ttl_shadow = int(round(ttl_px * float(tstyle.get("shadow_pct") or 0.1) / 4))
-    ttl_y = int(round(h * pct_of(tstyle.get("top_y_pct"), size_key, 12) / 100))
-    ttl_mx = float(tstyle.get("margin_x_pct") or 8)
-    ttl_max_chars = max(4, int((w * (1 - 2 * ttl_mx / 100)) // ttl_px))
+    def style_line(name, d, fam):
+        px = px_of(d)
+        bold = -1 if d.get("bold") else 0
+        ow = round(float(d.get("outline_w") or 0) * scale, 1)
+        sw = round(float(d.get("shadow_w") or 0) * scale, 1)
+        return (f"Style: {name},{fam},{px},{ass_colour((d.get('color') or ['#ffffff'])[0])},"
+                f"&H000000FF,{ass_colour((d.get('outline') or ['#000000'])[0])},"
+                f"{ass_colour(d.get('shadow_color') or '#000000')},"
+                f"{bold},0,0,0,100,100,0,0,1,{ow},{sw},5,20,20,20,1")
 
-    def style_line(name, px, st, outline, shadow):
-        bold = -1 if st.get("bold", True) else 0
-        return (f"Style: {name},{fontname},{px},{st.get('primary_colour', '&H00FFFFFF')},"
-                f"&H000000FF,{st.get('outline_colour', '&H00000000')},&H80000000,"
-                f"{bold},0,0,0,100,100,0,0,1,{outline},{shadow},5,20,20,20,1")
+    def max_chars(d, margin_pct):
+        return max(4, int((w * (1 - 2 * margin_pct / 100)) // px_of(d)))
+
+    def pos_tag(d):
+        x = int(round(w * float(d.get("x_pct") or 50) / 100))
+        y = int(round(h * float(d.get("y_pct") or 50) / 100))
+        return rf"{{\an5\pos({x},{y})}}"
 
     lines = [
         "[Script Info]",
@@ -234,23 +285,26 @@ def build_ass(w, h, size_key, styles, cfg, captions, dur, fontname):
         "Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, "
         "BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, "
         "BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding",
-        style_line("Sub", sub_px, sub, sub_outline, sub_shadow),
-        style_line("Title", ttl_px, tstyle, ttl_outline, ttl_shadow),
+        style_line("Sub", stl["sub"], families["sub"]),
+        style_line("Title", stl["title"], families["title"]),
         "",
         "[Events]",
         "Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text",
     ]
     title = (cfg.get("title") or "").strip()
     if title:
-        txt = wrap_lines(title, ttl_max_chars)
+        d = stl["title"]
+        txt = styled_text(title, max_chars(d, 8), d.get("color") or [], d.get("outline") or [])
         lines.append(f"Dialogue: 1,{ass_time(0)},{ass_time(dur)},Title,,0,0,0,,"
-                     f"{{\\an8\\pos({w // 2},{ttl_y})}}{txt}")
+                     f"{pos_tag(d)}{txt}")
+    d = stl["sub"]
+    mc = max_chars(d, 7)
     for c in captions:
         if not c["text"].strip():
             continue
-        txt = wrap_lines(c["text"], sub_max_chars)
+        txt = styled_text(c["text"], mc, d.get("color") or [], d.get("outline") or [])
         lines.append(f"Dialogue: 0,{ass_time(c['a'])},{ass_time(min(c['b'], dur))},Sub,,0,0,0,,"
-                     f"{{\\an5\\pos({w // 2},{sub_cy})}}{txt}")
+                     f"{pos_tag(d)}{txt}")
     return "\n".join(lines) + "\n"
 
 
@@ -305,11 +359,14 @@ def main():
     if not bg_name or not bg.is_file():
         sys.exit(f"[clipvid] 背景動画がありません: {bg}")
 
-    font_name = cfg.get("font") or ""
-    font_path = FONTS_DIR / font_name
-    if not font_name or not font_path.is_file():
-        sys.exit(f"[clipvid] フォントがありません: {font_path}")
-    family = font_family_name(font_path) or pathlib.Path(font_name).stem
+    stl = resolve_style(cfg, (styles.get("subtitle_styles") or [{}])[0])
+    families = {}
+    for el in ("sub", "title"):
+        fn = stl[el].get("font") or ""
+        fp2 = FONTS_DIR / fn
+        if not fn or not fp2.is_file():
+            sys.exit(f"[clipvid] フォントがありません({el}): {fp2}")
+        families[el] = font_family_name(fp2) or pathlib.Path(fn).stem
 
     captions, _dur2 = build_captions(clip_tokens(base, g, keeps), keeps, styles)
 
@@ -357,7 +414,7 @@ def main():
 
         ass_path = gen / f"clip_{args.key}_{args.seg}_{size_key}.ass"
         ass_path.write_text(
-            build_ass(w, h, size_key, styles, cfg, captions, dur, family),
+            build_ass(w, h, stl, cfg, captions, dur, families),
             encoding="utf-8")
 
         # フィルタ内のパス引用を避けるため、ass はファイル名だけ渡して cwd を generated/ にする
@@ -382,7 +439,7 @@ def main():
             tmp.unlink(missing_ok=True)
             sys.exit(f"[clipvid] 出力尺が不一致（指定{dur:.1f}s / 実際{actual:.1f}s）")
         tmp.replace(out)
-        print(f"[clipvid] done {size_key} / {dur:.1f}s / 字幕フォント {family} -> {out}",
+        print(f"[clipvid] done {size_key} / {dur:.1f}s / 字幕フォント {families['sub']} -> {out}",
               flush=True)
 
     if concat_wav is not None:
