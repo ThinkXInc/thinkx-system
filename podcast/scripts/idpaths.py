@@ -23,6 +23,7 @@ EDIT_FILES = {
     "ratings.json",         # オーナー評価（★）
     "cutlist.json",         # 手動のカット指定
     "trim_plan.json",       # 無音詰めの計画
+    "transcript_edits.json",  # 文字起こし修正のオーバーレイ(C-16。transcript.json は不変)
 }
 
 # 機械が作るもの。消しても作り直せる。

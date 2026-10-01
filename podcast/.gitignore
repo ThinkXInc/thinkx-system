@@ -12,6 +12,7 @@ data/**
 !data/*/edit/*.json
 !data/*/edit/segments_history.jsonl
 !data/*/edit/clip_*_history.jsonl
+!data/*/edit/transcript_edits_history.jsonl
 *.mp4
 *.m4a
 *.wav

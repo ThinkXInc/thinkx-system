@@ -24,6 +24,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 import sys as _sys
 _sys.path.insert(0, os.path.join(os.path.dirname(HERE), "scripts"))
 import idpaths  # data/<ID>/ のファイル配置は idpaths が唯一の定義（D-002 改定）
+import transcript_edits  # 文字起こし修正のオーバーレイ(C-16)。transcript.json は不変
 from render import safe_name  # 書き出しファイル名（タイトル部）の正規化を生成側と揃える
 DATA_DIR = os.path.realpath(
     os.environ.get("SITE_DATA_DIR") or os.path.join(os.path.dirname(HERE), "data")
@@ -1072,7 +1073,7 @@ function makeTimeline(root){
         el.className='w'+((w.p&&w.p!==D.mainSpk)?(' s'+(w.p<=8?w.p:'x')):'')
                         +(hlSet[wi]?' hl':'');
         el.textContent=w.t; el.style.left=x+'px';
-        el.dataset.s=w.s; el.dataset.e=w.e;
+        el.dataset.s=w.s; el.dataset.e=w.e; el.dataset.wi=wi;
         lane.appendChild(el); els.push(el);
         lastRight=x+el.offsetWidth; prevEnd=w.e; prevSpk=w.p; wi++;
       }
@@ -1206,16 +1207,19 @@ function makeTimeline(root){
   var pbox=null;
   var hoverT=null;   /* マウスが行の上にあるときの時刻。⌘D はここで割る */
   function closePend(){ if(pbox){ pbox.remove(); pbox=null; } }
-  function openCtx(R,t,cx,cy){
+  function openCtx(R,t,cx,cy,wEl){
     /* 右クリックメニュー。即実行は誤操作しやすい（オーナー指示・2026-08-05）ので
        メニューから選んで実行する */
     closePend();
     pbox=document.createElement('div'); pbox.className='pbox';
     pbox.style.left=Math.min(cx,window.innerWidth-260)+'px';
-    pbox.style.top=Math.min(cy+8,window.innerHeight-140)+'px';
+    pbox.style.top=Math.min(cy+8,window.innerHeight-200)+'px';
     pbox.innerHTML='<b>'+fmtAbs(t)+'</b>'+
-      '<div class="btns"><button data-a="split">ここでスプリット</button>'+
+      '<div class="btns" style="flex-direction:column;align-items:stretch">'+
+      '<button data-a="split">ここでスプリット</button>'+
       '<button data-a="play">ここから再生</button>'+
+      (wEl?'<button data-a="deltext">このテキストを削除</button>':'')+
+      '<button data-a="instext">ここにテキストを挿入</button>'+
       '<button data-a="close">閉じる</button></div>';
     document.body.appendChild(pbox);
     pbox.querySelectorAll('button').forEach(function(b){
@@ -1223,6 +1227,8 @@ function makeTimeline(root){
         var act=b.dataset.a; closePend();
         if(act==='split'){ playhead=t; movePlayhead(); splitAt(t); }
         else if(act==='play'){ selectInst(api); playhead=t; movePlayhead(); play(); }
+        else if(act==='deltext'&&wEl){ deleteWordEl(wEl); }
+        else if(act==='instext'){ insertWordAt(t); }
       };
     });
   }
@@ -1407,7 +1413,7 @@ function makeTimeline(root){
       ev.preventDefault();
       selectInst(api);
       var t=T(R, ev.clientX-R.strip.getBoundingClientRect().left);
-      openCtx(R, t, ev.clientX, ev.clientY);
+      openCtx(R, t, ev.clientX, ev.clientY, ev.target.closest('.w'));
     });
     R.strip.addEventListener('dblclick',function(ev){
       /* 黄（無音）をダブルクリック＝その無音だけ落とす */
@@ -1464,11 +1470,81 @@ function makeTimeline(root){
     if(pendingDrag) pendingDrag=null;
     if(dragging){ dragging=null; lastOp='trim'; scheduleSave(); }
   });
+  /* ---- 文字起こしの修正（C-16）。単語クリック＝入力欄（オーナー指示・原文 L104）。
+     修正は transcript.json でなく edit/transcript_edits.json（根のオーバーレイ）へ。
+     シークはバークリックが担う。 ---- */
+  function sendEdit(op, after){
+    fetch(window.APP+'/transcript_edit',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(Object.assign({id:D.id},op))})
+    .then(function(r){ return r.text().then(function(t){ return {ok:r.ok,t:t}; }); })
+    .then(function(res){
+      if(!res.ok){ setStatus(res.t==='stale_transcript'
+        ?'文字起こしが作り直されているため修正できません（transcript_edits を作り直してください）'
+        :'テキストを保存できません: '+res.t); return; }
+      after();
+    })
+    .catch(function(){ setStatus('サーバーに接続できません'); });
+  }
+  function editWord(el){
+    var wi=+el.dataset.wi, w=D.words[wi]; if(!w) return;
+    if(el.querySelector('input')) return;
+    var inp=document.createElement('input');
+    inp.value=w.t; inp.size=Math.max(w.t.length+2,6);
+    el.textContent=''; el.appendChild(inp); inp.focus();
+    var closed=false;
+    var done=function(commit){
+      if(closed) return; closed=true;
+      var v=inp.value;
+      if(!commit||v===w.t){ if(w.ins&&w.t===''){ D.words.splice(wi,1); } build(); return; }
+      /* 挿入された語(新規 .ins / 保存済み .insd)は insert の上書き・取り消しで扱い、
+         それ以外は raw 原文(w.o があればそれ)をキーに replace/delete する(C-16) */
+      if(w.ins||w.insd){
+        sendEdit({op:'insert', t:w.s, text:v.trim()},
+          function(){
+            if(v.trim()===''){ D.words.splice(wi,1); setStatus('挿入テキストを取り消しました（保存済み）'); }
+            else{ w.t=v; delete w.ins; w.insd=1; setStatus('テキストを挿入しました（保存済み）'); }
+            build();
+          });
+      }else if(v.trim()===''){
+        sendEdit({op:'delete', s:w.s, orig:(w.o!=null?w.o:w.t)},
+          function(){ D.words.splice(wi,1); build(); setStatus('テキストを削除しました（保存済み）'); });
+      }else{
+        sendEdit({op:'replace', s:w.s, orig:(w.o!=null?w.o:w.t), text:v},
+          function(){
+            if(w.o==null) w.o=w.t;
+            w.t=v;
+            if(v===w.o) delete w.o;   /* 原文に戻した = 修正の取り消し */
+            build(); setStatus('テキストを修正しました（保存済み）');
+          });
+      }
+    };
+    inp.addEventListener('keydown',function(ev){
+      ev.stopPropagation();
+      if(ev.key==='Enter'){ done(true); }
+      else if(ev.key==='Escape'){ done(false); }
+    });
+    inp.addEventListener('blur',function(){ done(true); });
+  }
+  function insertWordAt(t){
+    var nw={t:'', s:+t.toFixed(3), e:+(t+1.5).toFixed(3), p:D.mainSpk, ins:true};
+    var pos=D.words.findIndex(function(w){ return w.s>t; });
+    if(pos<0) pos=D.words.length;
+    D.words.splice(pos,0,nw); build();
+    var el=host.querySelector(".w[data-s='"+nw.s+"']");
+    if(el) editWord(el);
+  }
+  function deleteWordEl(el){
+    var wi=+el.dataset.wi, w=D.words[wi]; if(!w) return;
+    var op = (w.ins||w.insd) ? {op:'insert', t:w.s, text:''}
+                             : {op:'delete', s:w.s, orig:(w.o!=null?w.o:w.t)};
+    sendEdit(op,
+      function(){ D.words.splice(wi,1); build(); setStatus('テキストを削除しました（保存済み）'); });
+  }
   host.addEventListener('click',function(ev){
     var el=ev.target.closest('.w'); if(!el) return;
     selectInst(api);
-    playhead=+el.dataset.s; movePlayhead();
-    if(active===api) audio.currentTime=playhead;
+    editWord(el);
   });
 
   if(elBtn) elBtn.onclick=function(){ selectInst(api); (active===api)?stop():play(); };
@@ -1562,10 +1638,14 @@ document.addEventListener('keydown',function(e){
   else if(e.key==='Delete'||e.key==='Backspace'){ e.preventDefault(); a.delSel(); }
 });
 
-/* 画面に入ってから組む。7セグメントぶんの単語を最初に全部DOM化すると重いため */
+/* 画面に入ってから組む。7セグメントぶんの単語を最初に全部DOM化すると重いため。
+   ?eager=1 は遅延せず即組む（バックグラウンドタブでは IntersectionObserver が
+   発火しないため、自動テスト・デバッグ用に残す） */
+var eagerBuild=new URLSearchParams(location.search).get('eager')==='1';
 document.querySelectorAll('.tl').forEach(function(root){
   var a=makeTimeline(root);
   insts.push(a);
+  if(eagerBuild){ a.build(); return; }
   var io=new IntersectionObserver(function(es){
     es.forEach(function(en){
       if(en.isIntersecting&&!a.isBuilt()){ a.build(); io.disconnect(); }
@@ -1642,8 +1722,14 @@ def timeline_block(idv, sg, tsegments, silence, main_spk=1, cutdecs=None, quotes
                 pno = int(str(spk).split("_")[-1])
             except ValueError:
                 pno = 0
-            words.append({"t": tok, "s": round(float(st), 3),
-                          "e": round(float(en), 3), "p": pno})
+            wd = {"t": tok, "s": round(float(st), 3),
+                  "e": round(float(en), 3), "p": pno}
+            # 文字修正(C-16)の再修正用キー。o = 機械出力の原文 / insd = 挿入された語
+            if w.get("edited") and w.get("orig_word") is not None:
+                wd["o"] = w["orig_word"]
+            if w.get("inserted"):
+                wd["insd"] = 1
+            words.append(wd)
     words.sort(key=lambda w: w["s"])
     sil = [[max(a, s), min(b, e)] for a, b in silence if b > s and a < e]
     sil = [[round(a, 3), round(b, 3)] for a, b in sil if b - a > 0.01]
@@ -1689,8 +1775,9 @@ def timeline_block(idv, sg, tsegments, silence, main_spk=1, cutdecs=None, quotes
         f"<div class='tlhelp'>文字は時間軸上の位置に置いてあるので、文字間の空白がそのまま無音の長さです。"
         f"バーは常に1本の帯で、{vad_note}、黒＝カット済み。"
         "Space 再生（カット部はスキップ）・<b>⌘D＝マウス位置でスプリット</b>・"
-        "右クリック＝メニュー（スプリット/再生）・端をドラッグでトリム・"
-        "クリックで選択して Delete で削除・⌘Z 取り消し・⌘± ズーム。自動保存されます。</div>"
+        "右クリック＝メニュー（スプリット/再生/テキスト削除・挿入）・端をドラッグでトリム・"
+        "バーをクリックで選択して Delete で削除・<b>文字をクリック＝修正</b>（根の文字起こしに保存）・"
+        "⌘Z 取り消し・⌘± ズーム。自動保存されます。</div>"
         f"<div class='tlrows'><div class='tlwait'>スクロールすると組み上がります（単語 {len(words)}）…</div></div>"
         f"<script type='application/json'>{data}</script>"
         "</div>"
@@ -1998,6 +2085,11 @@ def load_id_data(idv):
     sil_by_index = {s.get("index"): s for s in sil.get("segments", [])}
     ex = _load_json(idpaths.find(base, "exclude_zones.json"), {})
     tr = _load_json(idpaths.find(base, "transcript.json"), {})
+    # 文字起こし修正のオーバーレイ(C-16)。stale(再文字起こし後)なら適用しない
+    _edoc = transcript_edits.load(base)
+    _est = transcript_edits.status(base, _edoc)
+    if _est == "ok":
+        tr = dict(tr, segments=transcript_edits.apply_to_segments(tr.get("segments", []), _edoc))
     # カット候補リストは ID ごと（data/<ID>/cutlist.json）。CUTLIST 環境変数で上書き可。
     cutlist_path = os.environ.get("CUTLIST") or idpaths.find(base, "cutlist.json")
     cutlist = _load_json(cutlist_path, {"speakers": [], "manual": []})
@@ -2021,6 +2113,8 @@ def load_id_data(idv):
         # メイン話者＝最多話者（docs/編集規則.md「Speaker 1 = 大塚さん（最多話者）」）。
         # この話者だけ既定色、他はオレンジ系にして会話相手を見分けられるようにする。
         "main_speaker": _main_speaker(tr),
+        # 文字起こし修正の状態（stale = 再文字起こしで指紋不一致・適用停止中）
+        "edits_status": _est,
     }
 
 
@@ -2401,6 +2495,10 @@ def render_id(idv):
         f"<div class='crumb'><a href='{approot()}/'>← 一覧</a></div>",
         f"<h1>{esc(idv)}</h1>",
     ]
+    if d.get("edits_status") == "stale":
+        parts.append("<p class='meta' style='color:#e11d48'>⚠ 文字起こしが作り直されたため、"
+                     "保存済みのテキスト修正(transcript_edits.json)を適用していません。"
+                     "修正を引き継ぐか破棄するか判断が必要です。</p>")
     if not segments:
         # まだ処理していない ID。何が足りないかだけ出す
         base = os.path.join(DATA_DIR, idv)
@@ -2665,6 +2763,52 @@ def set_seg_flag(idv, sid, field, on):
         json.dump(seg, f, ensure_ascii=False, indent=2)
     _queue_for_sync(seg_path, os.path.join(idpaths.edit_dir(base), "segments_history.jsonl"))
     return True
+
+
+def apply_transcript_edit(payload):
+    """/transcript_edit: 文字起こし修正(C-16)を edit/transcript_edits.json へ保存する。
+    作法は他の編集保存と同型: 受信ジャーナル(fsync) → 履歴退避 → 全量書き → 同期キュー。
+    transcript.json 自体には書かない(generated の契約を守る)。"""
+    import datetime
+    idv = str(payload.get("id") or "")
+    if idv not in list_ids():
+        return "bad_id"
+    base = os.path.join(DATA_DIR, idv)
+    try:
+        journal = os.path.join(idpaths.edit_dir(base), "edit_save_journal.jsonl")
+        with open(journal, "a", encoding="utf-8") as f:
+            f.write(json.dumps({"at": datetime.datetime.now().isoformat(timespec="milliseconds"),
+                                "payload": dict(payload, op_group="transcript_edit")},
+                               ensure_ascii=False) + "\n")
+            f.flush()
+            os.fsync(f.fileno())
+    except Exception:
+        pass
+    doc, err = transcript_edits.upsert(base, payload)
+    if err:
+        return err
+    path = idpaths.find(base, transcript_edits.EDITS_NAME)
+    # 履歴退避(200件)
+    try:
+        if os.path.isfile(path):
+            with open(path, encoding="utf-8") as f:
+                prev = f.read()
+            hist = os.path.join(idpaths.edit_dir(base), "transcript_edits_history.jsonl")
+            lines = []
+            if os.path.isfile(hist):
+                with open(hist, encoding="utf-8") as f:
+                    lines = f.read().splitlines()
+            lines.append(json.dumps({"at": datetime.datetime.now().isoformat(timespec="seconds"),
+                                     "edits_json": prev}, ensure_ascii=False))
+            with open(hist, "w", encoding="utf-8") as f:
+                f.write("\n".join(lines[-200:]) + "\n")
+    except Exception:
+        pass
+    out = idpaths.save(base, transcript_edits.EDITS_NAME)
+    with open(out, "w", encoding="utf-8") as f:
+        json.dump(doc, f, ensure_ascii=False, indent=2)
+    _queue_for_sync(out, os.path.join(idpaths.edit_dir(base), "transcript_edits_history.jsonl"))
+    return "ok"
 
 
 # ---------- 切り抜き（CLIP_PLAN）----------
@@ -3557,6 +3701,15 @@ def route_clip():
     if content is None:
         return _html(page("404", f"<h1>404</h1><a href='{approot()}/'>一覧へ</a>"), 404)
     return _html(content)
+
+
+@app.post("/transcript_edit")
+def route_transcript_edit():
+    try:
+        st = apply_transcript_edit(request.get_json(force=True) or {})
+    except Exception:
+        st = "bad_request"
+    return _text(st, 200 if st == "ok" else 400)
 
 
 @app.post("/clip_suggest")
