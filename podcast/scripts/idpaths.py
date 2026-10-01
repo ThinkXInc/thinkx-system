@@ -49,6 +49,7 @@ GENERATED_CONTAINS = ("_校正用",)
 CLIP_PREFIX = "clip_"
 CLIP_EDIT_SUFFIX = (".json", "_history.jsonl", "_journal.jsonl")
 CLIP_GEN_SUFFIX = ("_suggestions.json",)   # .json でも generated 行きの例外
+CLIP_GEN_CONTAINS = ("_titles_",)          # タイトル候補(再生成可能)も generated 行き
 
 EDIT_DIR = "edit"
 GEN_DIR = "generated"
@@ -60,7 +61,7 @@ EXP_DIR = "experiments"
 def subdir_for(name):
     """そのファイルが入るべきサブディレクトリ名を返す。直下なら空文字。"""
     if name.startswith(CLIP_PREFIX):
-        if name.endswith(CLIP_GEN_SUFFIX):
+        if name.endswith(CLIP_GEN_SUFFIX) or any(k in name for k in CLIP_GEN_CONTAINS):
             return GEN_DIR
         return EDIT_DIR if name.endswith(CLIP_EDIT_SUFFIX) else GEN_DIR
     if name in EDIT_FILES:

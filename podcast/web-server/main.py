@@ -323,6 +323,14 @@ CLIP_CSS = """
 .topicnote .tn-title:hover { text-decoration:underline; }
 .topicnote .tn-time { font-variant-numeric:tabular-nums; margin-bottom:4px; }
 .topicnote .tn-text { opacity:.85; }
+/* 動画作成画面: セグメント専用のタイトル候補チップ(原文 L123。3つ横並び・クリックで採用) */
+.cvtcands { display:flex; gap:10px; flex-wrap:wrap; margin:2px 0 10px 11px; }
+.cvtcand { font-size:13px; padding:4px 14px; cursor:pointer; background:transparent;
+           color:#1a73e8; border:1px solid #1a73e877; border-radius:16px; }
+.cvtcand:hover { background:#1a73e814; }
+.cvrev { font-size:12px; padding:1px 10px; cursor:pointer; background:transparent;
+         color:inherit; border:1px solid #6b728088; border-radius:5px; }
+.cvrev:hover { background:#6b728033; }
 /* ハイライト(名言・格言・キャッチー箇所。原文 L122)。テキスト行の上に半透明オレンジ */
 .hlfill { position:absolute; top:0; height:37px; background:#f5a62345;
           border-radius:4px; pointer-events:none; }
@@ -3402,10 +3410,22 @@ def render_clip_videos(idv, key):
             f"<option value='{esc(t['key'])}'{' selected' if cfg.get('title_style') == t['key'] else ''}>"
             f"{esc(t.get('label') or t['key'])}</option>" for t in title_styles)
         size_pct = cfg.get("size_pct") or sub_style.get("font_size_pct") or 4.7
+        # このセグメント専用のタイトル候補(原文 L123)。見出し行の上にボタン・下に3つ横並び
+        tdoc = _load_json(idpaths.find(base, f"clip_{key}_titles_{n}.json"), None)
+        cand_titles = [str(t) for t in ((tdoc or {}).get("titles") or [])][:3]
+        cand_html = ""
+        if cand_titles:
+            cand_html = ("<p class='cvtcands'>" + "".join(
+                f"<button class='cvtcand' onclick='cvPick(this,{n})'>{esc(t)}</button>"
+                for t in cand_titles) + "</p>")
         parts.append(
             f"<div class='seg' id='cv{n}' data-cs='{cs}' data-ce='{ce}'>"
+            f"<p><button class='gbtn' onclick='cvTitles({n})'>"
+            f"{'タイトル候補生成' if not cand_titles else 'タイトル候補再生成'}</button>"
+            f"　<span class='cvtstat meta'></span></p>"
             f"<div class='seghd'><h2><span class='rank'>{n + 1}</span>　"
             f"{fmt_time(cs)}〜{fmt_time(ce)}　{m2}分{s2:02d}秒</h2></div>"
+            f"{cand_html}"
             f"<div class='box summary'>{esc(text) or '（この区間にテキストがありません）'}</div>"
             "<p class='meta'>"
             f"タイトル <input type='text' class='cvtitle' value=\"{esc(cfg.get('title') or '')}\""
@@ -3439,17 +3459,25 @@ def render_clip_videos(idv, key):
             note = "動画の生成・書き出しはローカル(mac)で行います（オーナー裁定 2026-09-28）"
             gen_btn = f"<button class='gbtn' disabled title='{note}'>生成</button>"
             exp_btn = f"<button class='gbtn' disabled title='{note}'>書き出し</button>"
-        # 書き出し済みファイル（このカードのタイトルで始まるもの）
+        # 書き出し済みファイル（このカードのタイトルで始まるもの）。
+        # ローカルではパスを示し Finder で開けるようにする(原文 L123)
         exp_dir = os.path.join(base, "contents", "clip", key)
         prefix = safe_name((cfg.get("title") or f"クリップ{n + 1}").strip())
         exports = []
-        if os.path.isdir(exp_dir):
-            for fn2 in sorted(os.listdir(exp_dir)):
-                if fn2.startswith(prefix) and fn2.endswith(".mp4"):
-                    rel = f"{idv}/contents/clip/{key}/{fn2}"
-                    exports.append(f"<a href='{approot()}/media/{urllib.parse.quote(rel)}'"
-                                   f" download>{esc(fn2)}</a>")
-        exp_html = ("<p class='meta dl'>書き出し済み: " + "　".join(exports) + "</p>") if exports else ""
+        for fn2 in (sorted(os.listdir(exp_dir)) if os.path.isdir(exp_dir) else []):
+            if fn2.startswith(prefix) and fn2.endswith(".mp4"):
+                rel = f"{idv}/contents/clip/{key}/{fn2}"
+                row_html = (f"<a href='{approot()}/media/{urllib.parse.quote(rel)}'"
+                            f" download>{esc(fn2)}</a>")
+                if CLIP_RENDER_ENABLED:
+                    row_html += (f"　<button class='cvrev' data-fn=\"{esc(fn2)}\""
+                                 f" onclick='cvReveal(this)'>Finderで表示</button>")
+                exports.append(row_html)
+        exp_html = ""
+        if exports:
+            exp_html = ("<p class='meta dl'>書き出し済み: " + "　".join(exports) + "</p>"
+                        + (f"<p class='meta' style='font-size:12px;opacity:.75'>"
+                           f"{esc(exp_dir)}/</p>" if CLIP_RENDER_ENABLED else ""))
         parts.append(
             f"<p class='meta'>{gen_btn}　{exp_btn}"
             f"　<span class='cvstat meta'></span></p>"
@@ -3481,6 +3509,29 @@ def render_clip_videos(idv, key):
         "function cvStep(n,d){var card=document.getElementById('cv'+n);"
         "var inp=card.querySelector('.cvsizepct');"
         "inp.value=(Math.round(((parseFloat(inp.value)||4.7)+d*CV_STEP)*10)/10);cvSave(n);}"
+        # タイトル候補(原文 L123): 生成→完了でリロード。候補クリックでタイトル欄に入れて保存
+        "function cvTitles(n){var q=new URLSearchParams(location.search);"
+        "var card=document.getElementById('cv'+n);var el=card.querySelector('.cvtstat');"
+        "el.textContent='生成中…（30秒前後）';"
+        "fetch(window.APP+'/clip_titles?id='+encodeURIComponent(q.get('id'))"
+        "+'&key='+encodeURIComponent(q.get('key'))+'&seg='+n,{method:'POST'})"
+        ".then(function(r){return r.text();}).then(function(st){"
+        "if(st!=='started'&&st!=='already_running'){el.textContent='開始できません: '+st;return;}"
+        "var iv=setInterval(function(){"
+        "fetch(window.APP+'/clip_titles_status?id='+encodeURIComponent(q.get('id'))"
+        "+'&key='+encodeURIComponent(q.get('key'))+'&seg='+n)"
+        ".then(function(r){return r.text();}).then(function(s){"
+        "if(s==='done'){clearInterval(iv);location.reload();}"
+        "else if(s.indexOf('failed')===0){clearInterval(iv);"
+        "el.textContent='生成できません: '+s.slice(7);}});},3000);})"
+        ".catch(function(){el.textContent='サーバーに接続できません';});}"
+        "function cvPick(el,n){var card=document.getElementById('cv'+n);"
+        "card.querySelector('.cvtitle').value=el.textContent;cvSave(n);}"
+        # 書き出しファイルを Finder で表示(ローカルのみ。原文 L123)
+        "function cvReveal(el){var q=new URLSearchParams(location.search);"
+        "fetch(window.APP+'/clip_reveal?id='+encodeURIComponent(q.get('id'))"
+        "+'&key='+encodeURIComponent(q.get('key'))+'&name='+encodeURIComponent(el.dataset.fn),"
+        "{method:'POST'});}"
         # 生成: 設定を保存 → make_clip_video をバックグラウンド実行 → 完了でリロード
         # （プレビューの <video> はサーバー側がファイルの有無で組むため）
         "function cvRender(n){var q=new URLSearchParams(location.search);"
@@ -3573,6 +3624,59 @@ def clip_suggest_status(idv, key):
         try:
             gen = idpaths.gen_dir(os.path.join(DATA_DIR, idv))
             with open(os.path.join(gen, f"clip_{key}_suggest.log"), encoding="utf-8") as f:
+                lines = [ln for ln in f.read().splitlines() if ln.strip()]
+            return "failed:" + (lines[-1][-200:] if lines else str(p.returncode))
+        except Exception:
+            return f"failed({p.returncode})"
+    return "done"
+
+
+# セグメントごとのタイトル候補生成(原文 L123)。key=(ID, key, seg) → Popen
+CLIP_TITLE_PROCS = {}
+
+
+def start_clip_titles(idv, key, seg):
+    """動画作成画面のセグメント(=切り抜き)1本ぶんのタイトル候補3つを生成する。
+    再実行=ゼロから作り直して差し替え。"""
+    import subprocess
+    if idv not in list_ids() or not re.fullmatch(r"[0-9a-f]{12}_[0-9a-f]{8}", key or ""):
+        return "bad_id"
+    try:
+        seg = int(seg)
+    except (TypeError, ValueError):
+        return "bad_seg"
+    k = (idv, key, seg)
+    p = CLIP_TITLE_PROCS.get(k)
+    if p is not None and p.poll() is None:
+        return "already_running"
+    root = os.path.dirname(HERE)
+    cands = [os.path.join(root, ".venv-openai", "bin", "python"),
+             os.path.join(root, "venv", "bin", "python"), _sys.executable]
+    py = next((c for c in cands if os.path.isfile(c)), _sys.executable)
+    base = os.path.join(DATA_DIR, idv)
+    gen = idpaths.gen_dir(base)
+    logf = open(os.path.join(gen, f"clip_{key}_titles_{seg}.log"), "w", encoding="utf-8")
+    CLIP_TITLE_PROCS[k] = subprocess.Popen(
+        [py, os.path.join(root, "scripts", "suggest_clip_titles.py"), idv,
+         "--key", key, "--seg", str(seg)],
+        cwd=root, stdout=logf, stderr=subprocess.STDOUT)
+    return "started"
+
+
+def clip_titles_status(idv, key, seg):
+    try:
+        seg = int(seg)
+    except (TypeError, ValueError):
+        return "bad_seg"
+    p = CLIP_TITLE_PROCS.get((idv, key, seg))
+    if p is None:
+        return "none"
+    if p.poll() is None:
+        return "running"
+    if p.returncode != 0:
+        try:
+            gen = idpaths.gen_dir(os.path.join(DATA_DIR, idv))
+            with open(os.path.join(gen, f"clip_{key}_titles_{seg}.log"), encoding="utf-8") as f:
                 lines = [ln for ln in f.read().splitlines() if ln.strip()]
             return "failed:" + (lines[-1][-200:] if lines else str(p.returncode))
         except Exception:
@@ -3910,6 +4014,39 @@ def route_clip_suggest():
 def route_clip_suggest_status():
     return _text(clip_suggest_status(request.args.get("id") or "",
                                      request.args.get("key") or ""))
+
+
+@app.post("/clip_titles")
+def route_clip_titles():
+    st = start_clip_titles(request.args.get("id") or "", request.args.get("key") or "",
+                           request.args.get("seg"))
+    return _text(st)
+
+
+@app.get("/clip_titles_status")
+def route_clip_titles_status():
+    return _text(clip_titles_status(request.args.get("id") or "",
+                                    request.args.get("key") or "",
+                                    request.args.get("seg")))
+
+
+@app.post("/clip_reveal")
+def route_clip_reveal():
+    # 書き出したファイルを Finder で表示する(原文 L123)。ローカル(mac)のみ
+    if not CLIP_RENDER_ENABLED:
+        return _text("disabled", 400)
+    idv = request.args.get("id") or ""
+    key = request.args.get("key") or ""
+    name = request.args.get("name") or ""
+    if idv not in list_ids() or not re.fullmatch(r"[0-9a-f]{12}_[0-9a-f]{8}", key) or "/" in name:
+        return _text("ng", 400)
+    d = os.path.realpath(os.path.join(DATA_DIR, idv, "contents", "clip", key))
+    full = os.path.realpath(os.path.join(d, name))
+    if not (full.startswith(d + os.sep) and os.path.isfile(full)):
+        return _text("not_found", 404)
+    import subprocess
+    subprocess.Popen(["open", "-R", full])
+    return _text("ok")
 
 
 @app.post("/clip_render")
