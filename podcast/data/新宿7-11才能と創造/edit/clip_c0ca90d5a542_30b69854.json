@@ -453,26 +453,24 @@
           "sub": {
             "bold": true,
             "color": [
-              "#ffffff",
-              "#ffd24d"
+              "#ffffff"
             ],
             "font": "ヒラギノ角ゴシック W8.ttc",
             "outline": [
-              "#000000",
-              "#5500aa"
+              "#000000"
             ],
-            "outline_w": 10,
+            "outline_w": 8,
             "shadow_color": "#000000",
-            "shadow_w": 4,
+            "shadow_w": 3,
             "size_pct": 8.3,
+            "width_pct": 86,
             "x_pct": 50,
             "y_pct": 70
           },
           "title": {
             "bold": true,
             "color": [
-              "#4fd2ff",
-              "#ff4fa0"
+              "#ffffff"
             ],
             "font": "ヒラギノ角ゴシック W8.ttc",
             "outline": [
@@ -482,11 +480,12 @@
             "shadow_color": "#000000",
             "shadow_w": 2,
             "size_pct": 6.4,
+            "width_pct": 84,
             "x_pct": 50,
             "y_pct": 18
           }
         },
-        "title": "グラデーション検証"
+        "title": "元時刻アンカー検証"
       }
     }
   }

@@ -328,7 +328,7 @@ CLIP_CSS = """
 .cvprev { position:relative; width:250px; background:#111; border-radius:8px;
           overflow:hidden; aspect-ratio:1080/1920; }
 .cvprevbg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
-.pvtext { position:absolute; transform:translate(-50%,-50%); max-width:90%;
+.pvtext { position:absolute; transform:translate(-50%,-50%);
           text-align:center; line-height:1.3; white-space:pre-wrap; cursor:grab;
           user-select:none; }
 .pvtext .pv-stroke { position:absolute; inset:0; color:transparent; z-index:0; }
@@ -3379,10 +3379,10 @@ def resolve_clip_style(cfg, sub_style, fonts):
                 "shadow_w": 3, "shadow_color": "#000000", "font": legacy_font,
                 "bold": True,
                 "size_pct": float(cfg.get("size_pct") or sub_style.get("font_size_pct") or 8.3),
-                "x_pct": 50, "y_pct": 62},
+                "width_pct": 86, "x_pct": 50, "y_pct": 62},
         "title": {"color": ["#ffffff"], "outline": ["#000000"], "outline_w": 6,
                   "shadow_w": 2, "shadow_color": "#000000", "font": legacy_font,
-                  "bold": True, "size_pct": 6.4, "x_pct": 50, "y_pct": 20},
+                  "bold": True, "size_pct": 6.4, "width_pct": 84, "x_pct": 50, "y_pct": 20},
     }
     st = cfg.get("style") or {}
     out = {}
@@ -3516,7 +3516,9 @@ def render_clip_videos(idv, key):
                 f"　<select class='cvst' data-k='font'>{fo}</select>"
                 f"<label><input type='checkbox' class='cvst' data-k='bold'{' checked' if d.get('bold') else ''}>太字</label>"
                 f"　サイズ<input type='number' class='cvst' data-k='size' value='{d.get('size_pct')}'"
-                f" min='1' max='25' step='0.1' style='width:56px'>（幅%）"
+                f" min='1' max='25' step='0.1' style='width:56px'>"
+                f"　幅<input type='number' class='cvst' data-k='w' value='{d.get('width_pct')}'"
+                f" min='20' max='100' step='1' style='width:52px'>％"
                 f"<input type='hidden' class='cvst' data-k='x' value='{d.get('x_pct')}'>"
                 f"<input type='hidden' class='cvst' data-k='y' value='{d.get('y_pct')}'>"
                 "</div>")
@@ -3577,7 +3579,7 @@ def render_clip_videos(idv, key):
         "o[i.dataset.k]=(i.type==='checkbox')?i.checked:i.value;});"
         "var st={color:o.grad?[o.c1,o.c2]:[o.c1],outline:o.ograd?[o.o1,o.o2]:[o.o1],"
         "outline_w:parseFloat(o.ow)||0,shadow_w:parseFloat(o.sw)||0,shadow_color:o.sc,"
-        "font:o.font,bold:!!o.bold,size_pct:parseFloat(o.size)||8,"
+        "font:o.font,bold:!!o.bold,size_pct:parseFloat(o.size)||8,width_pct:parseFloat(o.w)||86,"
         "x_pct:parseFloat(o.x)||50,y_pct:parseFloat(o.y)||50};"
         "return st;}"
         "function cvCollect(){var out={};"
@@ -3621,6 +3623,7 @@ def render_clip_videos(idv, key):
         ":(card.dataset.sample||'サンプル字幕');"
         "var fs=st.size_pct/100*pw;"
         "box.style.left=st.x_pct+'%';box.style.top=st.y_pct+'%';"
+        "box.style.width=st.width_pct+'%';"
         "box.style.fontSize=fs+'px';"
         "box.style.fontFamily=cvFontFamily(st.font);"
         "box.style.fontWeight=st.bold?'700':'400';"

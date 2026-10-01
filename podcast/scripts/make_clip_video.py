@@ -76,22 +76,37 @@ def font_family_name(path):
         return None
     count = u16(name_off + 2)
     str_off = name_off + u16(name_off + 4)
-    best = None
+    best = None          # family (nameID 16 > 1)
+    best_sub = None      # subfamily (nameID 17 > 2)
     r = name_off + 6
     for _ in range(count):
         pid, _eid, _lid, nid = u16(r), u16(r + 2), u16(r + 4), u16(r + 6)
         ln, so = u16(r + 8), u16(r + 10)
         r += 12
-        if nid not in (16, 1):
+        if nid not in (16, 1, 17, 2):
             continue
         raw = data[str_off + so:str_off + so + ln]
         s = raw.decode("mac_roman", "ignore") if pid == 1 else raw.decode("utf-16-be", "ignore")
         if not s:
             continue
-        score = (0 if nid == 16 else 1, 0 if pid == 3 else 1)
-        if best is None or score < best[0]:
-            best = (score, s)
-    return best[1] if best else None
+        if nid in (16, 1):
+            score = (0 if nid == 16 else 1, 0 if pid == 3 else 1)
+            if best is None or score < best[0]:
+                best = (score, s)
+        else:
+            score = (0 if nid == 17 else 1, 0 if pid == 3 else 1)
+            if best_sub is None or score < best_sub[0]:
+                best_sub = (score, s)
+    if best is None:
+        return None
+    fam = best[1]
+    # 同一 family の別ウェイト(ヒラギノ W3/W6/W8 等)を区別できるよう、
+    # Regular/Bold 以外のサブファミリーは family に含める(原文 L130 のバリエーション対応)
+    sub = best_sub[1] if best_sub else ""
+    if sub and sub.lower() not in ("regular", "bold", "italic", "bold italic") \
+            and sub not in fam:
+        fam = f"{fam} {sub}"
+    return fam
 
 
 def ass_time(t):
@@ -111,10 +126,10 @@ def resolve_style(cfg, sub_style):
                 "shadow_w": 3, "shadow_color": "#000000", "font": legacy_font,
                 "bold": True,
                 "size_pct": float(cfg.get("size_pct") or sub_style.get("font_size_pct") or 8.3),
-                "x_pct": 50, "y_pct": 62},
+                "width_pct": 86, "x_pct": 50, "y_pct": 62},
         "title": {"color": ["#ffffff"], "outline": ["#000000"], "outline_w": 6,
                   "shadow_w": 2, "shadow_color": "#000000", "font": legacy_font,
-                  "bold": True, "size_pct": 6.4, "x_pct": 50, "y_pct": 20},
+                  "bold": True, "size_pct": 6.4, "width_pct": 84, "x_pct": 50, "y_pct": 20},
     }
     st = cfg.get("style") or {}
     out = {}
@@ -265,8 +280,9 @@ def build_ass(w, h, stl, cfg, captions, dur, families):
                 f"{ass_colour(d.get('shadow_color') or '#000000')},"
                 f"{bold},0,0,0,100,100,0,0,1,{ow},{sw},5,20,20,20,1")
 
-    def max_chars(d, margin_pct):
-        return max(4, int((w * (1 - 2 * margin_pct / 100)) // px_of(d)))
+    def max_chars(d):
+        # テキストボックスの幅はスタイルの width_pct(画面幅に対する%)が決める(原文 L130)
+        return max(2, int((w * float(d.get("width_pct") or 86) / 100) // px_of(d)))
 
     def pos_tag(d):
         x = int(round(w * float(d.get("x_pct") or 50) / 100))
@@ -294,11 +310,11 @@ def build_ass(w, h, stl, cfg, captions, dur, families):
     title = (cfg.get("title") or "").strip()
     if title:
         d = stl["title"]
-        txt = styled_text(title, max_chars(d, 8), d.get("color") or [], d.get("outline") or [])
+        txt = styled_text(title, max_chars(d), d.get("color") or [], d.get("outline") or [])
         lines.append(f"Dialogue: 1,{ass_time(0)},{ass_time(dur)},Title,,0,0,0,,"
                      f"{pos_tag(d)}{txt}")
     d = stl["sub"]
-    mc = max_chars(d, 7)
+    mc = max_chars(d)
     for c in captions:
         if not c["text"].strip():
             continue

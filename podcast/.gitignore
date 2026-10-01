@@ -42,3 +42,6 @@ assets/clip_backgrounds/*
 preview_audio.m4a
 checkpoints/
 venv_enhance/
+
+# 切り抜き動画の置き場(オーナー指示 2026-10-02・原文 L131)
+clipvideo/
