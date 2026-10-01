@@ -310,6 +310,19 @@ CLIP_CSS = """
 .w.wdel, .cu.wdel { min-width:16px; border:1px dashed #9ca3af99; border-radius:3px;
                     opacity:.6; cursor:text; }
 .w.wdel:hover, .cu.wdel:hover { background:#2563eb14; opacity:1; }
+/* トピック帯(原文 L113-115)。各行の最上段に、候補(トピック)の区間を番号付きで出す。
+   タイムラインを読み直さなくてもどこからどこが何のトピックかが分かる */
+.cliptl .ts2 { top:16px; }
+.cliptl .cu { top:32px; }
+.cliptl .strip { top:56px; }
+.cliptl .lane { height:100px; }
+.cliptl .tlabel { top:-56px; }
+.topicz { position:absolute; top:1px; height:12px; border-radius:3px; opacity:.9;
+          cursor:pointer; }
+.topicz:hover { filter:brightness(1.2); }
+.topiclab { position:absolute; top:0; font-size:10px; font-weight:700; line-height:13px;
+            color:#fff; padding:0 4px; pointer-events:none; white-space:nowrap;
+            text-shadow:0 0 3px #0009; }
 /* 切り抜きセグメント＝開始から終了までグラデーション（原文 L21）。
    開始側が明るい（開始と終了を色で見分ける。オーナー指示 2026-09-28・原文 L98） */
 .clipz { position:absolute; top:0; height:24px;
@@ -482,9 +495,34 @@ function build(){
   setTimeout(relaxAll,300);
 }
 
+/* トピック帯の色(番号順に回す) */
+var TOPIC_COLORS=['#1a73e8','#e8710a','#188038','#9334e6','#d93025','#12939a','#b06000','#5f6368'];
+var topics=(D.topics||[]).map(function(t){return {s:+t.s,e:+t.e,title:String(t.title||'')};});
+
 function renderBars(){
   rows.forEach(function(R){
     R.strip.innerHTML='';
+    /* トピック帯は lane 側に置くので、描き直す前に消す */
+    R.lane.querySelectorAll('.topicz,.topiclab').forEach(function(n){ n.remove(); });
+    /* 行の最上段にトピック(候補)の区間を番号付きで出す(原文 L113-115) */
+    topics.forEach(function(tp,ti){
+      var va=V(tp.s), vb=V(tp.e);
+      var a=Math.max(va,R.t0), b=Math.min(vb,R.t1);
+      if(b-a<=0) return;
+      var band=document.createElement('div'); band.className='topicz';
+      band.style.left=X(R,a)+'px'; band.style.width=Math.max(2,X(R,b)-X(R,a))+'px';
+      band.style.background=TOPIC_COLORS[ti%TOPIC_COLORS.length];
+      band.title='トピック'+(ti+1)+'　'+tp.title;
+      band.onclick=function(ev){ ev.stopPropagation(); playhead=tp.s; movePlayhead();
+        if(playing) audio.currentTime=playhead; };
+      R.lane.appendChild(band);
+      if(va>=R.t0&&va<R.t1){
+        var lab=document.createElement('div'); lab.className='topiclab';
+        lab.textContent=(ti+1)+'. '+tp.title;
+        lab.style.left=X(R,a)+'px';
+        R.lane.appendChild(lab);
+      }
+    });
     var W=X(R,R.t1);
     var base=document.createElement('div'); base.className='barbase';
     base.style.left='0px'; base.style.width=W+'px'; R.strip.appendChild(base);
@@ -3523,19 +3561,24 @@ def render_clip_suggestions(idv, key, geometry):
         m3 = int(t // 60)
         return f"{m3}:{t - m3 * 60:05.2f}"
 
+    # タイムラインのトピック帯と同じ番号・色で対応づける(原文 L113-115)
+    colors = ["#1a73e8", "#e8710a", "#188038", "#9334e6", "#d93025", "#12939a",
+              "#b06000", "#5f6368"]
     items = []
-    for it in (sug or {}).get("suggestions", []):
+    for i, it in enumerate((sug or {}).get("suggestions", [])):
         try:
             s3, e3 = float(it["s"]), float(it["e"])
         except (KeyError, TypeError, ValueError):
             continue
         v3, w3 = view(s3), view(e3)
         dm, ds = divmod(int(round(w3 - v3)), 60)
+        col = colors[i % len(colors)]
         # 見出し候補は3つを「 / 」区切りで並べる(原文 L100)
         titles = [t for t in (it.get("titles") or []) if str(t).strip()] or [it.get("title") or ""]
         items.append(
             "<div class='sugitem'>"
-            f"<div class='sugtitle'>・{esc(' / '.join(str(t) for t in titles))}</div>"
+            f"<div class='sugtitle'><span style='color:{col}'>■</span> トピック{i + 1}　"
+            f"{esc(' / '.join(str(t) for t in titles))}</div>"
             f"<div class='sugtime'><a onclick='window.clipTL&&clipTL.setPlayhead({s3:.3f})'>"
             f"{ts2(v3)}〜{ts2(w3)}（{dm}分{ds:02d}秒）</a></div>"
             f"<div class='sugtext'>{esc(it.get('text'))}</div></div>")
@@ -3617,10 +3660,21 @@ def render_clip(idv, key):
     if src_name:
         parts.append(f"<audio id='orig' src='{approot()}/media/{urllib.parse.quote(idv + '/' + src_name)}'"
                      " preload='metadata' style='display:none'></audio>")
+    # トピック帯(原文 L113-115): 候補の区間を番号付きでタイムライン上に出す
+    sug = _load_json(idpaths.find(base, f"clip_{key}_suggestions.json"), None)
+    topics = []
+    for it in (sug or {}).get("suggestions", []):
+        try:
+            ts3, te3 = float(it["s"]), float(it["e"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        titles = [t for t in (it.get("titles") or []) if str(t).strip()] or [it.get("title") or ""]
+        topics.append({"s": ts3, "e": te3, "title": str(titles[0])})
     data = json.dumps({"id": idv, "key": key, "duration": round(net, 3),
                        "keeps": [[round(a, 3), round(b, 3)] for a, b in keeps],
                        "units": tokens,
                        "clips": cur.get("clips") or [],
+                       "topics": topics,
                        "applyable": applyable},
                       ensure_ascii=False).replace("</", "<\\/")
     apply_btn = ("<button class='gbtn tlapply' title='1次編集で版が分かれる前の切り抜き編集を"
