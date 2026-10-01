@@ -99,7 +99,7 @@ ul.ids li.delivered { background:#382626; }
 video { width: 100%; max-width: 860px; display: block; border-radius: 6px;
         background: #000; margin: 5px 0 11px; }
 .dl { font-size: 13px; margin-bottom: 13px; }
-.dl a { margin-right: 16px; color: inherit; }
+.dl a { margin-right: 16px; color: inherit; text-decoration: underline; }
 
 /* 要約・レビュー：少し行間をつける */
 .box.summary { background:#292929; border-radius:5px;
