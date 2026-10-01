@@ -408,13 +408,29 @@ ask と deny のルールは hook の allow に勝つ。
 - **同型カウント**: heredoc 編集 4 回目。「Edit を使え」が実行者に毎回届く場所(CLAUDE.md)に無いことが継続原因(T・V と同じカタログ問題。
   2026-10-01 に CLAUDE.md への追記文面を提案済み・オーナー判断待ち)。
 
+### AO. dev サーバー停止 + main.py 埋め込み JS(CLIP_JS)を scratchpad へ書き出し
+- **生**: `lsof -ti :8012 | xargs kill 2>/dev/null; sleep 1; cd .../podcast/web-server && venv/bin/python -c "import main; open('<scratchpad>/cl6.js','w').write(main.CLIP_JS)"`(podcast セッション 2026-10-01・AL と同じセッション)
+- **引き金**: **不明**(ask 語なし)。AG・AJ・AL と同じ型で 4 件目。共通候補は絶対パスか `cd`。確定手順は AJ に記載済み
+  (同じセッションで相対パス版と絶対パス・パイプなし版を分けて打つ)。次にその
+  セッションを使うときに実測する。
+- **クラス**: 変更(dev サーバー停止・可逆)+ 観測(埋め込み定数の取り出し)。
+- **正しい形**: 2 つ。(1) 停止・起動は AL と同じ dev サーバー固定スクリプト(昇格条件到達済み)。
+  (2) python の中に JS が文字列定数(CLIP_JS)で埋まっているため、読むにも python -c の取り出しが要る =
+  **R(bash に埋め込まれた python の切り出し)と同型の 2 回目**。R の結論どおり、埋め込みコードは独立ファイル
+  (例 web-server/static または views 配下の .js)に出して python 側は読み込む形にすれば、Read ツールで直接読めて
+  取り出し自体が不要になる。podcast 側の設計変更なので findings 経由で提案(勝手に直さない)。
+- **残るゲート**: なし。
+- **同型カウント**: dev サーバー停止・起動は M・V・AL・AO で **4 回目**(スクリプト未着手)。埋め込みコードの切り出しは R・AO で 2 回目
+  (R の裁定「次に出たら独立ファイル化」に到達)。
+
 ---
 
 ## 状態と次の一手(2026-10-01)
 
 - **着手済み**: `infra/scripts/verify_deploy.py` 新設(preview / landed <env> / site <env>。着地確認 7 回・本番 URL 観測 7 回の 2 型を畳んだ。
   本番で実測済み・staging は停止中のため到達不可の FAIL 報告を確認)。`push_env.sh` に配布結果の検証を内蔵(値は出さない。事例 Q の畳み込み)。
-- **新規事例**: AL(dev サーバー再起動・昇格条件到達)・AM(localhost GET 7 回目)・AN(heredoc 編集 4 回目・localhost POST)。
+- **新規事例**: AL(dev サーバー再起動・昇格条件到達)・AM(localhost GET 7 回目)・AN(heredoc 編集 4 回目・localhost POST)・
+  AO(dev サーバー停止 4 回目・埋め込みコード切り出し 2 回目)。引き金不明のローカル系は AG・AJ・AL・AO の 4 件、全て要実測のまま。
 - **次の一手(未着手)**: dev サーバーの起動/観測スクリプト(AL+AM+AH。ポート固定集合・readiness・code+文字列有無)、
   stg.py 拡張(AK: 再起動時刻・絶対時刻窓)、カタログ(infra/scripts/README.md 一覧 + CLAUDE.md 参照 — 文面提案済み)。
 - **未決(オーナー選択待ち)**: 記録ファイルの settings の変え方(事例 AA の案 1〜3)。前提の実測 2026-10-01:
