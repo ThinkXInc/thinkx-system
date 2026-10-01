@@ -328,9 +328,6 @@ CLIP_CSS = """
 .cvtcand { font-size:13px; padding:4px 14px; cursor:pointer; background:transparent;
            color:#1a73e8; border:1px solid #1a73e877; border-radius:16px; }
 .cvtcand:hover { background:#1a73e814; }
-.cvrev { font-size:12px; padding:1px 10px; cursor:pointer; background:transparent;
-         color:inherit; border:1px solid #6b728088; border-radius:5px; }
-.cvrev:hover { background:#6b728033; }
 /* ハイライト(名言・格言・キャッチー箇所。原文 L122)。テキスト行の上に半透明オレンジ */
 .hlfill { position:absolute; top:0; height:37px; background:#f5a62345;
           border-radius:4px; pointer-events:none; }
@@ -3409,7 +3406,7 @@ def render_clip_videos(idv, key):
         tstyle_opts = "".join(
             f"<option value='{esc(t['key'])}'{' selected' if cfg.get('title_style') == t['key'] else ''}>"
             f"{esc(t.get('label') or t['key'])}</option>" for t in title_styles)
-        size_pct = cfg.get("size_pct") or sub_style.get("font_size_pct") or 4.7
+        size_pct = cfg.get("size_pct") or sub_style.get("font_size_pct") or 8.3
         # このセグメント専用のタイトル候補(原文 L123)。見出し行の上にボタン・下に3つ横並び
         tdoc = _load_json(idpaths.find(base, f"clip_{key}_titles_{n}.json"), None)
         cand_titles = [str(t) for t in ((tdoc or {}).get("titles") or [])][:3]
@@ -3436,53 +3433,38 @@ def render_clip_videos(idv, key):
             f"　字幕サイズ <button onclick='cvStep({n},-1)'>−</button>"
             f"<input type='number' class='cvsizepct' value='{size_pct}' step='0.1' min='1' max='12'"
             f" style='width:60px' onchange='cvSave({n})'>"
-            f"<button onclick='cvStep({n},1)'>＋</button>（高さ%）"
+            f"<button onclick='cvStep({n},1)'>＋</button>（幅%）"
             f"　背景 <select class='cvbg' onchange='cvSave({n})'>{bg_opts}</select></p>"
             f"<p class='meta'>書き出しサイズ {size_boxes}</p>")
-        # 生成済みプレビュー（動画の再生ウインドウ。原文 L68）。生成のたびに ?v= で更新
+        # 生成済みの動画（再生ウインドウ。原文 L68）。生成は毎回上書き・溜めない(原文 L124)。
+        # その下に整形ファイル名(タイトル_尺_規格)での .mp4 ダウンロードリンクを出す
+        nice_base = f"{safe_name((cfg.get('title') or f'クリップ{n + 1}').strip())}" \
+                    f"_{int(dur // 60)}m{int(dur % 60):02d}s"
         previews = []
         for s in sizes:
             pv = os.path.join(base, "generated", f"clip_{key}_preview_{n}_{s['key']}.mp4")
             if os.path.isfile(pv):
                 rel = f"{idv}/generated/clip_{key}_preview_{n}_{s['key']}.mp4"
+                url = f"{approot()}/media/{urllib.parse.quote(rel)}"
+                nice = f"{nice_base}_{s['key']}.mp4"
                 previews.append(
                     f"<div style='flex:1;min-width:200px;max-width:320px'>"
                     f"<div class='meta'>{esc(s['key'])}</div>"
                     f"<video class='cvpv' data-size='{esc(s['key'])}' controls preload='metadata'"
                     f" style='width:100%;max-width:320px'"
-                    f" src='{approot()}/media/{urllib.parse.quote(rel)}?v={int(os.path.getmtime(pv))}'>"
-                    "</video></div>")
+                    f" src='{url}?v={int(os.path.getmtime(pv))}'>"
+                    "</video>"
+                    f"<div class='dl'><a href='{url}' download=\"{esc(nice)}\">{esc(nice)}</a></div>"
+                    "</div>")
         if CLIP_RENDER_ENABLED:
             gen_btn = f"<button class='gbtn' onclick='cvRender({n})'>生成</button>"
-            exp_btn = f"<button class='gbtn' onclick='cvExport({n})'>書き出し</button>"
         else:
-            note = "動画の生成・書き出しはローカル(mac)で行います（オーナー裁定 2026-09-28）"
+            note = "動画の生成はローカル(mac)で行います（オーナー裁定 2026-09-28）"
             gen_btn = f"<button class='gbtn' disabled title='{note}'>生成</button>"
-            exp_btn = f"<button class='gbtn' disabled title='{note}'>書き出し</button>"
-        # 書き出し済みファイル（このカードのタイトルで始まるもの）。
-        # ローカルではパスを示し Finder で開けるようにする(原文 L123)
-        exp_dir = os.path.join(base, "contents", "clip", key)
-        prefix = safe_name((cfg.get("title") or f"クリップ{n + 1}").strip())
-        exports = []
-        for fn2 in (sorted(os.listdir(exp_dir)) if os.path.isdir(exp_dir) else []):
-            if fn2.startswith(prefix) and fn2.endswith(".mp4"):
-                rel = f"{idv}/contents/clip/{key}/{fn2}"
-                row_html = (f"<a href='{approot()}/media/{urllib.parse.quote(rel)}'"
-                            f" download>{esc(fn2)}</a>")
-                if CLIP_RENDER_ENABLED:
-                    row_html += (f"　<button class='cvrev' data-fn=\"{esc(fn2)}\""
-                                 f" onclick='cvReveal(this)'>Finderで表示</button>")
-                exports.append(row_html)
-        exp_html = ""
-        if exports:
-            exp_html = ("<p class='meta dl'>書き出し済み: " + "　".join(exports) + "</p>"
-                        + (f"<p class='meta' style='font-size:12px;opacity:.75'>"
-                           f"{esc(exp_dir)}/</p>" if CLIP_RENDER_ENABLED else ""))
         parts.append(
-            f"<p class='meta'>{gen_btn}　{exp_btn}"
+            f"<p class='meta'>{gen_btn}"
             f"　<span class='cvstat meta'></span></p>"
             f"<div class='cvpvs' style='display:flex;gap:12px;flex-wrap:wrap'>{''.join(previews)}</div>"
-            f"{exp_html}"
             "</div>")
     step = styles.get("subtitle_size_step_pct") or 0.3
     parts.append(
@@ -3508,7 +3490,7 @@ def render_clip_videos(idv, key):
         ".catch(function(){if(el)el.textContent='サーバーに接続できません';});}"
         "function cvStep(n,d){var card=document.getElementById('cv'+n);"
         "var inp=card.querySelector('.cvsizepct');"
-        "inp.value=(Math.round(((parseFloat(inp.value)||4.7)+d*CV_STEP)*10)/10);cvSave(n);}"
+        "inp.value=(Math.round(((parseFloat(inp.value)||8.3)+d*CV_STEP)*10)/10);cvSave(n);}"
         # タイトル候補(原文 L123): 生成→完了でリロード。候補クリックでタイトル欄に入れて保存
         "function cvTitles(n){var q=new URLSearchParams(location.search);"
         "var card=document.getElementById('cv'+n);var el=card.querySelector('.cvtstat');"
@@ -3527,11 +3509,6 @@ def render_clip_videos(idv, key):
         ".catch(function(){el.textContent='サーバーに接続できません';});}"
         "function cvPick(el,n){var card=document.getElementById('cv'+n);"
         "card.querySelector('.cvtitle').value=el.textContent;cvSave(n);}"
-        # 書き出しファイルを Finder で表示(ローカルのみ。原文 L123)
-        "function cvReveal(el){var q=new URLSearchParams(location.search);"
-        "fetch(window.APP+'/clip_reveal?id='+encodeURIComponent(q.get('id'))"
-        "+'&key='+encodeURIComponent(q.get('key'))+'&name='+encodeURIComponent(el.dataset.fn),"
-        "{method:'POST'});}"
         # 生成: 設定を保存 → make_clip_video をバックグラウンド実行 → 完了でリロード
         # （プレビューの <video> はサーバー側がファイルの有無で組むため）
         "function cvRender(n){var q=new URLSearchParams(location.search);"
@@ -3556,30 +3533,6 @@ def render_clip_videos(idv, key):
         "if(s==='done'){clearInterval(iv);location.reload();}"
         "else if(s.indexOf('failed')===0){clearInterval(iv);"
         "el.textContent='生成失敗（generated/clip_…_render_'+n+'.log を確認）';}});},3000);})"
-        ".catch(function(){el.textContent='サーバーに接続できません';});}"
-        # 書き出し: チェック済みの全規格を contents/clip/<key>/ へ（原文 L70-71）
-        "function cvExport(n){var q=new URLSearchParams(location.search);"
-        "var card=document.getElementById('cv'+n);var el=card.querySelector('.cvstat');"
-        "var sizes=[].slice.call(card.querySelectorAll('.cvsize:checked')).map(function(c){return c.value;});"
-        "if(!sizes.length){el.textContent='書き出しサイズを選んでください';return;}"
-        "el.textContent='設定を保存中…';"
-        "fetch(window.APP+'/clip_save',{method:'POST',headers:{'Content-Type':'application/json'},"
-        "body:JSON.stringify({id:q.get('id'),key:q.get('key'),op:'video-settings',"
-        "video:{clips:cvCollect()}})}).then(function(){"
-        "el.textContent='書き出しを開始しています…';"
-        "return fetch(window.APP+'/clip_render',{method:'POST',"
-        "headers:{'Content-Type':'application/json'},"
-        "body:JSON.stringify({id:q.get('id'),key:q.get('key'),seg:n,sizes:sizes,export:1})});})"
-        ".then(function(r){return r.text();}).then(function(st){"
-        "if(st!=='started'&&st!=='already_running'){el.textContent='開始できません: '+st;return;}"
-        "el.textContent='書き出し中…（サイズごとに数十秒〜数分）';"
-        "var iv=setInterval(function(){"
-        "fetch(window.APP+'/clip_render_status?id='+encodeURIComponent(q.get('id'))"
-        "+'&key='+encodeURIComponent(q.get('key'))+'&seg='+n+'&export=1')"
-        ".then(function(r){return r.text();}).then(function(s){"
-        "if(s==='done'){clearInterval(iv);location.reload();}"
-        "else if(s.indexOf('failed')===0){clearInterval(iv);"
-        "el.textContent='書き出し失敗（generated/clip_…_render_'+n+'_export.log を確認）';}});},3000);})"
         ".catch(function(){el.textContent='サーバーに接続できません';});}"
         "</script>")
     return page(f"動画の作成 {idv}", "".join(parts))
@@ -4028,25 +3981,6 @@ def route_clip_titles_status():
     return _text(clip_titles_status(request.args.get("id") or "",
                                     request.args.get("key") or "",
                                     request.args.get("seg")))
-
-
-@app.post("/clip_reveal")
-def route_clip_reveal():
-    # 書き出したファイルを Finder で表示する(原文 L123)。ローカル(mac)のみ
-    if not CLIP_RENDER_ENABLED:
-        return _text("disabled", 400)
-    idv = request.args.get("id") or ""
-    key = request.args.get("key") or ""
-    name = request.args.get("name") or ""
-    if idv not in list_ids() or not re.fullmatch(r"[0-9a-f]{12}_[0-9a-f]{8}", key) or "/" in name:
-        return _text("ng", 400)
-    d = os.path.realpath(os.path.join(DATA_DIR, idv, "contents", "clip", key))
-    full = os.path.realpath(os.path.join(d, name))
-    if not (full.startswith(d + os.sep) and os.path.isfile(full)):
-        return _text("not_found", 404)
-    import subprocess
-    subprocess.Popen(["open", "-R", full])
-    return _text("ok")
 
 
 @app.post("/clip_render")

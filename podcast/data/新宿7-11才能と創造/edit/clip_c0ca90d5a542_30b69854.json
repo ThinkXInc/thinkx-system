@@ -445,9 +445,10 @@
       "0": {
         "background": "テスト用グラデーション.mp4",
         "font": "ヒラギノ角ゴシック W8.ttc",
-        "size_pct": 4.7,
+        "size_pct": 10.1,
         "sizes": [
-          "1080x1920"
+          "1080x1920",
+          "1080x1080"
         ],
         "title": "元時刻アンカー検証",
         "title_style": "top_bold_white"

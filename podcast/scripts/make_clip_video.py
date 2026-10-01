@@ -102,14 +102,13 @@ def ass_time(t):
     return f"{h}:{m:02d}:{s:05.2f}"
 
 
-def wrap_lines(text, max_chars, max_lines):
-    """CJK 前提の単純折り返し（文字数ベース）。超過分も捨てずに最終行へ入れる。"""
+def wrap_lines(text, max_chars):
+    """CJK 前提の単純折り返し（文字数ベース）。必要なだけ行を増やす。
+    以前は行数上限の超過分を最終行へ詰め込んでいたため、その行が画面幅を超えて
+    端が切れていた（原文 L125 のバグの増幅要因）。"""
     if max_chars < 4:
         max_chars = 4
-    lines = [text[i:i + max_chars] for i in range(0, len(text), max_chars)]
-    if len(lines) > max_lines:
-        lines = lines[:max_lines - 1] + ["".join(lines[max_lines - 1:])]
-    return r"\N".join(lines)
+    return r"\N".join(text[i:i + max_chars] for i in range(0, len(text), max_chars))
 
 
 def pct_of(spec, size_key, default):
@@ -198,15 +197,19 @@ def build_ass(w, h, size_key, styles, cfg, captions, dur, fontname):
     tstyles = {t.get("key"): t for t in (styles.get("title_styles") or [])}
     tstyle = tstyles.get(cfg.get("title_style")) or (styles.get("title_styles") or [{}])[0]
 
-    sub_pct = float(cfg.get("size_pct") or sub.get("font_size_pct") or 4.7)
-    sub_px = int(round(h * sub_pct / 100))
+    # フォントサイズは**幅**に対する%で px 化する。高さ基準だと同じ指定でも
+    # 1:1 と 9:16 で物理サイズが変わり、幅が同じ 1080 なのに縦長だけ端が切れる
+    # （原文 L125 のバグ。実測: 10.1 指定で 1:1=109px / 9:16=194px になっていた）。
+    # 表示位置(center_y/top_y)は従来どおり高さ%のまま
+    sub_pct = float(cfg.get("size_pct") or sub.get("font_size_pct") or 8.3)
+    sub_px = int(round(w * sub_pct / 100))
     sub_outline = max(1, int(round(sub_px * float(sub.get("outline_pct") or 0.35) / 4)))
     sub_shadow = int(round(sub_px * float(sub.get("shadow_pct") or 0.15) / 4))
     sub_cy = int(round(h * pct_of(sub.get("center_y_pct"), size_key, 65) / 100))
     sub_mx = float(sub.get("margin_x_pct") or 7)
     sub_max_chars = max(4, int((w * (1 - 2 * sub_mx / 100)) // sub_px))
 
-    ttl_px = int(round(h * float(tstyle.get("font_size_pct") or 3.6) / 100))
+    ttl_px = int(round(w * float(tstyle.get("font_size_pct") or 6.4) / 100))
     ttl_outline = max(1, int(round(ttl_px * float(tstyle.get("outline_pct") or 0.25) / 4)))
     ttl_shadow = int(round(ttl_px * float(tstyle.get("shadow_pct") or 0.1) / 4))
     ttl_y = int(round(h * pct_of(tstyle.get("top_y_pct"), size_key, 12) / 100))
@@ -239,13 +242,13 @@ def build_ass(w, h, size_key, styles, cfg, captions, dur, fontname):
     ]
     title = (cfg.get("title") or "").strip()
     if title:
-        txt = wrap_lines(title, ttl_max_chars, int(tstyle.get("max_lines") or 3))
+        txt = wrap_lines(title, ttl_max_chars)
         lines.append(f"Dialogue: 1,{ass_time(0)},{ass_time(dur)},Title,,0,0,0,,"
                      f"{{\\an8\\pos({w // 2},{ttl_y})}}{txt}")
     for c in captions:
         if not c["text"].strip():
             continue
-        txt = wrap_lines(c["text"], sub_max_chars, int(sub.get("max_lines") or 2))
+        txt = wrap_lines(c["text"], sub_max_chars)
         lines.append(f"Dialogue: 0,{ass_time(c['a'])},{ass_time(min(c['b'], dur))},Sub,,0,0,0,,"
                      f"{{\\an5\\pos({w // 2},{sub_cy})}}{txt}")
     return "\n".join(lines) + "\n"
