@@ -1989,3 +1989,9 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   (npm 版バイナリ)はファイル削除後もプロセスは生存 — 次の staging 停止→起動から native 版。
   両 unit の PATH を ~/.local/bin 先頭に変更し daemon-reload + claude_connect restart 後、
   /connect/update = {current: 2.1.286, latest: 2.1.286, same: true} を実測。
+- 2026-10-01 「Claudeをアップデート」ボタンの扱い(オーナー指示): native 移行(D-83)後は
+  自動更新により「更新を実行する」役割はほぼ出番がなく、現実装の版表示はディスク上の実体を
+  見るため動作中セッションの古さは教えない。それでも**暫定で残す(単に作り直しが面倒なため)**。
+  原文「とりあえず残しておく　単に作業が面倒なため　今後別の機能が追加されたらそのスペースを
+  空ける可能性が高いので覚えておけ」— 右下のスペースに新機能を置く話が出たら、このボタンの
+  撤去・縮小を先に提案する。
