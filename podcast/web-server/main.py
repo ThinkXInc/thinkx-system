@@ -423,6 +423,16 @@ function clampDrops(c){
 }
 function setStatus(s){ if(elStat) elStat.textContent=s; }
 
+/* 文字の重なり解消（1次編集と同じ。原文 L108-111） */
+function relaxUnits(els){
+  var last=-1e9;
+  els.forEach(function(el){
+    var x=parseFloat(el.style.left)||0;
+    if(x<last){ x=last; el.style.left=x+'px'; }
+    last=x+el.offsetWidth+2;
+  });
+}
+
 function build(){
   host.innerHTML=''; rows=[];
   var probe=document.createElement('div'); probe.className='lane';
@@ -456,11 +466,15 @@ function build(){
       lastRight=x+el.offsetWidth+4; prevEndV=V(u.e); ui++;
     }
     host.appendChild(row);
+    relaxUnits(els);
     var R={t0:t0,t1:t1,strip:strip,els:els,lane:lane};
     rows.push(R); bindStrip(R);
   }
   built=true;
   renderBars(); styleUnits(); movePlayhead();
+  var relaxAll=function(){ rows.forEach(function(R){ relaxUnits(R.els); }); };
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(relaxAll);
+  setTimeout(relaxAll,300);
 }
 
 function renderBars(){
@@ -1044,6 +1058,19 @@ function fmtAbs(t){
   return (h?h+':':'')+((m<10&&h)?'0':'')+m+':'+(s<10?'0':'')+s;
 }
 
+/* 文字の重なり解消（オーナー案1・原文 L108-111）。各語を「前の語の右端+2px」まで
+   右へ押し出す。左→右の1パスで完結する（後の語を右へ動かしても前との重なりは
+   生まれないため）。配置時の幅測定が最終描画とズレることがある（実測 2026-10-01:
+   9912語ページで 7861 ペアが数px食い込み）ので、フォント確定後にもう一度かける。 */
+function relaxWords(els){
+  var last=-1e9;
+  els.forEach(function(el){
+    var x=parseFloat(el.style.left)||0;
+    if(x<last){ x=last; el.style.left=x+'px'; }
+    last=x+el.offsetWidth+2;
+  });
+}
+
 function makeTimeline(root){
   var D=JSON.parse(root.querySelector('script[type="application/json"]').textContent);
   var keeps=complement(D.drops||[]);
@@ -1136,11 +1163,16 @@ function makeTimeline(root){
         lastRight=x+el.offsetWidth; prevEnd=w.e; prevSpk=w.p; wi++;
       }
       host.appendChild(row);
+      relaxWords(els);
       var R={t0:t0,t1:t1,strip:strip,els:els,bars:[]};
       rows.push(R); bindStrip(R);
     }
     built=true;
     renderBars(); styleWords(); movePlayhead();
+    /* フォント確定後に幅が変わって食い込むことがあるので、もう一度だけ押し直す */
+    var relaxAll=function(){ rows.forEach(function(R){ relaxWords(R.els); }); };
+    if(document.fonts&&document.fonts.ready) document.fonts.ready.then(relaxAll);
+    setTimeout(relaxAll,300);
   }
   function renderBars(){
     rows.forEach(function(R){
