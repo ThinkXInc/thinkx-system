@@ -2,6 +2,16 @@
   "transcript_sha256": "ce46ec2c8f58346a34084b601612e7928cd41f29c32c0594b7b360e4a2932f7b",
   "edits": [
     {
+      "op": "delete",
+      "s": 4.32,
+      "orig": "自"
+    },
+    {
+      "op": "delete",
+      "s": 12.06,
+      "orig": "して"
+    },
+    {
       "op": "replace",
       "s": 84.24,
       "orig": "継",
@@ -148,6 +158,12 @@
       "orig": "そう"
     },
     {
+      "op": "replace",
+      "s": 142.06,
+      "orig": "さ",
+      "text": "急に"
+    },
+    {
       "op": "delete",
       "s": 142.08,
       "orig": "いう"
@@ -164,8 +180,53 @@
     },
     {
       "op": "delete",
+      "s": 142.48,
+      "orig": "そう"
+    },
+    {
+      "op": "delete",
+      "s": 142.48,
+      "orig": "ある"
+    },
+    {
+      "op": "delete",
+      "s": 142.48,
+      "orig": "も"
+    },
+    {
+      "op": "delete",
+      "s": 142.48,
+      "orig": "から"
+    },
+    {
+      "op": "delete",
       "s": 142.62,
       "orig": "も"
+    },
+    {
+      "op": "delete",
+      "s": 142.62,
+      "orig": "の"
+    },
+    {
+      "op": "delete",
+      "s": 142.62,
+      "orig": "いう"
+    },
+    {
+      "op": "delete",
+      "s": 142.62,
+      "orig": "ある"
+    },
+    {
+      "op": "delete",
+      "s": 142.62,
+      "orig": "から"
+    },
+    {
+      "op": "delete",
+      "s": 142.62,
+      "orig": "さ"
     },
     {
       "op": "replace",
@@ -216,8 +277,358 @@
     },
     {
       "op": "delete",
+      "s": 430.88,
+      "orig": "んだ"
+    },
+    {
+      "op": "delete",
       "s": 431.02,
       "orig": "から"
+    },
+    {
+      "op": "replace",
+      "s": 432.4,
+      "orig": "いい",
+      "text": "良い"
+    },
+    {
+      "op": "replace",
+      "s": 435.96,
+      "orig": "の",
+      "text": "なんだ"
+    },
+    {
+      "op": "replace",
+      "s": 436.06,
+      "orig": "理",
+      "text": "非"
+    },
+    {
+      "op": "replace",
+      "s": 436.32,
+      "orig": "上",
+      "text": "常"
+    },
+    {
+      "op": "replace",
+      "s": 441.26,
+      "orig": "に",
+      "text": "を"
+    },
+    {
+      "op": "delete",
+      "s": 442.1,
+      "orig": "と"
+    },
+    {
+      "op": "replace",
+      "s": 442.1,
+      "orig": "それ",
+      "text": "調べたり"
+    },
+    {
+      "op": "replace",
+      "s": 442.1,
+      "orig": "を",
+      "text": "すると"
+    },
+    {
+      "op": "delete",
+      "s": 442.1,
+      "orig": "える"
+    },
+    {
+      "op": "delete",
+      "s": 442.1,
+      "orig": "考"
+    },
+    {
+      "op": "delete",
+      "s": 443.92,
+      "orig": "あ"
+    },
+    {
+      "op": "delete",
+      "s": 444.52,
+      "orig": "ん"
+    },
+    {
+      "op": "delete",
+      "s": 444.6,
+      "orig": "た"
+    },
+    {
+      "op": "delete",
+      "s": 445.86,
+      "orig": "が"
+    },
+    {
+      "op": "replace",
+      "s": 708.7,
+      "orig": "敵",
+      "text": "的"
+    },
+    {
+      "op": "replace",
+      "s": 708.7,
+      "orig": "素",
+      "text": "論理"
+    },
+    {
+      "op": "replace",
+      "s": 974.74,
+      "orig": "こ",
+      "text": "れ"
+    },
+    {
+      "op": "delete",
+      "s": 974.8,
+      "orig": "で"
+    },
+    {
+      "op": "replace",
+      "s": 977.4,
+      "orig": "実",
+      "text": "空"
+    },
+    {
+      "op": "replace",
+      "s": 977.76,
+      "orig": "感",
+      "text": "間"
+    },
+    {
+      "op": "delete",
+      "s": 1000.2,
+      "orig": "う"
+    },
+    {
+      "op": "delete",
+      "s": 1000.24,
+      "orig": "よ"
+    },
+    {
+      "op": "replace",
+      "s": 1000.56,
+      "orig": "ユ",
+      "text": "ウィ"
+    },
+    {
+      "op": "delete",
+      "s": 1000.9,
+      "orig": "・"
+    },
+    {
+      "op": "replace",
+      "s": 1000.9,
+      "orig": "イ",
+      "text": "リアム・グラッサー"
+    },
+    {
+      "op": "delete",
+      "s": 1000.98,
+      "orig": "ラ"
+    },
+    {
+      "op": "delete",
+      "s": 1001.06,
+      "orig": "ム"
+    },
+    {
+      "op": "delete",
+      "s": 1001.12,
+      "orig": "グ"
+    },
+    {
+      "op": "delete",
+      "s": 1001.26,
+      "orig": "ラ"
+    },
+    {
+      "op": "delete",
+      "s": 1001.3,
+      "orig": "ス"
+    },
+    {
+      "op": "delete",
+      "s": 1001.38,
+      "orig": "ター"
+    },
+    {
+      "op": "delete",
+      "s": 1016.96,
+      "orig": "か"
+    },
+    {
+      "op": "replace",
+      "s": 1017.52,
+      "orig": "もし",
+      "text": "かもし"
+    },
+    {
+      "op": "replace",
+      "s": 1028.0,
+      "orig": "って",
+      "text": "った"
+    },
+    {
+      "op": "replace",
+      "s": 1028.18,
+      "orig": "て",
+      "text": "と"
+    },
+    {
+      "op": "replace",
+      "s": 1028.28,
+      "orig": "も",
+      "text": "き"
+    },
+    {
+      "op": "replace",
+      "s": 1028.4,
+      "orig": "いい",
+      "text": "に"
+    },
+    {
+      "op": "delete",
+      "s": 1028.54,
+      "orig": "それ"
+    },
+    {
+      "op": "delete",
+      "s": 1028.88,
+      "orig": "も"
+    },
+    {
+      "op": "replace",
+      "s": 1067.0,
+      "orig": "い",
+      "text": "い構造"
+    },
+    {
+      "op": "replace",
+      "s": 1070.26,
+      "orig": "言",
+      "text": "その言"
+    },
+    {
+      "op": "delete",
+      "s": 1079.22,
+      "orig": "ので"
+    },
+    {
+      "op": "replace",
+      "s": 1085.2,
+      "orig": "け",
+      "text": "る"
+    },
+    {
+      "op": "replace",
+      "s": 1085.32,
+      "orig": "ば",
+      "text": "から"
+    },
+    {
+      "op": "delete",
+      "s": 1085.42,
+      "orig": "いい"
+    },
+    {
+      "op": "replace",
+      "s": 1086.3,
+      "orig": "しい",
+      "text": "新しい"
+    },
+    {
+      "op": "replace",
+      "s": 1115.14,
+      "orig": "性",
+      "text": "数"
+    },
+    {
+      "op": "delete",
+      "s": 1115.88,
+      "orig": "だ"
+    },
+    {
+      "op": "delete",
+      "s": 1116.04,
+      "orig": "った"
+    },
+    {
+      "op": "replace",
+      "s": 1117.34,
+      "orig": "性",
+      "text": "数"
+    },
+    {
+      "op": "delete",
+      "s": 1129.44,
+      "orig": "AI"
+    },
+    {
+      "op": "delete",
+      "s": 1129.72,
+      "orig": "は"
+    },
+    {
+      "op": "replace",
+      "s": 1142.0,
+      "orig": "して",
+      "text": "す"
+    },
+    {
+      "op": "replace",
+      "s": 1146.78,
+      "orig": "か",
+      "text": "が"
+    },
+    {
+      "op": "replace",
+      "s": 1149.3,
+      "orig": "にな",
+      "text": "になる"
+    },
+    {
+      "op": "replace",
+      "s": 1153.04,
+      "orig": "だ",
+      "text": "だから"
+    },
+    {
+      "op": "replace",
+      "s": 1157.72,
+      "orig": "を",
+      "text": "の"
+    },
+    {
+      "op": "replace",
+      "s": 1159.7,
+      "orig": "と",
+      "text": "か"
+    },
+    {
+      "op": "replace",
+      "s": 1172.22,
+      "orig": "に",
+      "text": "にね"
+    },
+    {
+      "op": "replace",
+      "s": 1184.1,
+      "orig": "に",
+      "text": "の"
+    },
+    {
+      "op": "replace",
+      "s": 1184.2,
+      "orig": "して",
+      "text": "一つだ"
+    },
+    {
+      "op": "delete",
+      "s": 1184.34,
+      "orig": "た"
     }
   ]
 }

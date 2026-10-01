@@ -65,25 +65,36 @@ def status(base, edits_doc=None):
 
 def apply_to_segments(tsegments, edits_doc):
     """transcript.json の segments（words 付き）へ修正を重ねた**コピー**を返す。
-    元の構造は変更しない。返り値の word には "edited": True が付く（表示用）。"""
+    元の構造は変更しない。返り値の word には "edited": True が付く（表示用）。
+
+    照合キーは (開始秒, 原文[, 終了秒])。ASR は連発トークンに**同一の開始秒**を
+    付けることがあるため、開始秒だけをキーにすると同じ秒の別の語への修正が
+    衝突して前の修正が消える(2026-10-01 実障害・原文 L127)。同一キーの修正が
+    複数あるときは出現順に1語ずつ消費する。"""
     edits = (edits_doc or {}).get("edits") or []
     if not edits:
         return tsegments
-    by_key = {}
+    pool = []
     inserts = []
     for e in edits:
         if e.get("op") in ("replace", "delete"):
-            by_key[round(float(e["s"]), 3)] = e
+            pool.append(dict(e, _used=False))
         elif e.get("op") == "insert":
             inserts.append(e)
 
-    def match(ws):
-        k = round(float(ws), 3)
-        if k in by_key:
-            return by_key[k]
-        for dk in (k - 0.001, k + 0.001):   # 丸め差の救済
-            if dk in by_key:
-                return by_key[dk]
+    def match(ws, we, orig):
+        for e in pool:
+            if e["_used"]:
+                continue
+            if abs(float(e["s"]) - ws) >= KEY_EPS:
+                continue
+            if (e.get("orig") or "") != orig:
+                continue
+            if e.get("e") is not None and we is not None \
+                    and abs(float(e["e"]) - we) >= KEY_EPS:
+                continue
+            e["_used"] = True
+            return e
         return None
 
     out = []
@@ -91,13 +102,13 @@ def apply_to_segments(tsegments, edits_doc):
         words = []
         for w in (seg.get("words") or []):
             st = w.get("start")
-            e = match(st) if st is not None else None
+            orig = (w.get("word") or "").strip()
+            e = None
+            if st is not None:
+                we = w.get("end")
+                e = match(float(st), float(we) if we is not None else None, orig)
             if e is None:
                 words.append(w)
-                continue
-            orig = (w.get("word") or "").strip()
-            if e.get("orig") is not None and e["orig"] != orig:
-                words.append(w)          # 照合不一致 → 触らない（安全側）
                 continue
             w2 = dict(w)
             w2["edited"] = True
@@ -172,17 +183,38 @@ def upsert(base, op):
             key = round(float(op["s"]), 3)
         except (TypeError, ValueError, KeyError):
             return None, "bad_key"
-        d["edits"] = [e for e in d["edits"]
-                      if not (e.get("op") in ("replace", "delete")
-                              and abs(float(e.get("s", -1)) - key) < KEY_EPS)]
+        orig = (op.get("orig") or "").strip()
+        try:
+            end = round(float(op["e"]), 3) if op.get("e") is not None else None
+        except (TypeError, ValueError):
+            end = None
+        # 取り除くのは「同じ語」への既存修正だけ。開始秒だけで消すと、同一開始秒の
+        # 別トークンへの修正まで巻き添えで消える(2026-10-01 実障害・原文 L127)
+
+        def same_token(e):
+            if e.get("op") not in ("replace", "delete"):
+                return False
+            if abs(float(e.get("s", -1)) - key) >= KEY_EPS:
+                return False
+            if (e.get("orig") or "") != orig:
+                return False
+            if end is not None and e.get("e") is not None \
+                    and abs(float(e["e"]) - end) >= KEY_EPS:
+                return False
+            return True
+
+        d["edits"] = [e for e in d["edits"] if not same_token(e)]
         text = (op.get("text") or "").strip() if kind == "replace" else None
-        if kind == "replace" and text == (op.get("orig") or "").strip():
+        if kind == "replace" and text == orig:
             pass   # 原文に戻した = 修正の取り消し（何も追加しない）
         else:
-            rec = {"op": kind, "s": key, "orig": (op.get("orig") or "").strip()}
+            rec = {"op": kind, "s": key, "orig": orig}
+            if end is not None:
+                rec["e"] = end
             if kind == "replace":
                 if not text:
-                    rec = {"op": "delete", "s": key, "orig": rec["orig"]}
+                    rec["op"] = "delete"
+                    rec.pop("text", None)
                 else:
                     rec["text"] = text
             d["edits"].append(rec)

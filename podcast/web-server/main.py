@@ -927,11 +927,11 @@ function editUnit(el){
         });
     }else if(v.trim()===''){
       /* 消しても位置は空白プレースホルダとして残す(原文 L112) */
-      sendEdit({op:'delete', s:u.s, orig:(u.o!=null?u.o:u.t)},
+      sendEdit({op:'delete', s:u.s, e:u.e, orig:(u.o!=null?u.o:u.t)},
         function(){ if(u.o==null) u.o=u.t; u.t=''; u.del=1;
           build(); setStatus('テキストを削除しました（空白をクリックで書き戻せます）'); });
     }else{
-      sendEdit({op:'replace', s:u.s, orig:(u.o!=null?u.o:u.t), text:v},
+      sendEdit({op:'replace', s:u.s, e:u.e, orig:(u.o!=null?u.o:u.t), text:v},
         function(){
           if(u.o==null) u.o=u.t;
           u.t=v; delete u.del;
@@ -966,7 +966,7 @@ function deleteUnitEl(cuEl){
     sendEdit({op:'insert', t:u.s, text:''},
       function(){ units.splice(ui,1); build(); setStatus('挿入テキストを取り消しました（保存済み）'); });
   }else{
-    sendEdit({op:'delete', s:u.s, orig:(u.o!=null?u.o:u.t)},
+    sendEdit({op:'delete', s:u.s, e:u.e, orig:(u.o!=null?u.o:u.t)},
       function(){ if(u.o==null) u.o=u.t; u.t=''; u.del=1;
         build(); setStatus('テキストを削除しました（空白をクリックで書き戻せます）'); });
   }
@@ -1691,11 +1691,11 @@ function makeTimeline(root){
           });
       }else if(v.trim()===''){
         /* 消しても位置は空白プレースホルダとして残し、クリックで書き戻せる(原文 L112) */
-        sendEdit({op:'delete', s:w.s, orig:(w.o!=null?w.o:w.t)},
+        sendEdit({op:'delete', s:w.s, e:w.e, orig:(w.o!=null?w.o:w.t)},
           function(){ if(w.o==null) w.o=w.t; w.t=''; w.del=1;
             build(); setStatus('テキストを削除しました（空白をクリックで書き戻せます）'); });
       }else{
-        sendEdit({op:'replace', s:w.s, orig:(w.o!=null?w.o:w.t), text:v},
+        sendEdit({op:'replace', s:w.s, e:w.e, orig:(w.o!=null?w.o:w.t), text:v},
           function(){
             if(w.o==null) w.o=w.t;
             w.t=v; delete w.del;
@@ -1726,7 +1726,7 @@ function makeTimeline(root){
       sendEdit({op:'insert', t:w.s, text:''},
         function(){ D.words.splice(wi,1); build(); setStatus('挿入テキストを取り消しました（保存済み）'); });
     }else{
-      sendEdit({op:'delete', s:w.s, orig:(w.o!=null?w.o:w.t)},
+      sendEdit({op:'delete', s:w.s, e:w.e, orig:(w.o!=null?w.o:w.t)},
         function(){ if(w.o==null) w.o=w.t; w.t=''; w.del=1;
           build(); setStatus('テキストを削除しました（空白をクリックで書き戻せます）'); });
     }
@@ -2970,29 +2970,39 @@ def apply_transcript_edit(payload):
             os.fsync(f.fileno())
     except Exception:
         pass
-    doc, err = transcript_edits.upsert(base, payload)
-    if err:
-        return err
-    path = idpaths.find(base, transcript_edits.EDITS_NAME)
-    # 履歴退避(200件)
-    try:
-        if os.path.isfile(path):
-            with open(path, encoding="utf-8") as f:
-                prev = f.read()
-            hist = os.path.join(idpaths.edit_dir(base), "transcript_edits_history.jsonl")
-            lines = []
-            if os.path.isfile(hist):
-                with open(hist, encoding="utf-8") as f:
-                    lines = f.read().splitlines()
-            lines.append(json.dumps({"at": datetime.datetime.now().isoformat(timespec="seconds"),
-                                     "edits_json": prev}, ensure_ascii=False))
-            with open(hist, "w", encoding="utf-8") as f:
-                f.write("\n".join(lines[-200:]) + "\n")
-    except Exception:
-        pass
-    out = idpaths.save(base, transcript_edits.EDITS_NAME)
-    with open(out, "w", encoding="utf-8") as f:
-        json.dump(doc, f, ensure_ascii=False, indent=2)
+    # read-modify-write を flock で直列化する。速い連続編集や複数プロセス(別ポートの
+    # サーバー等)で後の書き込みが前の1件を飲み込む実障害があった(2026-10-01・原文 L127)
+    import fcntl
+    lock_path = os.path.join(idpaths.edit_dir(base), ".transcript_edits.lock")
+    with open(lock_path, "w") as lk:
+        fcntl.flock(lk, fcntl.LOCK_EX)
+        doc, err = transcript_edits.upsert(base, payload)
+        if err:
+            return err
+        path = idpaths.find(base, transcript_edits.EDITS_NAME)
+        # 履歴退避(200件)
+        try:
+            if os.path.isfile(path):
+                with open(path, encoding="utf-8") as f:
+                    prev = f.read()
+                hist = os.path.join(idpaths.edit_dir(base), "transcript_edits_history.jsonl")
+                lines = []
+                if os.path.isfile(hist):
+                    with open(hist, encoding="utf-8") as f:
+                        lines = f.read().splitlines()
+                lines.append(json.dumps({"at": datetime.datetime.now().isoformat(timespec="seconds"),
+                                         "edits_json": prev}, ensure_ascii=False))
+                with open(hist, "w", encoding="utf-8") as f:
+                    f.write("\n".join(lines[-200:]) + "\n")
+        except Exception:
+            pass
+        out = idpaths.save(base, transcript_edits.EDITS_NAME)
+        tmp = out + ".part"
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(doc, f, ensure_ascii=False, indent=2)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(tmp, out)   # 書き込みは原子的に(部分書きで壊れたファイルを読ませない)
     _queue_for_sync(out, os.path.join(idpaths.edit_dir(base), "transcript_edits_history.jsonl"))
     return "ok"
 
@@ -4030,6 +4040,16 @@ def route_clip_apply_prev():
 def route_render_status():
     return _text(render_status(request.args.get("id") or "",
                                request.args.get("sid") or ""))
+
+
+@app.get("/assets/<path:rel>")
+def route_assets(rel):
+    # スタイル調整パネルのライブプレビュー用(背景動画・フォント。原文 L126)。読み取りのみ
+    d = os.path.realpath(ASSETS_DIR)
+    full = os.path.realpath(os.path.join(d, rel or ""))
+    if not (full.startswith(d + os.sep) and os.path.isfile(full)):
+        return _text("not found", 404)
+    return send_file(full, conditional=True)
 
 
 @app.get("/media/<path:rel>")
