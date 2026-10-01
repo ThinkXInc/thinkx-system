@@ -121,8 +121,17 @@ def pct_of(spec, size_key, default):
     return float(spec)
 
 
+def token_in_keeps(st, en, keeps):
+    """中点が keep 内、または端をまたぐ語は重なり 0.2 秒以上（main.py と同じ規則。
+    「重なり 0.2 秒以上」だけだと 0.2 秒未満の短い語が keep 内でも全部落ちる）。"""
+    mid = (st + en) / 2
+    if any(ka <= mid < kb for ka, kb in keeps):
+        return True
+    return sum(max(0.0, min(en, kb) - max(st, ka)) for ka, kb in keeps) >= 0.2
+
+
 def clip_tokens(base, geometry, keeps):
-    """keep に 0.2 秒以上重なる修正済みトークン（元音源時刻）。"""
+    """keep に属する修正済みトークン（元音源時刻）。"""
     tsegments, _st = transcript_edits.corrected_segments(str(base))
     out = []
     for tseg in tsegments:
@@ -134,7 +143,7 @@ def clip_tokens(base, geometry, keeps):
             tok = (w.get("word") or "").strip()
             if not tok:
                 continue
-            if sum(max(0.0, min(en, kb) - max(st, ka)) for ka, kb in keeps) < 0.2:
+            if not token_in_keeps(st, en, keeps):
                 continue
             out.append({"s": st, "e": en, "t": tok})
     out.sort(key=lambda w: w["s"])

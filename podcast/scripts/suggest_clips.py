@@ -57,7 +57,9 @@ def extract_json_block(text):
 
 
 def tokens_in_geometry(base, geometry):
-    """geometry の keep に重なる修正済みトークン（元音源時刻）。"""
+    """geometry の keep に属する修正済みトークン（元音源時刻）。
+    判定は「中点が keep 内 or 重なり 0.2 秒以上」（main.py と同じ規則。
+    重なりだけだと 0.2 秒未満の短い語が keep 内でも全部落ちる）。"""
     tsegments, _st = transcript_edits.corrected_segments(str(base))
     keeps = keep_ranges(float(geometry["start_sec"]), float(geometry["end_sec"]),
                         [tuple(map(float, d)) for d in geometry.get("drops") or []])
@@ -71,7 +73,9 @@ def tokens_in_geometry(base, geometry):
             tok = (w.get("word") or "").strip()
             if not tok:
                 continue
-            if sum(max(0.0, min(en, kb) - max(st, ka)) for ka, kb in keeps) < 0.2:
+            mid = (st + en) / 2
+            if not (any(ka <= mid < kb for ka, kb in keeps)
+                    or sum(max(0.0, min(en, kb) - max(st, ka)) for ka, kb in keeps) >= 0.2):
                 continue
             out.append({"s": st, "e": en, "t": tok})
     out.sort(key=lambda w: w["s"])

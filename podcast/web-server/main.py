@@ -2951,10 +2951,20 @@ def geometry_keeps(geometry):
                        [tuple(map(float, d)) for d in geometry.get("drops") or []])
 
 
+def token_in_keeps(st, en, keeps):
+    """語を keep に含めるかの判定。**中点が keep 内**（1次編集のグレー判定と同じ基準なので
+    両画面のテキスト集合が構成上一致する）、または端をまたぐ長い語は重なり 0.2 秒以上。
+    「重なり 0.2 秒以上」だけだと、0.2 秒未満の短い語(「の」「が」等)が keep の内側に
+    あっても全部落ちる(2026-10-01 実測: keep 内 3,247 語中 2,142 語が消えていた)。"""
+    mid = (st + en) / 2
+    if any(ka <= mid < kb for ka, kb in keeps):
+        return True
+    return sum(max(0.0, min(en, kb) - max(st, ka)) for ka, kb in keeps) >= 0.2
+
+
 def clip_tokens(idv, geometry):
     """切り抜き画面・生成が使う単語トークン列（元音源の絶対時刻・修正オーバーレイ適用済み）。
-    geometry の keep に 0.2 秒以上重なる語だけを返す。粒度は1次編集と同じ（結合しない。
-    原文 L104 の粒度問題への対応）。"""
+    粒度は1次編集と同じ（結合しない。原文 L104 の粒度問題への対応）。"""
     base = os.path.join(DATA_DIR, idv)
     tsegments, est = transcript_edits.corrected_segments(base)
     keeps = geometry_keeps(geometry)
@@ -2970,7 +2980,7 @@ def clip_tokens(idv, geometry):
             # 生成側は空テキストを拾わないので出力には乗らない
             if not tok and not w.get("deleted"):
                 continue
-            if sum(max(0.0, min(en, kb) - max(st, ka)) for ka, kb in keeps) < 0.2:
+            if not token_in_keeps(st, en, keeps):
                 continue
             wd = {"t": tok, "s": round(st, 3), "e": round(en, 3)}
             if w.get("edited") and w.get("orig_word") is not None:
@@ -3298,8 +3308,7 @@ def render_clip_videos(idv, key):
         m2, s2 = divmod(int(round(dur)), 60)
         text = "".join(
             t["t"] for t in tokens
-            if sum(max(0.0, min(float(t["e"]), kb) - max(float(t["s"]), ka))
-                   for ka, kb in row_keeps) >= 0.2)
+            if token_in_keeps(float(t["s"]), float(t["e"]), row_keeps))
         checked_sizes = cfg.get("sizes") if cfg.get("sizes") is not None else default_sizes
         size_boxes = "".join(
             f"<label style='margin-right:14px'><input type='checkbox' class='cvsize' value='{esc(s['key'])}'"
