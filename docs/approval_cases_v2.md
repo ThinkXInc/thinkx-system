@@ -374,7 +374,52 @@ ask と deny のルールは hook の allow に勝つ。
 - **残るゲート**: なし。
 - **同型カウント**: staging claude_connect の観測は **A・T・U・AK で 4 回目**。stg.py に無い項目(再起動時刻・絶対時刻窓)は 1 回目。
 
+### AL. podcast dev サーバー(127.0.0.1:8012)の停止・起動
+- **生**: `lsof -ti :8012 | xargs kill 2>/dev/null; sleep 1; cd .../podcast/web-server && (PORT=8012 nohup venv/bin/python main.py > <scratchpad>/server8012.log 2>&1 &) && sleep…`(podcast セッション 2026-10-01)
+- **引き金**: **不明**(lsof / kill / nohup / cd は ask に無い)。AG・AJ と同じ「ask 語の無いローカル操作が止まる」型。要実測。
+- **クラス**: 変更(ローカル dev サーバーの停止・起動。自分のマシン・可逆)。
+- **正しい形**: dev サーバーの起動/再起動は固定スクリプト(ポート 8012・起動コマンド・ログ先をスクリプト内リテラルで持ち、
+  readiness 待ち(AH の結論)まで内蔵)。V の `dev_mock.sh` と同じ結論が対象を変えて再出(mock 8008 → thinkx dev 5050 → podcast dev 8012)。
+  サーバーごとに書くか「dev サーバー共通 1 本 + 対象名のホワイトリスト引数」かは作る時に決める(2 つに散らさない)。
+- **残るゲート**: なし(可逆なプロセス管理)。
+- **同型カウント**: dev サーバー/mock の停止・起動は M・V・AL で **3 回目 → 昇格条件に達した**。スクリプト未着手のまま対象が 3 つに増えた。
+
+### AM. ローカル JSON の中身確認(python3 -c)+ dev ページの文字列有無(curl GET)
+- **生**: `python3 -c "import json; d=json.load(open('data/新宿7-11才能と創造/edit/transcript_edits.json')); print('root edits after revert:', d['edits'])" && curl -s 'http://127.0.0.1:8012/clip_videos?id=...&key=...' | grep -o '版 2026[^<]*\|0分12秒\|元時刻アンカー検証' | head -5`
+- **引き金**: `curl`(ask・localhost)。
+- **クラス**: 観測(ローカルファイルの読み取り + dev ページの GET)。
+- **正しい形**: 2 つに分かれる。(1) JSON の中身は **Read ツール**で読める(承認なし)。python3 -c で読むのは Read の再発明
+  (V の Edit 再発明の読み取り版)。(2) ページの文字列確認は「ホスト固定・パスと探す文字列が引数」の GET 観測
+  (verify_deploy.py site と同じ形。2026-10-01 オーナー裁定: パスだけ引数なら可、URL 全体を引数にするのは不可)。
+  dev サーバー用はポート(5000/5050/8012 の固定集合)+ パス + 文字列を受ける 1 本に AH・Z・本件を畳める。
+- **残るゲート**: なし。
+- **同型カウント**: localhost curl の GET 観測は C・E・M・V・AH(+再発)・AM で **7 回目**。
+
+### AN. main.py から関数を python heredoc で削除 + import 確認 + dev へ curl POST
+- **生**: `python3 - <<'EOF' ... s=open('web-server/main.py').read(); start=s.index('def clip_full_text('); end=s.index('\n\n\ndef ', start); s=s[:start]+s[end+3:]; open(p,'w').write(s) EOF` → `venv/bin/python -c "...import main; print('import ok')" && curl -s -X POST 'http://127.0.0.1:8012/clip_suggest?id=...&key=...'`
+- **引き金**: `curl`(ask・localhost・**POST**)。heredoc の編集自体はセッションの許可セット次第(V の 3 回目と同じ)。
+- **クラス**: 編集(関数の削除)+ 観測(import 可)+ ローカル dev への操作(POST)。
+- **正しい形**: 関数の削除は **Edit ツール**(old_string に関数全体、new_string 空)。`s.index()` のスライス削除は
+  V の `t.replace()` より悪い — 目印(`\n\n\ndef `)がずれると隣の関数まで黙って消え、diff も残らない。
+  M・V(+同日再発)・AN で heredoc 編集は **4 回目**。import 確認は `venv/bin/python -c "import main"` で止まらない(そのままでよい)。
+  localhost への POST は GET と違い「見るだけ」でない(dev の処理を起動する)ので、裁定済みの安全枠(GET 限定)の外。
+  dev 相手の可逆な操作なので承認が出ても 1 回で済む形(dev 観測スクリプトに「POST は持たせない」を維持)が正しい。
+- **残るゲート**: localhost POST の承認(軽いが、観測スクリプトには畳まない)。
+- **同型カウント**: heredoc 編集 4 回目。「Edit を使え」が実行者に毎回届く場所(CLAUDE.md)に無いことが継続原因(T・V と同じカタログ問題。
+  2026-10-01 に CLAUDE.md への追記文面を提案済み・オーナー判断待ち)。
+
 ---
+
+## 状態と次の一手(2026-10-01)
+
+- **着手済み**: `infra/scripts/verify_deploy.py` 新設(preview / landed <env> / site <env>。着地確認 7 回・本番 URL 観測 7 回の 2 型を畳んだ。
+  本番で実測済み・staging は停止中のため到達不可の FAIL 報告を確認)。`push_env.sh` に配布結果の検証を内蔵(値は出さない。事例 Q の畳み込み)。
+- **新規事例**: AL(dev サーバー再起動・昇格条件到達)・AM(localhost GET 7 回目)・AN(heredoc 編集 4 回目・localhost POST)。
+- **次の一手(未着手)**: dev サーバーの起動/観測スクリプト(AL+AM+AH。ポート固定集合・readiness・code+文字列有無)、
+  stg.py 拡張(AK: 再起動時刻・絶対時刻窓)、カタログ(infra/scripts/README.md 一覧 + CLAUDE.md 参照 — 文面提案済み)。
+- **未決(オーナー選択待ち)**: 記録ファイルの settings の変え方(事例 AA の案 1〜3)。前提の実測 2026-10-01:
+  `docs/coding_guides/**` は **deny に入っていない**(ask の `docs/**` で止まっているだけ)。ask を外すなら規範の deny を併せて張る必要がある。
+  タイプ 6 以降(書き方の規律・引き金不明・Chrome 拡張)はオーナー指示で保留。
 
 ## 状態と次の一手(2026-09-18 セッション終了時・クローズ記録 2026-09-28)
 
