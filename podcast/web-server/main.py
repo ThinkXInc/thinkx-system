@@ -3555,46 +3555,11 @@ def clip_suggest_status(idv, key):
 
 
 def render_clip_suggestions(idv, key, geometry):
-    """切り抜き編集画面の見出し直下に出す「セグメント参考」（C-12・原文 L86-95）。
-    保存は元音源時刻、表示は詰めた後の時間（C-17）。"""
+    """参考セグメント(トピック)の再生成ボタン。タイムラインの直上にボタンだけを置く
+    (原文 L121。候補の中身はタイムライン上の水色の塗りと右マージンの注記が持つ)。"""
     base = os.path.join(DATA_DIR, idv)
     sug = _load_json(idpaths.find(base, f"clip_{key}_suggestions.json"), None)
-    kmap, acc = [], 0.0
-    for ka, kb in geometry_keeps(geometry):
-        kmap.append((ka, kb, acc))
-        acc += kb - ka
-
-    def view(t):
-        for ka, kb, off in kmap:
-            if t <= kb:
-                return off + min(max(t, ka), kb) - ka
-        return acc
-
-    def ts2(t):
-        m3 = int(t // 60)
-        return f"{m3}:{t - m3 * 60:05.2f}"
-
-    # タイムラインのトピック表示と同じ番号で対応づける(原文 L113-115。色分けは廃止 L119)
-    items = []
-    for i, it in enumerate((sug or {}).get("suggestions", [])):
-        try:
-            s3, e3 = float(it["s"]), float(it["e"])
-        except (KeyError, TypeError, ValueError):
-            continue
-        v3, w3 = view(s3), view(e3)
-        dm, ds = divmod(int(round(w3 - v3)), 60)
-        # 見出し候補は3つを「 / 」区切りで並べる(原文 L100)
-        titles = [t for t in (it.get("titles") or []) if str(t).strip()] or [it.get("title") or ""]
-        items.append(
-            "<div class='sugitem'>"
-            f"<div class='sugtitle'>トピック{i + 1}　"
-            f"{esc(' / '.join(str(t) for t in titles))}</div>"
-            f"<div class='sugtime'><a onclick='window.clipTL&&clipTL.setPlayhead({s3:.3f})'>"
-            f"{ts2(v3)}〜{ts2(w3)}（{dm}分{ds:02d}秒）</a></div>"
-            f"<div class='sugtext'>{esc(it.get('text'))}</div></div>")
-    label = "再生成" if items else "セグメント参考を生成"
-    body = "".join(items) if items else (
-        "<div class='meta'>AI による切り抜き候補（5〜10件・見出し/範囲/全文）をここに出します。</div>")
+    label = "参考セグメント再生成" if (sug or {}).get("suggestions") else "参考セグメントを生成"
     js = (
         "<script>"
         "function clipSuggest(){var q=new URLSearchParams(location.search);"
@@ -3615,10 +3580,8 @@ def render_clip_suggestions(idv, key, geometry):
         ".catch(function(){b.disabled=false;el.textContent='サーバーに接続できません';});}"
         "</script>")
     return (
-        "<div class='sugbox'><div class='sughd'><b>セグメント参考</b>"
-        f"<button class='gbtn' id='sugbtn' onclick='clipSuggest()'>{label}</button>"
-        "<span id='sugstat' class='meta'></span></div>"
-        f"{body}</div>{js}")
+        f"<p><button class='gbtn' id='sugbtn' onclick='clipSuggest()'>{label}</button>"
+        "　<span id='sugstat' class='meta'></span></p>" + js)
 
 
 def source_audio_name(idv):
