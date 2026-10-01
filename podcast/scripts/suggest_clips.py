@@ -169,14 +169,27 @@ def main():
     if not out:
         sys.exit("[clipsug] 有効な候補が得られませんでした")
 
+    # ハイライト(名言的・格言的・キャッチーな一言。原文 L122)。候補とは独立
+    hls = []
+    for h in (data.get("highlights") or [])[:20]:
+        try:
+            s, e = snap(tokens, h["start_sec"], h["end_sec"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        if not (0.5 <= e - s <= 20):
+            continue
+        text = "".join(w["t"] for w in tokens if w["e"] > s and w["s"] < e)
+        hls.append({"s": round(s, 3), "e": round(e, 3), "text": text})
+
     dst = pathlib.Path(idpaths.save(str(base), f"clip_{args.key}_suggestions.json"))
     tmp = dst.with_name(dst.name + ".part")
     tmp.write_text(json.dumps(
         {"generated_at": datetime.datetime.now().isoformat(timespec="seconds"),
-         "model": MODEL, "time_base": "source", "suggestions": out},
+         "model": MODEL, "time_base": "source",
+         "suggestions": out, "highlights": hls},
         ensure_ascii=False, indent=2), encoding="utf-8")
     tmp.replace(dst)   # 差し替えは原子的に
-    print(f"[clipsug] done. 候補 {len(out)} 件 -> {dst}")
+    print(f"[clipsug] done. 候補 {len(out)} 件 / ハイライト {len(hls)} 件 -> {dst}")
 
 
 if __name__ == "__main__":

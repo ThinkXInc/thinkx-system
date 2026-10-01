@@ -323,6 +323,10 @@ CLIP_CSS = """
 .topicnote .tn-title:hover { text-decoration:underline; }
 .topicnote .tn-time { font-variant-numeric:tabular-nums; margin-bottom:4px; }
 .topicnote .tn-text { opacity:.85; }
+/* ハイライト(名言・格言・キャッチー箇所。原文 L122)。テキスト行の上に半透明オレンジ */
+.hlfill { position:absolute; top:0; height:37px; background:#f5a62345;
+          border-radius:4px; pointer-events:none; }
+:root[data-theme="light"] .hlfill { background:#f0b35e59; }
 /* 切り抜きセグメント＝開始から終了までグラデーション（原文 L21）。
    開始側が明るい（開始と終了を色で見分ける。オーナー指示 2026-09-28・原文 L98） */
 .clipz { position:absolute; top:0; height:24px;
@@ -497,12 +501,26 @@ function build(){
 
 var topics=(D.topics||[]).map(function(t){
   return {s:+t.s,e:+t.e,title:String(t.title||''),text:String(t.text||'')};});
+var highlights=(D.highlights||[]).map(function(h){
+  return {s:+h.s,e:+h.e,text:String(h.text||'')};});
 
 /* トピック表示(原文 L113-119・ラフ 2026-10-01):
    区間は時刻範囲どおりに行をまたいで半透明の水色で塗り(クリックは透過)、
    見出し・時刻・全文は右マージンの青テキストで開始行の横に置く */
 function placeTopics(){
-  host.querySelectorAll('.topicfill,.topicnote').forEach(function(n){ n.remove(); });
+  host.querySelectorAll('.topicfill,.topicnote,.hlfill').forEach(function(n){ n.remove(); });
+  /* ハイライト: テキスト行の上に半透明オレンジを敷く(原文 L122・ラフ) */
+  highlights.forEach(function(h){
+    var va=V(h.s), vb=V(h.e);
+    rows.forEach(function(R){
+      var a=Math.max(va,R.t0), b=Math.min(vb,R.t1);
+      if(b-a<=0) return;
+      var f=document.createElement('div'); f.className='hlfill';
+      f.style.left=X(R,a)+'px'; f.style.width=Math.max(2,X(R,b)-X(R,a))+'px';
+      f.title=h.text;
+      R.lane.appendChild(f);
+    });
+  });
   var lastBottom=-1e9;
   topics.forEach(function(tp,ti){
     var va=V(tp.s), vb=V(tp.e);
@@ -3644,11 +3662,20 @@ def render_clip(idv, key):
         titles = [t for t in (it.get("titles") or []) if str(t).strip()] or [it.get("title") or ""]
         topics.append({"s": ts3, "e": te3, "title": str(titles[0]),
                        "text": str(it.get("text") or "")})
+    # ハイライト(名言・格言・キャッチー箇所。原文 L122)。テキストの上に半透明オレンジで敷く
+    highlights = []
+    for h in (sug or {}).get("highlights", []):
+        try:
+            highlights.append({"s": float(h["s"]), "e": float(h["e"]),
+                               "text": str(h.get("text") or "")})
+        except (KeyError, TypeError, ValueError):
+            continue
     data = json.dumps({"id": idv, "key": key, "duration": round(net, 3),
                        "keeps": [[round(a, 3), round(b, 3)] for a, b in keeps],
                        "units": tokens,
                        "clips": cur.get("clips") or [],
                        "topics": topics,
+                       "highlights": highlights,
                        "applyable": applyable},
                       ensure_ascii=False).replace("</", "<\\/")
     apply_btn = ("<button class='gbtn tlapply' title='1次編集で版が分かれる前の切り抜き編集を"
