@@ -310,19 +310,19 @@ CLIP_CSS = """
 .w.wdel, .cu.wdel { min-width:16px; border:1px dashed #9ca3af99; border-radius:3px;
                     opacity:.6; cursor:text; }
 .w.wdel:hover, .cu.wdel:hover { background:#2563eb14; opacity:1; }
-/* トピック帯(原文 L113-115)。各行の最上段に、候補(トピック)の区間を番号付きで出す。
-   タイムラインを読み直さなくてもどこからどこが何のトピックかが分かる */
-.cliptl .ts2 { top:16px; }
-.cliptl .cu { top:32px; }
-.cliptl .strip { top:56px; }
-.cliptl .lane { height:100px; }
-.cliptl .tlabel { top:-56px; }
-.topicz { position:absolute; top:1px; height:12px; border-radius:3px; opacity:.9;
-          cursor:pointer; }
-.topicz:hover { filter:brightness(1.2); }
-.topiclab { position:absolute; top:0; font-size:10px; font-weight:700; line-height:13px;
-            color:#fff; padding:0 4px; pointer-events:none; white-space:nowrap;
-            text-shadow:0 0 3px #0009; }
+/* トピック表示(原文 L113-119・ラフ 2026-10-01)。
+   区間 = トピックの時刻範囲どおりに行をまたいで半透明の水色で塗る(ラフ③+半透明)。
+   注記 = 右マージンに青テキストで 見出し・時刻範囲・全文(ラフ②)。色分けはせず水色単色 */
+.cliptl .tlrows { position:relative; }
+.topicfill { position:absolute; top:0; bottom:0; background:#63c5f52e;
+             pointer-events:none; }
+:root[data-theme="light"] .topicfill { background:#63c5f542; }
+.topicnote { position:absolute; width:260px; font-size:12px; line-height:1.7;
+             color:#2b8fd0; }
+.topicnote .tn-title { font-size:14px; font-weight:700; cursor:pointer; }
+.topicnote .tn-title:hover { text-decoration:underline; }
+.topicnote .tn-time { font-variant-numeric:tabular-nums; margin-bottom:4px; }
+.topicnote .tn-text { opacity:.85; }
 /* 切り抜きセグメント＝開始から終了までグラデーション（原文 L21）。
    開始側が明るい（開始と終了を色で見分ける。オーナー指示 2026-09-28・原文 L98） */
 .clipz { position:absolute; top:0; height:24px;
@@ -489,40 +489,53 @@ function build(){
     rows.push(R); bindStrip(R);
   }
   built=true;
-  renderBars(); styleUnits(); movePlayhead();
+  renderBars(); styleUnits(); movePlayhead(); placeTopics();
   var relaxAll=function(){ rows.forEach(function(R){ relaxUnits(R.els); }); };
   if(document.fonts&&document.fonts.ready) document.fonts.ready.then(relaxAll);
   setTimeout(relaxAll,300);
 }
 
-/* トピック帯の色(番号順に回す) */
-var TOPIC_COLORS=['#1a73e8','#e8710a','#188038','#9334e6','#d93025','#12939a','#b06000','#5f6368'];
-var topics=(D.topics||[]).map(function(t){return {s:+t.s,e:+t.e,title:String(t.title||'')};});
+var topics=(D.topics||[]).map(function(t){
+  return {s:+t.s,e:+t.e,title:String(t.title||''),text:String(t.text||'')};});
+
+/* トピック表示(原文 L113-119・ラフ 2026-10-01):
+   区間は時刻範囲どおりに行をまたいで半透明の水色で塗り(クリックは透過)、
+   見出し・時刻・全文は右マージンの青テキストで開始行の横に置く */
+function placeTopics(){
+  host.querySelectorAll('.topicfill,.topicnote').forEach(function(n){ n.remove(); });
+  var lastBottom=-1e9;
+  topics.forEach(function(tp,ti){
+    var va=V(tp.s), vb=V(tp.e);
+    rows.forEach(function(R){
+      var a=Math.max(va,R.t0), b=Math.min(vb,R.t1);
+      if(b-a<=0) return;
+      var f=document.createElement('div'); f.className='topicfill';
+      f.style.left=X(R,a)+'px'; f.style.width=Math.max(2,X(R,b)-X(R,a))+'px';
+      R.lane.appendChild(f);
+    });
+    var sr=rows.find(function(R){return R.t0<=va&&va<R.t1;});
+    if(!sr) return;
+    var note=document.createElement('div'); note.className='topicnote';
+    var dm=Math.floor((vb-va)/60), ds=Math.round((vb-va)-dm*60);
+    note.innerHTML="<div class='tn-title'></div>"+
+      "<div class='tn-time'>"+fmtAbs(va)+'〜'+fmtAbs(vb)+'（'+dm+'分'+(ds<10?'0':'')+ds+'秒）</div>'+
+      "<div class='tn-text'></div>";
+    note.querySelector('.tn-title').textContent=(ti+1)+'. '+tp.title;
+    note.querySelector('.tn-text').textContent=tp.text;
+    note.querySelector('.tn-title').onclick=function(){
+      playhead=tp.s; movePlayhead(); if(playing) audio.currentTime=playhead; };
+    note.style.left=(laneW+16)+'px';
+    var top=sr.lane.parentNode.offsetTop;
+    if(top<lastBottom+10) top=lastBottom+10;   /* 前の注記と重ならないよう下げる */
+    note.style.top=top+'px';
+    host.appendChild(note);
+    lastBottom=top+note.offsetHeight;
+  });
+}
 
 function renderBars(){
   rows.forEach(function(R){
     R.strip.innerHTML='';
-    /* トピック帯は lane 側に置くので、描き直す前に消す */
-    R.lane.querySelectorAll('.topicz,.topiclab').forEach(function(n){ n.remove(); });
-    /* 行の最上段にトピック(候補)の区間を番号付きで出す(原文 L113-115) */
-    topics.forEach(function(tp,ti){
-      var va=V(tp.s), vb=V(tp.e);
-      var a=Math.max(va,R.t0), b=Math.min(vb,R.t1);
-      if(b-a<=0) return;
-      var band=document.createElement('div'); band.className='topicz';
-      band.style.left=X(R,a)+'px'; band.style.width=Math.max(2,X(R,b)-X(R,a))+'px';
-      band.style.background=TOPIC_COLORS[ti%TOPIC_COLORS.length];
-      band.title='トピック'+(ti+1)+'　'+tp.title;
-      band.onclick=function(ev){ ev.stopPropagation(); playhead=tp.s; movePlayhead();
-        if(playing) audio.currentTime=playhead; };
-      R.lane.appendChild(band);
-      if(va>=R.t0&&va<R.t1){
-        var lab=document.createElement('div'); lab.className='topiclab';
-        lab.textContent=(ti+1)+'. '+tp.title;
-        lab.style.left=X(R,a)+'px';
-        R.lane.appendChild(lab);
-      }
-    });
     var W=X(R,R.t1);
     var base=document.createElement('div'); base.className='barbase';
     base.style.left='0px'; base.style.width=W+'px'; R.strip.appendChild(base);
@@ -3561,9 +3574,7 @@ def render_clip_suggestions(idv, key, geometry):
         m3 = int(t // 60)
         return f"{m3}:{t - m3 * 60:05.2f}"
 
-    # タイムラインのトピック帯と同じ番号・色で対応づける(原文 L113-115)
-    colors = ["#1a73e8", "#e8710a", "#188038", "#9334e6", "#d93025", "#12939a",
-              "#b06000", "#5f6368"]
+    # タイムラインのトピック表示と同じ番号で対応づける(原文 L113-115。色分けは廃止 L119)
     items = []
     for i, it in enumerate((sug or {}).get("suggestions", [])):
         try:
@@ -3572,12 +3583,11 @@ def render_clip_suggestions(idv, key, geometry):
             continue
         v3, w3 = view(s3), view(e3)
         dm, ds = divmod(int(round(w3 - v3)), 60)
-        col = colors[i % len(colors)]
         # 見出し候補は3つを「 / 」区切りで並べる(原文 L100)
         titles = [t for t in (it.get("titles") or []) if str(t).strip()] or [it.get("title") or ""]
         items.append(
             "<div class='sugitem'>"
-            f"<div class='sugtitle'><span style='color:{col}'>■</span> トピック{i + 1}　"
+            f"<div class='sugtitle'>トピック{i + 1}　"
             f"{esc(' / '.join(str(t) for t in titles))}</div>"
             f"<div class='sugtime'><a onclick='window.clipTL&&clipTL.setPlayhead({s3:.3f})'>"
             f"{ts2(v3)}〜{ts2(w3)}（{dm}分{ds:02d}秒）</a></div>"
@@ -3669,7 +3679,8 @@ def render_clip(idv, key):
         except (KeyError, TypeError, ValueError):
             continue
         titles = [t for t in (it.get("titles") or []) if str(t).strip()] or [it.get("title") or ""]
-        topics.append({"s": ts3, "e": te3, "title": str(titles[0])})
+        topics.append({"s": ts3, "e": te3, "title": str(titles[0]),
+                       "text": str(it.get("text") or "")})
     data = json.dumps({"id": idv, "key": key, "duration": round(net, 3),
                        "keeps": [[round(a, 3), round(b, 3)] for a, b in keeps],
                        "units": tokens,
@@ -3679,7 +3690,7 @@ def render_clip(idv, key):
                       ensure_ascii=False).replace("</", "<\\/")
     apply_btn = ("<button class='gbtn tlapply' title='1次編集で版が分かれる前の切り抜き編集を"
                  "この版へコピーします（座標は元音源時刻なので、解除した区間は自動で広がり、"
-                 "新しいカットは自動で詰まります）'>前の版の切り抜き編集を適用</button>"
+                 "新しいカットは自動で詰まります）'>前の編集を適用</button>"
                  if applyable else "")
     parts.append(
         "<div class='cliptl' id='cliptl'>"
