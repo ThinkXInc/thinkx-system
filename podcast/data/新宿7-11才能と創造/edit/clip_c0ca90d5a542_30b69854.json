@@ -451,6 +451,11 @@
         ],
         "style": {
           "sub": {
+            "bg_alpha": 55,
+            "bg_color": "#000000",
+            "bg_on": true,
+            "bg_pad": 28,
+            "bg_radius": 18,
             "bold": true,
             "color": [
               "#ffffff"
@@ -468,6 +473,7 @@
             "y_pct": 70
           },
           "title": {
+            "bg_alpha": 100,
             "bg_color": "#1a2b4a",
             "bg_on": true,
             "bg_pad": 36,

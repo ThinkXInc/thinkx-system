@@ -308,46 +308,54 @@ def build_ass(w, h, stl, cfg, captions, dur, families):
         "[Events]",
         "Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text",
     ]
+    def bg_event(d, style_name, text, t0, t1):
+        """背景の角丸矩形(原文 L132/L133)。ASS に角丸ボックスが無いので描画コマンド
+        (\\p1 のベジェ角丸矩形)をテキストの背面レイヤーに焼く。半透明は \\1a で指定。
+        文字幅は 全角=1em・半角=0.55em の見積り(プレビューは CSS なので数 px の近似差は許容)"""
+        if not d.get("bg_on"):
+            return None
+        px = max(1, int(round(w * float(d["size_pct"]) / 100)))
+        mc0 = max_chars(d)
+        tl = [text[i:i + mc0] for i in range(0, len(text), mc0)] or [""]
+
+        def _est(ln):
+            return sum(px if ord(ch) > 0xFF else px * 0.55 for ch in ln)
+
+        pad = float(d.get("bg_pad") or 0) * scale
+        rad = float(d.get("bg_radius") or 0) * scale
+        bw = max(_est(ln) for ln in tl) + 2 * pad
+        bh = len(tl) * px * 1.18 + 2 * pad * 0.35
+        rad = max(0.0, min(rad, bw / 2, bh / 2))
+        cx = w * float(d.get("x_pct") or 50) / 100
+        cy = h * float(d.get("y_pct") or 50) / 100
+        x0, y0 = cx - bw / 2, cy - bh / 2
+
+        def f(v):
+            return f"{v:.1f}"
+
+        r_ = rad
+        path = (f"m {f(r_)} 0 l {f(bw - r_)} 0 "
+                f"b {f(bw)} 0 {f(bw)} 0 {f(bw)} {f(r_)} "
+                f"l {f(bw)} {f(bh - r_)} "
+                f"b {f(bw)} {f(bh)} {f(bw)} {f(bh)} {f(bw - r_)} {f(bh)} "
+                f"l {f(r_)} {f(bh)} "
+                f"b 0 {f(bh)} 0 {f(bh)} 0 {f(bh - r_)} "
+                f"l 0 {f(r_)} "
+                f"b 0 0 0 0 {f(r_)} 0")
+        br, bgg, bb = _hex_rgb(d.get("bg_color") or "#000000")
+        op = d.get("bg_alpha")
+        op = 100.0 if op is None else float(op)
+        aa = max(0, min(255, int(round(255 * (1 - op / 100)))))
+        return (f"Dialogue: 0,{ass_time(t0)},{ass_time(t1)},{style_name},,0,0,0,,"
+                rf"{{\an7\pos({x0:.1f},{y0:.1f})\p1\bord0\shad0"
+                rf"\1c&H{bb:02X}{bgg:02X}{br:02X}&\1a&H{aa:02X}&}}{path}{{\p0}}")
+
     title = (cfg.get("title") or "").strip()
     if title:
         d = stl["title"]
-        if d.get("bg_on"):
-            # タイトル背景の角丸矩形(原文 L132)。ASS に角丸ボックスは無いので
-            # 描画コマンド(\p1)でタイトルの背面レイヤーに描く。文字幅は全角=1em・
-            # 半角=0.55em の見積り(プレビューは CSS なので数 px の近似差は許容)
-            px = max(1, int(round(w * float(d["size_pct"]) / 100)))
-            mc0 = max_chars(d)
-            tl_lines = [title[i:i + mc0] for i in range(0, len(title), mc0)]
-
-            def _est(ln):
-                return sum(px if ord(ch) > 0xFF else px * 0.55 for ch in ln)
-
-            pad = float(d.get("bg_pad") or 0) * scale
-            rad = float(d.get("bg_radius") or 0) * scale
-            bw = max(_est(ln) for ln in tl_lines) + 2 * pad
-            bh = len(tl_lines) * px * 1.18 + 2 * pad * 0.35
-            rad = max(0.0, min(rad, bw / 2, bh / 2))
-            cx = w * float(d.get("x_pct") or 50) / 100
-            cy = h * float(d.get("y_pct") or 50) / 100
-            x0, y0 = cx - bw / 2, cy - bh / 2
-
-            def f(v):
-                return f"{v:.1f}"
-
-            r_ = rad
-            path = (f"m {f(r_)} 0 l {f(bw - r_)} 0 "
-                    f"b {f(bw)} 0 {f(bw)} 0 {f(bw)} {f(r_)} "
-                    f"l {f(bw)} {f(bh - r_)} "
-                    f"b {f(bw)} {f(bh)} {f(bw)} {f(bh)} {f(bw - r_)} {f(bh)} "
-                    f"l {f(r_)} {f(bh)} "
-                    f"b 0 {f(bh)} 0 {f(bh)} 0 {f(bh - r_)} "
-                    f"l 0 {f(r_)} "
-                    f"b 0 0 0 0 {f(r_)} 0")
-            br, bgg, bb = _hex_rgb(d.get("bg_color") or "#000000")
-            lines.append(
-                f"Dialogue: 0,{ass_time(0)},{ass_time(dur)},Title,,0,0,0,,"
-                rf"{{\an7\pos({x0:.1f},{y0:.1f})\p1\bord0\shad0"
-                rf"\1c&H{bb:02X}{bgg:02X}{br:02X}&}}{path}{{\p0}}")
+        ev = bg_event(d, "Title", title, 0, dur)
+        if ev:
+            lines.append(ev)
         txt = styled_text(title, max_chars(d), d.get("color") or [], d.get("outline") or [])
         lines.append(f"Dialogue: 1,{ass_time(0)},{ass_time(dur)},Title,,0,0,0,,"
                      f"{pos_tag(d)}{txt}")
@@ -356,8 +364,11 @@ def build_ass(w, h, stl, cfg, captions, dur, families):
     for c in captions:
         if not c["text"].strip():
             continue
+        ev = bg_event(d, "Sub", c["text"], c["a"], min(c["b"], dur))
+        if ev:
+            lines.append(ev)
         txt = styled_text(c["text"], mc, d.get("color") or [], d.get("outline") or [])
-        lines.append(f"Dialogue: 0,{ass_time(c['a'])},{ass_time(min(c['b'], dur))},Sub,,0,0,0,,"
+        lines.append(f"Dialogue: 1,{ass_time(c['a'])},{ass_time(min(c['b'], dur))},Sub,,0,0,0,,"
                      f"{pos_tag(d)}{txt}")
     return "\n".join(lines) + "\n"
 
