@@ -456,6 +456,9 @@ function relaxUnits(els){
 }
 
 function build(){
+  /* 再構築中にページ高が一瞬縮み、スクロール位置が 0 に丸められて飛ばされる
+     (テキスト編集の確定で実測 8590→0。2026-10-01)。前後で保存・復元する */
+  var sx=window.scrollX, sy=window.scrollY;
   host.innerHTML=''; rows=[];
   var probe=document.createElement('div'); probe.className='lane';
   host.appendChild(probe); laneW=probe.clientWidth||800; host.removeChild(probe);
@@ -494,6 +497,7 @@ function build(){
   }
   built=true;
   renderBars(); styleUnits(); movePlayhead(); placeTopics();
+  window.scrollTo(sx, sy);
   var relaxAll=function(){ rows.forEach(function(R){ relaxUnits(R.els); }); };
   if(document.fonts&&document.fonts.ready) document.fonts.ready.then(relaxAll);
   setTimeout(relaxAll,300);
@@ -1199,6 +1203,9 @@ function makeTimeline(root){
     for(var i=r[0];i<=r[1];i++) st[i]=1; }); return st; })();
 
   function build(){
+    /* 再構築中にページ高が一瞬縮み、スクロール位置が丸められて飛ぶことがある
+       (切り抜き画面で実測。テキスト修正の確定後の再構築も通る)。前後で保存・復元 */
+    var sx=window.scrollX, sy=window.scrollY;
     host.innerHTML=''; rows=[];
     var probe=document.createElement('div'); probe.className='lane';
     host.appendChild(probe); laneW=probe.clientWidth||800; host.removeChild(probe);
@@ -1249,6 +1256,7 @@ function makeTimeline(root){
     }
     built=true;
     renderBars(); styleWords(); movePlayhead();
+    window.scrollTo(sx, sy);
     /* フォント確定後に幅が変わって食い込むことがあるので、もう一度だけ押し直す */
     var relaxAll=function(){ rows.forEach(function(R){ relaxWords(R.els); }); };
     if(document.fonts&&document.fonts.ready) document.fonts.ready.then(relaxAll);

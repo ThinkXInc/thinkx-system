@@ -52,6 +52,17 @@
     },
     {
       "op": "replace",
+      "s": 98.84,
+      "orig": "ん",
+      "text": "ら"
+    },
+    {
+      "op": "delete",
+      "s": 101.78,
+      "orig": "んだ"
+    },
+    {
+      "op": "replace",
       "s": 105.92,
       "orig": "肯",
       "text": "後"
@@ -69,9 +80,38 @@
       "text": "ってるか"
     },
     {
+      "op": "replace",
+      "s": 111.4,
+      "orig": "ん",
+      "text": "ら"
+    },
+    {
       "op": "delete",
       "s": 111.58,
       "orig": "よ"
+    },
+    {
+      "op": "replace",
+      "s": 116.42,
+      "orig": "って",
+      "text": "って人"
+    },
+    {
+      "op": "replace",
+      "s": 118.4,
+      "orig": "わ",
+      "text": "がいるわ"
+    },
+    {
+      "op": "replace",
+      "s": 118.96,
+      "orig": "大",
+      "text": "たまに"
+    },
+    {
+      "op": "delete",
+      "s": 119.42,
+      "orig": "変"
     },
     {
       "op": "replace",
@@ -103,10 +143,9 @@
       "orig": "さ"
     },
     {
-      "op": "replace",
+      "op": "delete",
       "s": 142.06,
-      "orig": "そう",
-      "text": "現れる"
+      "orig": "そう"
     },
     {
       "op": "delete",
@@ -121,12 +160,12 @@
     {
       "op": "delete",
       "s": 142.48,
-      "orig": "そう"
+      "orig": "さ"
     },
     {
       "op": "delete",
       "s": 142.62,
-      "orig": "の"
+      "orig": "も"
     },
     {
       "op": "replace",
@@ -157,6 +196,28 @@
       "s": 154.6,
       "orig": "ゴ",
       "text": "特異"
+    },
+    {
+      "op": "replace",
+      "s": 423.84,
+      "orig": "と思",
+      "text": "で思"
+    },
+    {
+      "op": "replace",
+      "s": 429.0,
+      "orig": "早",
+      "text": "作曲"
+    },
+    {
+      "op": "delete",
+      "s": 429.28,
+      "orig": "く"
+    },
+    {
+      "op": "delete",
+      "s": 431.02,
+      "orig": "から"
     }
   ]
 }
