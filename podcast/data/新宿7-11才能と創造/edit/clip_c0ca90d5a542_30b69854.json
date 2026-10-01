@@ -468,6 +468,10 @@
             "y_pct": 70
           },
           "title": {
+            "bg_color": "#1a2b4a",
+            "bg_on": true,
+            "bg_pad": 36,
+            "bg_radius": 22,
             "bold": true,
             "color": [
               "#ffffff"

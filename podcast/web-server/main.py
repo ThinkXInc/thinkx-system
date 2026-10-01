@@ -3382,7 +3382,8 @@ def resolve_clip_style(cfg, sub_style, fonts):
                 "width_pct": 86, "x_pct": 50, "y_pct": 62},
         "title": {"color": ["#ffffff"], "outline": ["#000000"], "outline_w": 6,
                   "shadow_w": 2, "shadow_color": "#000000", "font": legacy_font,
-                  "bold": True, "size_pct": 6.4, "width_pct": 84, "x_pct": 50, "y_pct": 20},
+                  "bold": True, "size_pct": 6.4, "width_pct": 84, "x_pct": 50, "y_pct": 20,
+                  "bg_on": False, "bg_color": "#000000", "bg_pad": 24, "bg_radius": 16},
     }
     st = cfg.get("style") or {}
     out = {}
@@ -3519,7 +3520,16 @@ def render_clip_videos(idv, key):
                 f" min='1' max='25' step='0.1' style='width:56px'>"
                 f"　幅<input type='number' class='cvst' data-k='w' value='{d.get('width_pct')}'"
                 f" min='20' max='100' step='1' style='width:52px'>％"
-                f"<input type='hidden' class='cvst' data-k='x' value='{d.get('x_pct')}'>"
+                + (""
+                   if el_key != 'title' else
+                   f"<br>背景<label><input type='checkbox' class='cvst' data-k='bgon'"
+                   f"{' checked' if d.get('bg_on') else ''}>あり</label>"
+                   f"<input type='color' class='cvst' data-k='bgc' value='{d.get('bg_color')}'>"
+                   f"　左右pad<input type='number' class='cvst' data-k='bgp' value='{d.get('bg_pad')}'"
+                   f" min='0' max='200' step='2' style='width:56px'>"
+                   f"　角丸<input type='number' class='cvst' data-k='bgr' value='{d.get('bg_radius')}'"
+                   f" min='0' max='100' step='2' style='width:56px'>")
+                + f"<input type='hidden' class='cvst' data-k='x' value='{d.get('x_pct')}'>"
                 f"<input type='hidden' class='cvst' data-k='y' value='{d.get('y_pct')}'>"
                 "</div>")
 
@@ -3530,8 +3540,8 @@ def render_clip_videos(idv, key):
             f"<div class='cvprev' data-n='{n}'>"
             f"<video class='cvprevbg' muted autoplay loop playsinline src='{bg_src}'></video>"
             "<div class='pvguide pvguide-v'></div><div class='pvguide pvguide-h'></div>"
-            "<div class='pvtext' data-el='title'><span class='pv-stroke'></span><span class='pv-fill'></span></div>"
-            "<div class='pvtext' data-el='sub'><span class='pv-stroke'></span><span class='pv-fill'></span></div>"
+            "<div class='pvtext' data-el='title'><span class='pv-box'><span class='pv-stroke'></span><span class='pv-fill'></span></span></div>"
+            "<div class='pvtext' data-el='sub'><span class='pv-box'><span class='pv-stroke'></span><span class='pv-fill'></span></span></div>"
             "</div>"
             "<div class='meta' style='font-size:11px'>テキストをドラッグで位置調整（中央に吸着）</div>"
             "</div>"
@@ -3580,7 +3590,7 @@ def render_clip_videos(idv, key):
         "var st={color:o.grad?[o.c1,o.c2]:[o.c1],outline:o.ograd?[o.o1,o.o2]:[o.o1],"
         "outline_w:parseFloat(o.ow)||0,shadow_w:parseFloat(o.sw)||0,shadow_color:o.sc,"
         "font:o.font,bold:!!o.bold,size_pct:parseFloat(o.size)||8,width_pct:parseFloat(o.w)||86,"
-        "x_pct:parseFloat(o.x)||50,y_pct:parseFloat(o.y)||50};"
+        "x_pct:parseFloat(o.x)||50,y_pct:parseFloat(o.y)||50};if('bgon' in o){st.bg_on=!!o.bgon;st.bg_color=o.bgc;st.bg_pad=parseFloat(o.bgp)||0;st.bg_radius=parseFloat(o.bgr)||0;}"
         "return st;}"
         "function cvCollect(){var out={};"
         "document.querySelectorAll('[id^=cv]').forEach(function(card){"
@@ -3627,7 +3637,10 @@ def render_clip_videos(idv, key):
         "box.style.fontSize=fs+'px';"
         "box.style.fontFamily=cvFontFamily(st.font);"
         "box.style.fontWeight=st.bold?'700':'400';"
+        "var pb=box.querySelector('.pv-box');"
         "var sk=box.querySelector('.pv-stroke'),fl=box.querySelector('.pv-fill');"
+        "if(st.bg_on){pb.style.background=st.bg_color;""pb.style.padding=(st.bg_pad*scale*0.35)+'px '+(st.bg_pad*scale)+'px';""pb.style.borderRadius=(st.bg_radius*scale)+'px';}"
+        "else{pb.style.background='none';pb.style.padding='0';pb.style.borderRadius='0';}"
         "sk.textContent=txt;fl.textContent=txt;"
         "var ow=st.outline_w*scale;"
         "sk.style.webkitTextStroke=(ow*2)+'px '+st.outline[0];"
