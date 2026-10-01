@@ -29,5 +29,11 @@
       "top_y_pct": { "1080x1920": 16, "1080x1080": 8, "default": 11 },
       "margin_x_pct": 8, "max_lines": 3 }
   ],
-  "subtitle_size_step_pct": 0.3
+  "subtitle_size_step_pct": 0.3,
+  "caption": {
+    "_note": "字幕行のまとめ方(C-17。データはトークン粒度のまま、生成時にここで行へまとめる)",
+    "max_chars": 16,
+    "gap_sec": 0.6,
+    "min_show_sec": 0.8
+  }
 }

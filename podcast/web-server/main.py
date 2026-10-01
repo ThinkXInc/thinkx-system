@@ -25,7 +25,7 @@ import sys as _sys
 _sys.path.insert(0, os.path.join(os.path.dirname(HERE), "scripts"))
 import idpaths  # data/<ID>/ のファイル配置は idpaths が唯一の定義（D-002 改定）
 import transcript_edits  # 文字起こし修正のオーバーレイ(C-16)。transcript.json は不変
-from render import safe_name  # 書き出しファイル名（タイトル部）の正規化を生成側と揃える
+from render import safe_name, keep_ranges  # ファイル名正規化と keep 区間計算を生成側と揃える
 DATA_DIR = os.path.realpath(
     os.environ.get("SITE_DATA_DIR") or os.path.join(os.path.dirname(HERE), "data")
 )
@@ -353,42 +353,69 @@ CLIP_CSS = """
 """
 
 CLIP_JS = r"""
-/* 切り抜き編集画面のタイムライン（1ページに1本）。凍結音源は連続なので
-   再生にスキップ処理はない。設計の正本は podcast/CLIP_PLAN.md。 */
+/* 切り抜き編集画面のタイムライン（1ページに1本）。設計の正本は podcast/CLIP_PLAN.md。
+   C-17: データ（切り抜き区間・テキスト）は元音源の絶対時刻で持ち、表示だけを
+   この版の1次形状(keeps)から導出した「詰め後時間」(view) に写像する。
+   凍結はなく、再生は元音源をカット部スキップで鳴らす（1次編集と同じ）。 */
 (function(){
 var root=document.getElementById('cliptl');
 if(!root) return;
 var D=JSON.parse(root.querySelector('script[type="application/json"]').textContent);
 var audio=document.getElementById('orig');
 var pxPerSec=parseFloat(localStorage.getItem('tl_pps'))||140;
-/* clips の要素は [開始, 終了] または [開始, 終了, drops]（drops = 「間を詰める」で
-   捨てた区間の列。C-15・原文 L99） */
+/* clips の要素は [開始, 終了] または [開始, 終了, drops]（すべて元音源時刻） */
 var clips=(D.clips||[]).map(function(c){
   var o=[+c[0],+c[1]];
   if(c[2]&&c[2].length) o.push(c[2].map(function(d){return [+d[0],+d[1]];}));
   return o;
 });
-var units=(D.units||[]).map(function(u){return {s:+u.s,e:+u.e,t:String(u.t)};});
-var pendingStart=null, playhead=0, selCi=-1;
+var units=(D.units||[]).map(function(u){
+  var w={s:+u.s,e:+u.e,t:String(u.t)};
+  if(u.o!=null) w.o=String(u.o);
+  if(u.insd) w.insd=1;
+  return w;
+});
+var keeps=(D.keeps||[]).map(function(k){return [+k[0],+k[1]];});
+var NET=+D.duration||0;
+var pendingStart=null, playhead=(keeps[0]?keeps[0][0]:0), selCi=-1;
 var rows=[], laneW=0, built=false, playing=false;
 var undoStack=[], redoStack=[], lastOp='', saveTimer=null;
 var host=root.querySelector('.tlrows');
 var elTime=root.querySelector('.tltime'), elStat=root.querySelector('.tlstat');
 var elZoom=root.querySelector('.tlzoom'), elBtn=root.querySelector('.tlplay');
-var elSel=root.querySelector('.tlsel');
 var MINW=0.05, EPS=0.01;
+
+/* ---- 元音源時刻(src) ⇄ 詰め後時間(view) の写像 ---- */
+var kmap=(function(){ var m=[],acc=0;
+  keeps.forEach(function(k){ m.push([k[0],k[1],acc]); acc+=k[1]-k[0]; }); return m; })();
+function V(t){
+  for(var i=0;i<kmap.length;i++){ var k=kmap[i];
+    if(t<=k[1]) return k[2]+Math.min(Math.max(t,k[0]),k[1])-k[0]; }
+  return NET;
+}
+function SRC(tv){
+  tv=Math.max(0,Math.min(tv,NET));
+  for(var i=0;i<kmap.length;i++){ var k=kmap[i];
+    if(tv<=k[2]+(k[1]-k[0])) return k[0]+(tv-k[2]); }
+  return keeps.length?keeps[keeps.length-1][1]:0;
+}
+function inGeom(t){ return keeps.some(function(k){return k[0]<=t&&t<k[1];}); }
 
 function fmtAbs(t){
   var m=Math.floor(t/60), s=t-m*60;
   return m+':'+(s<10?'0':'')+s.toFixed(2);
 }
-function X(R,t){ return (t-R.t0)*pxPerSec; }
+function X(R,tv){ return (tv-R.t0)*pxPerSec; }
 function T(R,x){ return R.t0 + x/pxPerSec; }
 function clipAt(t){ for(var i=0;i<clips.length;i++){ if(clips[i][0]<=t&&t<clips[i][1]) return i; } return -1; }
 function inDrops(c,t){ return (c[2]||[]).some(function(d){return d[0]<=t&&t<d[1];}); }
-function clipNet(c){ return (c[1]-c[0])-(c[2]||[]).reduce(function(a,d){return a+(d[1]-d[0]);},0); }
+function viewNet(c){
+  /* この切り抜きの表示上の正味（1次drops は V が潰し、詰めた間は引く） */
+  var n=V(c[1])-V(c[0]);
+  (c[2]||[]).forEach(function(d){ n-=V(d[1])-V(d[0]); });
+  return Math.max(0,n);
+}
 function clampDrops(c){
-  /* 端の移動・分割の後に drops を区間内へ収める。空になったら消す */
   var ds=(c[2]||[]).map(function(d){return [Math.max(d[0],c[0]),Math.min(d[1],c[1])];})
     .filter(function(d){return d[1]-d[0]>EPS;});
   if(ds.length) c[2]=ds; else c.splice(2,1);
@@ -396,63 +423,37 @@ function clampDrops(c){
 }
 function setStatus(s){ if(elStat) elStat.textContent=s; }
 
-/* ---- 保存（C-5）。1次編集と同じ三重の作法:
-   操作の瞬間に localStorage へ同期的に記録 → サーバー送信は後追い（失敗は3秒再送）→
-   サーバー側で受信ジャーナル・履歴退避・git 同期キュー ---- */
-function journalNow(){
-  try{ var k='clip_journal_'+D.key, j=JSON.parse(localStorage.getItem(k)||'[]');
-       j.push({at:Date.now(),op:lastOp,clips:clips,units:units});
-       try{ localStorage.setItem(k,JSON.stringify(j)); }
-       catch(qe){ j=j.slice(Math.floor(j.length/2));
-                  try{ localStorage.setItem(k,JSON.stringify(j)); }catch(e2){} }
-       localStorage.setItem('clip_dirty_'+D.key,'1');
-  }catch(e){}
-}
-function scheduleSave(){ journalNow(); setStatus('未保存'); clearTimeout(saveTimer); saveTimer=setTimeout(doSave,0); }
-function doSave(){
-  setStatus('保存中…');
-  var rec={id:D.id,key:D.key,op:lastOp,clips:clips,units:units};
-  lastOp='';
-  fetch(window.APP+'/clip_save',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(rec)})
-  .then(function(r){
-    if(r.ok){ setStatus('保存済み'); try{ localStorage.removeItem('clip_dirty_'+D.key); }catch(e){} }
-    else{ setStatus('保存失敗（3秒後に再送します）'); clearTimeout(saveTimer); saveTimer=setTimeout(doSave,3000); }
-  })
-  .catch(function(){ setStatus('サーバーに接続できません（3秒後に再送します）');
-    clearTimeout(saveTimer); saveTimer=setTimeout(doSave,3000); });
-}
-
 function build(){
   host.innerHTML=''; rows=[];
   var probe=document.createElement('div'); probe.className='lane';
   host.appendChild(probe); laneW=probe.clientWidth||800; host.removeChild(probe);
   var rowSec=laneW/pxPerSec;
-  var nRows=Math.max(1,Math.ceil(D.duration/rowSec));
+  var nRows=Math.max(1,Math.ceil(NET/rowSec));
   if(elZoom) elZoom.textContent=pxPerSec.toFixed(0)+'px/秒・1行'+rowSec.toFixed(1)+'秒';
   var ui=0;
   for(var r=0;r<nRows;r++){
-    var t0=r*rowSec, t1=Math.min(D.duration,t0+rowSec);
+    var t0=r*rowSec, t1=Math.min(NET,t0+rowSec);
     var row=document.createElement('div'); row.className='row';
     var lane=document.createElement('div'); lane.className='lane'; row.appendChild(lane);
     var strip=document.createElement('div'); strip.className='strip'; lane.appendChild(strip);
-    var lastRight=-1e9, lastTsRight=-1e9, els=[], prevEnd=null;
-    while(ui<units.length && units[ui].s < t1){
+    var lastRight=-1e9, lastTsRight=-1e9, els=[], prevEndV=null;
+    while(ui<units.length && V(units[ui].s) < t1){
       var u=units[ui];
-      if(u.e<=t0){ ui++; continue; }
-      var x=(u.s-t0)*pxPerSec;
+      var vs=V(u.s);
+      if(V(u.e)<=t0){ ui++; continue; }
+      var x=(vs-t0)*pxPerSec;
       if(x<lastRight) x=lastRight;
-      var newBlock=(prevEnd===null || u.s-prevEnd>=0.8);
+      var newBlock=(prevEndV===null || vs-prevEndV>=0.8);
       if(newBlock && x>=lastTsRight){
         var ts=document.createElement('div'); ts.className='ts2';
-        ts.textContent=fmtAbs(u.s); ts.style.left=x+'px';
+        ts.textContent=fmtAbs(vs); ts.style.left=x+'px';
         lane.appendChild(ts); lastTsRight=x+ts.offsetWidth+8;
       }
       var el=document.createElement('span'); el.className='cu';
       el.textContent=u.t; el.style.left=x+'px';
       el.dataset.ui=ui;
       lane.appendChild(el); els.push(el);
-      lastRight=x+el.offsetWidth+6; prevEnd=u.e; ui++;
+      lastRight=x+el.offsetWidth+4; prevEndV=V(u.e); ui++;
     }
     host.appendChild(row);
     var R={t0:t0,t1:t1,strip:strip,els:els,lane:lane};
@@ -470,73 +471,77 @@ function renderBars(){
     base.style.left='0px'; base.style.width=W+'px'; R.strip.appendChild(base);
     /* 切り抜きの間（どの切り抜きにも入らない区間）は黒（原文 L98）。
        まだ1本も無いときは全部黒にせず土台色のまま */
-    if(clips.length){
+    var vclips=clips.map(function(c){return [V(c[0]),V(c[1]),c];})
+      .sort(function(a,b){return a[0]-b[0];});
+    if(vclips.length){
       var t=0;
-      clips.slice().sort(function(a,b){return a[0]-b[0];}).concat([[D.duration,D.duration]])
-        .forEach(function(c){
-          var a=Math.max(t,R.t0), b=Math.min(c[0],R.t1);
-          if(b-a>0){
-            var g=document.createElement('div'); g.className='gapz';
-            g.style.left=X(R,a)+'px'; g.style.width=Math.max(1,X(R,b)-X(R,a))+'px';
-            R.strip.appendChild(g);
-          }
-          t=Math.max(t,c[1]);
-        });
+      vclips.concat([[NET,NET,null]]).forEach(function(vc){
+        var a=Math.max(t,R.t0), b=Math.min(vc[0],R.t1);
+        if(b-a>0){
+          var g=document.createElement('div'); g.className='gapz';
+          g.style.left=X(R,a)+'px'; g.style.width=Math.max(1,X(R,b)-X(R,a))+'px';
+          R.strip.appendChild(g);
+        }
+        t=Math.max(t,vc[1]);
+      });
     }
-    /* 切り抜きセグメント。開始（明）→終了（暗）で1本のグラデーション。行をまたいでも
-       background-position をずらして1本につながって見えるようにする */
-    clips.forEach(function(c,ci){
-      var a=Math.max(c[0],R.t0), b=Math.min(c[1],R.t1);
+    /* 切り抜き。開始（明）→終了（暗）の1本のグラデーション（view 座標で描く） */
+    vclips.forEach(function(vc){
+      var va=vc[0], vb=vc[1], c=vc[2];
+      var a=Math.max(va,R.t0), b=Math.min(vb,R.t1);
       if(b-a<=0) return;
       var d=document.createElement('div'); d.className='clipz';
       d.style.left=X(R,a)+'px'; d.style.width=Math.max(1,X(R,b)-X(R,a))+'px';
-      d.style.backgroundSize=((c[1]-c[0])*pxPerSec)+'px 100%';
-      d.style.backgroundPosition=(-(a-c[0])*pxPerSec)+'px 0';
+      d.style.backgroundSize=Math.max(1,(vb-va)*pxPerSec)+'px 100%';
+      d.style.backgroundPosition=(-(a-va)*pxPerSec)+'px 0';
       R.strip.appendChild(d);
-      /* (a) 結合で捨てた間（drops）は切り抜きの中でも黒 */
+      /* 「間を詰める」で捨てた間は切り抜きの中でも黒（1次dropsと重なる部分は幅0になる） */
       (c[2]||[]).forEach(function(dr){
-        var da=Math.max(dr[0],R.t0), db=Math.min(dr[1],R.t1);
+        var da=Math.max(V(dr[0]),R.t0), db=Math.min(V(dr[1]),R.t1);
         if(db-da<=0) return;
         var g2=document.createElement('div'); g2.className='gapz';
         g2.style.left=X(R,da)+'px'; g2.style.width=Math.max(1,X(R,db)-X(R,da))+'px';
         R.strip.appendChild(g2);
       });
-      /* 開始端＝太い白線 / 終了端＝細い白線（開始が分かりにくい問題。原文 L98） */
-      if(c[0]>=R.t0-1e-9&&c[0]<=R.t1){
+      /* 開始端＝太い白線 / 終了端＝細い白線（原文 L98） */
+      if(va>=R.t0-1e-9&&va<=R.t1){
         var es=document.createElement('div'); es.className='clipedge-s';
-        es.style.left=X(R,c[0])+'px'; R.strip.appendChild(es);
+        es.style.left=X(R,va)+'px'; R.strip.appendChild(es);
       }
-      if(c[1]>=R.t0&&c[1]<=R.t1+1e-9){
+      if(vb>=R.t0&&vb<=R.t1+1e-9){
         var ee=document.createElement('div'); ee.className='clipedge-e';
-        ee.style.left=(X(R,c[1])-2)+'px'; R.strip.appendChild(ee);
+        ee.style.left=(X(R,vb)-2)+'px'; R.strip.appendChild(ee);
       }
-      if(ci===selCi){
+      if(clips.indexOf(c)===selCi){
         var sel=document.createElement('div'); sel.className='clipsel';
         sel.style.left=X(R,a)+'px'; sel.style.width=Math.max(1,X(R,b)-X(R,a))+'px';
         R.strip.appendChild(sel);
       }
     });
     /* 隣接する切り抜きの境界（分割線） */
-    for(var i=0;i+1<clips.length;i++){
-      if(Math.abs(clips[i][1]-clips[i+1][0])>EPS) continue;
-      var bt=clips[i][1];
+    for(var i=0;i+1<vclips.length;i++){
+      if(Math.abs(vclips[i][1]-vclips[i+1][0])>EPS) continue;
+      var bt=vclips[i][1];
       if(bt<R.t0||bt>R.t1) continue;
       var sp=document.createElement('div'); sp.className='splitline';
       sp.style.left=(X(R,bt)-6)+'px'; R.strip.appendChild(sp);
     }
     /* S（開始指定）の保留マーカー */
-    if(pendingStart!=null && pendingStart>=R.t0 && pendingStart<=R.t1){
-      var st=document.createElement('div'); st.className='startline';
-      st.style.left=X(R,pendingStart)+'px'; R.strip.appendChild(st);
-      var sl=document.createElement('div'); sl.className='startlabel';
-      sl.textContent='S 開始'; sl.style.left=(X(R,pendingStart)+4)+'px';
-      R.strip.appendChild(sl);
+    if(pendingStart!=null){
+      var pv=V(pendingStart);
+      if(pv>=R.t0 && pv<=R.t1){
+        var st=document.createElement('div'); st.className='startline';
+        st.style.left=X(R,pv)+'px'; R.strip.appendChild(st);
+        var sl=document.createElement('div'); sl.className='startlabel';
+        sl.textContent='S 開始'; sl.style.left=(X(R,pv)+4)+'px';
+        R.strip.appendChild(sl);
+      }
     }
     R.hover=document.createElement('div'); R.hover.className='hoverline'; R.strip.appendChild(R.hover);
     R.play=document.createElement('div'); R.play.className='playline'; R.strip.appendChild(R.play);
     R.tlab=document.createElement('div'); R.tlab.className='tlabel'; R.strip.appendChild(R.tlab);
   });
-  var kept=clips.reduce(function(a,c){return a+clipNet(c);},0);
+  var kept=clips.reduce(function(a,c){return a+viewNet(c);},0);
   var el=root.querySelector('.tlkeep');
   if(el){ var m=Math.floor(kept/60), s=Math.round(kept-m*60);
     el.textContent=clips.length+'本・計 '+m+'分'+(s<10?'0':'')+s+'秒'; }
@@ -547,8 +552,6 @@ function styleUnits(){
     R.els.forEach(function(el){
       var u=units[+el.dataset.ui]; if(!u) return;
       var mid=(u.s+u.e)/2;
-      /* まだ1本も指定していない段階では沈ませない（全部カット済みに見えるため）。
-         切り抜きの中でも「詰めた間」(drops) は沈ませる */
       var ci2=clipAt(mid);
       el.classList.toggle('out', clips.length>0 && (ci2<0 || inDrops(clips[ci2],mid)));
     });
@@ -557,9 +560,10 @@ function styleUnits(){
 
 function movePlayhead(){
   rows.forEach(function(R){ if(R.play) R.play.style.display='none'; });
-  var R=rows.find(function(R){return R.t0<=playhead&&playhead<R.t1;})||rows[rows.length-1];
-  if(R&&R.play){ R.play.style.left=X(R,playhead)+'px'; R.play.style.display='block'; }
-  if(elTime) elTime.textContent=fmtAbs(playhead);
+  var pv=V(playhead);
+  var R=rows.find(function(R){return R.t0<=pv&&pv<R.t1;})||rows[rows.length-1];
+  if(R&&R.play){ R.play.style.left=X(R,pv)+'px'; R.play.style.display='block'; }
+  if(elTime) elTime.textContent=fmtAbs(pv);
 }
 
 function highlight(t){
@@ -571,18 +575,27 @@ function highlight(t){
   if(el) el.classList.add('playing');
 }
 
-/* ---- 再生（連続音源。スキップなし） ---- */
+/* ---- 再生。元音源をカット部スキップで鳴らす（1次編集と同じ） ---- */
 function tick(){
   if(!playing) return;
   var t=audio.currentTime;
-  if(t>=D.duration){ stop(); return; }
-  playhead=t; movePlayhead(); highlight(t);
+  if(V(t)>=NET-0.01 && t>=(keeps.length?keeps[keeps.length-1][1]:0)){ stop(); return; }
+  if(!inGeom(t)){
+    var nk=keeps.find(function(k){return k[0]>t;});
+    if(!nk){ stop(); return; }
+    audio.currentTime=nk[0]+0.001;
+  }
+  playhead=audio.currentTime; movePlayhead(); highlight(playhead);
   requestAnimationFrame(tick);
 }
 function applyRate(){ try{ audio.playbackRate=parseFloat(localStorage.getItem('tl_rate')||'1'); }catch(e){} }
 function play(){
-  if(!audio){ setStatus('凍結音源がまだありません'); return; }
+  if(!audio){ setStatus('元音源がありません'); return; }
   applyRate();
+  if(!inGeom(playhead)){
+    var nk=keeps.find(function(k){return k[0]>=playhead;});
+    playhead=nk?nk[0]:(keeps[0]?keeps[0][0]:0);
+  }
   var go=function(){
     try{ audio.currentTime=playhead; }
     catch(err){ setStatus('シークできません: '+err.name); return; }
@@ -606,26 +619,25 @@ function stop(){
   root.querySelectorAll('.cu.playing').forEach(function(x){x.classList.remove('playing');});
 }
 
-var pbox=null, hoverT=null;
+var pbox=null, hoverT=null;   /* hoverT は元音源時刻 */
 function closeMenu(){ if(pbox){ pbox.remove(); pbox=null; } }
 function esc(t){ return String(t).replace(/[&<>]/g,function(c){
   return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; }); }
 
-/* ---- 編集操作（C-3）。すべて Undo できる ---- */
-function snapshot(){ return JSON.stringify({c:clips,u:units,p:pendingStart}); }
-function restore(s){ var d=JSON.parse(s); clips=d.c; units=d.u; pendingStart=d.p; }
+/* ---- 編集操作（C-3/C-15）。すべて元音源時刻・すべて Undo できる ---- */
+function snapshot(){ return JSON.stringify({c:clips,p:pendingStart}); }
+function restore(s){ var d=JSON.parse(s); clips=d.c; pendingStart=d.p; }
 function pushUndo(){ undoStack.push(snapshot()); if(undoStack.length>200)undoStack.shift(); redoStack=[]; }
 function undo(){ if(!undoStack.length){ setStatus('取り消す操作がありません'); return; }
-  redoStack.push(snapshot()); restore(undoStack.pop()); selCi=-1; lastOp='undo'; afterEdit(true); }
+  redoStack.push(snapshot()); restore(undoStack.pop()); selCi=-1; lastOp='undo'; afterEdit(); }
 function redo(){ if(!redoStack.length) return;
-  undoStack.push(snapshot()); restore(redoStack.pop()); selCi=-1; lastOp='redo'; afterEdit(true); }
-function afterEdit(rebuildRows){
+  undoStack.push(snapshot()); restore(redoStack.pop()); selCi=-1; lastOp='redo'; afterEdit(); }
+function afterEdit(){
   clips.sort(function(a,b){return a[0]-b[0];});
-  if(rebuildRows){ build(); } else { renderBars(); styleUnits(); movePlayhead(); }
+  renderBars(); styleUnits(); movePlayhead();
   scheduleSave();
 }
 function normalizeClips(){
-  /* 重なりは1本に統合する（drops も持ち寄って区間内に収める） */
   clips.sort(function(a,b){return a[0]-b[0];});
   var out=[];
   clips.forEach(function(c){
@@ -646,7 +658,6 @@ function normalizeClips(){
 function markStart(t){
   var ci=clipAt(t);
   if(ci>=0){
-    /* 切り抜きの中で S ＝ その時点で分割（原文 L17）。drops は位置で左右に配る */
     var c=clips[ci];
     if(t-c[0]<MINW||c[1]-t<MINW){ setStatus('端に近すぎて分割できません'); return; }
     pushUndo(); lastOp='split@'+t.toFixed(1);
@@ -686,7 +697,7 @@ function gapNeighbors(t){
   return {prev:prev,next:next};
 }
 function joinGap(t){
-  /* (b)「間も含めて1本にする」＝ E が S まで伸びる。間の音も入る（原文 L99） */
+  /* (b)「間も含めて1本にする」＝ E が S まで伸びる（原文 L99） */
   if(clipAt(t)>=0){ setStatus('ここは切り抜きの中です'); return; }
   var nb=gapNeighbors(t);
   if(nb.prev===null||nb.next===null){ setStatus('この空白の前後に切り抜きがありません'); return; }
@@ -700,8 +711,7 @@ function joinGap(t){
   setStatus('間も含めて1つの切り抜きにしました（間の音は入ります）');
 }
 function dropGap(t){
-  /* (a)「間を詰めて1本にする」＝間の音は捨てて前後をつなぐ。間はこの切り抜きの
-     drops として除外され、動画では詰められる（原文 L99） */
+  /* (a)「間を詰めて1本にする」＝間の音は捨てて前後をつなぐ（原文 L99） */
   if(clipAt(t)>=0){ setStatus('ここは切り抜きの中です'); return; }
   var nb=gapNeighbors(t);
   if(nb.prev===null||nb.next===null){ setStatus('この空白の前後に切り抜きがありません'); return; }
@@ -721,28 +731,29 @@ function deleteSel(){
   setStatus('切り抜きを解除しました（音は消えていません。S/E で指定し直せます）');
 }
 
-/* 端のドラッグ調整 */
+/* 端のドラッグ調整（src 座標で動かし、表示は view） */
 var dragging=null;
 function edgesAt(R,x){
   var out=[];
   clips.forEach(function(c,ci){
-    if(c[1]<=R.t0||c[0]>=R.t1) return;
-    if(c[0]>=R.t0-1e-9&&Math.abs(x-X(R,c[0]))<8) out.push({ci:ci,which:0});
-    if(c[1]<=R.t1+1e-9&&Math.abs(x-X(R,c[1]))<8) out.push({ci:ci,which:1});
+    var va=V(c[0]), vb=V(c[1]);
+    if(vb<=R.t0||va>=R.t1) return;
+    if(va>=R.t0-1e-9&&Math.abs(x-X(R,va))<8) out.push({ci:ci,which:0});
+    if(vb<=R.t1+1e-9&&Math.abs(x-X(R,vb))<8) out.push({ci:ci,which:1});
   });
   return out;
 }
 document.addEventListener('mousemove',function(ev){
   if(!dragging) return;
   var R=dragging.R;
-  var t=T(R, ev.clientX-R.strip.getBoundingClientRect().left);
+  var t=SRC(T(R, ev.clientX-R.strip.getBoundingClientRect().left));
   var c=clips[dragging.ci]; if(!c) return;
   if(dragging.which===0){
-    var lo=0;
+    var lo=keeps.length?keeps[0][0]:0;
     clips.forEach(function(o,i){ if(i!==dragging.ci&&o[1]<=c[1]&&o[1]>lo) lo=o[1]; });
     c[0]=Math.min(Math.max(t,lo),c[1]-MINW);
   }else{
-    var hi=D.duration;
+    var hi=keeps.length?keeps[keeps.length-1][1]:0;
     clips.forEach(function(o,i){ if(i!==dragging.ci&&o[0]>=c[0]&&o[0]<hi) hi=o[0]; });
     c[1]=Math.max(Math.min(t,hi),c[0]+MINW);
   }
@@ -759,55 +770,75 @@ function bindStrip(R){
     R.hover.style.left=x+'px'; R.hover.style.display='block';
     R.tlab.style.left=(x+4)+'px'; R.tlab.style.display='block';
     R.tlab.textContent=fmtAbs(T(R,x));
+    R.strip.style.cursor=edgesAt(R,x).length?'ew-resize':'crosshair';
   });
   R.strip.addEventListener('mouseleave',function(){
     R.hover.style.display='none'; R.tlab.style.display='none';
   });
   R.lane.addEventListener('mousemove',function(ev){
-    hoverT=T(R, ev.clientX-R.strip.getBoundingClientRect().left);
+    hoverT=SRC(T(R, ev.clientX-R.strip.getBoundingClientRect().left));
   });
   R.lane.addEventListener('mouseleave',function(){ hoverT=null; });
   R.lane.addEventListener('contextmenu',function(ev){
     ev.preventDefault();
-    var t=T(R, ev.clientX-R.strip.getBoundingClientRect().left);
+    var t=SRC(T(R, ev.clientX-R.strip.getBoundingClientRect().left));
     openCtx(t, ev.clientX, ev.clientY, ev.target.closest('.cu'));
-  });
-  R.strip.addEventListener('mousemove',function(ev){
-    var x=ev.clientX-R.strip.getBoundingClientRect().left;
-    R.strip.style.cursor=edgesAt(R,x).length?'ew-resize':'crosshair';
   });
   R.strip.addEventListener('mousedown',function(ev){
     ev.preventDefault(); closeMenu();
     var x=ev.clientX-R.strip.getBoundingClientRect().left;
     var cand=edgesAt(R,x);
     if(cand.length){ pushUndo(); dragging={R:R,ci:cand[0].ci,which:cand[0].which}; return; }
-    playhead=T(R,x);
+    playhead=SRC(T(R,x));
     selCi=clipAt(playhead);
     renderBars(); movePlayhead();
     if(playing) audio.currentTime=playhead;
   });
 }
 
-/* ---- テキスト修正（C-4・原文 L25-29）。字幕の元になるので直せなければならない ---- */
+/* ---- テキスト修正（C-16/C-17）。根の transcript_edits に保存される ---- */
+function sendEdit(op, after){
+  fetch(window.APP+'/transcript_edit',{method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(Object.assign({id:D.id},op))})
+  .then(function(r){ return r.text().then(function(t){ return {ok:r.ok,t:t}; }); })
+  .then(function(res){
+    if(!res.ok){ setStatus(res.t==='stale_transcript'
+      ?'文字起こしが作り直されているため修正できません'
+      :'テキストを保存できません: '+res.t); return; }
+    after();
+  })
+  .catch(function(){ setStatus('サーバーに接続できません'); });
+}
 function editUnit(el){
   var ui=+el.dataset.ui, u=units[ui]; if(!u) return;
   if(el.querySelector('input')) return;
   var inp=document.createElement('input');
-  inp.value=u.t; inp.size=Math.max(u.t.length+2,8);
+  inp.value=u.t; inp.size=Math.max(u.t.length+2,6);
   el.textContent=''; el.appendChild(inp); inp.focus();
   var closed=false;
   var done=function(commit){
     if(closed) return; closed=true;
     var v=inp.value;
-    if(commit&&v!==u.t){
-      pushUndo(); lastOp='text@'+u.s.toFixed(1);
-      if(v.trim()===''){ units.splice(ui,1); setStatus('テキストを削除しました'); }
-      else { u.t=v; setStatus('テキストを修正しました'); }
-      afterEdit(true);
+    if(!commit||v===u.t){ if(u.ins&&u.t===''){ units.splice(ui,1); } build(); return; }
+    if(u.ins||u.insd){
+      sendEdit({op:'insert', t:u.s, text:v.trim()},
+        function(){
+          if(v.trim()===''){ units.splice(ui,1); setStatus('挿入テキストを取り消しました（保存済み）'); }
+          else{ u.t=v; delete u.ins; u.insd=1; setStatus('テキストを挿入しました（保存済み）'); }
+          build();
+        });
+    }else if(v.trim()===''){
+      sendEdit({op:'delete', s:u.s, orig:(u.o!=null?u.o:u.t)},
+        function(){ units.splice(ui,1); build(); setStatus('テキストを削除しました（保存済み）'); });
     }else{
-      /* 取り消し。挿入直後の空ユニットはゴミになるので消す */
-      if(u.t===''){ units.splice(ui,1); }
-      build();
+      sendEdit({op:'replace', s:u.s, orig:(u.o!=null?u.o:u.t), text:v},
+        function(){
+          if(u.o==null) u.o=u.t;
+          u.t=v;
+          if(v===u.o) delete u.o;
+          build(); setStatus('テキストを修正しました（保存済み）');
+        });
     }
   };
   inp.addEventListener('keydown',function(ev){
@@ -822,32 +853,21 @@ host.addEventListener('click',function(ev){
   editUnit(el);
 });
 function insertUnit(t){
-  pushUndo(); lastOp='instext@'+t.toFixed(1);
-  var next=null; units.forEach(function(u){ if(u.s>t&&(next===null||u.s<next)) next=u.s; });
-  var e=Math.min(t+3, next!==null?next:D.duration, D.duration);
-  if(e-t<0.3) e=Math.min(t+0.5,D.duration);
-  var nu={s:+t.toFixed(3),e:+e.toFixed(3),t:''};
-  units.push(nu); units.sort(function(a,b){return a.s-b.s;});
-  build();
+  var nu={s:+t.toFixed(3), e:+(t+1.5).toFixed(3), t:'', ins:true};
+  var pos=units.findIndex(function(u){ return u.s>t; });
+  if(pos<0) pos=units.length;
+  units.splice(pos,0,nu); build();
   var idx=units.indexOf(nu);
   var el=root.querySelector(".cu[data-ui='"+idx+"']");
   if(el) editUnit(el);
 }
-window.clipTextMenu=function(t,cuEl){
-  var items=[];
-  if(cuEl) items.push({a:'delunit',label:'このテキストを削除'});
-  items.push({a:'insunit',label:'ここにテキストを挿入'});
-  return items;
-};
-window.clipTextRun=function(act,t,cuEl){
-  if(act==='delunit'&&cuEl){
-    var ui=+cuEl.dataset.ui;
-    if(!units[ui]) return;
-    pushUndo(); lastOp='deltext@'+t.toFixed(1);
-    units.splice(ui,1); afterEdit(true);
-    setStatus('テキストを削除しました');
-  }else if(act==='insunit'){ insertUnit(t); }
-};
+function deleteUnitEl(cuEl){
+  var ui=+cuEl.dataset.ui, u=units[ui]; if(!u) return;
+  var op=(u.ins||u.insd)?{op:'insert', t:u.s, text:''}
+                        :{op:'delete', s:u.s, orig:(u.o!=null?u.o:u.t)};
+  sendEdit(op,
+    function(){ units.splice(ui,1); build(); setStatus('テキストを削除しました（保存済み）'); });
+}
 
 /* 右クリックメニュー。即実行しない作法は1次編集と同じ（オーナー指示 2026-08-05） */
 function openCtx(t,cx,cy,cuEl){
@@ -858,13 +878,13 @@ function openCtx(t,cx,cy,cuEl){
   var items=[{a:'play',label:'ここから再生'},
              {a:'start',label:'ここを開始にする（S）'},
              {a:'end',label:'ここを終了にする（E）'}];
-  /* 空白では結合を2種類に分ける（紛らわしい問題。原文 L99） */
   if(clipAt(t)<0){
     items.push({a:'dropgap',label:'間を詰めて1本にする（間の音は捨てる）'});
     items.push({a:'join',label:'間も含めて1本にする（E を S まで伸ばす）'});
   }
-  if(window.clipTextMenu) items=items.concat(window.clipTextMenu(t,cuEl));
-  var html='<b>'+fmtAbs(t)+'</b><div class="btns" style="flex-direction:column;align-items:stretch">';
+  if(cuEl) items.push({a:'delunit',label:'このテキストを削除'});
+  items.push({a:'insunit',label:'ここにテキストを挿入'});
+  var html='<b>'+fmtAbs(V(t))+'</b><div class="btns" style="flex-direction:column;align-items:stretch">';
   items.forEach(function(it){ html+='<button data-a="'+it.a+'">'+esc(it.label)+'</button>'; });
   html+='<button data-a="close">閉じる</button></div>';
   pbox.innerHTML=html;
@@ -877,8 +897,8 @@ function openCtx(t,cx,cy,cuEl){
       else if(act==='end'){ markEnd(t); }
       else if(act==='join'){ joinGap(t); }
       else if(act==='dropgap'){ dropGap(t); }
-      else if(act==='close'){ }
-      else if(window.clipTextRun){ window.clipTextRun(act,t,cuEl); }
+      else if(act==='delunit'&&cuEl){ deleteUnitEl(cuEl); }
+      else if(act==='insunit'){ insertUnit(t); }
     };
   });
 }
@@ -892,8 +912,7 @@ document.addEventListener('keydown',function(e){
   else if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='z'){ e.preventDefault(); e.shiftKey?redo():undo(); }
   else if((e.metaKey||e.ctrlKey)&&(e.key==='='||e.key==='+')){ e.preventDefault(); setZoom(pxPerSec*1.4); }
   else if((e.metaKey||e.ctrlKey)&&e.key==='-'){ e.preventDefault(); setZoom(pxPerSec/1.4); }
-  /* S＝開始・E＝終了（原文 L17-18）。現在時刻バーの位置に効く。
-     マウスが行の上にあるときはその位置を優先する（⌘D と同じ考え方） */
+  /* S＝開始・E＝終了（原文 L17-18）。マウスがあればその位置、なければ再生位置 */
   else if(!e.metaKey&&!e.ctrlKey&&!e.altKey&&e.key.toLowerCase()==='s'){
     e.preventDefault(); markStart(hoverT!=null?hoverT:playhead); }
   else if(!e.metaKey&&!e.ctrlKey&&!e.altKey&&e.key.toLowerCase()==='e'){
@@ -901,6 +920,31 @@ document.addEventListener('keydown',function(e){
   else if(e.key==='Delete'||e.key==='Backspace'){ e.preventDefault(); deleteSel(); }
   else if(e.key==='Escape'&&pendingStart!=null){ pendingStart=null; renderBars(); setStatus('開始指定を取り消しました'); }
 });
+
+/* ---- 保存（C-5。切り抜き区間と動画設定だけ。テキストは根が正） ---- */
+function journalNow(){
+  try{ var k='clip_journal_'+D.key, j=JSON.parse(localStorage.getItem(k)||'[]');
+       j.push({at:Date.now(),op:lastOp,clips:clips});
+       try{ localStorage.setItem(k,JSON.stringify(j)); }
+       catch(qe){ j=j.slice(Math.floor(j.length/2));
+                  try{ localStorage.setItem(k,JSON.stringify(j)); }catch(e2){} }
+       localStorage.setItem('clip_dirty_'+D.key,'1');
+  }catch(e){}
+}
+function scheduleSave(){ journalNow(); setStatus('未保存'); clearTimeout(saveTimer); saveTimer=setTimeout(doSave,0); }
+function doSave(){
+  setStatus('保存中…');
+  var rec={id:D.id,key:D.key,op:lastOp,clips:clips};
+  lastOp='';
+  fetch(window.APP+'/clip_save',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(rec)})
+  .then(function(r){
+    if(r.ok){ setStatus('保存済み'); try{ localStorage.removeItem('clip_dirty_'+D.key); }catch(e){} }
+    else{ setStatus('保存失敗（3秒後に再送します）'); clearTimeout(saveTimer); saveTimer=setTimeout(doSave,3000); }
+  })
+  .catch(function(){ setStatus('サーバーに接続できません（3秒後に再送します）');
+    clearTimeout(saveTimer); saveTimer=setTimeout(doSave,3000); });
+}
 
 function setZoom(v){
   pxPerSec=Math.max(20,Math.min(600,v));
@@ -914,6 +958,20 @@ if(zo) zo.onclick=function(){ setZoom(pxPerSec/1.4); };
 var ub=root.querySelector('.tlundo'), rb=root.querySelector('.tlredo');
 if(ub) ub.onclick=undo;
 if(rb) rb.onclick=redo;
+/* 「前の版の切り抜き編集を適用」（C-17・原文 L106） */
+var ab=root.querySelector('.tlapply');
+if(ab) ab.onclick=function(){
+  ab.disabled=true; setStatus('前の版の切り抜き編集を適用しています…');
+  var q=new URLSearchParams(location.search);
+  fetch(window.APP+'/clip_apply_prev?id='+encodeURIComponent(q.get('id'))
+    +'&key='+encodeURIComponent(q.get('key')),{method:'POST'})
+  .then(function(r){ return r.text().then(function(t){ return {ok:r.ok,t:t}; }); })
+  .then(function(res){
+    if(!res.ok){ ab.disabled=false; setStatus('適用できません: '+res.t); return; }
+    location.reload();
+  })
+  .catch(function(){ ab.disabled=false; setStatus('サーバーに接続できません'); });
+};
 var sp=root.querySelector('.tlspeed');
 if(sp){
   sp.value=localStorage.getItem('tl_rate')||'1';
@@ -941,26 +999,26 @@ build();
       if(!jj.length){ setStatus('復元できる編集がありません'); return; }
       pushUndo(); lastOp='restore-unsaved';
       var last=jj[jj.length-1];
-      clips=(last.clips||[]).map(function(c){return [+c[0],+c[1]];});
-      units=(last.units||[]).map(function(u){return {s:+u.s,e:+u.e,t:String(u.t)};});
-      selCi=-1; afterEdit(true); rb2.remove();
+      clips=(last.clips||[]).map(function(c){
+        var o=[+c[0],+c[1]];
+        if(c[2]&&c[2].length) o.push(c[2].map(function(d){return [+d[0],+d[1]];}));
+        return o;
+      });
+      selCi=-1; afterEdit(); rb2.remove();
     }catch(e){ setStatus('復元に失敗しました'); }
   };
   var bar=root.querySelector('.tlbar');
   if(bar) bar.appendChild(rb2);
 })();
 
-/* C-3〜C-5 が使う内部状態への窓口 */
+/* セグメント参考などからの窓口（playhead は元音源時刻） */
 window.clipTL={
-  get clips(){ return clips; }, set clips(v){ clips=v; },
-  get units(){ return units; }, set units(v){ units=v; },
-  get pendingStart(){ return pendingStart; }, set pendingStart(v){ pendingStart=v; },
-  get playhead(){ return playhead; }, get hoverT(){ return hoverT; },
-  get selCi(){ return selCi; }, set selCi(v){ selCi=v; },
+  get clips(){ return clips; },
+  get units(){ return units; },
+  get playhead(){ return playhead; },
   D:D, refresh:function(){ renderBars(); styleUnits(); movePlayhead(); },
   rebuild:build, setStatus:setStatus, clipAt:clipAt,
-  undoStack:undoStack, redoStack:redoStack,
-  movePlayhead:movePlayhead, setPlayhead:function(t){ playhead=t; movePlayhead(); }
+  setPlayhead:function(t){ playhead=t; movePlayhead(); }
 };
 })();
 """
@@ -2513,14 +2571,7 @@ def render_id(idv):
     # 元音源（無編集）。カット済み区間のクリック時にここから再生して内容を確認できるようにする
     # 再生用は preview_audio.m4a を最優先。元音源が ALAC だと Chrome / Firefox が
     # 再生できないため（2026-08-05 実測）。作り方: python scripts/make_preview_audio.py <ID>
-    _b = os.path.join(DATA_DIR, idv)
-    names = sorted(os.listdir(_b))
-    _pv = idpaths.find(_b, "preview_audio.m4a")
-    src_name = os.path.relpath(_pv, _b) if os.path.exists(_pv) else None
-    if not src_name:
-        src_name = next((n for n in names if n.lower().endswith(".m4a")), None)
-    if not src_name:
-        src_name = next((n for n in names if n.lower().endswith(".mp4")), None)
+    src_name = source_audio_name(idv)
     if src_name:
         # preload='none' だと尺が分からずシークできない。タイムラインは 800秒などの
         # 絶対時刻へ飛ぶので metadata まで読ませる。
@@ -2813,17 +2864,15 @@ def apply_transcript_edit(payload):
 
 # ---------- 切り抜き（CLIP_PLAN）----------
 # 設計の正本は podcast/CLIP_PLAN.md、仕様原文は docs/CLIP_SPEC_20260928_原文.md。
-# 「切り抜きを作成」を押した瞬間の1次編集状態（区間+drops）を凍結し、
-# clipkey = <sid>_<hash8> に紐づける。1次編集を後から変えても既存の切り抜き編集には
-# 影響しない（別の clipkey = 別の切り抜き編集画面になる。原文 L73-78）。
+# C-17 改定(2026-10-01): 凍結は廃止。切り抜き区間は**元音源の絶対時刻**で持ち、
+# 隙間なしタイムライン・正味尺・字幕・音声連結はすべて表示/生成時に導出する。
+# key = <sid>_<hash8> は「1次編集の版の識別子」(版ごとに切り抜き編集画面が対応)。
+# 版ファイルは自分の1次形状(geometry)だけをピンし、テキスト・音源は持たない。
 # 既存の segments.json には一切書き込まない（大原則1）。
-
-CLIP_UNIT_GAP = 0.8        # 字幕ユニットの区切り: この秒数以上の間隔（オーナー裁定 2026-09-28）
-CLIP_UNIT_PUNCT = "。．！？!?"
 
 
 def clip_key_of(sg):
-    """凍結キー。1次編集の状態（区間+drops）が変わると別のキーになる。"""
+    """版キー。1次編集の状態（区間+drops）が変わると別のキー=別の切り抜き編集画面になる。"""
     import hashlib
     canon = json.dumps({"segStart": round(float(sg["start_sec"]), 3),
                         "segEnd": round(float(sg["end_sec"]), 3),
@@ -2834,105 +2883,53 @@ def clip_key_of(sg):
     return f"{sg.get('sid')}_{h8}"
 
 
-def build_clip_source(idv, sg):
-    """凍結スナップショット（clip_<key>_source.json の中身）を作る。
-    transcript の単語を drops で間引き、編集後時間軸（カットを詰めた連続時間）へ再配置し、
-    字幕ユニット（0.8秒以上の間隔または句読点で区切った文字のまとまり）にまとめる。"""
-    import datetime
-    base = os.path.join(DATA_DIR, idv)
-    tr = _load_json(idpaths.find(base, "transcript.json"), {})
+def clip_geometry_of(sg):
+    """版ファイルにピンする1次形状。履歴の回転(200件)に依存せず古い版を開けるようにする。"""
     s, e = float(sg["start_sec"]), float(sg["end_sec"])
-    drops = sorted([[max(s, float(a)), min(e, float(b))] for a, b in (sg.get("drops") or [])
+    drops = sorted([[max(s, round(float(a), 3)), min(e, round(float(b), 3))]
+                    for a, b in (sg.get("drops") or [])
                     if float(b) > s and float(a) < e])
-    # keep 区間と、各 keep の編集後開始オフセット
-    keeps, t = [], s
-    for a, b in drops:
-        if a - t > 0.01:
-            keeps.append([t, a])
-        t = max(t, b)
-    if e - t > 0.01:
-        keeps.append([t, e])
-    kmap, acc = [], 0.0
-    for a, b in keeps:
-        kmap.append((a, b, acc))
-        acc += b - a
+    return {"start_sec": round(s, 3), "end_sec": round(e, 3), "drops": drops}
 
-    def remap(t0):
-        for a, b, off in kmap:
-            if a <= t0 <= b:
-                return off + (t0 - a)
-        return None
 
-    words = []
-    for tseg in tr.get("segments", []):
+def geometry_keeps(geometry):
+    """geometry の keep 区間 [(a,b),…]（元音源時刻）。"""
+    return keep_ranges(float(geometry["start_sec"]), float(geometry["end_sec"]),
+                       [tuple(map(float, d)) for d in geometry.get("drops") or []])
+
+
+def clip_tokens(idv, geometry):
+    """切り抜き画面・生成が使う単語トークン列（元音源の絶対時刻・修正オーバーレイ適用済み）。
+    geometry の keep に 0.2 秒以上重なる語だけを返す。粒度は1次編集と同じ（結合しない。
+    原文 L104 の粒度問題への対応）。"""
+    base = os.path.join(DATA_DIR, idv)
+    tsegments, est = transcript_edits.corrected_segments(base)
+    keeps = geometry_keeps(geometry)
+    out = []
+    for tseg in tsegments:
         for w in (tseg.get("words") or []):
             st, en = w.get("start"), w.get("end")
-            if st is None or en is None or not (s <= st < e):
+            if st is None or en is None:
                 continue
+            st, en = float(st), float(en)
             tok = (w.get("word") or "").strip()
             if not tok:
                 continue
-            mid = (float(st) + float(en)) / 2
-            if remap(mid) is None:      # カットされた単語は落とす
+            if sum(max(0.0, min(en, kb) - max(st, ka)) for ka, kb in keeps) < 0.2:
                 continue
-            ns, ne = remap(float(st)), remap(float(en))
-            if ns is None:
-                ns = remap(mid) - (mid - float(st))
-            if ne is None:
-                ne = ns + (float(en) - float(st))
-            words.append({"t": tok, "s": round(max(0.0, ns), 3), "e": round(max(0.0, ne), 3)})
-    words.sort(key=lambda w: w["s"])
-    units, cur = [], None
-    for w in words:
-        if cur is not None and w["s"] - cur["e"] >= CLIP_UNIT_GAP:
-            units.append(cur)
-            cur = None
-        if cur is None:
-            cur = {"s": w["s"], "e": w["e"], "t": w["t"]}
-        else:
-            cur["t"] += w["t"]
-            cur["e"] = w["e"]
-        if cur["t"] and cur["t"][-1] in CLIP_UNIT_PUNCT:
-            units.append(cur)
-            cur = None
-    if cur is not None:
-        units.append(cur)
-    return {"id": idv, "sid": sg.get("sid") or "", "key": clip_key_of(sg),
-            "created_at": datetime.datetime.now().isoformat(timespec="seconds"),
-            "seg": {"index": sg.get("index"), "title": sg.get("title") or "",
-                    "start_sec": s, "end_sec": e, "drops": drops},
-            "duration": round(acc, 3), "units": units}
+            wd = {"t": tok, "s": round(st, 3), "e": round(en, 3)}
+            if w.get("edited") and w.get("orig_word") is not None:
+                wd["o"] = w["orig_word"]
+            if w.get("inserted"):
+                wd["insd"] = 1
+            out.append(wd)
+    out.sort(key=lambda w: w["s"])
+    return out, est
 
 
-# 凍結音源の生成プロセス。key=(ID, clipkey) → subprocess.Popen
-CLIP_SOURCE_RENDERS = {}
-
-
-def start_clip_source_render(idv, key):
-    """凍結音源（generated/clip_<key>_source.m4a）をバックグラウンド生成する。"""
-    import subprocess
-    base = os.path.join(DATA_DIR, idv)
-    if os.path.isfile(idpaths.find(base, f"clip_{key}_source.m4a")):
-        return "done"
-    k = (idv, key)
-    p = CLIP_SOURCE_RENDERS.get(k)
-    if p is not None and p.poll() is None:
-        return "already_running"
-    root = os.path.dirname(HERE)
-    py = os.path.join(root, "venv", "bin", "python")
-    if not os.path.isfile(py):
-        py = _sys.executable
-    gen = idpaths.gen_dir(base)
-    logf = open(os.path.join(gen, f"clip_{key}_source.log"), "w", encoding="utf-8")
-    CLIP_SOURCE_RENDERS[k] = subprocess.Popen(
-        [py, os.path.join(root, "scripts", "make_clip_source.py"), idv, "--key", key],
-        cwd=root, stdout=logf, stderr=subprocess.STDOUT)
-    return "started"
-
-
-def create_clip(idv, sid):
-    """「切り抜きを作成」。現在の1次編集状態を凍結して clipkey を返す。
-    同じ状態の凍結が既にあればそれをそのまま使う（再凍結しない）。"""
+def open_clip(idv, sid):
+    """「このバージョンの切り抜き編集画面へ」。現在の1次状態の版キーを返し、
+    版ファイルが無ければ geometry だけをピンして作る（凍結はしない。C-17）。"""
     import datetime
     if idv not in list_ids() or not sid:
         return None
@@ -2943,32 +2940,70 @@ def create_clip(idv, sid):
     if sg is None or not sg.get("production"):
         return None
     key = clip_key_of(sg)
-    src_path = idpaths.find(base, f"clip_{key}_source.json")
-    if not os.path.isfile(src_path):
+    path = idpaths.find(base, f"clip_{key}.json")
+    if not os.path.isfile(path):
         try:
             journal = os.path.join(idpaths.edit_dir(base), "edit_save_journal.jsonl")
             with open(journal, "a", encoding="utf-8") as f:
                 f.write(json.dumps({"at": datetime.datetime.now().isoformat(timespec="milliseconds"),
-                                    "payload": {"op": "clip_create", "id": idv, "sid": sid,
+                                    "payload": {"op": "clip_open", "id": idv, "sid": sid,
                                                 "key": key}}, ensure_ascii=False) + "\n")
                 f.flush()
                 os.fsync(f.fileno())
         except Exception:
             pass
-        source = build_clip_source(idv, sg)
-        sp = idpaths.save(base, f"clip_{key}_source.json")
-        with open(sp, "w", encoding="utf-8") as f:
-            json.dump(source, f, ensure_ascii=False, indent=2)
-        # 編集の現在状態。units は source のコピーから修正していく
-        cur = {"id": idv, "key": key, "sid": source["sid"], "title": source["seg"]["title"],
-               "created_at": source["created_at"], "clips": [],
-               "units": source["units"], "video": {}}
+        cur = {"id": idv, "key": key, "sid": sg.get("sid") or "",
+               "title": sg.get("title") or "",
+               "created_at": datetime.datetime.now().isoformat(timespec="seconds"),
+               "geometry": clip_geometry_of(sg), "clips": [], "video": {}}
         cp = idpaths.save(base, f"clip_{key}.json")
         with open(cp, "w", encoding="utf-8") as f:
             json.dump(cur, f, ensure_ascii=False, indent=2)
-        _queue_for_sync(sp, cp)
-    start_clip_source_render(idv, key)
+        _queue_for_sync(cp)
     return key
+
+
+def apply_prev_clip(idv, key):
+    """「前の版の切り抜き編集を適用」(C-17・原文 L106)。最新の他版の clips/video を
+    この版へコピーする。座標は元音源時刻なので変換不要 — 1次編集でカットを解除した
+    区間を跨ぐ切り抜きは新しい geometry の下で自動的に広がり、新カットは自動で詰まる。"""
+    import datetime
+    if idv not in list_ids() or not re.fullmatch(r"[0-9a-f]{12}_[0-9a-f]{8}", key or ""):
+        return "bad_id"
+    base = os.path.join(DATA_DIR, idv)
+    path = idpaths.find(base, f"clip_{key}.json")
+    cur = _load_json(path, None)
+    if not cur or "geometry" not in cur:
+        return "not_found"
+    if cur.get("clips"):
+        return "not_empty"
+    sid = key.split("_")[0]
+    prev = None
+    for v in list_clip_versions(idv, sid):
+        if v["key"] != key:
+            src = _load_json(os.path.join(base, idpaths.EDIT_DIR, f"clip_{v['key']}.json"), None)
+            if src and "geometry" in src:
+                prev = src
+                break   # list は新しい順
+    if prev is None:
+        return "no_prev"
+    try:
+        journal = os.path.join(idpaths.edit_dir(base), "edit_save_journal.jsonl")
+        with open(journal, "a", encoding="utf-8") as f:
+            f.write(json.dumps({"at": datetime.datetime.now().isoformat(timespec="milliseconds"),
+                                "payload": {"op": "clip_apply_prev", "id": idv, "key": key,
+                                            "from": prev.get("key")}},
+                               ensure_ascii=False) + "\n")
+            f.flush()
+            os.fsync(f.fileno())
+    except Exception:
+        pass
+    cur["clips"] = prev.get("clips") or []
+    cur["video"] = prev.get("video") or {}
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(cur, f, ensure_ascii=False, indent=2)
+    _queue_for_sync(path)
+    return "ok"
 
 
 def apply_clip_save(payload):
@@ -2996,12 +3031,17 @@ def apply_clip_save(payload):
     cur = _load_json(path, {})
     changed = False
     if "clips" in payload:
+        # 切り抜きはこの版の1次形状の範囲内に丸める（元音源時刻。C-17）
+        g = cur.get("geometry") or {}
+        g0 = float(g.get("start_sec", 0.0))
+        g1 = float(g.get("end_sec", 1e12))
         clean = []
         for c in payload.get("clips") or []:
             try:
                 a, b = float(c[0]), float(c[1])
             except (TypeError, ValueError, IndexError):
                 return False
+            a, b = max(a, g0), min(b, g1)
             if b <= a:
                 continue
             row = [round(a, 3), round(b, 3)]
@@ -3020,17 +3060,7 @@ def apply_clip_save(payload):
             clean.append(row)
         cur["clips"] = sorted(clean, key=lambda r: (r[0], r[1]))
         changed = True
-    if "units" in payload:
-        clean_u = []
-        for u in payload.get("units") or []:
-            try:
-                s, e = float(u["s"]), float(u["e"])
-                t = str(u.get("t") or "")
-            except (TypeError, ValueError, KeyError):
-                return False
-            clean_u.append({"s": round(s, 3), "e": round(e, 3), "t": t})
-        cur["units"] = sorted(clean_u, key=lambda u: u["s"])
-        changed = True
+    # units は C-17 で廃止（テキストは根の transcript_edits が正）。受け取っても無視する
     if "video" in payload and isinstance(payload.get("video"), dict):
         cur["video"] = payload["video"]
         changed = True
@@ -3058,7 +3088,7 @@ def apply_clip_save(payload):
 
 
 def list_clip_versions(idv, sid):
-    """このセグメントの凍結版一覧（新しい順）。1次編集を変えた後でも古い切り抜き編集へ
+    """このセグメントの版一覧（新しい順）。1次編集を変えた後でも古い版の切り抜き編集へ
     ここから到達できる（原文 L76-77 の「版ごとに別画面」の入口）。"""
     base = os.path.join(DATA_DIR, idv)
     ed = os.path.join(base, idpaths.EDIT_DIR)
@@ -3066,12 +3096,14 @@ def list_clip_versions(idv, sid):
         return []
     out = []
     for n in sorted(os.listdir(ed)):
-        if n.startswith(f"clip_{sid}_") and n.endswith("_source.json"):
-            key = n[len("clip_"):-len("_source.json")]
-            src = _load_json(os.path.join(ed, n), {})
-            cur = _load_json(os.path.join(ed, f"clip_{key}.json"), {})
-            out.append({"key": key, "created_at": src.get("created_at") or "",
-                        "nclips": len(cur.get("clips") or [])})
+        m = re.fullmatch(rf"clip_{re.escape(sid)}_([0-9a-f]{{8}})\.json", n)
+        if not m:
+            continue
+        cur = _load_json(os.path.join(ed, n), {})
+        if "geometry" not in cur:
+            continue   # 旧形式(凍結時代)は版として扱わない
+        out.append({"key": f"{sid}_{m.group(1)}", "created_at": cur.get("created_at") or "",
+                    "nclips": len(cur.get("clips") or [])})
     out.sort(key=lambda v: v["created_at"], reverse=True)
     return out
 
@@ -3160,15 +3192,6 @@ def list_clip_backgrounds():
                   if n.lower().endswith((".mp4", ".mov", ".m4v", ".webm")))
 
 
-def clip_full_text(units, cs, ce, drops=None):
-    """切り抜き区間に重なる字幕ユニットのテキスト全文。「詰めた間」(drops) の中は除く。"""
-    def dropped(u):
-        mid = (float(u["s"]) + float(u["e"])) / 2
-        return any(d[0] <= mid < d[1] for d in (drops or []))
-    return "".join(u.get("t") or "" for u in units
-                   if float(u["e"]) > cs and float(u["s"]) < ce and not dropped(u))
-
-
 def render_clip_videos(idv, key):
     """動画作成画面（CLIP_PLAN C-6）。切り抜きが時系列順に並び、コンテンツごとに
     テキスト全文・設定ウインドウ・生成・再生・書き出しを持つ（原文 L66-69）。
@@ -3176,12 +3199,13 @@ def render_clip_videos(idv, key):
     if idv not in list_ids():
         return None
     base = os.path.join(DATA_DIR, idv)
-    src = _load_json(idpaths.find(base, f"clip_{key}_source.json"), None)
-    if not src:
+    cur = _load_json(idpaths.find(base, f"clip_{key}.json"), None)
+    if not cur or "geometry" not in cur:
         return None
-    cur = _load_json(idpaths.find(base, f"clip_{key}.json"), {})
+    g = cur["geometry"]
+    g_drops = [tuple(map(float, d)) for d in g.get("drops") or []]
+    tokens, _est = clip_tokens(idv, g)
     clips = sorted(cur.get("clips") or [], key=lambda c: (c[0], c[1]))
-    units = cur.get("units") or []
     styles = load_clip_styles()
     fonts = list_clip_fonts()
     bgs = list_clip_backgrounds()
@@ -3193,8 +3217,8 @@ def render_clip_videos(idv, key):
     parts = [
         f"<div class='crumb'><a href='{approot()}/clip?id={urllib.parse.quote(idv)}&key={urllib.parse.quote(key)}'>"
         f"← 切り抜き編集</a></div>",
-        f"<h1>動画の作成　{esc(src['seg'].get('title') or '')}</h1>",
-        f"<p class='meta'>凍結版 {esc((src.get('created_at') or '')[:16].replace('T', ' '))}"
+        f"<h1>動画の作成　{esc(cur.get('title') or '')}</h1>",
+        f"<p class='meta'>版 {esc((cur.get('created_at') or '')[:16].replace('T', ' '))}"
         f"　切り抜き {len(clips)}本（タイムラインの時系列順）</p>",
     ]
     if not fonts:
@@ -3211,10 +3235,14 @@ def render_clip_videos(idv, key):
         cs, ce = float(row[0]), float(row[1])
         row_drops = row[2] if len(row) > 2 else []
         cfg = per.get(str(n)) or {}
-        # 尺は正味（「間を詰める」で捨てた drops を除く。C-15）
-        dur = (ce - cs) - sum(d[1] - d[0] for d in row_drops)
+        # 尺は正味（1次編集の drops と「間を詰める」の drops の両方を除く。C-17）
+        row_keeps = keep_ranges(cs, ce, g_drops + [tuple(map(float, d)) for d in row_drops])
+        dur = sum(b - a for a, b in row_keeps)
         m2, s2 = divmod(int(round(dur)), 60)
-        text = clip_full_text(units, cs, ce, row_drops)
+        text = "".join(
+            t["t"] for t in tokens
+            if sum(max(0.0, min(float(t["e"]), kb) - max(float(t["s"]), ka))
+                   for ka, kb in row_keeps) >= 0.2)
         checked_sizes = cfg.get("sizes") if cfg.get("sizes") is not None else default_sizes
         size_boxes = "".join(
             f"<label style='margin-right:14px'><input type='checkbox' class='cvsize' value='{esc(s['key'])}'"
@@ -3409,10 +3437,21 @@ def clip_suggest_status(idv, key):
     return "done"
 
 
-def render_clip_suggestions(idv, key):
-    """切り抜き編集画面の見出し直下に出す「セグメント参考」（C-12・原文 L86-95）。"""
+def render_clip_suggestions(idv, key, geometry):
+    """切り抜き編集画面の見出し直下に出す「セグメント参考」（C-12・原文 L86-95）。
+    保存は元音源時刻、表示は詰めた後の時間（C-17）。"""
     base = os.path.join(DATA_DIR, idv)
     sug = _load_json(idpaths.find(base, f"clip_{key}_suggestions.json"), None)
+    kmap, acc = [], 0.0
+    for ka, kb in geometry_keeps(geometry):
+        kmap.append((ka, kb, acc))
+        acc += kb - ka
+
+    def view(t):
+        for ka, kb, off in kmap:
+            if t <= kb:
+                return off + min(max(t, ka), kb) - ka
+        return acc
 
     def ts2(t):
         m3 = int(t // 60)
@@ -3424,14 +3463,15 @@ def render_clip_suggestions(idv, key):
             s3, e3 = float(it["s"]), float(it["e"])
         except (KeyError, TypeError, ValueError):
             continue
-        dm, ds = divmod(int(round(e3 - s3)), 60)
+        v3, w3 = view(s3), view(e3)
+        dm, ds = divmod(int(round(w3 - v3)), 60)
         # 見出し候補は3つを「 / 」区切りで並べる(原文 L100)
         titles = [t for t in (it.get("titles") or []) if str(t).strip()] or [it.get("title") or ""]
         items.append(
             "<div class='sugitem'>"
             f"<div class='sugtitle'>・{esc(' / '.join(str(t) for t in titles))}</div>"
             f"<div class='sugtime'><a onclick='window.clipTL&&clipTL.setPlayhead({s3:.3f})'>"
-            f"{ts2(s3)}〜{ts2(e3)}（{dm}分{ds:02d}秒）</a></div>"
+            f"{ts2(v3)}〜{ts2(w3)}（{dm}分{ds:02d}秒）</a></div>"
             f"<div class='sugtext'>{esc(it.get('text'))}</div></div>")
     label = "再生成" if items else "セグメント参考を生成"
     body = "".join(items) if items else (
@@ -3462,47 +3502,65 @@ def render_clip_suggestions(idv, key):
         f"{body}</div>{js}")
 
 
+def source_audio_name(idv):
+    """ブラウザ再生用の音源ファイル名（ID 直下からの相対）。preview_audio.m4a を最優先
+    （元が ALAC だと Chrome/Firefox で鳴らないため。D-021）。render_id と切り抜き画面で共用。"""
+    base = os.path.join(DATA_DIR, idv)
+    names = sorted(os.listdir(base))
+    pv = idpaths.find(base, "preview_audio.m4a")
+    if os.path.exists(pv):
+        return os.path.relpath(pv, base)
+    for ext in (".m4a", ".mp4"):
+        n = next((n for n in names if n.lower().endswith(ext)), None)
+        if n:
+            return n
+    return None
+
+
 def render_clip(idv, key):
-    """切り抜き編集画面（CLIP_PLAN C-2〜C-4）。機能はセグメント決定とテキスト修正の
-    2つだけに絞る（原文 L64）。タイムラインは凍結版の編集後時間軸で隙間なく連続。"""
+    """切り抜き編集画面（C-2〜C-4・C-17 改定）。機能はセグメント決定とテキスト修正の
+    2つだけに絞る（原文 L64）。タイムラインはこの版の1次形状(geometry)から毎回導出した
+    詰め後時間で表示し、データ（切り抜き区間・テキスト修正）は元音源の絶対時刻で持つ。"""
     if idv not in list_ids():
         return None
     base = os.path.join(DATA_DIR, idv)
-    src = _load_json(idpaths.find(base, f"clip_{key}_source.json"), None)
-    if not src:
+    cur = _load_json(idpaths.find(base, f"clip_{key}.json"), None)
+    if not cur or "geometry" not in cur:
         return None
-    cur = _load_json(idpaths.find(base, f"clip_{key}.json"), {})
-    audio = idpaths.find(base, f"clip_{key}_source.m4a")
-    audio_ok = os.path.isfile(audio)
-    dur = src.get("duration") or 0
-    m, s2 = divmod(int(round(dur)), 60)
+    g = cur["geometry"]
+    tokens, est = clip_tokens(idv, g)
+    keeps = geometry_keeps(g)
+    net = sum(b - a for a, b in keeps)
+    m, s2 = divmod(int(round(net)), 60)
+    sid = cur.get("sid") or key.split("_")[0]
+    vers = list_clip_versions(idv, sid)
+    has_prev = any(v["key"] != key for v in vers)
+    applyable = (not cur.get("clips")) and has_prev
     parts = [
         f"<div class='crumb'><a href='{approot()}/id?id={urllib.parse.quote(idv)}'>← 1次編集（{esc(idv)}）</a></div>",
-        f"<h1>切り抜き編集　{esc(src['seg'].get('title') or '')}</h1>",
-        f"<p class='meta'>凍結版 {esc((src.get('created_at') or '')[:16].replace('T', ' '))}"
+        f"<h1>切り抜き編集　{esc(cur.get('title') or '')}</h1>",
+        f"<p class='meta'>版 {esc((cur.get('created_at') or '')[:16].replace('T', ' '))}"
         f"　尺 {m}分{s2:02d}秒</p>",
-        # 見出し直下に AI のセグメント参考（C-12・原文 L86-95）
-        render_clip_suggestions(idv, key),
     ]
-    if not audio_ok:
-        parts.append("<p class='meta' id='srcwait'>凍結音源を生成中です…（できあがると自動で表示が変わります）</p>")
-        parts.append(
-            "<script>var _iv=setInterval(function(){"
-            "fetch(window.APP+'/clip_source_status?id='+encodeURIComponent(new URLSearchParams(location.search).get('id'))"
-            "+'&key='+encodeURIComponent(new URLSearchParams(location.search).get('key')))"
-            ".then(function(r){return r.text();}).then(function(s){"
-            "if(s==='done'){clearInterval(_iv);location.reload();}"
-            "else if(s.indexOf('failed')===0){clearInterval(_iv);"
-            "document.getElementById('srcwait').textContent='凍結音源の生成に失敗しました"
-            "（generated/clip_…_source.log を確認）';}});},3000);</script>")
-    else:
-        rel = os.path.relpath(audio, DATA_DIR)
-        parts.append(f"<audio id='orig' src='{approot()}/media/{urllib.parse.quote(rel)}'"
+    if est == "stale":
+        parts.append("<p class='meta' style='color:#e11d48'>⚠ 文字起こしが作り直されたため、"
+                     "保存済みのテキスト修正を適用していません。</p>")
+    # 見出し直下に AI のセグメント参考（C-12・原文 L86-95）
+    parts.append(render_clip_suggestions(idv, key, g))
+    src_name = source_audio_name(idv)
+    if src_name:
+        parts.append(f"<audio id='orig' src='{approot()}/media/{urllib.parse.quote(idv + '/' + src_name)}'"
                      " preload='metadata' style='display:none'></audio>")
-    data = json.dumps({"id": idv, "key": key, "duration": dur,
-                       "units": cur.get("units") or [],
-                       "clips": cur.get("clips") or []},
+    data = json.dumps({"id": idv, "key": key, "duration": round(net, 3),
+                       "keeps": [[round(a, 3), round(b, 3)] for a, b in keeps],
+                       "units": tokens,
+                       "clips": cur.get("clips") or [],
+                       "applyable": applyable},
                       ensure_ascii=False).replace("</", "<\\/")
+    apply_btn = ("<button class='gbtn tlapply' title='1次編集で版が分かれる前の切り抜き編集を"
+                 "この版へコピーします（座標は元音源時刻なので、解除した区間は自動で広がり、"
+                 "新しいカットは自動で詰まります）'>前の版の切り抜き編集を適用</button>"
+                 if applyable else "")
     parts.append(
         "<div class='cliptl' id='cliptl'>"
         "<div class='tlbar'>"
@@ -3514,16 +3572,17 @@ def render_clip(idv, key):
         "<option value='1.35'>1.35x</option><option value='1.5'>1.5x</option></select>"
         "<span class='tlzoom'></span>"
         "<button class='tlundo'>↩ 元に戻す</button><button class='tlredo'>↪ やり直す</button>"
+        f"{apply_btn}"
         # 「動画の作成」はこのツールバー(再生〜やり直す)の並びに置く(オーナー指示・原文 L103)
         f"<a class='gbtn' href='{approot()}/clip_videos?id={urllib.parse.quote(idv)}"
         f"&key={urllib.parse.quote(key)}'>動画の作成 →</a>"
         "<span class='tlstat'>保存済み</span>"
         "</div>"
         "<div class='tlhelp'>Space 再生/停止・<b>S＝切り抜きの開始</b>・<b>E＝終了</b>・"
-        "右クリック＝メニュー（再生/開始/終了/この間を詰める/テキスト削除・挿入）・"
-        "文字クリックで編集・切り抜きをクリックで選択して Delete で解除・⌘Z 取り消し・⌘± ズーム。"
-        "自動保存されます。</div>"
-        f"<div class='tlrows'><div class='tlwait'>組み上げ中…（字幕ユニット {len(cur.get('units') or [])}）</div></div>"
+        "右クリック＝メニュー（再生/開始/終了/間を詰める・伸ばす/テキスト削除・挿入）・"
+        "文字クリックで修正（根の文字起こしに保存）・切り抜きをクリックで選択して Delete で解除・"
+        "⌘Z 取り消し・⌘± ズーム。切り抜きは自動保存されます。</div>"
+        f"<div class='tlrows'><div class='tlwait'>組み上げ中…（単語 {len(tokens)}）</div></div>"
         f"<script type='application/json'>{data}</script>"
         "</div>")
     return page(f"切り抜き編集 {idv}", "".join(parts))
@@ -3691,7 +3750,7 @@ def route_delivered():
 
 @app.post("/clip_create")
 def route_clip_create():
-    key = create_clip(request.args.get("id") or "", request.args.get("sid") or "")
+    key = open_clip(request.args.get("id") or "", request.args.get("sid") or "")
     return _text("ok:" + key if key else "ng", 200 if key else 400)
 
 
@@ -3761,20 +3820,10 @@ def route_clip_save():
     return _text("ok" if ok else "ng", 200 if ok else 400)
 
 
-@app.get("/clip_source_status")
-def route_clip_source_status():
-    idv, key = request.args.get("id") or "", request.args.get("key") or ""
-    if idv not in list_ids() or not key:
-        return _text("ng", 400)
-    base = os.path.join(DATA_DIR, idv)
-    if os.path.isfile(idpaths.find(base, f"clip_{key}_source.m4a")):
-        return _text("done")
-    p = CLIP_SOURCE_RENDERS.get((idv, key))
-    if p is not None and p.poll() is None:
-        return _text("running")
-    if p is not None and p.returncode != 0:
-        return _text(f"failed({p.returncode})")
-    return _text("none")
+@app.post("/clip_apply_prev")
+def route_clip_apply_prev():
+    st = apply_prev_clip(request.args.get("id") or "", request.args.get("key") or "")
+    return _text(st, 200 if st == "ok" else 400)
 
 
 @app.get("/render_status")

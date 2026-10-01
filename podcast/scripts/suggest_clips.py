@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
-"""切り抜き候補（セグメント参考）を生成する（CLIP_PLAN C-12）。
+"""切り抜き候補（セグメント参考）を生成する（CLIP_PLAN C-12・C-17 改定）。
 
-凍結版の現在の字幕ユニット（clip_<KEY>.json）を LLM に渡し、切り抜きに向く区間の
-候補 5〜10 件（見出し + 範囲）をもらう。返った範囲はユニット境界にスナップし、
-全文はユニットから合成する（LLM の引用は使わない）。結果は
-generated/clip_<KEY>_suggestions.json に保存する（参考情報。再生成で丸ごと差し替え）。
+対象の版（clip_<KEY>.json の geometry）の有効区間にある単語トークン
+（文字起こし+修正オーバーレイ適用済み・元音源の絶対時刻）を LLM に渡し、
+切り抜きに向く区間の候補 5〜10 件（見出し3案 + 範囲）をもらう。
+返った範囲はトークン境界にスナップし、全文はトークンから合成する（LLM の引用は使わない）。
+結果は generated/clip_<KEY>_suggestions.json に保存（元音源時刻。再生成で丸ごと差し替え）。
 
 API キーは環境変数 OPENAI_API_KEY、無ければ podcast/.env から読む（単一 .env 集約の規約）。
-モデルは CLIP_SUGGEST_MODEL（既定 gpt-5.5。suggest.py の gpt-5.5-pro より軽い用途のため）。
+モデルは CLIP_SUGGEST_MODEL（既定 gpt-5.5）。
 
-usage: python scripts/suggest_clips.py <ID> --key <CLIPKEY>
+usage: python scripts/suggest_clips.py <ID> --key <KEY>
 """
 import os
 import re
@@ -22,10 +23,13 @@ import datetime
 HERE = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(HERE / "scripts"))
 import idpaths
-from render import load_conf
+import transcript_edits
+from render import load_conf, keep_ranges
 
 MODEL = os.environ.get("CLIP_SUGGEST_MODEL", "gpt-5.5")
 EFFORT = os.environ.get("CLIP_SUGGEST_EFFORT", "medium")
+LINE_GAP = 0.8        # プロンプト行のまとまり（表示粒度ではなく入力の圧縮用）
+LINE_PUNCT = "。．！？!?"
 
 
 def load_api_key():
@@ -52,11 +56,52 @@ def extract_json_block(text):
         return None
 
 
-def snap(units, start, end):
-    """LLM の範囲をユニット境界へ寄せる。開始 = start に最も近いユニット開始、
-    終了 = end に最も近いユニット終了。"""
-    starts = [float(u["s"]) for u in units]
-    ends = [float(u["e"]) for u in units]
+def tokens_in_geometry(base, geometry):
+    """geometry の keep に重なる修正済みトークン（元音源時刻）。"""
+    tsegments, _st = transcript_edits.corrected_segments(str(base))
+    keeps = keep_ranges(float(geometry["start_sec"]), float(geometry["end_sec"]),
+                        [tuple(map(float, d)) for d in geometry.get("drops") or []])
+    out = []
+    for tseg in tsegments:
+        for w in (tseg.get("words") or []):
+            st, en = w.get("start"), w.get("end")
+            if st is None or en is None:
+                continue
+            st, en = float(st), float(en)
+            tok = (w.get("word") or "").strip()
+            if not tok:
+                continue
+            if sum(max(0.0, min(en, kb) - max(st, ka)) for ka, kb in keeps) < 0.2:
+                continue
+            out.append({"s": st, "e": en, "t": tok})
+    out.sort(key=lambda w: w["s"])
+    return out
+
+
+def prompt_lines(tokens):
+    """トークンをフレーズ行にまとめる（LLM 入力の圧縮用。データの粒度は変えない）。"""
+    lines, cur = [], None
+    for w in tokens:
+        if cur is not None and w["s"] - cur["e"] >= LINE_GAP:
+            lines.append(cur)
+            cur = None
+        if cur is None:
+            cur = {"s": w["s"], "e": w["e"], "t": w["t"]}
+        else:
+            cur["t"] += w["t"]
+            cur["e"] = w["e"]
+        if cur["t"] and cur["t"][-1] in LINE_PUNCT:
+            lines.append(cur)
+            cur = None
+    if cur is not None:
+        lines.append(cur)
+    return lines
+
+
+def snap(tokens, start, end):
+    """LLM の範囲をトークン境界へ寄せる。"""
+    starts = [w["s"] for w in tokens]
+    ends = [w["e"] for w in tokens]
     s = min(starts, key=lambda v: abs(v - float(start)))
     e = min(ends, key=lambda v: abs(v - float(end)))
     return s, e
@@ -74,9 +119,11 @@ def main():
 
     cur = json.loads(pathlib.Path(idpaths.find(str(base), f"clip_{args.key}.json"))
                      .read_text(encoding="utf-8"))
-    units = [u for u in (cur.get("units") or []) if (u.get("t") or "").strip()]
-    if not units:
-        sys.exit("[clipsug] 字幕ユニットがありません")
+    if "geometry" not in cur:
+        sys.exit("[clipsug] この版ファイルに geometry がありません（旧形式）")
+    tokens = tokens_in_geometry(base, cur["geometry"])
+    if not tokens:
+        sys.exit("[clipsug] 対象区間にトークンがありません")
 
     if not load_api_key():
         sys.exit("[clipsug] OPENAI_API_KEY がありません（podcast/.env に置いてください）")
@@ -86,10 +133,10 @@ def main():
         sys.exit("[clipsug] openai SDK がありません。README の .venv-openai を作ってください"
                  "（pip install -r requirements-openai.txt）")
 
-    lines = [f"[{float(u['s']):.1f}-{float(u['e']):.1f}] {u['t']}" for u in units]
+    lines = [f"[{ln['s']:.1f}-{ln['e']:.1f}] {ln['t']}" for ln in prompt_lines(tokens)]
     prompt = (HERE / "prompts" / "prompt_clips.txt").read_text(encoding="utf-8")
     client = OpenAI(timeout=float(os.environ.get("PODCAST_API_TIMEOUT", "900")), max_retries=1)
-    print(f"[clipsug] {MODEL}(effort={EFFORT}) を1回呼び出します（ユニット {len(units)} 行）")
+    print(f"[clipsug] {MODEL}(effort={EFFORT}) を1回呼び出します（{len(lines)} 行）")
     resp = client.responses.create(
         model=MODEL,
         instructions="指示に厳密に従い、最後に必ず指定の JSON ブロックを付けてください。",
@@ -103,14 +150,13 @@ def main():
     out = []
     for sg in data["suggestions"][:10]:
         try:
-            s, e = snap(units, sg["start_sec"], sg["end_sec"])
+            s, e = snap(tokens, sg["start_sec"], sg["end_sec"])
         except (KeyError, TypeError, ValueError):
             continue
         if e - s < 5:
             continue
-        text = "".join(u["t"] for u in units if float(u["e"]) > s and float(u["s"]) < e)
-        # 見出し候補は3つ(「AはBである」形式優先。オーナー指示 2026-09-28・原文 L100)。
-        # 旧形式 title 単数も受ける
+        text = "".join(w["t"] for w in tokens if w["e"] > s and w["s"] < e)
+        # 見出し候補は3つ(「AはBである」形式優先。原文 L100)。旧形式 title 単数も受ける
         titles = [str(t).strip() for t in (sg.get("titles") or []) if str(t).strip()][:3]
         if not titles:
             titles = [str(sg.get("title") or "").strip() or "（無題）"]
@@ -123,8 +169,9 @@ def main():
     tmp = dst.with_name(dst.name + ".part")
     tmp.write_text(json.dumps(
         {"generated_at": datetime.datetime.now().isoformat(timespec="seconds"),
-         "model": MODEL, "suggestions": out}, ensure_ascii=False, indent=2), encoding="utf-8")
-    tmp.replace(dst)   # 差し替えは原子的に（再生成中に古い候補が壊れて見えない）
+         "model": MODEL, "time_base": "source", "suggestions": out},
+        ensure_ascii=False, indent=2), encoding="utf-8")
+    tmp.replace(dst)   # 差し替えは原子的に
     print(f"[clipsug] done. 候補 {len(out)} 件 -> {dst}")
 
 

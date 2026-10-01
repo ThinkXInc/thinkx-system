@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
-"""切り抜き動画を1本合成する（CLIP_PLAN C-8）。
+"""切り抜き動画を1本合成する（CLIP_PLAN C-8・C-17 改定）。
 
-構成要素は 音声（凍結音源の該当区間）+ 字幕（修正済みユニット）+ タイトル（全編表示）+
-背景動画（ループ）。スタイルは config/clip_styles.json（C-7）をデータとして読む。
-プログラムが全要素を結合して1本にする（原文 L36-37。After Effects を使わない）。
+構成要素は 音声 + 字幕 + タイトル（全編表示） + 背景動画（ループ）。
+C-17: 凍結音源は使わない。音声は**元音源**から、切り抜き区間 −（1次編集の drops）−
+（「間を詰める」の drops）の keep を抽出・連結する。字幕は修正オーバーレイ適用済みの
+単語トークン（元音源時刻）を、出力時間へ再配置してから clip_styles.json の caption
+パラメータで字幕行にまとめる。スタイルはコードに埋め込まない（原文 L53）。
 
-usage: python scripts/make_clip_video.py <ID> --key <CLIPKEY> --seg <N> --sizes <WxH>[,<WxH>…] \
-           [--out <出力パス>]
-  N は切り抜きの時系列順の番号（0始まり）。--out は単一サイズのときだけ指定できる。
-  省略時は generated/clip_<KEY>_preview_<N>_<WxH>.mp4 に書く。
+usage: python scripts/make_clip_video.py <ID> --key <KEY> --seg <N> --sizes <WxH>[,<WxH>…] \
+           [--out <出力パス>] [--export]
+  N は切り抜きの時系列順の番号（0始まり）。--export は contents/clip/<KEY>/ へ
+  ファイル名規則（タイトル_長さ_規格）で書き出す（C-9）。
 """
 import os
 import sys
@@ -16,12 +18,15 @@ import json
 import struct
 import pathlib
 import argparse
+import tempfile
 import subprocess
 
 HERE = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(HERE / "scripts"))
 import idpaths
-from render import load_conf, safe_name, keep_ranges
+import transcript_edits
+from render import find_media, keep_ranges, load_conf, safe_name
+from export_audio import aac_encoder
 
 FONTS_DIR = HERE / "assets" / "fonts"
 BG_DIR = HERE / "assets" / "clip_backgrounds"
@@ -116,12 +121,33 @@ def pct_of(spec, size_key, default):
     return float(spec)
 
 
-def build_ass(w, h, size_key, styles, cfg, units, keeps, fontname):
-    """keeps = 凍結音源時間での有効区間 [(a,b),...]（「間を詰める」の drops を除いた残り。
-    C-15）。字幕タイムは詰めた後の出力時間へ再配置する。"""
-    sub = (styles.get("subtitle_styles") or [{}])[0]
-    tstyles = {t.get("key"): t for t in (styles.get("title_styles") or [])}
-    tstyle = tstyles.get(cfg.get("title_style")) or (styles.get("title_styles") or [{}])[0]
+def clip_tokens(base, geometry, keeps):
+    """keep に 0.2 秒以上重なる修正済みトークン（元音源時刻）。"""
+    tsegments, _st = transcript_edits.corrected_segments(str(base))
+    out = []
+    for tseg in tsegments:
+        for w in (tseg.get("words") or []):
+            st, en = w.get("start"), w.get("end")
+            if st is None or en is None:
+                continue
+            st, en = float(st), float(en)
+            tok = (w.get("word") or "").strip()
+            if not tok:
+                continue
+            if sum(max(0.0, min(en, kb) - max(st, ka)) for ka, kb in keeps) < 0.2:
+                continue
+            out.append({"s": st, "e": en, "t": tok})
+    out.sort(key=lambda w: w["s"])
+    return out
+
+
+def build_captions(tokens, keeps, styles):
+    """トークンを出力時間へ再配置し、字幕行（caption）にまとめる（C-17。
+    表示のまとめ方はデータでなくスタイルの問題なのでここで行う）。"""
+    cap = styles.get("caption") or {}
+    max_chars = int(cap.get("max_chars") or 16)
+    gap_sec = float(cap.get("gap_sec") or 0.6)
+    min_show = float(cap.get("min_show_sec") or 0.8)
     kmap, acc = [], 0.0
     for ka, kb in keeps:
         kmap.append((ka, kb, acc))
@@ -133,6 +159,35 @@ def build_ass(w, h, size_key, styles, cfg, units, keeps, fontname):
             if t <= kb:
                 return off + min(max(t, ka), kb) - ka
         return dur
+
+    caps, cur = [], None
+    for w in tokens:
+        a, b = remap(w["s"]), remap(w["e"])
+        if cur is not None and (a - cur["b"] >= gap_sec or len(cur["text"]) >= max_chars):
+            caps.append(cur)
+            cur = None
+        if cur is None:
+            cur = {"a": a, "b": max(b, a), "text": w["t"]}
+        else:
+            cur["text"] += w["t"]
+            cur["b"] = max(cur["b"], b)
+        if cur["text"] and cur["text"][-1] in "。．！？!?":
+            caps.append(cur)
+            cur = None
+    if cur is not None:
+        caps.append(cur)
+    # 短すぎる表示は読めない。次の字幕開始までの範囲で最低表示時間を確保する
+    for i, c in enumerate(caps):
+        if c["b"] - c["a"] < min_show:
+            limit = caps[i + 1]["a"] if i + 1 < len(caps) else dur
+            c["b"] = min(max(c["b"], c["a"] + min_show), max(limit, c["a"]))
+    return caps, dur
+
+
+def build_ass(w, h, size_key, styles, cfg, captions, dur, fontname):
+    sub = (styles.get("subtitle_styles") or [{}])[0]
+    tstyles = {t.get("key"): t for t in (styles.get("title_styles") or [])}
+    tstyle = tstyles.get(cfg.get("title_style")) or (styles.get("title_styles") or [{}])[0]
 
     sub_pct = float(cfg.get("size_pct") or sub.get("font_size_pct") or 4.7)
     sub_px = int(round(h * sub_pct / 100))
@@ -178,22 +233,11 @@ def build_ass(w, h, size_key, styles, cfg, units, keeps, fontname):
         txt = wrap_lines(title, ttl_max_chars, int(tstyle.get("max_lines") or 3))
         lines.append(f"Dialogue: 1,{ass_time(0)},{ass_time(dur)},Title,,0,0,0,,"
                      f"{{\\an8\\pos({w // 2},{ttl_y})}}{txt}")
-    for u in units:
-        us, ue = float(u["s"]), float(u["e"])
-        # 有効区間と 0.2 秒以上重なる字幕だけ出す（端をまたぐユニットは音が流れるぶん
-        # 表示し、「詰めた間」に完全に入ったものは出さない）。時刻は remap が区間内に丸める
-        overlap = sum(max(0.0, min(ue, kb) - max(us, ka)) for ka, kb in keeps)
-        if overlap < 0.2:
+    for c in captions:
+        if not c["text"].strip():
             continue
-        text = (u.get("t") or "").strip()
-        if not text:
-            continue
-        a, b = remap(us), remap(ue)
-        # 短すぎる表示は読めないので最低 0.8 秒は出す（次の字幕開始までに収める）
-        if b - a < 0.8:
-            b = min(dur, a + 0.8)
-        txt = wrap_lines(text, sub_max_chars, int(sub.get("max_lines") or 2))
-        lines.append(f"Dialogue: 0,{ass_time(a)},{ass_time(b)},Sub,,0,0,0,,"
+        txt = wrap_lines(c["text"], sub_max_chars, int(sub.get("max_lines") or 2))
+        lines.append(f"Dialogue: 0,{ass_time(c['a'])},{ass_time(min(c['b'], dur))},Sub,,0,0,0,,"
                      f"{{\\an5\\pos({w // 2},{sub_cy})}}{txt}")
     return "\n".join(lines) + "\n"
 
@@ -220,22 +264,29 @@ def main():
     styles = json.loads((HERE / "config" / "clip_styles.json").read_text(encoding="utf-8"))
     cur = json.loads(pathlib.Path(idpaths.find(str(base), f"clip_{args.key}.json"))
                      .read_text(encoding="utf-8"))
+    if "geometry" not in cur:
+        sys.exit("[clipvid] この版ファイルに geometry がありません（旧形式）")
+    g = cur["geometry"]
+    g_drops = [tuple(map(float, d)) for d in g.get("drops") or []]
     clips = sorted(cur.get("clips") or [], key=lambda c: (c[0], c[1]))
     if not (0 <= args.seg < len(clips)):
         sys.exit(f"[clipvid] 切り抜き {args.seg} がありません（{len(clips)}本）")
     row = clips[args.seg]
     cs, ce = float(row[0]), float(row[1])
-    # 「間を詰める」で捨てた区間（C-15・原文 L99）。音声は keep を連結し、尺は正味
     row_drops = [tuple(map(float, d)) for d in (row[2] if len(row) > 2 else [])]
-    keeps = keep_ranges(cs, ce, row_drops)
+    # keep = 切り抜き −（1次編集の drops）−（詰めた間）。音声・字幕・尺の唯一の根拠（C-17）
+    keeps = keep_ranges(cs, ce, g_drops + row_drops)
     if not keeps:
         sys.exit("[clipvid] 有効区間がありません")
     dur = sum(b - a for a, b in keeps)
     cfg = (cur.get("video") or {}).get("clips", {}).get(str(args.seg)) or {}
 
-    audio = pathlib.Path(idpaths.find(str(base), f"clip_{args.key}_source.m4a"))
-    if not audio.is_file():
-        sys.exit("[clipvid] 凍結音源がありません（切り抜き編集画面で生成されます）")
+    media = find_media(base, args.id, None)
+    if not media or not media.exists():
+        sys.exit(f"[clipvid] メディアが見つかりません（{base}）")
+    wav = media.with_suffix(".wav")
+    if wav.exists():
+        media = wav
 
     bg_name = cfg.get("background") or ""
     bg = BG_DIR / bg_name
@@ -248,16 +299,16 @@ def main():
         sys.exit(f"[clipvid] フォントがありません: {font_path}")
     family = font_family_name(font_path) or pathlib.Path(font_name).stem
 
+    captions, _dur2 = build_captions(clip_tokens(base, g, keeps), keeps, styles)
+
     ff = ffmpeg_with_subtitles()
     gen = pathlib.Path(idpaths.gen_dir(str(base)))
 
-    # 音声。drops が無ければ凍結音源を -ss/-t で直接切る。あれば keep を抽出して
-    # 無劣化連結した一時 wav を全サイズで使い回す（make_clip_source と同じ作法）
-    audio_in = audio
-    audio_seek = ["-ss", f"{cs:.3f}", "-t", f"{dur:.3f}"]
+    # 音声。単一区間なら元音源を -ss/-t で直接切り、複数区間なら抽出して無劣化連結
+    audio_in = media
+    audio_seek = ["-ss", f"{keeps[0][0]:.3f}", "-t", f"{dur:.3f}"]
     concat_wav = None
-    if row_drops:
-        import tempfile
+    if len(keeps) > 1:
         concat_wav = gen / f"clip_{args.key}_{args.seg}_audio.part.wav"
         with tempfile.TemporaryDirectory(dir=str(gen)) as td:
             tdp = pathlib.Path(td)
@@ -266,7 +317,7 @@ def main():
                 for i, (ka, kb) in enumerate(keeps):
                     part = tdp / f"p{i:04d}.wav"
                     subprocess.run([ff, "-hide_banner", "-loglevel", "error", "-y",
-                                    "-ss", f"{ka:.3f}", "-to", f"{kb:.3f}", "-i", str(audio),
+                                    "-ss", f"{ka:.3f}", "-to", f"{kb:.3f}", "-i", str(media),
                                     "-c:a", "pcm_s16le", str(part)], check=True)
                     lf.write(f"file '{part.name}'\n")
             subprocess.run([ff, "-hide_banner", "-loglevel", "error", "-y",
@@ -294,7 +345,7 @@ def main():
 
         ass_path = gen / f"clip_{args.key}_{args.seg}_{size_key}.ass"
         ass_path.write_text(
-            build_ass(w, h, size_key, styles, cfg, cur.get("units") or [], keeps, family),
+            build_ass(w, h, size_key, styles, cfg, captions, dur, family),
             encoding="utf-8")
 
         # フィルタ内のパス引用を避けるため、ass はファイル名だけ渡して cwd を generated/ にする
