@@ -126,11 +126,14 @@ def resolve_style(cfg, sub_style):
                 "shadow_w": 3, "shadow_color": "#000000", "font": legacy_font,
                 "bold": True,
                 "size_pct": float(cfg.get("size_pct") or sub_style.get("font_size_pct") or 8.3),
-                "width_pct": 86, "x_pct": 50, "y_pct": 62},
+                "width_pct": 86, "x_pct": 50, "y_pct": 62,
+                "bg_on": False, "bg_color": "#000000", "bg_pad": 24, "bg_pad_v": 8,
+                "bg_radius": 16, "bg_alpha": 70},
         "title": {"color": ["#ffffff"], "outline": ["#000000"], "outline_w": 6,
                   "shadow_w": 2, "shadow_color": "#000000", "font": legacy_font,
                   "bold": True, "size_pct": 6.4, "width_pct": 84, "x_pct": 50, "y_pct": 20,
-                  "bg_on": False, "bg_color": "#000000", "bg_pad": 24, "bg_radius": 16},
+                  "bg_on": False, "bg_color": "#000000", "bg_pad": 24, "bg_pad_v": 8,
+                  "bg_radius": 16, "bg_alpha": 70},
     }
     st = cfg.get("style") or {}
     out = {}
@@ -245,10 +248,12 @@ def build_captions(tokens, keeps, styles):
             caps.append(cur)
             cur = None
         if cur is None:
-            cur = {"a": a, "b": max(b, a), "text": w["t"]}
+            cur = {"a": a, "b": max(b, a), "text": w["t"],
+                   "toks": [{"s": w["s"], "t": w["t"]}]}
         else:
             cur["text"] += w["t"]
             cur["b"] = max(cur["b"], b)
+            cur["toks"].append({"s": w["s"], "t": w["t"]})
         if cur["text"] and cur["text"][-1] in "。．！？!?":
             caps.append(cur)
             cur = None
@@ -262,7 +267,96 @@ def build_captions(tokens, keeps, styles):
     return caps, dur
 
 
-def build_ass(w, h, stl, cfg, captions, dur, families):
+def emit_caption_text(toks, max_chars_n, base, effects, fxmap, w, px_base):
+    """キャプション本文を1文字ずつ組み立てる(原文 L134)。
+    各トークンは effects([{a,b,style}] 元音源時刻)に当たれば名前付きスタイルの
+    上書き(サイズ・色/グラデ・縁・影・フォント・太字・ポップ)を受ける。
+    折り返しは基準サイズの文字数で行う(部分的な拡大による幅増は近似のまま)。"""
+    scale = w / 1080.0
+
+    def style_of(tok_s):
+        for e in effects:
+            if float(e["a"]) - 0.005 <= tok_s <= float(e["b"]) + 0.005:
+                return e.get("style")
+        return None
+
+    # 文字列に展開(文字ごとのスタイル名)
+    chars = []
+    for tk in toks:
+        nm = style_of(float(tk["s"]))
+        for ch in tk["t"]:
+            chars.append((ch, nm))
+    # 折り返し位置(基準文字数)
+    if max_chars_n < 4:
+        max_chars_n = 4
+    total = max(1, len(chars) - 1)
+
+    def props_of(nm):
+        if nm and nm in fxmap:
+            q = dict(base)
+            q.update({k: v for k, v in fxmap[nm].items() if v is not None})
+            return q
+        return base
+
+    def run_tags(q, nm, run_len_info=None):
+        px = max(1, int(round(w * float(q["size_pct"]) / 100)))
+        ow = round(float(q.get("outline_w") or 0) * scale, 1)
+        sw = round(float(q.get("shadow_w") or 0) * scale, 1)
+        fam = q.get("_family") or ""
+        t = rf"\fs{px}\bord{ow}\shad{sw}"
+        t += r"\b1" if q.get("bold") else r"\b0"
+        if fam:
+            t += rf"\fn{fam}"
+        sr, sg, sb = _hex_rgb(q.get("shadow_color") or "#000000")
+        t += rf"\4c&H{sb:02X}{sg:02X}{sr:02X}&"
+        oc = (q.get("outline") or ["#000000"])
+        if len(oc) < 2:
+            r, g, b = _hex_rgb(oc[0])
+            t += rf"\3c&H{b:02X}{g:02X}{r:02X}&"
+        fc = (q.get("color") or ["#ffffff"])
+        if len(fc) < 2:
+            r, g, b = _hex_rgb(fc[0])
+            t += rf"\c&H{b:02X}{g:02X}{r:02X}&"
+        # 部分ポップ(拡大アニメ)。スライドはまとまり単位のみ(イベント移動のため)
+        if nm and q.get("anim") == "pop":
+            ms = int(float(q.get("anim_dur") or 0.25) * 1000)
+            t += rf"\fscx20\fscy20\t(0,{ms},\fscx100\fscy100)"
+        else:
+            t += r"\fscx100\fscy100"
+        return "{" + t + "}"
+
+    out = []
+    cur_nm = object()   # 強制的に先頭でタグを吐く
+    col = 0
+    gi = 0
+    for ch, nm in chars:
+        if col >= max_chars_n:
+            out.append(r"\N")
+            col = 0
+        if nm != cur_nm:
+            q = props_of(nm)
+            out.append(run_tags(q, nm))
+            cur_nm = nm
+            cur_q = q
+        # グラデーション(スタイルのスコープ内で全体に補間)
+        fc = (cur_q.get("color") or ["#ffffff"])
+        oc = (cur_q.get("outline") or ["#000000"])
+        tags = ""
+        if len(fc) > 1:
+            r, g, b = _lerp_hex(fc[0], fc[1], gi / total)
+            tags += rf"\c&H{b:02X}{g:02X}{r:02X}&"
+        if len(oc) > 1:
+            r, g, b = _lerp_hex(oc[0], oc[1], gi / total)
+            tags += rf"\3c&H{b:02X}{g:02X}{r:02X}&"
+        if tags:
+            out.append("{" + tags + "}")
+        out.append(ch)
+        col += 1
+        gi += 1
+    return "".join(out)
+
+
+def build_ass(w, h, stl, cfg, captions, dur, families, effects=None, fxmap=None):
     """stl = resolve_style() の実効値(タイトル/字幕とも 色[1-2]・縁[1-2]・縁太・影・影色・
     フォント・太字・サイズ(幅%)・位置(x/y %))。families = {"sub": family, "title": family}。
     縁太・影は 1080 幅基準の px 指定を実寸へスケールする。位置は中央アンカー(\\an5)。"""
@@ -322,9 +416,10 @@ def build_ass(w, h, stl, cfg, captions, dur, families):
             return sum(px if ord(ch) > 0xFF else px * 0.55 for ch in ln)
 
         pad = float(d.get("bg_pad") or 0) * scale
+        pad_v = float(d.get("bg_pad_v") or 0) * scale
         rad = float(d.get("bg_radius") or 0) * scale
         bw = max(_est(ln) for ln in tl) + 2 * pad
-        bh = len(tl) * px * 1.18 + 2 * pad * 0.35
+        bh = len(tl) * px * 1.18 + 2 * pad_v
         rad = max(0.0, min(rad, bw / 2, bh / 2))
         cx = w * float(d.get("x_pct") or 50) / 100
         cy = h * float(d.get("y_pct") or 50) / 100
@@ -361,15 +456,50 @@ def build_ass(w, h, stl, cfg, captions, dur, families):
                      f"{pos_tag(d)}{txt}")
     d = stl["sub"]
     mc = max_chars(d)
+    effects = effects or []
+    fxmap = fxmap or {}
+    base_sub = dict(d, _family=families["sub"])
+    px_sub = px_of(d)
+
+    def whole_anim(toks):
+        """まとまり全体が同一スタイルで覆われ、そのスタイルが slide_up のとき返す。"""
+        nm = None
+        for tk in toks:
+            hit = None
+            for e in effects:
+                if float(e["a"]) - 0.005 <= float(tk["s"]) <= float(e["b"]) + 0.005:
+                    hit = e.get("style")
+                    break
+            if hit is None or (nm is not None and hit != nm):
+                return None
+            nm = hit
+        if nm and (fxmap.get(nm) or {}).get("anim") == "slide_up":
+            return fxmap[nm]
+        return None
+
     for c in captions:
         if not c["text"].strip():
             continue
         ev = bg_event(d, "Sub", c["text"], c["a"], min(c["b"], dur))
         if ev:
             lines.append(ev)
-        txt = styled_text(c["text"], mc, d.get("color") or [], d.get("outline") or [])
+        toks = c.get("toks") or [{"s": -1, "t": c["text"]}]
+        if effects and fxmap:
+            txt = emit_caption_text(toks, mc, base_sub, effects, fxmap, w, px_sub)
+        else:
+            txt = styled_text(c["text"], mc, d.get("color") or [], d.get("outline") or [])
+        wa = whole_anim(toks) if (effects and fxmap) else None
+        if wa:
+            # 下からスライドして現れる(まとまり単位。原文 L134)
+            ms = int(float(wa.get("anim_dur") or 0.3) * 1000)
+            x = int(round(w * float(d.get("x_pct") or 50) / 100))
+            y = int(round(h * float(d.get("y_pct") or 50) / 100))
+            dy = int(round(h * 0.045))
+            head = rf"{{\an5\move({x},{y + dy},{x},{y},0,{ms})}}"
+        else:
+            head = pos_tag(d)
         lines.append(f"Dialogue: 1,{ass_time(c['a'])},{ass_time(min(c['b'], dur))},Sub,,0,0,0,,"
-                     f"{pos_tag(d)}{txt}")
+                     f"{head}{txt}")
     return "\n".join(lines) + "\n"
 
 
@@ -435,6 +565,21 @@ def main():
 
     captions, _dur2 = build_captions(clip_tokens(base, g, keeps), keeps, styles)
 
+    # 名前付きエフェクトスタイル(原文 L134)。定義は data/effect_styles.json(全エピソード共通)
+    effects = cur.get("effects") or []
+    fxmap = {}
+    fx_path = pathlib.Path(root) / "effect_styles.json"
+    if effects and fx_path.is_file():
+        try:
+            for st_ in (json.loads(fx_path.read_text(encoding="utf-8")).get("styles") or []):
+                props = dict(st_.get("props") or {})
+                fn_ = props.get("font")
+                if fn_ and (FONTS_DIR / fn_).is_file():
+                    props["_family"] = font_family_name(FONTS_DIR / fn_)
+                fxmap[str(st_.get("name"))] = props
+        except (OSError, json.JSONDecodeError):
+            pass
+
     ff = ffmpeg_with_subtitles()
     gen = pathlib.Path(idpaths.gen_dir(str(base)))
 
@@ -479,7 +624,8 @@ def main():
 
         ass_path = gen / f"clip_{args.key}_{args.seg}_{size_key}.ass"
         ass_path.write_text(
-            build_ass(w, h, stl, cfg, captions, dur, families),
+            build_ass(w, h, stl, cfg, captions, dur, families,
+                      effects=effects, fxmap=fxmap),
             encoding="utf-8")
 
         # フィルタ内のパス引用を避けるため、ass はファイル名だけ渡して cwd を generated/ にする
