@@ -8,6 +8,7 @@ __pycache__/
 # edit_save_journal.jsonl(復旧用の受信ジャーナル)は端末ローカルに残し git 外
 data/**
 !data/effect_styles.json
+!data/style_sets.json
 !data/*/
 !data/*/edit/
 !data/*/edit/*.json

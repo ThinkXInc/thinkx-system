@@ -3281,6 +3281,59 @@ EFFECT_STYLE_KEYS = {"size_pct", "color", "outline", "outline_w", "shadow_w",
                      "shadow_color", "font", "bold", "anim", "anim_dur"}
 
 
+STYLE_SET_KEYS = {"color", "outline", "outline_w", "shadow_w", "shadow_color",
+                  "font", "bold", "size_pct", "width_pct", "x_pct", "y_pct",
+                  "bg_on", "bg_color", "bg_pad", "bg_pad_v", "bg_radius", "bg_alpha"}
+
+
+def style_sets_path():
+    return os.path.join(DATA_DIR, "style_sets.json")
+
+
+def load_style_sets():
+    """タイトル+字幕の設定セット(原文 L143)。全エピソード共通の1ファイル。
+    last_selected = 最後に選ばれたセット名(次回の既定)。"""
+    doc = _load_json(style_sets_path(), None) or {}
+    sets = []
+    for x in (doc.get("sets") or []):
+        if isinstance(x, dict) and x.get("name"):
+            sets.append({"name": str(x["name"]),
+                         "title": x.get("title") or {}, "sub": x.get("sub") or {}})
+    return {"sets": sets, "last_selected": str(doc.get("last_selected") or "")}
+
+
+def save_style_sets(payload):
+    sets = payload.get("sets")
+    if not isinstance(sets, list) or len(sets) > 20:
+        return False
+    clean = []
+    for x in sets:
+        name = str((x or {}).get("name") or "").strip()
+        if not name or len(name) > 40 or "<" in name:
+            return False
+        row = {"name": name}
+        for el in ("title", "sub"):
+            d = {k: v for k, v in ((x or {}).get(el) or {}).items()
+                 if k in STYLE_SET_KEYS and v is not None}
+            for k in ("color", "outline"):
+                if k in d:
+                    cols = [str(c) for c in (d[k] or [])][:2]
+                    if not cols or not all(re.fullmatch(r"#[0-9a-fA-F]{6}", c) for c in cols):
+                        return False
+                    d[k] = cols
+            if "shadow_color" in d and \
+                    not re.fullmatch(r"#[0-9a-fA-F]{6}", str(d["shadow_color"])):
+                return False
+            if "font" in d and ("/" in str(d["font"]) or os.sep in str(d["font"])):
+                return False
+            row[el] = d
+        clean.append(row)
+    last = str(payload.get("last_selected") or "")
+    _write_json_atomic(style_sets_path(), {"sets": clean, "last_selected": last})
+    _queue_for_sync(style_sets_path())
+    return True
+
+
 def effect_styles_path():
     return os.path.join(DATA_DIR, "effect_styles.json")
 
@@ -3554,9 +3607,11 @@ def list_clip_backgrounds():
                   if n.lower().endswith((".mp4", ".mov", ".m4v", ".webm")))
 
 
-def resolve_clip_style(cfg, sub_style, fonts):
+def resolve_clip_style(cfg, sub_style, fonts, set_style=None):
     """スタイル調整パネル(原文 L126)の実効値。保存済み cfg['style'] を既定値に重ねる。
-    make_clip_video.py 側の resolve と同じ既定を共有する。"""
+    make_clip_video.py 側の resolve と同じ既定を共有する。
+    set_style は最後に選ばれたスタイルセット(原文 L143)。カード自身の保存値が
+    まだ無いときだけ既定として敷く(一度でも保存すれば cfg['style'] が正)。"""
     legacy_font = cfg.get("font") or (fonts[0] if fonts else "")
     base = {
         "sub": {"color": ["#ffffff"], "outline": ["#000000"], "outline_w": 8,
@@ -3576,6 +3631,10 @@ def resolve_clip_style(cfg, sub_style, fonts):
     out = {}
     for k, d in base.items():
         merged = dict(d)
+        if not st and set_style:
+            for kk, vv in (set_style.get(k) or {}).items():
+                if vv is not None:
+                    merged[kk] = vv
         for kk, vv in (st.get(k) or {}).items():
             if vv is not None:
                 merged[kk] = vv
@@ -3599,6 +3658,9 @@ def render_clip_videos(idv, key):
     clips = sorted(cur.get("clips") or [], key=lambda c: (c[0], c[1]))
     styles = load_clip_styles()
     fx_styles = load_effect_styles()
+    style_sets = load_style_sets()
+    last_set_name = style_sets.get("last_selected") or ""
+    last_set = next((x for x in style_sets["sets"] if x["name"] == last_set_name), None)
     effects_cur = cur.get("effects") or []
     fonts = list_clip_fonts()
     bgs = list_clip_backgrounds()
@@ -3684,7 +3746,8 @@ def render_clip_videos(idv, key):
             f"<p class='meta'>書き出しサイズ {size_boxes}</p>")
         # スタイル調整パネル(原文 L126)+ライブプレビュー(位置はドラッグ指定。原文 L128)。
         # 書き出しに時間がかかるため、見た目は CSS で即時に確認し、書き出し時に ASS へ変換する
-        stl = resolve_clip_style(cfg, sub_style, fonts)
+        stl = resolve_clip_style(cfg, sub_style, fonts,
+                                 set_style=None if cfg.get("style") else last_set)
         prev_bg = cfg.get("background") or (bgs[0] if bgs else "")
 
         def _srow(el_key, label, d):
@@ -3743,7 +3806,17 @@ def render_clip_videos(idv, key):
             "</div>"
             "<div class='meta' style='font-size:11px'>テキストをドラッグで位置調整（中央に吸着）</div>"
             "</div>"
-            f"<div class='cvstyles'>{_srow('title', 'タイトル', stl['title'])}{_srow('sub', '字幕', stl['sub'])}"
+            f"<div class='cvstyles'>"
+            "<div class='meta' style='margin-bottom:6px'>スタイルセット "
+            f"<select class='cvset' onchange='cvSetApply({n})'>"
+            "<option value=''>（選択）</option>"
+            + "".join(f"<option{' selected' if x['name'] == last_set_name else ''}>"
+                      f"{esc(x['name'])}</option>" for x in style_sets["sets"])
+            + "</select>"
+            f"　<input class='cvsetname' placeholder='名前を付けて保存' style='width:130px'>"
+            f"<button class='gbtn' onclick='cvSetSave({n})'>セット保存</button>"
+            "　<span class='cvsetstat'></span></div>"
+            f"{_srow('title', 'タイトル', stl['title'])}{_srow('sub', '字幕', stl['sub'])}"
             "<div class='meta' style='font-size:11px'>プレビューは CSS による近似。最終の見た目は書き出しで確認</div>"
             "</div></div>")
         # 書き出し済みの動画（再生ウインドウ。原文 L68）。毎回上書き・溜めない(原文 L124)。
@@ -3818,6 +3891,7 @@ def render_clip_videos(idv, key):
         "<script>"
         f"var CV_SIZES={json.dumps(size_map)};"
         f"var CV_FX={_js(fx_styles)};var CV_EFFECTS={_js(effects_cur)};"
+        f"var CV_SETS={_js(style_sets)};"
         # ---- スタイルの収集(保存形式は make_clip_video と共有) ----
         "function cvStyleGet(card,el){var o={};"
         "card.querySelectorAll(\".cvstrow[data-el='\"+el+\"'] .cvst\").forEach(function(i){"
@@ -4148,6 +4222,41 @@ def render_clip_videos(idv, key):
         "if(ev.target.closest('#fxmodal'))cvFxPrev();});"
         "document.addEventListener('change',function(ev){"
         "if(ev.target.closest('#fxmodal'))cvFxPrev();});"
+        # スタイルセット(原文 L143)。選択=カードの入力へ流し込み+last_selected 更新。
+        # セット保存=今のタイトル/字幕設定一式を名前で保持(同名は上書き)
+        "function cvSetFill(card,el,d){var row=card.querySelector(\".cvstrow[data-el='\"+el+\"']\");"
+        "function S(k,v){var i=row.querySelector(\"[data-k='\"+k+\"']\");if(!i)return;"
+        "if(i.type==='checkbox')i.checked=!!v;else if(v!=null)i.value=v;}"
+        "var c=d.color||['#ffffff'],o=d.outline||['#000000'];"
+        "S('c1',c[0]);S('c2',c[1]||c[0]);S('grad',c.length>1);"
+        "S('o1',o[0]);S('o2',o[1]||o[0]);S('ograd',o.length>1);"
+        "S('ow',d.outline_w);S('sw',d.shadow_w);S('sc',d.shadow_color);"
+        "S('font',d.font);S('bold',d.bold);S('size',d.size_pct);S('w',d.width_pct);"
+        "S('x',d.x_pct);S('y',d.y_pct);"
+        "S('bgon',d.bg_on);S('bgc',d.bg_color);S('bga',d.bg_alpha);"
+        "S('bgp',d.bg_pad);S('bgpv',d.bg_pad_v);S('bgr',d.bg_radius);"
+        "row.querySelector('.cvst-c2').style.display=c.length>1?'':'none';"
+        "row.querySelector('.cvst-o2').style.display=o.length>1?'':'none';}"
+        "function cvSetsPost(then){fetch(window.APP+'/style_sets',{method:'POST',"
+        "headers:{'Content-Type':'application/json'},body:JSON.stringify(CV_SETS)})"
+        ".then(function(r){if(r.ok&&then)then();});}"
+        "function cvSetApply(n){var card=document.getElementById('cv'+n);"
+        "var nm=card.querySelector('.cvset').value;if(!nm)return;"
+        "var st=null;CV_SETS.sets.forEach(function(x){if(x.name===nm)st=x;});if(!st)return;"
+        "cvSetFill(card,'title',st.title||{});cvSetFill(card,'sub',st.sub||{});"
+        "CV_SETS.last_selected=nm;cvSetsPost(null);"
+        "cvApplyPrev(n);cvSave(n);}"
+        "function cvSetSave(n){var card=document.getElementById('cv'+n);"
+        "var el=card.querySelector('.cvsetstat');"
+        "var nm=(card.querySelector('.cvsetname').value||'').trim()"
+        "||card.querySelector('.cvset').value;"
+        "if(!nm){el.textContent='セット名を入れてください';return;}"
+        "var st={name:nm,title:cvStyleGet(card,'title'),sub:cvStyleGet(card,'sub')};"
+        "var i=-1;CV_SETS.sets.forEach(function(x,ix){if(x.name===nm)i=ix;});"
+        "if(i<0){if(CV_SETS.sets.length>=20){el.textContent='セットは20個まで';return;}"
+        "CV_SETS.sets.push(st);}else CV_SETS.sets[i]=st;"
+        "CV_SETS.last_selected=nm;"
+        "el.textContent='保存中…';cvSetsPost(function(){location.reload();});}"
         "document.addEventListener('DOMContentLoaded',cvTint);"
         "</script>")
     return page(f"動画の作成 {idv}", "".join(parts))
@@ -4630,6 +4739,15 @@ def route_clip_videos():
 def route_clip_save():
     try:
         ok = apply_clip_save(request.get_json(force=True) or {})
+    except Exception:
+        ok = False
+    return _text("ok" if ok else "ng", 200 if ok else 400)
+
+
+@app.post("/style_sets")
+def route_style_sets():
+    try:
+        ok = save_style_sets(request.get_json(force=True) or {})
     except Exception:
         ok = False
     return _text("ok" if ok else "ng", 200 if ok else 400)
