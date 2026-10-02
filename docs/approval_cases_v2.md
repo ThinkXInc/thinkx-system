@@ -383,6 +383,11 @@ ask と deny のルールは hook の allow に勝つ。
   サーバーごとに書くか「dev サーバー共通 1 本 + 対象名のホワイトリスト引数」かは作る時に決める(2 つに散らさない)。
 - **残るゲート**: なし(可逆なプロセス管理)。
 - **同型カウント**: dev サーバー/mock の停止・起動は M・V・AL で **3 回目 → 昇格条件に達した**。スクリプト未着手のまま対象が 3 つに増えた。
+- **再発(2026-10-02・5 回目)**: `cd .../podcast/web-server && nohup venv/bin/python main.py > <scratchpad>/podweb.log 2>&1 &` →
+  `sleep 2 && curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8010/ && curl -s 'http://127.0.0.1:8010/clip_videos?...' | head -c 300`。
+  起動(AL)+ 起動待ち + GET の code と本文確認(AM の型)が 1 つながりで出た = 作るべきスクリプトの要件そのもの
+  (起動/停止 + readiness 待ち + code + 本文の文字列有無)。ポートは今回 8010(固定集合は 5000/5050/8008/8010/8012 に拡大)。
+  localhost GET はこれで **8 回目**。
 
 ### AM. ローカル JSON の中身確認(python3 -c)+ dev ページの文字列有無(curl GET)
 - **生**: `python3 -c "import json; d=json.load(open('data/新宿7-11才能と創造/edit/transcript_edits.json')); print('root edits after revert:', d['edits'])" && curl -s 'http://127.0.0.1:8012/clip_videos?id=...&key=...' | grep -o '版 2026[^<]*\|0分12秒\|元時刻アンカー検証' | head -5`
@@ -394,6 +399,12 @@ ask と deny のルールは hook の allow に勝つ。
   dev サーバー用はポート(5000/5050/8012 の固定集合)+ パス + 文字列を受ける 1 本に AH・Z・本件を畳める。
 - **残るゲート**: なし。
 - **同型カウント**: localhost curl の GET 観測は C・E・M・V・AH(+再発)・AM で **7 回目**。
+- **再発(2026-10-02・9 回目)**: `cd .../podcast && curl -s 'http://127.0.0.1:8010/clip_videos?...' > <scratchpad>/cv.html && python3 - <<'PYEOF' ...
+  for k in ["cvblk","cvtok",...]: print(k, h.count(k)) ... print(h[i-120:i+260]) PYEOF`。
+  ページを scratchpad に保存して出現回数と前後文脈を見る変種。見る項目が毎回違う(有無 → 件数 → 文脈)ことが確定したので、
+  dev 観測スクリプトは分析まで抱え込まず **「code を出し、本文を scratchpad のファイルに保存する」まで**を受け持つのがよい。
+  保存後の分析は Read / Grep ツールで承認なしにできる(python heredoc も不要になる)。引き金は curl 1 語なので、
+  取得だけ畳めば残りは全部止まらない。
 
 ### AN. main.py から関数を python heredoc で削除 + import 確認 + dev へ curl POST
 - **生**: `python3 - <<'EOF' ... s=open('web-server/main.py').read(); start=s.index('def clip_full_text('); end=s.index('\n\n\ndef ', start); s=s[:start]+s[end+3:]; open(p,'w').write(s) EOF` → `venv/bin/python -c "...import main; print('import ok')" && curl -s -X POST 'http://127.0.0.1:8012/clip_suggest?id=...&key=...'`
@@ -405,6 +416,11 @@ ask と deny のルールは hook の allow に勝つ。
   localhost への POST は GET と違い「見るだけ」でない(dev の処理を起動する)ので、裁定済みの安全枠(GET 限定)の外。
   dev 相手の可逆な操作なので承認が出ても 1 回で済む形(dev 観測スクリプトに「POST は持たせない」を維持)が正しい。
 - **残るゲート**: localhost POST の承認(軽いが、観測スクリプトには畳まない)。
+- **再発(2026-10-02・localhost POST 2・3 回目)**: `curl -s -X POST http://127.0.0.1:8010/effect_styles -d '{...スタイル定義...}'` と
+  `curl -s -X POST http://127.0.0.1:8010/clip_save -d '{"op":"effects",...}'`(どちらも切り抜きのエフェクト機能のデバッグ)。
+  dev のデータを変える操作なので承認を残す判断は維持。ただし同じ機能のデバッグで POST → JSON 確認(python3 -c = Read の再発明)→
+  設定 cat が繰り返されており、**機能側のテストを固定スクリプト(podcast/scripts または web-server/tests)に置けば**
+  可視コマンドが python/bash になり curl の ask にも当たらず、手順も diff に残る。R の結論(テストはスクリプト化)と同じ。
 - **同型カウント**: heredoc 編集 4 回目。「Edit を使え」が実行者に毎回届く場所(CLAUDE.md)に無いことが継続原因(T・V と同じカタログ問題。
   2026-10-01 に CLAUDE.md への追記文面を提案済み・オーナー判断待ち)。
 
