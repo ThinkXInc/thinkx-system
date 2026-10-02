@@ -249,11 +249,11 @@ def build_captions(tokens, keeps, styles):
             cur = None
         if cur is None:
             cur = {"a": a, "b": max(b, a), "text": w["t"],
-                   "toks": [{"s": w["s"], "t": w["t"]}]}
+                   "tokens": [{"s": w["s"], "t": w["t"]}]}
         else:
             cur["text"] += w["t"]
             cur["b"] = max(cur["b"], b)
-            cur["toks"].append({"s": w["s"], "t": w["t"]})
+            cur["tokens"].append({"s": w["s"], "t": w["t"]})
         if cur["text"] and cur["text"][-1] in "。．！？!?":
             caps.append(cur)
             cur = None
@@ -267,7 +267,7 @@ def build_captions(tokens, keeps, styles):
     return caps, dur
 
 
-def emit_caption_text(toks, max_chars_n, base, effects, fxmap, w, px_base):
+def emit_caption_text(tokens, max_chars_n, base, effects, fxmap, w, px_base):
     """キャプション本文を1文字ずつ組み立てる(原文 L134)。
     各トークンは effects([{a,b,style}] 元音源時刻)に当たれば名前付きスタイルの
     上書き(サイズ・色/グラデ・縁・影・フォント・太字・ポップ)を受ける。
@@ -277,86 +277,87 @@ def emit_caption_text(toks, max_chars_n, base, effects, fxmap, w, px_base):
     def styles_of(tok_s):
         """このトークンに重なる全スタイル名。アニメとスタイルは共存し(原文 L142)、
         広い範囲(=まとまり全体のアニメ)を先に、狭い範囲(=部分スタイル)を後に重ねる。"""
-        ms = [e for e in effects
-              if float(e["a"]) - 0.005 <= tok_s <= float(e["b"]) + 0.005
-              and str(e.get("style")) in fxmap]
-        ms.sort(key=lambda e: -(float(e["b"]) - float(e["a"])))
-        return tuple(str(e["style"]) for e in ms)
+        matched = [effect for effect in effects
+                   if float(effect["a"]) - 0.005 <= tok_s <= float(effect["b"]) + 0.005
+                   and str(effect.get("style")) in fxmap]
+        matched.sort(key=lambda effect: -(float(effect["b"]) - float(effect["a"])))
+        return tuple(str(effect["style"]) for effect in matched)
 
     # 文字列に展開(文字ごとのスタイル名の組)
     chars = []
-    for tk in toks:
-        nm = styles_of(float(tk["s"]))
-        for ch in tk["t"]:
-            chars.append((ch, nm))
+    for token in tokens:
+        style_names = styles_of(float(token["s"]))
+        for ch in token["t"]:
+            chars.append((ch, style_names))
     # 折り返し位置(基準文字数)
     if max_chars_n < 4:
         max_chars_n = 4
     total = max(1, len(chars) - 1)
 
-    def props_of(nms):
-        if not nms:
+    def props_of(style_names):
+        if not style_names:
             return base
-        q = dict(base)
-        for nm in nms:
-            q.update({k: v for k, v in fxmap.get(nm, {}).items() if v is not None})
-        return q
+        merged = dict(base)
+        for name in style_names:
+            merged.update({k: v for k, v in fxmap.get(name, {}).items()
+                           if v is not None})
+        return merged
 
-    def run_tags(q, nm, run_len_info=None):
-        px = max(1, int(round(w * float(q["size_pct"]) / 100)))
-        ow = round(float(q.get("outline_w") or 0) * scale, 1)
-        sw = round(float(q.get("shadow_w") or 0) * scale, 1)
-        fam = q.get("_family") or ""
+    def run_tags(merged, style_names):
+        px = max(1, int(round(w * float(merged["size_pct"]) / 100)))
+        ow = round(float(merged.get("outline_w") or 0) * scale, 1)
+        sw = round(float(merged.get("shadow_w") or 0) * scale, 1)
+        fam = merged.get("_family") or ""
         t = rf"\fs{px}\bord{ow}\shad{sw}"
-        t += r"\b1" if q.get("bold") else r"\b0"
+        t += r"\b1" if merged.get("bold") else r"\b0"
         if fam:
             t += rf"\fn{fam}"
-        sr, sg, sb = _hex_rgb(q.get("shadow_color") or "#000000")
+        sr, sg, sb = _hex_rgb(merged.get("shadow_color") or "#000000")
         t += rf"\4c&H{sb:02X}{sg:02X}{sr:02X}&"
-        oc = (q.get("outline") or ["#000000"])
+        oc = (merged.get("outline") or ["#000000"])
         if len(oc) < 2:
             r, g, b = _hex_rgb(oc[0])
             t += rf"\3c&H{b:02X}{g:02X}{r:02X}&"
-        fc = (q.get("color") or ["#ffffff"])
+        fc = (merged.get("color") or ["#ffffff"])
         if len(fc) < 2:
             r, g, b = _hex_rgb(fc[0])
             t += rf"\c&H{b:02X}{g:02X}{r:02X}&"
         # ポップ(拡大アニメ)。スライドはまとまり単位のみ(イベント移動のため)
-        if nm and q.get("anim") == "pop":
-            ms = int(float(q.get("anim_dur") or 0.25) * 1000)
+        if style_names and merged.get("anim") == "pop":
+            ms = int(float(merged.get("anim_dur") or 0.25) * 1000)
             t += rf"\fscx20\fscy20\t(0,{ms},\fscx100\fscy100)"
         else:
             t += r"\fscx100\fscy100"
         return "{" + t + "}"
 
     out = []
-    cur_nm = object()   # 強制的に先頭でタグを吐く
-    col = 0
-    gi = 0
-    for ch, nm in chars:
-        if col >= max_chars_n:
+    current_names = object()   # 強制的に先頭でタグを吐く
+    current_props = None
+    column = 0
+    char_index = 0
+    for ch, style_names in chars:
+        if column >= max_chars_n:
             out.append(r"\N")
-            col = 0
-        if nm != cur_nm:
-            q = props_of(nm)
-            out.append(run_tags(q, nm))
-            cur_nm = nm
-            cur_q = q
+            column = 0
+        if style_names != current_names:
+            current_props = props_of(style_names)
+            out.append(run_tags(current_props, style_names))
+            current_names = style_names
         # グラデーション(スタイルのスコープ内で全体に補間)
-        fc = (cur_q.get("color") or ["#ffffff"])
-        oc = (cur_q.get("outline") or ["#000000"])
+        fc = (current_props.get("color") or ["#ffffff"])
+        oc = (current_props.get("outline") or ["#000000"])
         tags = ""
         if len(fc) > 1:
-            r, g, b = _lerp_hex(fc[0], fc[1], gi / total)
+            r, g, b = _lerp_hex(fc[0], fc[1], char_index / total)
             tags += rf"\c&H{b:02X}{g:02X}{r:02X}&"
         if len(oc) > 1:
-            r, g, b = _lerp_hex(oc[0], oc[1], gi / total)
+            r, g, b = _lerp_hex(oc[0], oc[1], char_index / total)
             tags += rf"\3c&H{b:02X}{g:02X}{r:02X}&"
         if tags:
             out.append("{" + tags + "}")
         out.append(ch)
-        col += 1
-        gi += 1
+        column += 1
+        char_index += 1
     return "".join(out)
 
 
@@ -441,13 +442,14 @@ def build_ass(w, h, stl, cfg, captions, dur, families, effects=None, fxmap=None)
                 f"b 0 {f(bh)} 0 {f(bh)} 0 {f(bh - r_)} "
                 f"l 0 {f(r_)} "
                 f"b 0 0 0 0 {f(r_)} 0")
-        br, bgg, bb = _hex_rgb(d.get("bg_color") or "#000000")
-        op = d.get("bg_alpha")
-        op = 100.0 if op is None else float(op)
-        aa = max(0, min(255, int(round(255 * (1 - op / 100)))))
+        bg_red, bg_green, bg_blue = _hex_rgb(d.get("bg_color") or "#000000")
+        opacity = d.get("bg_alpha")
+        opacity = 100.0 if opacity is None else float(opacity)
+        alpha_hex = max(0, min(255, int(round(255 * (1 - opacity / 100)))))
         return (f"Dialogue: 0,{ass_time(t0)},{ass_time(t1)},{style_name},,0,0,0,,"
                 rf"{{\an7\pos({x0:.1f},{y0:.1f})\p1\bord0\shad0"
-                rf"\1c&H{bb:02X}{bgg:02X}{br:02X}&\1a&H{aa:02X}&}}{path}{{\p0}}")
+                rf"\1c&H{bg_blue:02X}{bg_green:02X}{bg_red:02X}&"
+                rf"\1a&H{alpha_hex:02X}&}}{path}{{\p0}}")
 
     title = (cfg.get("title") or "").strip()
     if title:
@@ -465,16 +467,16 @@ def build_ass(w, h, stl, cfg, captions, dur, families, effects=None, fxmap=None)
     base_sub = dict(d, _family=families["sub"])
     px_sub = px_of(d)
 
-    def whole_anim(toks):
+    def whole_anim(tokens):
         """slide_up のスタイルがまとまりの全トークンを覆っていれば返す(原文 L142。
         内側に部分スタイルが重なっていてもスライドは生きる)。"""
-        for e in effects:
-            pr = fxmap.get(str(e.get("style"))) or {}
-            if pr.get("anim") != "slide_up":
+        for effect in effects:
+            props = fxmap.get(str(effect.get("style"))) or {}
+            if props.get("anim") != "slide_up":
                 continue
-            if all(float(e["a"]) - 0.005 <= float(tk["s"]) <= float(e["b"]) + 0.005
-                   for tk in toks):
-                return pr
+            if all(float(effect["a"]) - 0.005 <= float(token["s"]) <= float(effect["b"]) + 0.005
+                   for token in tokens):
+                return props
         return None
 
     for c in captions:
@@ -483,12 +485,12 @@ def build_ass(w, h, stl, cfg, captions, dur, families, effects=None, fxmap=None)
         ev = bg_event(d, "Sub", c["text"], c["a"], min(c["b"], dur))
         if ev:
             lines.append(ev)
-        toks = c.get("toks") or [{"s": -1, "t": c["text"]}]
+        tokens = c.get("tokens") or [{"s": -1, "t": c["text"]}]
         if effects and fxmap:
-            txt = emit_caption_text(toks, mc, base_sub, effects, fxmap, w, px_sub)
+            txt = emit_caption_text(tokens, mc, base_sub, effects, fxmap, w, px_sub)
         else:
             txt = styled_text(c["text"], mc, d.get("color") or [], d.get("outline") or [])
-        wa = whole_anim(toks) if (effects and fxmap) else None
+        wa = whole_anim(tokens) if (effects and fxmap) else None
         if wa:
             # 下からスライドして現れる(まとまり単位。原文 L134)
             ms = int(float(wa.get("anim_dur") or 0.3) * 1000)
@@ -511,6 +513,9 @@ def main():
     ap.add_argument("--sizes", required=True,
                     help="例 1080x1920,1080x1080（clip_styles.json の key をカンマ区切り）")
     ap.add_argument("--out", default=None, help="出力パス（単一サイズのときのみ）")
+    ap.add_argument("--quick", action="store_true",
+                    help="クイックプレビュー(原文 L147/L148): 1/3 サイズ・先頭10秒・"
+                         "音なし・速い設定で generated/clip_<key>_quick_* へ出す")
     ap.add_argument("--export", action="store_true",
                     help="contents/clip/<KEY>/ にファイル名規則（タイトル_長さ_規格）で書き出す（C-9）")
     args = ap.parse_args()
@@ -571,12 +576,12 @@ def main():
     fx_path = pathlib.Path(root) / "effect_styles.json"
     if effects and fx_path.is_file():
         try:
-            for st_ in (json.loads(fx_path.read_text(encoding="utf-8")).get("styles") or []):
-                props = dict(st_.get("props") or {})
-                fn_ = props.get("font")
-                if fn_ and (FONTS_DIR / fn_).is_file():
-                    props["_family"] = font_family_name(FONTS_DIR / fn_)
-                fxmap[str(st_.get("name"))] = props
+            for style_def in (json.loads(fx_path.read_text(encoding="utf-8")).get("styles") or []):
+                props = dict(style_def.get("props") or {})
+                font_file = props.get("font")
+                if font_file and (FONTS_DIR / font_file).is_file():
+                    props["_family"] = font_family_name(FONTS_DIR / font_file)
+                fxmap[str(style_def.get("name"))] = props
         except (OSError, json.JSONDecodeError):
             pass
 
@@ -587,7 +592,7 @@ def main():
     audio_in = media
     audio_seek = ["-ss", f"{keeps[0][0]:.3f}", "-t", f"{dur:.3f}"]
     concat_wav = None
-    if len(keeps) > 1:
+    if len(keeps) > 1 and not args.quick:
         concat_wav = gen / f"clip_{args.key}_{args.seg}_audio.part.wav"
         with tempfile.TemporaryDirectory(dir=str(gen)) as td:
             tdp = pathlib.Path(td)
@@ -610,6 +615,9 @@ def main():
         if size is None:
             sys.exit(f"[clipvid] 未知のサイズ規格: {size_key}")
         w, h = int(size["w"]), int(size["h"])
+        if args.quick:
+            # 1/3 サイズ(偶数丸め)。見た目チェック用の実描画(原文 L147/L148)
+            w, h = (w // 3) // 2 * 2, (h // 3) // 2 * 2
         if args.export:
             # ファイル名はタイトル・長さ・サイズ規格から（原文 L71）
             title = (cfg.get("title") or f"クリップ{args.seg + 1}").strip()
@@ -617,12 +625,16 @@ def main():
             out = base / "contents" / "clip" / args.key / name
         elif args.out:
             out = pathlib.Path(args.out)
+        elif args.quick:
+            out = pathlib.Path(
+                idpaths.save(str(base), f"clip_{args.key}_quick_{args.seg}_{size_key}.mp4"))
         else:
             out = pathlib.Path(
                 idpaths.save(str(base), f"clip_{args.key}_preview_{args.seg}_{size_key}.mp4"))
         out.parent.mkdir(parents=True, exist_ok=True)
 
-        ass_path = gen / f"clip_{args.key}_{args.seg}_{size_key}.ass"
+        ass_path = gen / (f"clip_{args.key}_{args.seg}_{size_key}"
+                          f"{'_quick' if args.quick else ''}.ass")
         ass_path.write_text(
             build_ass(w, h, stl, cfg, captions, dur, families,
                       effects=effects, fxmap=fxmap),
@@ -632,23 +644,37 @@ def main():
         vf = (f"scale={w}:{h}:force_original_aspect_ratio=increase,crop={w}:{h},setsar=1,fps=30,"
               f"subtitles=filename={ass_path.name}:fontsdir='{FONTS_DIR}'")
         tmp = out.with_name(out.name + ".part.mp4")
-        cmd = ([ff, "-hide_banner", "-loglevel", "error", "-y",
-                "-stream_loop", "-1", "-i", str(bg)]
-               + audio_seek + ["-i", str(audio_in),
-               "-map", "0:v", "-map", "1:a", "-t", f"{dur:.3f}",
-               "-vf", vf,
-               "-c:v", "libx264", "-preset", "medium", "-crf", "20", "-pix_fmt", "yuv420p",
-               "-c:a", "aac", "-b:a", "192k",
-               str(tmp)])
+        if args.quick:
+            # 数秒で返すための設定(原文 L148)。先頭10秒・音なし・速いプリセット
+            dur_out = min(dur, 10.0)
+            cmd = ([ff, "-hide_banner", "-loglevel", "error", "-y",
+                    "-stream_loop", "-1", "-i", str(bg),
+                    "-map", "0:v", "-an", "-t", f"{dur_out:.3f}",
+                    "-vf", vf,
+                    "-c:v", "libx264", "-preset", "veryfast", "-crf", "23",
+                    "-pix_fmt", "yuv420p", str(tmp)])
+        else:
+            # 文字のエッジが中間フレームで潰れないよう crf 17 + aq-mode=3
+            # (crf 20 で字幕の縁が荒れる実測。原文 L146・2026-10-02)
+            dur_out = dur
+            cmd = ([ff, "-hide_banner", "-loglevel", "error", "-y",
+                    "-stream_loop", "-1", "-i", str(bg)]
+                   + audio_seek + ["-i", str(audio_in),
+                   "-map", "0:v", "-map", "1:a", "-t", f"{dur:.3f}",
+                   "-vf", vf,
+                   "-c:v", "libx264", "-preset", "medium", "-crf", "17",
+                   "-x264-params", "aq-mode=3", "-pix_fmt", "yuv420p",
+                   "-c:a", "aac", "-b:a", "192k",
+                   str(tmp)])
         subprocess.run(cmd, cwd=str(gen), check=True)
 
         probe = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration",
                                 "-of", "default=noprint_wrappers=1:nokey=1", str(tmp)],
                                capture_output=True, text=True)
         actual = float(probe.stdout.strip() or 0)
-        if abs(actual - dur) > 2.0:
+        if abs(actual - dur_out) > 2.0:
             tmp.unlink(missing_ok=True)
-            sys.exit(f"[clipvid] 出力尺が不一致（指定{dur:.1f}s / 実際{actual:.1f}s）")
+            sys.exit(f"[clipvid] 出力尺が不一致（指定{dur_out:.1f}s / 実際{actual:.1f}s）")
         tmp.replace(out)
         print(f"[clipvid] done {size_key} / {dur:.1f}s / 字幕フォント {families['sub']} -> {out}",
               flush=True)
