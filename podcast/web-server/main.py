@@ -366,8 +366,18 @@ CLIP_CSS = """
 .cvsetrow .gbtn { margin-left:14px; }
 /* クイックプレビュー(原文 L147-L149)。縦長だけを静的プレビューの右に同じ高さで出す */
 .cvqcol { flex:0 0 auto; }
+.cvquick { position:relative; }
 .cvquick video { height:444px; width:auto; background:#000; border-radius:8px; display:block; }
 .cvqstat { max-width:250px; }
+/* エフェクト位置マーカー(原文 L153)。赤=テキストスタイル・青=アニメーション。
+   プレーヤーのシークバーのすぐ上に重ねる。クリックでその位置へ */
+.cvqmarks { position:absolute; left:10px; right:10px; bottom:42px; height:12px;
+            pointer-events:none; }
+.cvqdot { position:absolute; top:1px; width:9px; height:9px; border-radius:50%;
+          transform:translateX(-50%); cursor:pointer; pointer-events:auto;
+          box-shadow:0 0 0 1.5px #ffffffcc; }
+.cvqdot-deco { background:#e53935; }
+.cvqdot-anim { background:#1e88e5; }
 /* 全文のまとまり(=字幕1枚)とエフェクト割当(原文 L134) */
 .cvblk { border-radius:4px; }
 .cvblk:hover { outline:1px dashed #1a73e866; }
@@ -3723,6 +3733,7 @@ def render_clip_videos(idv, key):
                      "区間を指定してください。</p>")
     default_sizes = [s["key"] for s in sizes if s.get("default_on")]
     quick_maps = {}
+    quick_keeps = {}   # 元音源時刻→プレビュー時刻の変換用(エフェクト位置マーカー。原文 L153)
     for n, row in enumerate(clips):
         cs, ce = float(row[0]), float(row[1])
         row_drops = row[2] if len(row) > 2 else []
@@ -3762,6 +3773,7 @@ def render_clip_videos(idv, key):
             if os.path.isfile(quick_path):
                 quick_map[size_def["key"]] = int(os.path.getmtime(quick_path))
         quick_maps[str(n)] = quick_map
+        quick_keeps[str(n)] = [[round(ka, 3), round(kb, 3)] for ka, kb in row_keeps]
         # このセグメント専用のタイトル候補(原文 L123)。見出し行の上にボタン・下に3つ横並び
         # 全文は字幕のまとまりごとに全角スペースで区切る(原文 L134)。まとめ方は
         # 書き出し側 build_captions と同じ関数で、表示と動画の区切りがずれない
@@ -3964,6 +3976,7 @@ def render_clip_videos(idv, key):
         f"var CV_FX={_js(fx_styles)};var CV_EFFECTS={_js(effects_cur)};"
         f"var CV_SETS={_js(style_sets)};"
         f"var CV_QUICK={_js(quick_maps)};var CV_QON={'true' if CLIP_RENDER_ENABLED else 'false'};"
+        f"var CV_KEEPS={_js(quick_keeps)};"
         # ---- スタイルの収集(保存形式は make_clip_video と共有) ----
         "function cvStyleGet(card,el){var o={};"
         "card.querySelectorAll(\".cvstrow[data-el='\"+el+\"'] .cvst\").forEach(function(i){"
@@ -4143,7 +4156,8 @@ def render_clip_videos(idv, key):
         "if(decoEffect){var j=cvFxIdx(decoEffect.style);"
         "t.style.background=CV_PAL[(j<0?0:j)%CV_PAL.length];"
         "t.style.borderRadius='3px';t.style.padding='0 1px';t.title=decoEffect.style;}"
-        "else{t.style.background='';t.style.padding='';t.removeAttribute('title');}});});}"
+        "else{t.style.background='';t.style.padding='';t.removeAttribute('title');}});});"
+        "cvQuickMarksAll();}"
         "function cvFxAssignSave(){var q=new URLSearchParams(location.search);"
         "fetch(window.APP+'/clip_save',{method:'POST',headers:{'Content-Type':'application/json'},"
         "body:JSON.stringify({id:q.get('id'),key:q.get('key'),op:'effects',effects:CV_EFFECTS})});}"
@@ -4369,7 +4383,8 @@ def render_clip_videos(idv, key):
         "Object.keys(mtimes).forEach(function(sizeKey){"
         "html+=\"<video controls muted autoplay loop playsinline\""
         "+\" src='\"+cvQuickUrl(n,sizeKey)+'?v='+mtimes[sizeKey]+\"'></video>\";});"
-        "host.innerHTML=html;}"
+        "if(html)html+=\"<div class='cvqmarks'></div>\";"
+        "host.innerHTML=html;cvQuickMarks(n);}"
         "var cvQT={},cvQPend={},cvQPoll={};"
         "function cvQuickKick(n){if(!CV_QON)return;"
         "clearTimeout(cvQT[n]);cvQT[n]=setTimeout(function(){cvQuickStart(n);},800);}"
@@ -4383,7 +4398,7 @@ def render_clip_videos(idv, key):
         ".then(function(r){return r.text();}).then(function(state){"
         "if(state==='already_running'){cvQPend[n]=1;return;}"
         "if(state!=='started'){if(st)st.textContent='';return;}"
-        "if(st)st.textContent='実描画プレビューを生成中…';"
+        "if(st)st.textContent='描画プレビューを生成中…';"
         "clearInterval(cvQPoll[n]);cvQPoll[n]=setInterval(function(){"
         "fetch(window.APP+'/clip_quick_status?id='+encodeURIComponent(q.get('id'))"
         "+'&key='+encodeURIComponent(q.get('key'))+'&seg='+n)"
@@ -4391,11 +4406,37 @@ def render_clip_videos(idv, key):
         "if(state==='running')return;clearInterval(cvQPoll[n]);"
         "if(state==='done'){var mtimes=CV_QUICK[String(n)]=CV_QUICK[String(n)]||{};"
         "var now=Date.now();sizes.forEach(function(sizeKey){mtimes[sizeKey]=now;});"
-        "cvQuickDraw(n);if(st)st.textContent='実描画プレビュー(全編・音なし)';}"
-        "else if(st)st.textContent='実描画プレビューを生成できません';"
+        "cvQuickDraw(n);if(st)st.textContent='描画プレビュー';}"
+        "else if(st)st.textContent='描画プレビューを生成できません';"
         "if(cvQPend[n]){cvQPend[n]=0;cvQuickStart(n);}});},1000);});}"
         "document.addEventListener('DOMContentLoaded',function(){"
         "Object.keys(CV_QUICK).forEach(function(n){cvQuickDraw(+n);});});"
+        # エフェクト位置マーカー(原文 L153)。赤=テキストスタイル・青=アニメーション。
+        # 元音源時刻を keep の累積でプレビュー時刻へ変換し、クリックでその位置へ飛ぶ
+        "function cvViewTime(n,srcSec){var ks=CV_KEEPS[String(n)]||[];var off=0;"
+        "for(var i=0;i<ks.length;i++){var k=ks[i];"
+        "if(srcSec<=k[1])return off+Math.max(0,Math.min(srcSec,k[1])-k[0]);"
+        "off+=k[1]-k[0];}return off;}"
+        "function cvClipDur(n){var ks=CV_KEEPS[String(n)]||[];var off=0;"
+        "ks.forEach(function(k){off+=k[1]-k[0];});return off;}"
+        "function cvQuickMarks(n){var card=document.getElementById('cv'+n);if(!card)return;"
+        "var host=card.querySelector('.cvqmarks');if(!host)return;"
+        "var ks=CV_KEEPS[String(n)]||[];var dur=cvClipDur(n);if(!dur)return;"
+        "var html='';"
+        "CV_EFFECTS.forEach(function(e){"
+        "var hit=ks.some(function(k){return e.b>=k[0]&&e.a<=k[1];});if(!hit)return;"
+        "var p=cvFxProps(e.style)||{};var anim=!!p.anim;"
+        "var t=cvViewTime(n,e.a);"
+        "html+=\"<span class='cvqdot \"+(anim?'cvqdot-anim':'cvqdot-deco')"
+        "+\"' title='\"+cvEsc(e.style)+\"' data-t='\"+t.toFixed(2)"
+        "+\"' style='left:\"+(t/dur*100).toFixed(2)+\"%'></span>\";});"
+        "host.innerHTML=html;}"
+        "function cvQuickMarksAll(){Object.keys(CV_KEEPS).forEach(function(n){"
+        "cvQuickMarks(+n);});}"
+        "document.addEventListener('click',function(ev){"
+        "var dot=ev.target.closest('.cvqdot');if(!dot)return;"
+        "var video=dot.closest('.cvquick').querySelector('video');if(!video)return;"
+        "video.currentTime=Math.max(0,parseFloat(dot.dataset.t)-0.3);video.play();});"
         "document.addEventListener('DOMContentLoaded',cvTint);"
         "</script>")
     return page(f"動画の作成 {idv}", "".join(parts))
