@@ -3555,7 +3555,7 @@ CLIP_VID_RENDERS = {}
 
 def start_clip_video_render(idv, key, seg, sizes, export=False, quick=False):
     """make_clip_video.py をバックグラウンドで走らせる（C-8 生成 / C-9 書き出し。
-    quick=小サイズ・先頭10秒・音なしの実描画プレビュー。原文 L147/L148）。"""
+    quick=小サイズ・全編・音なしの実描画プレビュー。原文 L147/L148/L151）。"""
     import subprocess
     if not CLIP_RENDER_ENABLED:
         return "disabled"
@@ -4379,7 +4379,7 @@ def render_clip_videos(idv, key):
         "if(state==='running')return;clearInterval(cvQPoll[n]);"
         "if(state==='done'){var mtimes=CV_QUICK[String(n)]=CV_QUICK[String(n)]||{};"
         "var now=Date.now();sizes.forEach(function(sizeKey){mtimes[sizeKey]=now;});"
-        "cvQuickDraw(n);if(st)st.textContent='実描画プレビュー(先頭10秒・音なし)';}"
+        "cvQuickDraw(n);if(st)st.textContent='実描画プレビュー(全編・音なし)';}"
         "else if(st)st.textContent='実描画プレビューを生成できません';"
         "if(cvQPend[n]){cvQPend[n]=0;cvQuickStart(n);}});},1000);});}"
         "document.addEventListener('DOMContentLoaded',function(){"

@@ -586,7 +586,7 @@ def main():
                     help="例 1080x1920,1080x1080（clip_styles.json の key をカンマ区切り）")
     ap.add_argument("--out", default=None, help="出力パス（単一サイズのときのみ）")
     ap.add_argument("--quick", action="store_true",
-                    help="クイックプレビュー(原文 L147/L148): 1/3 サイズ・先頭10秒・"
+                    help="クイックプレビュー(原文 L147/L148/L151): 1/3 サイズ・全編・"
                          "音なし・速い設定で generated/clip_<key>_quick_* へ出す")
     ap.add_argument("--export", action="store_true",
                     help="contents/clip/<KEY>/ にファイル名規則（タイトル_長さ_規格）で書き出す（C-9）")
@@ -717,8 +717,8 @@ def main():
               f"subtitles=filename={ass_path.name}:fontsdir='{FONTS_DIR}'")
         tmp = out.with_name(out.name + ".part.mp4")
         if args.quick:
-            # 数秒で返すための設定(原文 L148)。先頭10秒・音なし・速いプリセット
-            dur_out = min(dur, 10.0)
+            # 速く返すための設定(原文 L148)。全編(原文 L151)・音なし・速いプリセット
+            dur_out = dur
             cmd = ([ff, "-hide_banner", "-loglevel", "error", "-y",
                     "-stream_loop", "-1", "-i", str(bg),
                     "-map", "0:v", "-an", "-t", f"{dur_out:.3f}",
