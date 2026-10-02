@@ -396,6 +396,9 @@ ask と deny のルールは hook の allow に勝つ。
   今回は引き金が明確(`$(lsof ...)` のコマンド置換)。wrapper が出来た直後に別セッションで生コマンドが出た =
   T・U・AK と同じ**カタログ問題の実例**(スクリプトの存在が実行者に届いていない)。CLAUDE.md からの参照(文面提案済み・
   オーナー判断待ち)が入るまで再発は続く見込み。
+- **再発(2026-10-02・8・9 回目)**: 同型(`$(lsof)` + kill + nohup + curl)が連続再出(8 回目は heredoc 編集 5 回目と同じ 1 コマンド、
+  9 回目は単独)。devserver.py 新設後も案内が無い限り使われないことの 2・3 例目。**これ以上の収録は数の更新のみとし、
+  解はカタログ(CLAUDE.md 参照)の設置に移っている。**
 
 ### AM. ローカル JSON の中身確認(python3 -c)+ dev ページの文字列有無(curl GET)
 - **生**: `python3 -c "import json; d=json.load(open('data/新宿7-11才能と創造/edit/transcript_edits.json')); print('root edits after revert:', d['edits'])" && curl -s 'http://127.0.0.1:8012/clip_videos?id=...&key=...' | grep -o '版 2026[^<]*\|0分12秒\|元時刻アンカー検証' | head -5`
@@ -434,6 +437,11 @@ ask と deny のルールは hook の allow に勝つ。
   テスト固定スクリプト化(作る→検証→後片付けまで 1 本)の判断を強める。podcast トラックへの提案事項。
 - **同型カウント**: heredoc 編集 4 回目。「Edit を使え」が実行者に毎回届く場所(CLAUDE.md)に無いことが継続原因(T・V と同じカタログ問題。
   2026-10-01 に CLAUDE.md への追記文面を提案済み・オーナー判断待ち)。
+- **再発(2026-10-02・heredoc 編集 5 回目)**: main.py のモーダル HTML / CSS / JS(文字列定数)を 5 箇所、python heredoc の
+  `rep(old,new)`(assert count==1 付き)で置換 → `ast.parse` で構文確認 → `$(lsof)` で再起動 → curl。置換の中身自体は丁寧
+  (一意性 assert・ラベル付き)だが、**Edit ツールなら同じ安全性が承認ゼロ・diff 可視で得られる**。assert 方式は失敗時に
+  5 箇所全部が止まり、成功しても変更が git diff にしか残らない(レビューは可能だが、どの置換がどれかは消える)。
+  ast.parse の構文確認は止まらないのでそのままでよい。
 
 ### AO. dev サーバー停止 + main.py 埋め込み JS(CLIP_JS)を scratchpad へ書き出し
 - **生**: `lsof -ti :8012 | xargs kill 2>/dev/null; sleep 1; cd .../podcast/web-server && venv/bin/python -c "import main; open('<scratchpad>/cl6.js','w').write(main.CLIP_JS)"`(podcast セッション 2026-10-01・AL と同じセッション)
