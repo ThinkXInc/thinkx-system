@@ -388,6 +388,14 @@ ask と deny のルールは hook の allow に勝つ。
   起動(AL)+ 起動待ち + GET の code と本文確認(AM の型)が 1 つながりで出た = 作るべきスクリプトの要件そのもの
   (起動/停止 + readiness 待ち + code + 本文の文字列有無)。ポートは今回 8010(固定集合は 5000/5050/8008/8010/8012 に拡大)。
   localhost GET はこれで **8 回目**。
+- **再発(2026-10-02・6 回目)**: `lsof -nP -a -p <pid> -iTCP -sTCP:LISTEN; kill <pid>; sleep 1; cd .../podcast/web-server && nohup venv/bin/python ... & sleep 2; lsof -nP -iTCP:8010 -sTCP:LISTEN | tail -1; curl ... '%{http_code}' http://127.0.0.1:8010/`。
+  6 回目で昇格を実施: **`infra/scripts/devserver.py` 新設(2026-10-02)**。status / start / stop / restart / get。対象は固定集合
+  (podcast 8010・podcast2 8012・thinkx 5000)、GET のみ、stop は python プロセス限定のグループ TERM(:5000 の AirPlay を
+  巻き込まない)、本文は --save で保存して Read/Grep で分析。
+- **再発(2026-10-02・7 回目。devserver.py 新設の直後)**: `PID=$(lsof -tnP -iTCP:8010 -sTCP:LISTEN) && kill $PID; sleep 1; cd web-server && nohup ...`。
+  今回は引き金が明確(`$(lsof ...)` のコマンド置換)。wrapper が出来た直後に別セッションで生コマンドが出た =
+  T・U・AK と同じ**カタログ問題の実例**(スクリプトの存在が実行者に届いていない)。CLAUDE.md からの参照(文面提案済み・
+  オーナー判断待ち)が入るまで再発は続く見込み。
 
 ### AM. ローカル JSON の中身確認(python3 -c)+ dev ページの文字列有無(curl GET)
 - **生**: `python3 -c "import json; d=json.load(open('data/新宿7-11才能と創造/edit/transcript_edits.json')); print('root edits after revert:', d['edits'])" && curl -s 'http://127.0.0.1:8012/clip_videos?id=...&key=...' | grep -o '版 2026[^<]*\|0分12秒\|元時刻アンカー検証' | head -5`
@@ -421,6 +429,8 @@ ask と deny のルールは hook の allow に勝つ。
   dev のデータを変える操作なので承認を残す判断は維持。ただし同じ機能のデバッグで POST → JSON 確認(python3 -c = Read の再発明)→
   設定 cat が繰り返されており、**機能側のテストを固定スクリプト(podcast/scripts または web-server/tests)に置けば**
   可視コマンドが python/bash になり curl の ask にも当たらず、手順も diff に残る。R の結論(テストはスクリプト化)と同じ。
+- **再発(2026-10-02・localhost POST 4・5 回目)**: 同じエフェクト機能の後片付け(`POST /clip_save` effects:[] と `POST /effect_styles` styles:[])+
+  python3 -c の JSON 確認。テスト固定スクリプト化(作る→検証→後片付けまで 1 本)の判断を強める。
 - **同型カウント**: heredoc 編集 4 回目。「Edit を使え」が実行者に毎回届く場所(CLAUDE.md)に無いことが継続原因(T・V と同じカタログ問題。
   2026-10-01 に CLAUDE.md への追記文面を提案済み・オーナー判断待ち)。
 
@@ -447,8 +457,9 @@ ask と deny のルールは hook の allow に勝つ。
   本番で実測済み・staging は停止中のため到達不可の FAIL 報告を確認)。`push_env.sh` に配布結果の検証を内蔵(値は出さない。事例 Q の畳み込み)。
 - **新規事例**: AL(dev サーバー再起動・昇格条件到達)・AM(localhost GET 7 回目)・AN(heredoc 編集 4 回目・localhost POST)・
   AO(dev サーバー停止 4 回目・埋め込みコード切り出し 2 回目)。引き金不明のローカル系は AG・AJ・AL・AO の 4 件、全て要実測のまま。
-- **次の一手(未着手)**: dev サーバーの起動/観測スクリプト(AL+AM+AH。ポート固定集合・readiness・code+文字列有無)、
-  stg.py 拡張(AK: 再起動時刻・絶対時刻窓)、カタログ(infra/scripts/README.md 一覧 + CLAUDE.md 参照 — 文面提案済み)。
+- **着手済み(2026-10-02 追加)**: `infra/scripts/devserver.py` 新設(AL+AM+AH の畳み込み。dev 停止・起動 6 回目で昇格実施)。
+- **次の一手(未着手)**: stg.py 拡張(AK: 再起動時刻・絶対時刻窓)、カタログ(infra/scripts/README.md 一覧 + CLAUDE.md 参照 — 文面提案済み)、
+  podcast エフェクト機能のテスト固定スクリプト(AN 再発 ×5 — podcast トラック側へ提案)。
 - **未決(オーナー選択待ち)**: 記録ファイルの settings の変え方(事例 AA の案 1〜3)。前提の実測 2026-10-01:
   `docs/coding_guides/**` は **deny に入っていない**(ask の `docs/**` で止まっているだけ)。ask を外すなら規範の deny を併せて張る必要がある。
   タイプ 6 以降(書き方の規律・引き金不明・Chrome 拡張)はオーナー指示で保留。
