@@ -181,8 +181,11 @@ def cmd_restart(args: argparse.Namespace) -> int:
 
 
 def cmd_get(args: argparse.Namespace) -> int:
+    import urllib.parse
+    # 日本語クエリをそのまま受ける(エンコード済みの % は safe なので二重エンコードしない)
+    args.path = urllib.parse.quote(args.path, safe="/%?&=+-._")
     if not PATH_OK.match(args.path):
-        return fail(f"get: パスの形式が不正(先頭 / ・空白や引用符は不可): {args.path}")
+        return fail(f"get: パスの形式が不正(先頭 / ・引用符は不可): {args.path}")
     if not 1 <= args.repeat <= 10:
         return fail("get: --repeat は 1..10")
     port = SERVERS[args.name][0]

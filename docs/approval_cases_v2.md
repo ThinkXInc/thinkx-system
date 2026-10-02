@@ -429,8 +429,9 @@ ask と deny のルールは hook の allow に勝つ。
   dev のデータを変える操作なので承認を残す判断は維持。ただし同じ機能のデバッグで POST → JSON 確認(python3 -c = Read の再発明)→
   設定 cat が繰り返されており、**機能側のテストを固定スクリプト(podcast/scripts または web-server/tests)に置けば**
   可視コマンドが python/bash になり curl の ask にも当たらず、手順も diff に残る。R の結論(テストはスクリプト化)と同じ。
-- **再発(2026-10-02・localhost POST 4・5 回目)**: 同じエフェクト機能の後片付け(`POST /clip_save` effects:[] と `POST /effect_styles` styles:[])+
-  python3 -c の JSON 確認。テスト固定スクリプト化(作る→検証→後片付けまで 1 本)の判断を強める。
+- **再発(2026-10-02・localhost POST 4〜6 回目)**: 同じエフェクト機能の後片付け(`POST /clip_save` effects:[] と `POST /effect_styles` styles:[])が
+  繰り返し出た(6 回目は + awk/sed/grep のコード確認 — こちらは止まらない)。python3 -c の JSON 確認(Read の再発明)も毎回同乗。
+  テスト固定スクリプト化(作る→検証→後片付けまで 1 本)の判断を強める。podcast トラックへの提案事項。
 - **同型カウント**: heredoc 編集 4 回目。「Edit を使え」が実行者に毎回届く場所(CLAUDE.md)に無いことが継続原因(T・V と同じカタログ問題。
   2026-10-01 に CLAUDE.md への追記文面を提案済み・オーナー判断待ち)。
 
