@@ -123,14 +123,16 @@ def resolve_style(cfg, sub_style):
     legacy_font = cfg.get("font") or ""
     base = {
         "sub": {"color": ["#ffffff"], "outline": ["#000000"], "outline_w": 8,
-                "shadow_w": 3, "shadow_color": "#000000", "font": legacy_font,
+                "shadow_x": 3, "shadow_y": 3, "shadow_blur": 0,
+                "shadow_color": "#000000", "font": legacy_font,
                 "bold": True,
                 "size_pct": float(cfg.get("size_pct") or sub_style.get("font_size_pct") or 8.3),
                 "width_pct": 86, "x_pct": 50, "y_pct": 62,
                 "bg_on": False, "bg_color": "#000000", "bg_pad": 24, "bg_pad_v": 8,
                 "bg_radius": 16, "bg_alpha": 70},
         "title": {"color": ["#ffffff"], "outline": ["#000000"], "outline_w": 6,
-                  "shadow_w": 2, "shadow_color": "#000000", "font": legacy_font,
+                  "shadow_x": 2, "shadow_y": 2, "shadow_blur": 0,
+                  "shadow_color": "#000000", "font": legacy_font,
                   "bold": True, "size_pct": 6.4, "width_pct": 84, "x_pct": 50, "y_pct": 20,
                   "bg_on": False, "bg_color": "#000000", "bg_pad": 24, "bg_pad_v": 8,
                   "bg_radius": 16, "bg_alpha": 70},
@@ -139,9 +141,13 @@ def resolve_style(cfg, sub_style):
     out = {}
     for k, d in base.items():
         merged = dict(d)
-        for kk, vv in (st.get(k) or {}).items():
+        saved = st.get(k) or {}
+        for kk, vv in saved.items():
             if vv is not None:
                 merged[kk] = vv
+        # 旧データの移行(原文 L150): 影が1値(shadow_w)の保存なら X/Y に読み替える
+        if "shadow_w" in saved and "shadow_x" not in saved:
+            merged["shadow_x"] = merged["shadow_y"] = saved["shadow_w"]
         out[k] = merged
     return out
 
@@ -267,7 +273,8 @@ def build_captions(tokens, keeps, styles):
     return caps, dur
 
 
-def emit_caption_text(tokens, max_chars_n, base, effects, fxmap, w, px_base):
+def emit_caption_text(tokens, max_chars_n, base, effects, fxmap, w, px_base,
+                      force_color=None):
     """キャプション本文を1文字ずつ組み立てる(原文 L134)。
     各トークンは effects([{a,b,style}] 元音源時刻)に当たれば名前付きスタイルの
     上書き(サイズ・色/グラデ・縁・影・フォント・太字・ポップ)を受ける。
@@ -306,12 +313,30 @@ def emit_caption_text(tokens, max_chars_n, base, effects, fxmap, w, px_base):
     def run_tags(merged, style_names):
         px = max(1, int(round(w * float(merged["size_pct"]) / 100)))
         ow = round(float(merged.get("outline_w") or 0) * scale, 1)
-        sw = round(float(merged.get("shadow_w") or 0) * scale, 1)
         fam = merged.get("_family") or ""
-        t = rf"\fs{px}\bord{ow}\shad{sw}"
+        t = rf"\fs{px}\bord{ow}"
         t += r"\b1" if merged.get("bold") else r"\b0"
         if fam:
             t += rf"\fn{fam}"
+        if force_color:
+            # 影レイヤー用(原文 L150): 本体色・縁色とも影色のシルエットにして、
+            # 影の広がり(blur)だけをこのレイヤーで表現する
+            blur = round(float(merged.get("shadow_blur") or 0) * scale, 1)
+            r, g, b = _hex_rgb(force_color)
+            t += (rf"\xshad0\yshad0\blur{blur}"
+                  rf"\c&H{b:02X}{g:02X}{r:02X}&\3c&H{b:02X}{g:02X}{r:02X}&")
+            if merged.get("anim") == "pop":
+                anim_ms = int(float(merged.get("anim_dur") or 0.25) * 1000)
+                t += rf"\fscx20\fscy20\t(0,{anim_ms},\fscx100\fscy100)"
+            else:
+                t += r"\fscx100\fscy100"
+            return "{" + t + "}"
+        if float(merged.get("shadow_blur") or 0) > 0:
+            shadow_x = shadow_y = 0   # ぼかし影は別レイヤーが描く(二重影の防止)
+        else:
+            shadow_x = round(float(merged.get("shadow_x") or 0) * scale, 1)
+            shadow_y = round(float(merged.get("shadow_y") or 0) * scale, 1)
+        t += rf"\xshad{shadow_x}\yshad{shadow_y}"
         sr, sg, sb = _hex_rgb(merged.get("shadow_color") or "#000000")
         t += rf"\4c&H{sb:02X}{sg:02X}{sr:02X}&"
         oc = (merged.get("outline") or ["#000000"])
@@ -343,9 +368,9 @@ def emit_caption_text(tokens, max_chars_n, base, effects, fxmap, w, px_base):
             current_props = props_of(style_names)
             out.append(run_tags(current_props, style_names))
             current_names = style_names
-        # グラデーション(スタイルのスコープ内で全体に補間)
-        fc = (current_props.get("color") or ["#ffffff"])
-        oc = (current_props.get("outline") or ["#000000"])
+        # グラデーション(スタイルのスコープ内で全体に補間)。影レイヤーでは色を焼かない
+        fc = [] if force_color else (current_props.get("color") or ["#ffffff"])
+        oc = [] if force_color else (current_props.get("outline") or ["#000000"])
         tags = ""
         if len(fc) > 1:
             r, g, b = _lerp_hex(fc[0], fc[1], char_index / total)
@@ -371,23 +396,31 @@ def build_ass(w, h, stl, cfg, captions, dur, families, effects=None, fxmap=None)
         return max(1, int(round(w * float(d["size_pct"]) / 100)))
 
     def style_line(name, d, fam):
+        # 影はイベント側の \xshad \yshad が常に上書きするため Style 行は 0(原文 L150)
         px = px_of(d)
         bold = -1 if d.get("bold") else 0
         ow = round(float(d.get("outline_w") or 0) * scale, 1)
-        sw = round(float(d.get("shadow_w") or 0) * scale, 1)
         return (f"Style: {name},{fam},{px},{ass_colour((d.get('color') or ['#ffffff'])[0])},"
                 f"&H000000FF,{ass_colour((d.get('outline') or ['#000000'])[0])},"
                 f"{ass_colour(d.get('shadow_color') or '#000000')},"
-                f"{bold},0,0,0,100,100,0,0,1,{ow},{sw},5,20,20,20,1")
+                f"{bold},0,0,0,100,100,0,0,1,{ow},0,5,20,20,20,1")
 
     def max_chars(d):
         # テキストボックスの幅はスタイルの width_pct(画面幅に対する%)が決める(原文 L130)
         return max(2, int((w * float(d.get("width_pct") or 86) / 100) // px_of(d)))
 
+    def shadow_offsets(d):
+        """影の X/Y ずらし(1080 幅基準 px → 実寸。原文 L150)。"""
+        return (round(float(d.get("shadow_x") or 0) * scale, 1),
+                round(float(d.get("shadow_y") or 0) * scale, 1))
+
     def pos_tag(d):
         x = int(round(w * float(d.get("x_pct") or 50) / 100))
         y = int(round(h * float(d.get("y_pct") or 50) / 100))
-        return rf"{{\an5\pos({x},{y})}}"
+        shadow_x, shadow_y = shadow_offsets(d)
+        if float(d.get("shadow_blur") or 0) > 0:
+            shadow_x = shadow_y = 0   # ぼかし影は別レイヤーが描く(二重影の防止)
+        return rf"{{\an5\pos({x},{y})\xshad{shadow_x}\yshad{shadow_y}}}"
 
     lines = [
         "[Script Info]",
@@ -451,12 +484,35 @@ def build_ass(w, h, stl, cfg, captions, dur, families, effects=None, fxmap=None)
                 rf"\1c&H{bg_blue:02X}{bg_green:02X}{bg_red:02X}&"
                 rf"\1a&H{alpha_hex:02X}&}}{path}{{\p0}}")
 
+    def shadow_head(d, move_ms=None, move_dy=0):
+        """影レイヤーの位置タグ。本体位置を影の X/Y ぶんずらして置く(原文 L150)。"""
+        shadow_x, shadow_y = shadow_offsets(d)
+        x = w * float(d.get("x_pct") or 50) / 100 + shadow_x
+        y = h * float(d.get("y_pct") or 50) / 100 + shadow_y
+        if move_ms:
+            return rf"{{\an5\move({x:.1f},{y + move_dy:.1f},{x:.1f},{y:.1f},0,{move_ms})}}"
+        return rf"{{\an5\pos({x:.1f},{y:.1f})}}"
+
+    def shadow_silhouette_tags(d):
+        """影レイヤーの描画タグ。本体と同じ字形(縁込み)を影色一色で塗り、blur で広げる。
+        \\blur は縁ごと滲むので本体イベントには掛けず、この別レイヤーだけに掛ける。"""
+        ow = round(float(d.get("outline_w") or 0) * scale, 1)
+        blur = round(float(d.get("shadow_blur") or 0) * scale, 1)
+        r, g, b = _hex_rgb(d.get("shadow_color") or "#000000")
+        colour = f"&H{b:02X}{g:02X}{r:02X}&"
+        return (rf"{{\bord{ow}\xshad0\yshad0\blur{blur}"
+                rf"\c{colour}\3c{colour}}}")
+
     title = (cfg.get("title") or "").strip()
     if title:
         d = stl["title"]
         ev = bg_event(d, "Title", title, 0, dur)
         if ev:
             lines.append(ev)
+        if float(d.get("shadow_blur") or 0) > 0:
+            plain = styled_text(title, max_chars(d), [], [])
+            lines.append(f"Dialogue: 0,{ass_time(0)},{ass_time(dur)},Title,,0,0,0,,"
+                         f"{shadow_head(d)}{shadow_silhouette_tags(d)}{plain}")
         txt = styled_text(title, max_chars(d), d.get("color") or [], d.get("outline") or [])
         lines.append(f"Dialogue: 1,{ass_time(0)},{ass_time(dur)},Title,,0,0,0,,"
                      f"{pos_tag(d)}{txt}")
@@ -491,15 +547,31 @@ def build_ass(w, h, stl, cfg, captions, dur, families, effects=None, fxmap=None)
         else:
             txt = styled_text(c["text"], mc, d.get("color") or [], d.get("outline") or [])
         wa = whole_anim(tokens) if (effects and fxmap) else None
+        move_ms = int(float(wa.get("anim_dur") or 0.3) * 1000) if wa else None
+        move_dy = int(round(h * 0.045))
         if wa:
             # 下からスライドして現れる(まとまり単位。原文 L134)
-            ms = int(float(wa.get("anim_dur") or 0.3) * 1000)
             x = int(round(w * float(d.get("x_pct") or 50) / 100))
             y = int(round(h * float(d.get("y_pct") or 50) / 100))
-            dy = int(round(h * 0.045))
-            head = rf"{{\an5\move({x},{y + dy},{x},{y},0,{ms})}}"
+            shadow_x, shadow_y = shadow_offsets(d)
+            if float(d.get("shadow_blur") or 0) > 0:
+                shadow_x = shadow_y = 0   # ぼかし影は別レイヤーが描く
+            head = (rf"{{\an5\move({x},{y + move_dy},{x},{y},0,{move_ms})"
+                    rf"\xshad{shadow_x}\yshad{shadow_y}}}")
         else:
             head = pos_tag(d)
+        if float(d.get("shadow_blur") or 0) > 0:
+            # 広がりのある影は別レイヤー(原文 L150)。本体と同じ動き・同じ字形で影色一色
+            if effects and fxmap:
+                shadow_body = emit_caption_text(
+                    tokens, mc, base_sub, effects, fxmap, w, px_sub,
+                    force_color=d.get("shadow_color") or "#000000")
+            else:
+                shadow_body = (shadow_silhouette_tags(d)
+                               + styled_text(c["text"], mc, [], []))
+            lines.append(
+                f"Dialogue: 0,{ass_time(c['a'])},{ass_time(min(c['b'], dur))},Sub,,0,0,0,,"
+                f"{shadow_head(d, move_ms, move_dy)}{shadow_body}")
         lines.append(f"Dialogue: 1,{ass_time(c['a'])},{ass_time(min(c['b'], dur))},Sub,,0,0,0,,"
                      f"{head}{txt}")
     return "\n".join(lines) + "\n"

@@ -3291,11 +3291,13 @@ def apply_prev_clip(idv, key):
     return "ok"
 
 
-EFFECT_STYLE_KEYS = {"size_pct", "color", "outline", "outline_w", "shadow_w",
+EFFECT_STYLE_KEYS = {"size_pct", "color", "outline", "outline_w",
+                     "shadow_x", "shadow_y", "shadow_blur", "shadow_w",
                      "shadow_color", "font", "bold", "anim", "anim_dur"}
 
 
-STYLE_SET_KEYS = {"color", "outline", "outline_w", "shadow_w", "shadow_color",
+STYLE_SET_KEYS = {"color", "outline", "outline_w", "shadow_w",
+                  "shadow_x", "shadow_y", "shadow_blur", "shadow_color",
                   "font", "bold", "size_pct", "width_pct", "x_pct", "y_pct",
                   "bg_on", "bg_color", "bg_pad", "bg_pad_v", "bg_radius", "bg_alpha"}
 
@@ -3382,7 +3384,8 @@ def save_effect_styles(payload):
                 if not cols or not all(re.fullmatch(r"#[0-9a-fA-F]{6}", c) for c in cols):
                     return False
                 props[k] = cols
-        for k in ("size_pct", "outline_w", "shadow_w", "anim_dur"):
+        for k in ("size_pct", "outline_w", "shadow_w", "shadow_x", "shadow_y",
+                  "shadow_blur", "anim_dur"):
             if k in props:
                 try:
                     props[k] = float(props[k])
@@ -3635,14 +3638,16 @@ def resolve_clip_style(cfg, sub_style, fonts, set_style=None):
     legacy_font = cfg.get("font") or (fonts[0] if fonts else "")
     base = {
         "sub": {"color": ["#ffffff"], "outline": ["#000000"], "outline_w": 8,
-                "shadow_w": 3, "shadow_color": "#000000", "font": legacy_font,
+                "shadow_x": 3, "shadow_y": 3, "shadow_blur": 0,
+                "shadow_color": "#000000", "font": legacy_font,
                 "bold": True,
                 "size_pct": float(cfg.get("size_pct") or sub_style.get("font_size_pct") or 8.3),
                 "width_pct": 86, "x_pct": 50, "y_pct": 62,
                 "bg_on": False, "bg_color": "#000000", "bg_pad": 24, "bg_pad_v": 8,
                 "bg_radius": 16, "bg_alpha": 70},
         "title": {"color": ["#ffffff"], "outline": ["#000000"], "outline_w": 6,
-                  "shadow_w": 2, "shadow_color": "#000000", "font": legacy_font,
+                  "shadow_x": 2, "shadow_y": 2, "shadow_blur": 0,
+                  "shadow_color": "#000000", "font": legacy_font,
                   "bold": True, "size_pct": 6.4, "width_pct": 84, "x_pct": 50, "y_pct": 20,
                   "bg_on": False, "bg_color": "#000000", "bg_pad": 24, "bg_pad_v": 8,
                   "bg_radius": 16, "bg_alpha": 70},
@@ -3655,9 +3660,13 @@ def resolve_clip_style(cfg, sub_style, fonts, set_style=None):
             for kk, vv in (set_style.get(k) or {}).items():
                 if vv is not None:
                     merged[kk] = vv
-        for kk, vv in (st.get(k) or {}).items():
+        saved = st.get(k) or {}
+        for kk, vv in saved.items():
             if vv is not None:
                 merged[kk] = vv
+        # 旧データの移行(原文 L150): 影が1値(shadow_w)の保存なら X/Y に読み替える
+        if "shadow_w" in saved and "shadow_x" not in saved:
+            merged["shadow_x"] = merged["shadow_y"] = saved["shadow_w"]
         out[k] = merged
     return out
 
@@ -3807,8 +3816,12 @@ def render_clip_videos(idv, key):
                 f"<label><input type='checkbox' class='cvst' data-k='ograd'{' checked' if len(o) > 1 else ''}>グラデ</label>"
                 f"　縁太<input type='number' class='cvst' data-k='ow' value='{d.get('outline_w')}'"
                 f" min='0' max='40' step='1' style='width:48px'>"
-                f"　影<input type='number' class='cvst' data-k='sw' value='{d.get('shadow_w')}'"
-                f" min='0' max='40' step='1' style='width:48px'>"
+                f"　影X<input type='number' class='cvst' data-k='sx' value='{d.get('shadow_x')}'"
+                f" min='-40' max='40' step='1' style='width:46px'>"
+                f"Y<input type='number' class='cvst' data-k='sy' value='{d.get('shadow_y')}'"
+                f" min='-40' max='40' step='1' style='width:46px'>"
+                f"ぼかし<input type='number' class='cvst' data-k='sb' value='{d.get('shadow_blur')}'"
+                f" min='0' max='60' step='1' style='width:46px'>"
                 f"<input type='color' class='cvst' data-k='sc' value='{d.get('shadow_color')}'>"
                 f"　<select class='cvst' data-k='font'>{fo}</select>"
                 f"<label><input type='checkbox' class='cvst' data-k='bold'{' checked' if d.get('bold') else ''}>太字</label>"
@@ -3910,8 +3923,12 @@ def render_clip_videos(idv, key):
         " style='width:56px' placeholder='--'>％"
         "　縁太<input id='fx_ow' type='number' step='1' min='0' max='40'"
         " style='width:48px' placeholder='--'>"
-        "　影<input id='fx_sw' type='number' step='1' min='0' max='40'"
-        " style='width:48px' placeholder='--'>"
+        "　影X<input id='fx_sx' type='number' step='1' min='-40' max='40'"
+        " style='width:46px' placeholder='--'>"
+        "Y<input id='fx_sy' type='number' step='1' min='-40' max='40'"
+        " style='width:46px' placeholder='--'>"
+        "ぼかし<input id='fx_sb' type='number' step='1' min='0' max='60'"
+        " style='width:46px' placeholder='--'>"
         "<label><input type='checkbox' id='fx_sc_on'>影色</label>"
         "<input type='color' id='fx_sc' value='#000000'></p>"
         f"<p>フォント<select id='fx_font'><option value=''>（継承）</option>{fo_all}</select>"
@@ -3940,7 +3957,8 @@ def render_clip_videos(idv, key):
         "card.querySelectorAll(\".cvstrow[data-el='\"+el+\"'] .cvst\").forEach(function(i){"
         "o[i.dataset.k]=(i.type==='checkbox')?i.checked:i.value;});"
         "var st={color:o.grad?[o.c1,o.c2]:[o.c1],outline:o.ograd?[o.o1,o.o2]:[o.o1],"
-        "outline_w:parseFloat(o.ow)||0,shadow_w:parseFloat(o.sw)||0,shadow_color:o.sc,"
+        "outline_w:parseFloat(o.ow)||0,shadow_x:parseFloat(o.sx)||0,"
+        "shadow_y:parseFloat(o.sy)||0,shadow_blur:parseFloat(o.sb)||0,shadow_color:o.sc,"
         "font:o.font,bold:!!o.bold,size_pct:parseFloat(o.size)||8,width_pct:parseFloat(o.w)||86,"
         "x_pct:parseFloat(o.x)||50,y_pct:parseFloat(o.y)||50};if('bgon' in o){st.bg_on=!!o.bgon;st.bg_color=o.bgc;st.bg_pad=parseFloat(o.bgp)||0;st.bg_pad_v=parseFloat(o.bgpv)||0;st.bg_radius=parseFloat(o.bgr)||0;st.bg_alpha=(o.bga===''||o.bga==null)?100:parseFloat(o.bga);}"
         "return st;}"
@@ -3997,8 +4015,9 @@ def render_clip_videos(idv, key):
         "sk.textContent=txt;fl.textContent=txt;"
         "var ow=st.outline_w*scale;"
         "sk.style.webkitTextStroke=(ow*2)+'px '+st.outline[0];"
-        "var sw=st.shadow_w*scale;"
-        "sk.style.textShadow=sw?(sw+'px '+sw+'px '+Math.max(1,sw/2)+'px '+st.shadow_color):'none';"
+        "var shx=st.shadow_x*scale,shy=st.shadow_y*scale,shb=st.shadow_blur*scale;"
+        "sk.style.textShadow=(shx||shy||shb)?"
+        "(shx+'px '+shy+'px '+shb+'px '+st.shadow_color):'none';"
         "if(st.color.length>1){fl.style.background='linear-gradient(90deg,'+st.color[0]+','+st.color[1]+')';"
         "fl.style.webkitBackgroundClip='text';fl.style.backgroundClip='text';"
         "fl.style.color='transparent';}"
@@ -4192,7 +4211,9 @@ def render_clip_videos(idv, key):
         "cvG('fx_og').checked=!!(p.outline&&p.outline.length>1);"
         "cvG('fx_size').value=(p.size_pct==null?'':p.size_pct);"
         "cvG('fx_ow').value=(p.outline_w==null?'':p.outline_w);"
-        "cvG('fx_sw').value=(p.shadow_w==null?'':p.shadow_w);"
+        "cvG('fx_sx').value=(p.shadow_x==null?'':p.shadow_x);"
+        "cvG('fx_sy').value=(p.shadow_y==null?'':p.shadow_y);"
+        "cvG('fx_sb').value=(p.shadow_blur==null?'':p.shadow_blur);"
         "cvG('fx_sc_on').checked=!!p.shadow_color;"
         "cvG('fx_sc').value=p.shadow_color||'#000000';"
         "cvG('fx_font').value=p.font||'';"
@@ -4206,7 +4227,9 @@ def render_clip_videos(idv, key):
         "[cvG('fx_o1').value,cvG('fx_o2').value]:[cvG('fx_o1').value];"
         "if(cvG('fx_size').value!=='')p.size_pct=parseFloat(cvG('fx_size').value);"
         "if(cvG('fx_ow').value!=='')p.outline_w=parseFloat(cvG('fx_ow').value);"
-        "if(cvG('fx_sw').value!=='')p.shadow_w=parseFloat(cvG('fx_sw').value);"
+        "if(cvG('fx_sx').value!=='')p.shadow_x=parseFloat(cvG('fx_sx').value);"
+        "if(cvG('fx_sy').value!=='')p.shadow_y=parseFloat(cvG('fx_sy').value);"
+        "if(cvG('fx_sb').value!=='')p.shadow_blur=parseFloat(cvG('fx_sb').value);"
         "if(cvG('fx_sc_on').checked)p.shadow_color=cvG('fx_sc').value;"
         "if(cvG('fx_font').value)p.font=cvG('fx_font').value;"
         "if(cvG('fx_bold').value!=='')p.bold=cvG('fx_bold').value==='1';"
@@ -4256,14 +4279,16 @@ def render_clip_videos(idv, key):
         "var fs=(q.size_pct||base.size_pct)/100*W*0.85;"
         "var col=q.color||base.color;var oc=q.outline||base.outline;"
         "var ow=(q.outline_w!=null?q.outline_w:base.outline_w)*W/1080*2;"
-        "var sw=(q.shadow_w!=null?q.shadow_w:base.shadow_w)*W/1080;"
+        "var shx=(q.shadow_x!=null?q.shadow_x:base.shadow_x)*W/1080;"
+        "var shy=(q.shadow_y!=null?q.shadow_y:base.shadow_y)*W/1080;"
+        "var shb=(q.shadow_blur!=null?q.shadow_blur:base.shadow_blur)*W/1080;"
         "var scol=q.shadow_color||base.shadow_color;"
         # 縁はメインプレビューと同じ2層(stroke層+fill層)。単層の paint-order では
         # グラデ(background-clip:text)が縁の下に沈む(2026-10-02 実測)
         "var st='font-size:'+fs+'px;font-weight:'+((q.bold!=null?q.bold:base.bold)?'700':'400')"
         "+';font-family:'+cvFontFamily(q.font||base.font);"
         "var sk='-webkit-text-stroke:'+(ow*2)+'px '+oc[0]+';color:transparent'"
-        "+(sw?';text-shadow:'+sw+'px '+sw+'px '+Math.max(1,sw/2)+'px '+scol:'');"
+        "+((shx||shy||shb)?';text-shadow:'+shx+'px '+shy+'px '+shb+'px '+scol:'');"
         "var fl='';"
         "if(col.length>1)fl='background:linear-gradient(90deg,'+col[0]+','+col[1]+')"
         ";-webkit-background-clip:text;background-clip:text;color:transparent';"
@@ -4288,7 +4313,10 @@ def render_clip_videos(idv, key):
         "var c=d.color||['#ffffff'],o=d.outline||['#000000'];"
         "S('c1',c[0]);S('c2',c[1]||c[0]);S('grad',c.length>1);"
         "S('o1',o[0]);S('o2',o[1]||o[0]);S('ograd',o.length>1);"
-        "S('ow',d.outline_w);S('sw',d.shadow_w);S('sc',d.shadow_color);"
+        "S('ow',d.outline_w);S('sc',d.shadow_color);"
+        "S('sx',d.shadow_x!=null?d.shadow_x:d.shadow_w);"
+        "S('sy',d.shadow_y!=null?d.shadow_y:d.shadow_w);"
+        "S('sb',d.shadow_blur);"
         "S('font',d.font);S('bold',d.bold);S('size',d.size_pct);S('w',d.width_pct);"
         "S('x',d.x_pct);S('y',d.y_pct);"
         "S('bgon',d.bg_on);S('bgc',d.bg_color);S('bga',d.bg_alpha);"
