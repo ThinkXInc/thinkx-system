@@ -360,6 +360,8 @@ CLIP_CSS = """
           box-shadow:0 4px 16px #0008; }
 :root[data-theme="light"] .cvmenu { background:#fff; border-color:#ddd; }
 .cvmi { padding:6px 14px; cursor:pointer; }
+.cvmi .cvchk { display:inline-block; width:1.2em; visibility:hidden; color:#1a73e8; }
+.cvmi.on .cvchk { visibility:visible; }
 .cvmi:hover { background:#1a73e822; }
 .cvmsep { border-top:1px solid #444; margin:4px 0; }
 :root[data-theme="light"] .cvmsep { border-color:#eee; }
@@ -2087,7 +2089,17 @@ def apply_timeline_save(payload):
     except (TypeError, ValueError):
         return False
     sid = str(payload.get("sid") or "")
+    lk = _segments_lock(base)
+    try:
+        return _apply_timeline_save_locked(base, seg_path, payload, idx, sid)
+    finally:
+        lk.close()
+
+
+def _apply_timeline_save_locked(base, seg_path, payload, idx, sid):
     seg = _load_json(seg_path, {})
+    if not seg.get("segments"):
+        return False   # 壊れた・半端な読み取りには上書きしない(履歴から復旧する)
     changed = False
     for sg in seg.get("segments", []):
         # 対応づけは sid が正（index は細分化・並べ替えで変わるため。2026-08-08）。
@@ -2120,10 +2132,26 @@ def apply_timeline_save(payload):
     if not changed:
         return False
     _append_history(base, seg_path)
-    with open(seg_path, "w", encoding="utf-8") as f:
-        json.dump(seg, f, ensure_ascii=False, indent=2)
+    _write_json_atomic(seg_path, seg)
     _queue_for_sync(seg_path, os.path.join(idpaths.edit_dir(base), "segments_history.jsonl"))
     return True
+
+
+def _segments_lock(base):
+    """segments.json の read-modify-write を直列化する排他ロック。
+    連続 POST の競合による lost-update / 半端読み取り上書きの予防(2026-10-02。
+    clip_save で geometry が消えた実障害と同じ系統)。"""
+    import fcntl
+    lk = open(os.path.join(idpaths.edit_dir(base), ".segments.lock"), "w")
+    fcntl.flock(lk, fcntl.LOCK_EX)
+    return lk
+
+
+def _write_json_atomic(path, doc):
+    tmp = path + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(doc, f, ensure_ascii=False, indent=2)
+    os.replace(tmp, path)
 
 
 def _append_history(base, seg_path):
@@ -2954,7 +2982,17 @@ def apply_decision(idv, cid, action, status_only=False):
         _queue_for_sync(dec_path)
         return True
     seg_path = idpaths.find(base, "segments.json")
+    lk = _segments_lock(base)
+    try:
+        return _apply_decision_locked(dec_path, dec, seg_path, target, action)
+    finally:
+        lk.close()
+
+
+def _apply_decision_locked(dec_path, dec, seg_path, target, action):
     seg = _load_json(seg_path, {})
+    if not seg.get("segments"):
+        return False
     st, en = float(target["start_sec"]), float(target["end_sec"])
     for sg in seg.get("segments", []):
         s0, e0 = sg["start_sec"], sg["end_sec"]
@@ -2969,10 +3007,8 @@ def apply_decision(idv, cid, action, status_only=False):
         else:
             sg["drops"] = [d for d in drops
                            if not (abs(d[0] - cs) < 0.3 and abs(d[1] - ce) < 0.3)]
-    with open(dec_path, "w", encoding="utf-8") as f:
-        json.dump(dec, f, ensure_ascii=False, indent=2)
-    with open(seg_path, "w", encoding="utf-8") as f:
-        json.dump(seg, f, ensure_ascii=False, indent=2)
+    _write_json_atomic(dec_path, dec)
+    _write_json_atomic(seg_path, seg)
     _queue_for_sync(dec_path, seg_path)
     return True
 
@@ -3000,7 +3036,17 @@ def set_seg_flag(idv, sid, field, on):
     except Exception:
         pass
     seg_path = idpaths.find(base, "segments.json")
+    lk = _segments_lock(base)
+    try:
+        return _set_seg_flag_locked(base, seg_path, sid, field, on)
+    finally:
+        lk.close()
+
+
+def _set_seg_flag_locked(base, seg_path, sid, field, on):
     seg = _load_json(seg_path, {})
+    if not seg.get("segments"):
+        return False
     changed = False
     for sg in seg.get("segments", []):
         if sg.get("sid") == sid:
@@ -3012,8 +3058,7 @@ def set_seg_flag(idv, sid, field, on):
     if not changed:
         return False
     _append_history(base, seg_path)
-    with open(seg_path, "w", encoding="utf-8") as f:
-        json.dump(seg, f, ensure_ascii=False, indent=2)
+    _write_json_atomic(seg_path, seg)
     _queue_for_sync(seg_path, os.path.join(idpaths.edit_dir(base), "segments_history.jsonl"))
     return True
 
@@ -3315,7 +3360,21 @@ def apply_clip_save(payload):
     path = idpaths.find(base, f"clip_{key}.json")
     if not os.path.isfile(path):
         return False
+    # read-modify-write を flock で直列化し、本体は tmp→os.replace の原子置換で書く。
+    # 連続 POST の競合で半端な読み取り({})をそのまま書き戻し、geometry ごと消えた
+    # 実障害があった(2026-10-02 実測・原文 L127 と同じ lost-update 系。履歴から復旧済み)
+    import fcntl
+    lock_path = os.path.join(idpaths.edit_dir(base), f".clip_{key}.lock")
+    with open(lock_path, "w") as lk:
+        fcntl.flock(lk, fcntl.LOCK_EX)
+        return _apply_clip_save_locked(base, path, key, payload)
+
+
+def _apply_clip_save_locked(base, path, key, payload):
+    import datetime
     cur = _load_json(path, {})
+    if "geometry" not in cur:
+        return False   # 壊れた・半端な読み取りには上書きしない(履歴から復旧する)
     changed = False
     if "clips" in payload:
         # 切り抜きはこの版の1次形状の範囲内に丸める（元音源時刻。C-17）
@@ -3382,8 +3441,10 @@ def apply_clip_save(payload):
             f.write("\n".join(lines[-200:]) + "\n")
     except Exception:
         pass
-    with open(path, "w", encoding="utf-8") as f:
+    tmp = path + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
         json.dump(cur, f, ensure_ascii=False, indent=2)
+    os.replace(tmp, path)
     _queue_for_sync(path, os.path.join(idpaths.edit_dir(base), f"clip_{key}_history.jsonl"))
     return True
 
@@ -3914,21 +3975,41 @@ def render_clip_videos(idv, key):
         "function cvG(i){return document.getElementById(i);}"
         "function cvEsc(s){var d=document.createElement('span');d.textContent=s;return d.innerHTML;}"
         "function cvFxIdx(nm){for(var i=0;i<CV_FX.length;i++)if(CV_FX[i].name===nm)return i;return -1;}"
-        "function cvFxOf(s){for(var i=0;i<CV_EFFECTS.length;i++){var e=CV_EFFECTS[i];"
-        "if(e.a-0.005<=s&&s<=e.b+0.005)return e;}return null;}"
-        "function cvTint(){document.querySelectorAll('.cvtok').forEach(function(t){"
-        "var e=cvFxOf(parseFloat(t.dataset.s));"
-        "if(e){var i=cvFxIdx(e.style);t.style.background=CV_PAL[(i<0?0:i)%CV_PAL.length];"
-        "t.title=e.style;}else{t.style.background='';t.removeAttribute('title');}});}"
+        "function cvFxProps(nm){var p=null;"
+        "CV_FX.forEach(function(s2){if(s2.name===nm)p=s2.props||{};});return p;}"
+        "function cvOverlap(e,a,b){return !(e.b<a-0.005||e.a>b+0.005);}"
+        # 着色はアニメ=ブロック全体(広いpad)・スタイル=部分(狭いpad)の入れ子(原文 L142)
+        "function cvTint(){document.querySelectorAll('.cvblk').forEach(function(blk){"
+        "var ts=blk.querySelectorAll('.cvtok');if(!ts.length)return;"
+        "var a=parseFloat(ts[0].dataset.s),b=parseFloat(ts[ts.length-1].dataset.s);"
+        "var ae=null;CV_EFFECTS.forEach(function(e){var p=cvFxProps(e.style);"
+        "if(p&&p.anim&&cvOverlap(e,a,b))ae=e;});"
+        "if(ae){var i=cvFxIdx(ae.style);blk.style.background=CV_PAL[(i<0?0:i)%CV_PAL.length];"
+        "blk.style.padding='3px 5px';blk.title=ae.style;}"
+        "else{blk.style.background='';blk.style.padding='';blk.removeAttribute('title');}"
+        "ts.forEach(function(t){var s0=parseFloat(t.dataset.s);var de=null;"
+        "CV_EFFECTS.forEach(function(e){var p=cvFxProps(e.style);"
+        "if(p&&!p.anim&&e.a-0.005<=s0&&s0<=e.b+0.005)de=e;});"
+        "if(de){var j=cvFxIdx(de.style);t.style.background=CV_PAL[(j<0?0:j)%CV_PAL.length];"
+        "t.style.borderRadius='3px';t.style.padding='0 1px';t.title=de.style;}"
+        "else{t.style.background='';t.style.padding='';t.removeAttribute('title');}});});}"
         "function cvFxAssignSave(){var q=new URLSearchParams(location.search);"
         "fetch(window.APP+'/clip_save',{method:'POST',headers:{'Content-Type':'application/json'},"
         "body:JSON.stringify({id:q.get('id'),key:q.get('key'),op:'effects',effects:CV_EFFECTS})});}"
         "function cvFxRemove(r){CV_EFFECTS=CV_EFFECTS.filter(function(e){"
         "return e.b<r.a-0.005||e.a>r.b+0.005;});}"
-        "function cvFxApply(r,nm){if(!r)return;cvFxRemove(r);"
-        "CV_EFFECTS.push({a:r.a,b:r.b,style:nm});"
+        # 割当はトグル(原文 L142)。アニメ付きスタイルは常にブロック全体(blockR)へ、
+        # アニメ無しスタイルは選択範囲(r)へ。層(アニメ/スタイル)が違えば共存する
+        "function cvFxApply(r,nm,blockR){if(!r)return;"
+        "var p=cvFxProps(nm)||{};var anim=!!p.anim;var tgt=(anim&&blockR)?blockR:r;"
+        "var hit=CV_EFFECTS.some(function(e){return e.style===nm&&cvOverlap(e,tgt.a,tgt.b);});"
+        "if(hit){CV_EFFECTS=CV_EFFECTS.filter(function(e){"
+        "return !(e.style===nm&&cvOverlap(e,tgt.a,tgt.b));});}"
+        "else{CV_EFFECTS=CV_EFFECTS.filter(function(e){var q=cvFxProps(e.style);"
+        "if((!!(q&&q.anim))!==anim)return true;return !cvOverlap(e,tgt.a,tgt.b);});"
+        "CV_EFFECTS.push({a:tgt.a,b:tgt.b,style:nm});}"
         "CV_EFFECTS.sort(function(x,y){return x.a-y.a;});cvTint();cvFxAssignSave();}"
-        "var cvMenuEl=null,cvMenuRange=null;"
+        "var cvMenuEl=null,cvMenuRange=null,cvMenuBlock=null;"
         "function cvMenuClose(){if(cvMenuEl){cvMenuEl.remove();cvMenuEl=null;}}"
         "document.addEventListener('contextmenu',function(ev){"
         "var blk=ev.target.closest('.cvblk');if(!blk)return;ev.preventDefault();cvMenuClose();"
@@ -3939,9 +4020,15 @@ def render_clip_videos(idv, key):
         "if(!toks.length)return;"
         "var ss=toks.map(function(t){return parseFloat(t.dataset.s);});"
         "cvMenuRange={a:Math.min.apply(null,ss),b:Math.max.apply(null,ss)};"
+        "var bs=[].slice.call(blk.querySelectorAll('.cvtok'))"
+        ".map(function(t){return parseFloat(t.dataset.s);});"
+        "cvMenuBlock={a:Math.min.apply(null,bs),b:Math.max.apply(null,bs)};"
         "var m=document.createElement('div');m.className='cvmenu';var h='';"
-        "CV_FX.forEach(function(st){"
-        "h+=\"<div class='cvmi' data-act='apply'>\"+cvEsc(st.name)+'</div>';});"
+        "CV_FX.forEach(function(st,ix){"
+        "var on=CV_EFFECTS.some(function(e){return e.style===st.name"
+        "&&cvOverlap(e,cvMenuRange.a,cvMenuRange.b);});"
+        "h+=\"<div class='cvmi\"+(on?' on':'')+\"' data-act='apply' data-i='\"+ix+\"'>\""
+        "+\"<span class='cvchk'>✓</span>\"+cvEsc(st.name)+'</div>';});"
         "if(CV_FX.length)h+=\"<div class='cvmsep'></div>\";"
         "h+=\"<div class='cvmi' data-act='new'>新規スタイル定義…</div>\";"
         "h+=\"<div class='cvmi' data-act='edit'>スタイルの編集・削除…</div>\";"
@@ -3952,8 +4039,9 @@ def render_clip_videos(idv, key):
         "document.addEventListener('mousedown',function(ev){"
         "if(cvMenuEl&&!cvMenuEl.contains(ev.target))cvMenuClose();});"
         "document.addEventListener('click',function(ev){var mi=ev.target.closest('.cvmi');"
-        "if(!mi)return;var act=mi.dataset.act,nm=mi.textContent,r=cvMenuRange;cvMenuClose();"
-        "if(act==='apply')cvFxApply(r,nm);"
+        "if(!mi)return;var act=mi.dataset.act,r=cvMenuRange,br=cvMenuBlock;"
+        "var nm=(mi.dataset.i!=null)?CV_FX[+mi.dataset.i].name:'';cvMenuClose();"
+        "if(act==='apply')cvFxApply(r,nm,br);"
         "else if(act==='reset'){cvFxRemove(r);cvTint();cvFxAssignSave();}"
         "else if(act==='new')cvFxEditor('',r);"
         "else if(act==='edit')cvFxEditor(CV_FX.length?CV_FX[0].name:'',null);});"
@@ -4010,7 +4098,7 @@ def render_clip_videos(idv, key):
         "var p=cvFxCollect();var i=cvFxIdx(nm);"
         "if(i<0)CV_FX.push({name:nm,props:p});else CV_FX[i].props=p;"
         "cvFxPost(function(){cvG('fx_stat').textContent='保存しました';"
-        "if(cvEdRange){cvFxApply(cvEdRange,nm);cvEdRange=null;}cvFxEditor(nm,null);"
+        "if(cvEdRange){cvFxApply(cvEdRange,nm,cvMenuBlock);cvEdRange=null;}cvFxEditor(nm,null);"
         "cvG('fx_stat').textContent='保存しました';cvTint();});}"
         "function cvFxDelDef(){var nm=cvG('fx_name').value.trim();var i=cvFxIdx(nm);"
         "if(i<0){cvG('fx_stat').textContent='未保存のスタイルです';return;}"

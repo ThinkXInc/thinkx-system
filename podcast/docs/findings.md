@@ -459,3 +459,11 @@ cut_decisions の該当Cを keep に更新するところまでで1セット
   (journal 実測)。UI からの到達経路は『個別スタイルをリセット』クリックのみだが、
   同一手順の再実行では再現せず。履歴(clip_*_history.jsonl)で復元可能なため続行。
   再発したら cvFxAssignSave の呼び出し元ログを仕込んで特定する。
+- **clip 版ファイルの geometry 消失(2026-10-02・根治済み)**: apply_clip_save は
+  flock 無しの read-modify-write + 非原子書き込みだった。連続 POST の競合で
+  半端な読み取り(JSON 壊れ → _load_json が {})に effects だけ載せて書き戻し、
+  geometry・clips・video が消えた(履歴 jsonl にも壊れた1エントリが残った)。
+  L127 の文字修正消失と同じ lost-update 系。対処: clip_save / timeline_save /
+  decision / seg_flag の segments 系書き込み全部に flock 直列化 + tmp→os.replace
+  原子置換 + 「geometry/segments の無い読み取りには上書きしない」ガード。
+  履歴から完全版を復元済み(10並列 POST の負荷テストで再発しないことを確認)。

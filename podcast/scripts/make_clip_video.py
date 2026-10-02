@@ -274,16 +274,19 @@ def emit_caption_text(toks, max_chars_n, base, effects, fxmap, w, px_base):
     折り返しは基準サイズの文字数で行う(部分的な拡大による幅増は近似のまま)。"""
     scale = w / 1080.0
 
-    def style_of(tok_s):
-        for e in effects:
-            if float(e["a"]) - 0.005 <= tok_s <= float(e["b"]) + 0.005:
-                return e.get("style")
-        return None
+    def styles_of(tok_s):
+        """このトークンに重なる全スタイル名。アニメとスタイルは共存し(原文 L142)、
+        広い範囲(=まとまり全体のアニメ)を先に、狭い範囲(=部分スタイル)を後に重ねる。"""
+        ms = [e for e in effects
+              if float(e["a"]) - 0.005 <= tok_s <= float(e["b"]) + 0.005
+              and str(e.get("style")) in fxmap]
+        ms.sort(key=lambda e: -(float(e["b"]) - float(e["a"])))
+        return tuple(str(e["style"]) for e in ms)
 
-    # 文字列に展開(文字ごとのスタイル名)
+    # 文字列に展開(文字ごとのスタイル名の組)
     chars = []
     for tk in toks:
-        nm = style_of(float(tk["s"]))
+        nm = styles_of(float(tk["s"]))
         for ch in tk["t"]:
             chars.append((ch, nm))
     # 折り返し位置(基準文字数)
@@ -291,12 +294,13 @@ def emit_caption_text(toks, max_chars_n, base, effects, fxmap, w, px_base):
         max_chars_n = 4
     total = max(1, len(chars) - 1)
 
-    def props_of(nm):
-        if nm and nm in fxmap:
-            q = dict(base)
-            q.update({k: v for k, v in fxmap[nm].items() if v is not None})
-            return q
-        return base
+    def props_of(nms):
+        if not nms:
+            return base
+        q = dict(base)
+        for nm in nms:
+            q.update({k: v for k, v in fxmap.get(nm, {}).items() if v is not None})
+        return q
 
     def run_tags(q, nm, run_len_info=None):
         px = max(1, int(round(w * float(q["size_pct"]) / 100)))
@@ -317,7 +321,7 @@ def emit_caption_text(toks, max_chars_n, base, effects, fxmap, w, px_base):
         if len(fc) < 2:
             r, g, b = _hex_rgb(fc[0])
             t += rf"\c&H{b:02X}{g:02X}{r:02X}&"
-        # 部分ポップ(拡大アニメ)。スライドはまとまり単位のみ(イベント移動のため)
+        # ポップ(拡大アニメ)。スライドはまとまり単位のみ(イベント移動のため)
         if nm and q.get("anim") == "pop":
             ms = int(float(q.get("anim_dur") or 0.25) * 1000)
             t += rf"\fscx20\fscy20\t(0,{ms},\fscx100\fscy100)"
@@ -462,19 +466,15 @@ def build_ass(w, h, stl, cfg, captions, dur, families, effects=None, fxmap=None)
     px_sub = px_of(d)
 
     def whole_anim(toks):
-        """まとまり全体が同一スタイルで覆われ、そのスタイルが slide_up のとき返す。"""
-        nm = None
-        for tk in toks:
-            hit = None
-            for e in effects:
-                if float(e["a"]) - 0.005 <= float(tk["s"]) <= float(e["b"]) + 0.005:
-                    hit = e.get("style")
-                    break
-            if hit is None or (nm is not None and hit != nm):
-                return None
-            nm = hit
-        if nm and (fxmap.get(nm) or {}).get("anim") == "slide_up":
-            return fxmap[nm]
+        """slide_up のスタイルがまとまりの全トークンを覆っていれば返す(原文 L142。
+        内側に部分スタイルが重なっていてもスライドは生きる)。"""
+        for e in effects:
+            pr = fxmap.get(str(e.get("style"))) or {}
+            if pr.get("anim") != "slide_up":
+                continue
+            if all(float(e["a"]) - 0.005 <= float(tk["s"]) <= float(e["b"]) + 0.005
+                   for tk in toks):
+                return pr
         return None
 
     for c in captions:
