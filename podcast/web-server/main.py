@@ -348,9 +348,15 @@ CLIP_CSS = """
            padding:4px 13px; }
 :root[data-theme="light"] .cvstrow { background:#f7f7f7; }
 .cvstrow b { margin-right:6px; }
-/* 背景設定と文字設定の区切り(原文 L140) */
-.cvstbg { border-top:1px solid #ffffff26; margin-top:4px; padding-top:2px; }
-:root[data-theme="light"] .cvstbg { border-top-color:#e3e3e3; }
+/* 設定行のグループ(文字/カラー/シャドウ/背景。AE・Illustrator 風の整列。原文 L152)。
+   区切り線は L140 の「背景と文字の区別」を全グループへ一般化したもの */
+.cvsgrp { position:relative; display:flex; align-items:center; gap:4px; flex-wrap:wrap;
+          line-height:2; padding-left:64px; }
+.cvsgrp + .cvsgrp { border-top:1px solid #ffffff14; }
+:root[data-theme="light"] .cvsgrp + .cvsgrp { border-top-color:#ececec; }
+.cvsglabel { position:absolute; left:0; top:0; width:60px; font-weight:700;
+             font-size:11px; opacity:.6; }
+.cvsgrp select { max-width:210px; }
 /* スタイルセット行(原文 L143/L144)。名前入力と保存ボタンは右寄せ・間に間隔 */
 .cvsetrow { display:flex; align-items:center; gap:8px; margin-bottom:6px;
             flex-wrap:wrap; }
@@ -3804,9 +3810,19 @@ def render_clip_videos(idv, key):
             o = (d.get("outline") or ["#000000"])
             c2_hide = "" if len(c) > 1 else " style='display:none'"
             o2_hide = "" if len(o) > 1 else " style='display:none'"
+            # Illustrator / After Effects 風に「文字・カラー・シャドウ・背景」の
+            # ラベル付き行へグループ分けする(原文 L152)。data-k は従来と同一
             return (
                 f"<div class='cvstrow' data-el='{el_key}'><b>{label}</b>"
-                f" 色<input type='color' class='cvst' data-k='c1' value='{c[0]}'>"
+                "<div class='cvsgrp'><span class='cvsglabel'>文字</span>"
+                f"<select class='cvst' data-k='font'>{fo}</select>"
+                f"<label><input type='checkbox' class='cvst' data-k='bold'{' checked' if d.get('bold') else ''}>太字</label>"
+                f"　サイズ<input type='number' class='cvst' data-k='size' value='{d.get('size_pct')}'"
+                f" min='1' max='25' step='0.1' style='width:56px'>％"
+                f"　幅<input type='number' class='cvst' data-k='w' value='{d.get('width_pct')}'"
+                f" min='20' max='100' step='1' style='width:52px'>％</div>"
+                "<div class='cvsgrp'><span class='cvsglabel'>カラー</span>"
+                f"色<input type='color' class='cvst' data-k='c1' value='{c[0]}'>"
                 f"<input type='color' class='cvst cvst-c2' data-k='c2'"
                 f" value='{c[1] if len(c) > 1 else c[0]}'{c2_hide}>"
                 f"<label><input type='checkbox' class='cvst' data-k='grad'{' checked' if len(c) > 1 else ''}>グラデ</label>"
@@ -3815,31 +3831,27 @@ def render_clip_videos(idv, key):
                 f" value='{o[1] if len(o) > 1 else o[0]}'{o2_hide}>"
                 f"<label><input type='checkbox' class='cvst' data-k='ograd'{' checked' if len(o) > 1 else ''}>グラデ</label>"
                 f"　縁太<input type='number' class='cvst' data-k='ow' value='{d.get('outline_w')}'"
-                f" min='0' max='40' step='1' style='width:48px'>"
-                f"　影X<input type='number' class='cvst' data-k='sx' value='{d.get('shadow_x')}'"
+                f" min='0' max='40' step='1' style='width:48px'></div>"
+                "<div class='cvsgrp'><span class='cvsglabel'>シャドウ</span>"
+                f"X<input type='number' class='cvst' data-k='sx' value='{d.get('shadow_x')}'"
                 f" min='-40' max='40' step='1' style='width:46px'>"
-                f"Y<input type='number' class='cvst' data-k='sy' value='{d.get('shadow_y')}'"
+                f"　Y<input type='number' class='cvst' data-k='sy' value='{d.get('shadow_y')}'"
                 f" min='-40' max='40' step='1' style='width:46px'>"
-                f"ぼかし<input type='number' class='cvst' data-k='sb' value='{d.get('shadow_blur')}'"
+                f"　ぼかし<input type='number' class='cvst' data-k='sb' value='{d.get('shadow_blur')}'"
                 f" min='0' max='60' step='1' style='width:46px'>"
-                f"<input type='color' class='cvst' data-k='sc' value='{d.get('shadow_color')}'>"
-                f"　<select class='cvst' data-k='font'>{fo}</select>"
-                f"<label><input type='checkbox' class='cvst' data-k='bold'{' checked' if d.get('bold') else ''}>太字</label>"
-                f"　サイズ<input type='number' class='cvst' data-k='size' value='{d.get('size_pct')}'"
-                f" min='1' max='25' step='0.1' style='width:56px'>"
-                f"　幅<input type='number' class='cvst' data-k='w' value='{d.get('width_pct')}'"
-                f" min='20' max='100' step='1' style='width:52px'>％"
-                + (f"<div class='cvstbg'>背景<label><input type='checkbox' class='cvst' data-k='bgon'"
-                   f"{' checked' if d.get('bg_on') else ''}>あり</label>"
-                   f"<input type='color' class='cvst' data-k='bgc' value='{d.get('bg_color')}'>"
-                   f"　不透明度<input type='number' class='cvst' data-k='bga' value='{d.get('bg_alpha')}'"
-                   f" min='0' max='100' step='5' style='width:52px'>％"
-                   f"　左右pad<input type='number' class='cvst' data-k='bgp' value='{d.get('bg_pad')}'"
-                   f" min='0' max='200' step='2' style='width:56px'>"
-                   f"　上下pad<input type='number' class='cvst' data-k='bgpv' value='{d.get('bg_pad_v')}'"
-                   f" min='0' max='200' step='2' style='width:56px'>"
-                   f"　角丸<input type='number' class='cvst' data-k='bgr' value='{d.get('bg_radius')}'"
-                   f" min='0' max='100' step='2' style='width:56px'></div>")
+                f"　色<input type='color' class='cvst' data-k='sc' value='{d.get('shadow_color')}'></div>"
+                "<div class='cvsgrp'><span class='cvsglabel'>背景</span>"
+                f"<label><input type='checkbox' class='cvst' data-k='bgon'"
+                f"{' checked' if d.get('bg_on') else ''}>あり</label>"
+                f"<input type='color' class='cvst' data-k='bgc' value='{d.get('bg_color')}'>"
+                f"　不透明度<input type='number' class='cvst' data-k='bga' value='{d.get('bg_alpha')}'"
+                f" min='0' max='100' step='5' style='width:52px'>％"
+                f"　左右pad<input type='number' class='cvst' data-k='bgp' value='{d.get('bg_pad')}'"
+                f" min='0' max='200' step='2' style='width:56px'>"
+                f"　上下pad<input type='number' class='cvst' data-k='bgpv' value='{d.get('bg_pad_v')}'"
+                f" min='0' max='200' step='2' style='width:56px'>"
+                f"　角丸<input type='number' class='cvst' data-k='bgr' value='{d.get('bg_radius')}'"
+                f" min='0' max='100' step='2' style='width:56px'></div>"
                 + f"<input type='hidden' class='cvst' data-k='x' value='{d.get('x_pct')}'>"
                 f"<input type='hidden' class='cvst' data-k='y' value='{d.get('y_pct')}'>"
                 "</div>")
