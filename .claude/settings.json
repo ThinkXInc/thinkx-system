@@ -37,10 +37,6 @@
       "Edit(**/dist/**)",
       "Write(**/dist/**)",
 
-      "Edit(**/*_PLAN.md)",
-      "Write(**/*_PLAN.md)",
-      "Edit(transformism/refactor_plan.md)",
-      "Write(transformism/refactor_plan.md)",
       "Edit(ARCHIVE.md)",
       "Write(ARCHIVE.md)",
       "Edit(.claude/**)",
@@ -104,7 +100,9 @@
     "PreToolUse": [
       { "matcher": "Bash",
         "hooks": [ { "type": "command",
-                     "command": "python3 \"$CLAUDE_PROJECT_DIR/hooks/check_git_command.py\"" } ] }
+                     "command": "python3 \"$CLAUDE_PROJECT_DIR/hooks/check_git_command.py\"" },
+                   { "type": "command",
+                     "command": "python3 \"$CLAUDE_PROJECT_DIR/hooks/suggest_wrapper.py\"" } ] }
     ],
     "PostToolUse": [
       { "matcher": "Edit|Write",
