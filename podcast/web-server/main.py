@@ -4103,8 +4103,10 @@ def render_clip_videos(idv, key):
         ":(card.dataset.sample||'サンプル字幕');"
         # 折り返しは書き出し(ASS)と同じ「文字数」規則で入れる(原文 L155)。
         # CSS の幅折り返しに任せると行の切れ目が動画とずれる
+        # 1文字の実幅は em = fs/比(原文 L166)。書き出し側 max_chars と同じ規則
         "var pxv=Math.max(1,Math.round(wh[0]*st.size_pct/100));"
-        "var mcw=Math.max(2,Math.floor(wh[0]*st.width_pct/100/pxv));"
+        "var charW=pxv/cvFontScale(st.font);"
+        "var mcw=Math.max(2,Math.floor(wh[0]*st.width_pct/100/charW));"
         "var wrapped='';for(var ci=0;ci<txt.length;ci++){"
         "if(ci&&ci%mcw===0)wrapped+='\\n';wrapped+=txt.charAt(ci);}"
         "txt=wrapped;"
@@ -4401,9 +4403,10 @@ def render_clip_videos(idv, key):
         "bgv.setAttribute('data-src',bsrc);bgv.src=bsrc;}"
         "var p=cvFxCollect();var W=box.clientWidth||480;var html='';"
         "bc.style.lineHeight=(base.size_pct/100*W)+'px';"
-        # 折り返しは書き出しと同じ文字数規則(基準サイズ基準。原文 L155)
+        # 折り返しは書き出しと同じ文字数規則(実幅 em = fs/比。原文 L155/L166)
         "var pxv=Math.max(1,Math.round(1080*base.size_pct/100));"
-        "var mcw=Math.max(2,Math.floor(1080*(base.width_pct/100)/pxv));var chc=0;"
+        "var mcw=Math.max(2,Math.floor(1080*(base.width_pct/100)"
+        "/(pxv/cvFontScale(base.font))));var chc=0;"
         "blk.querySelectorAll('.cvtok').forEach(function(t){"
         "if(chc&&chc+t.textContent.length>mcw){html+='<br>';chc=0;}"
         "chc+=t.textContent.length;"

@@ -59,11 +59,16 @@ def font_family_name(path):
     return _font_family_from_bytes(data)
 
 
+_FS_SCALE_CACHE = {}
+
+
 def font_fs_scale(path):
     """libass は \\fs を「usWinAscent+usWinDescent の高さ」としてフォントを縮めて描く
     (ヒラギノで 1.332。\\fs100 のインク高 68px と CSS 100px の 89px の比で実測確認。
     2026-10-03・原文 L163)。CSS の em に対するこの比を返し、プレビューは
     font-size = fs / この値 で動画と同じ実寸になる。"""
+    if str(path) in _FS_SCALE_CACHE:
+        return _FS_SCALE_CACHE[str(path)]
     try:
         data = pathlib.Path(path).read_bytes()
 
@@ -84,9 +89,12 @@ def font_fs_scale(path):
         os2 = tables[b"OS/2"]
         win_ascent, win_descent = u16(os2 + 74), u16(os2 + 76)
         scale = (win_ascent + win_descent) / upem
-        return scale if 0.5 < scale < 3 else 1.0
+        if not (0.5 < scale < 3):
+            scale = 1.0
     except Exception:
-        return 1.0
+        scale = 1.0
+    _FS_SCALE_CACHE[str(path)] = scale
+    return scale
 
 
 def _font_family_from_bytes(data):
@@ -439,9 +447,15 @@ def build_ass(w, h, stl, cfg, captions, dur, families, effects=None, fxmap=None)
                 f"{ass_colour(d.get('shadow_color') or '#000000')},"
                 f"{bold},0,0,0,100,100,0,0,1,{ow},0,5,20,20,20,1")
 
+    def char_width(d):
+        """全角1文字の実幅(px)。libass は \\fs をフォント高として縮めて描くため、
+        文字の実幅(em)は fs/比 になる(原文 L166。比は font_fs_scale)。"""
+        return px_of(d) / font_fs_scale(FONTS_DIR / (d.get("font") or ""))
+
     def max_chars(d):
-        # テキストボックスの幅はスタイルの width_pct(画面幅に対する%)が決める(原文 L130)
-        return max(2, int((w * float(d.get("width_pct") or 86) / 100) // px_of(d)))
+        # テキストボックスの幅はスタイルの width_pct(画面幅に対する%)が決める(原文 L130)。
+        # 1文字=fs幅で数えると幅100%でも実際は約75%にしかならない(原文 L166)
+        return max(2, int((w * float(d.get("width_pct") or 86) / 100) // char_width(d)))
 
     def shadow_offsets(d):
         """影の X/Y ずらし(1080 幅基準 px → 実寸。原文 L150)。"""
@@ -484,8 +498,10 @@ def build_ass(w, h, stl, cfg, captions, dur, families, effects=None, fxmap=None)
         mc0 = max_chars(d)
         tl = [text[i:i + mc0] for i in range(0, len(text), mc0)] or [""]
 
+        glyph_w = char_width(d)   # 実幅は em = fs/比(原文 L166)
+
         def _est(ln):
-            return sum(px if ord(ch) > 0xFF else px * 0.55 for ch in ln)
+            return sum(glyph_w if ord(ch) > 0xFF else glyph_w * 0.55 for ch in ln)
 
         pad = float(d.get("bg_pad") or 0) * scale
         pad_v = float(d.get("bg_pad_v") or 0) * scale
