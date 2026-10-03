@@ -4168,9 +4168,14 @@ def render_clip_videos(idv, key):
         "if(ev.target.dataset.k==='grad')row.querySelector('.cvst-c2').style.display=ev.target.checked?'':'none';"
         "if(ev.target.dataset.k==='ograd')row.querySelector('.cvst-o2').style.display=ev.target.checked?'':'none';"
         "cvApplyPrev(n);cvSave(n);});"
+        # macOS のカラーピッカーはパネルを閉じるまで change を出さない(原文 L169)。
+        # input をデバウンス保存して、色をいじるだけでも描画プレビューの再描画まで届かせる
+        "var cvInputTimers={};"
         "document.addEventListener('input',function(ev){"
         "var row=ev.target.closest('.cvstrow');if(!row)return;"
-        "cvApplyPrev(+row.closest('.seg').id.slice(2));});"
+        "var n=+row.closest('.seg').id.slice(2);cvApplyPrev(n);"
+        "clearTimeout(cvInputTimers[n]);"
+        "cvInputTimers[n]=setTimeout(function(){cvSave(n);},900);});"
         "document.addEventListener('change',function(ev){"
         "if(ev.target.classList.contains('cvsize')){"
         "var card=ev.target.closest('.seg');cvApplyPrev(+card.id.slice(2));}});"
