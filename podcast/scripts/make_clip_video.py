@@ -56,6 +56,40 @@ def font_family_name(path):
     """フォントファイルの family 名（name テーブル）。libass はファイル名でなく
     family 名で探すため、ファイルから直接読む（依存を増やさない）。ttc は先頭フォント。"""
     data = pathlib.Path(path).read_bytes()
+    return _font_family_from_bytes(data)
+
+
+def font_fs_scale(path):
+    """libass は \\fs を「usWinAscent+usWinDescent の高さ」としてフォントを縮めて描く
+    (ヒラギノで 1.332。\\fs100 のインク高 68px と CSS 100px の 89px の比で実測確認。
+    2026-10-03・原文 L163)。CSS の em に対するこの比を返し、プレビューは
+    font-size = fs / この値 で動画と同じ実寸になる。"""
+    try:
+        data = pathlib.Path(path).read_bytes()
+
+        def u32(o):
+            return struct.unpack(">I", data[o:o + 4])[0]
+
+        def u16(o):
+            return struct.unpack(">H", data[o:o + 2])[0]
+
+        off = u32(12) if data[:4] == b"ttcf" else 0
+        num_tables = u16(off + 4)
+        rec = off + 12
+        tables = {}
+        for _ in range(num_tables):
+            tables[data[rec:rec + 4]] = u32(rec + 8)
+            rec += 16
+        upem = u16(tables[b"head"] + 18)
+        os2 = tables[b"OS/2"]
+        win_ascent, win_descent = u16(os2 + 74), u16(os2 + 76)
+        scale = (win_ascent + win_descent) / upem
+        return scale if 0.5 < scale < 3 else 1.0
+    except Exception:
+        return 1.0
+
+
+def _font_family_from_bytes(data):
 
     def u32(o):
         return struct.unpack(">I", data[o:o + 4])[0]

@@ -28,7 +28,8 @@ import idpaths  # data/<ID>/ のファイル配置は idpaths が唯一の定義
 import transcript_edits  # 文字起こし修正のオーバーレイ(C-16)。transcript.json は不変
 from render import safe_name, keep_ranges  # ファイル名正規化と keep 区間計算を生成側と揃える
 from make_clip_video import (  # 字幕のまとまり(原文 L134)を表示と書き出しで共有
-    clip_tokens as clip_src_tokens, build_captions as clip_captions)
+    clip_tokens as clip_src_tokens, build_captions as clip_captions,
+    font_fs_scale)  # libass の fs→em 比。プレビューの実寸合わせ(原文 L163)
 DATA_DIR = os.path.realpath(
     os.environ.get("SITE_DATA_DIR") or os.path.join(os.path.dirname(HERE), "data")
 )
@@ -3744,6 +3745,8 @@ def render_clip_videos(idv, key):
     clips = sorted(cur.get("clips") or [], key=lambda c: (c[0], c[1]))
     styles = load_clip_styles()
     fx_styles = load_effect_styles()
+    font_scales = {f: font_fs_scale(os.path.join(ASSETS_DIR, "fonts", f))
+                   for f in list_clip_fonts()}
     style_sets = load_style_sets()
     last_set_name = style_sets.get("last_selected") or ""
     last_set = next((style_set for style_set in style_sets["sets"]
@@ -4031,6 +4034,7 @@ def render_clip_videos(idv, key):
         f"var CV_SETS={_js(style_sets)};"
         f"var CV_QUICK={_js(quick_maps)};var CV_QON={'true' if CLIP_RENDER_ENABLED else 'false'};"
         f"var CV_KEEPS={_js(quick_keeps)};"
+        f"var CV_FSCALE={_js(font_scales)};"
         # ---- スタイルの収集(保存形式は make_clip_video と共有) ----
         "function cvStyleGet(card,el){var o={};"
         "card.querySelectorAll(\".cvstrow[data-el='\"+el+\"'] .cvst\").forEach(function(i){"
@@ -4069,6 +4073,9 @@ def render_clip_videos(idv, key):
         "ff.load().then(function(f){document.fonts.add(f);"
         "document.querySelectorAll('.cvprev').forEach(function(p){cvApplyPrev(+p.dataset.n);});});}"
         "catch(e){}return fam;}"
+        # libass は \fs を usWin(アセント+ディセント)の高さとして描くが CSS は em。
+        # フォントごとの比(サーバーがフォントファイルから算出)で CSS を fs/F に縮める(原文 L163)
+        "function cvFontScale(fontFile){return CV_FSCALE[fontFile]||1;}"
         # ---- ライブプレビュー(原文 L126)。CSS 2層(縁=stroke層/本体=fill層)で近似 ----
         "function cvApplyPrev(n){var card=document.getElementById('cv'+n);if(!card)return;"
         "var prev=card.querySelector('.cvprev');"
@@ -4088,13 +4095,15 @@ def render_clip_videos(idv, key):
         "var wrapped='';for(var ci=0;ci<txt.length;ci++){"
         "if(ci&&ci%mcw===0)wrapped+='\\n';wrapped+=txt.charAt(ci);}"
         "txt=wrapped;"
-        "var fs=st.size_pct/100*pw;"
+        # 動画側(libass)の実寸に合わせる: fs は行高なので CSS は fs/F、行送りは fs(原文 L163)
+        "var fam=cvFontFamily(st.font);var fscale=cvFontScale(st.font);"
+        "var fsLine=st.size_pct/100*pw;var fs=fsLine/fscale;"
         "box.style.left=st.x_pct+'%';box.style.top=st.y_pct+'%';"
         # left:50% の絶対配置は shrink-to-fit が半幅に縛られ CSS が再折返しする。
         # 折返しは \n が決めるので幅は内容いっぱいに(max-content)
         "box.style.width='max-content';box.style.maxWidth='none';"
-        "box.style.fontSize=fs+'px';"
-        "box.style.fontFamily=cvFontFamily(st.font);"
+        "box.style.fontSize=fs+'px';box.style.lineHeight=fsLine+'px';"
+        "box.style.fontFamily=fam;"
         "box.style.fontWeight=st.bold?'700':'400';"
         "var pb=box.querySelector('.pv-box');"
         "var sk=box.querySelector('.pv-stroke'),fl=box.querySelector('.pv-fill');"
@@ -4378,6 +4387,7 @@ def render_clip_videos(idv, key):
         "if(bsrc&&bgv.getAttribute('data-src')!==bsrc){"
         "bgv.setAttribute('data-src',bsrc);bgv.src=bsrc;}"
         "var p=cvFxCollect();var W=box.clientWidth||480;var html='';"
+        "bc.style.lineHeight=(base.size_pct/100*W)+'px';"
         # 折り返しは書き出しと同じ文字数規則(基準サイズ基準。原文 L155)
         "var pxv=Math.max(1,Math.round(1080*base.size_pct/100));"
         "var mcw=Math.max(2,Math.floor(1080*(base.width_pct/100)/pxv));var chc=0;"
@@ -4387,8 +4397,9 @@ def render_clip_videos(idv, key):
         "var tokSec=parseFloat(t.dataset.s);"
         "var inr=cvEdRange?(tokSec>=cvEdRange.a-0.005&&tokSec<=cvEdRange.b+0.005):true;"
         "var q=inr?Object.assign({},base,p):base;"
-        # サイズはカードの静的プレビューと同じ規則(幅% そのまま。0.85 の縮小は廃止。原文 L158)
-        "var fs=(q.size_pct||base.size_pct)/100*W;"
+        # サイズは静的プレビューと同じ規則(libass の行高基準に合わせ fs/F。原文 L158/L163)
+        "var famT=cvFontFamily(q.font||base.font);"
+        "var fs=((q.size_pct||base.size_pct)/100*W)/cvFontScale(q.font||base.font);"
         "var col=q.color||base.color;var oc=q.outline||base.outline;"
         # 縁太の二重掛け(ここで×2・stroke指定でさらに×2=4倍)を修正(原文 L158)
         "var ow=(q.outline_w!=null?q.outline_w:base.outline_w)*W/1080;"
@@ -4399,7 +4410,7 @@ def render_clip_videos(idv, key):
         # 縁はメインプレビューと同じ2層(stroke層+fill層)。単層の paint-order では
         # グラデ(background-clip:text)が縁の下に沈む(2026-10-02 実測)
         "var st='font-size:'+fs+'px;font-weight:'+((q.bold!=null?q.bold:base.bold)?'700':'400')"
-        "+';font-family:'+cvFontFamily(q.font||base.font);"
+        "+';font-family:'+famT;"
         "var sk='-webkit-text-stroke:'+(ow*2)+'px '+oc[0]+';color:transparent'"
         "+((shx||shy||shb)?';text-shadow:'+shx+'px '+shy+'px '+shb+'px '+scol:'');"
         "var fl='';"
