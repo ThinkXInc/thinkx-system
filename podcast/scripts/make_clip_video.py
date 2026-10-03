@@ -16,6 +16,7 @@ import os
 import sys
 import json
 import struct
+import hashlib
 import pathlib
 import argparse
 import tempfile
@@ -717,25 +718,33 @@ def main():
     gen = pathlib.Path(idpaths.gen_dir(str(base)))
 
     # 音声。単一区間なら元音源を -ss/-t で直接切り、複数区間なら抽出して無劣化連結
+    # 音声は keep にだけ依存するので、抽出・連結の結果をキャッシュする(原文 L168。
+    # スタイル変更のたびの描画プレビューで音声抽出をやり直さないため)。
+    # キャッシュ名は keep のハッシュ。切り抜きやカットが変わればハッシュが変わる
     audio_in = media
     audio_seek = ["-ss", f"{keeps[0][0]:.3f}", "-t", f"{dur:.3f}"]
-    concat_wav = None
-    if len(keeps) > 1 and not args.quick:
-        concat_wav = gen / f"clip_{args.key}_{args.seg}_audio.part.wav"
-        with tempfile.TemporaryDirectory(dir=str(gen)) as td:
-            tdp = pathlib.Path(td)
-            listf = tdp / "list.txt"
-            with open(listf, "w") as lf:
-                for i, (ka, kb) in enumerate(keeps):
-                    part = tdp / f"p{i:04d}.wav"
-                    subprocess.run([ff, "-hide_banner", "-loglevel", "error", "-y",
-                                    "-ss", f"{ka:.3f}", "-to", f"{kb:.3f}", "-i", str(media),
-                                    "-c:a", "pcm_s16le", str(part)], check=True)
-                    lf.write(f"file '{part.name}'\n")
-            subprocess.run([ff, "-hide_banner", "-loglevel", "error", "-y",
-                            "-f", "concat", "-safe", "0", "-i", str(listf),
-                            "-c", "copy", str(concat_wav)], check=True)
-        audio_in = concat_wav
+    if len(keeps) > 1:
+        keeps_sig = hashlib.sha1(
+            json.dumps([[round(a, 3), round(b, 3)] for a, b in keeps]).encode()
+        ).hexdigest()[:8]
+        cache_wav = gen / f"clip_{args.key}_{args.seg}_audio_{keeps_sig}.wav"
+        if not cache_wav.is_file():
+            for old in gen.glob(f"clip_{args.key}_{args.seg}_audio*.wav"):
+                old.unlink()
+            with tempfile.TemporaryDirectory(dir=str(gen)) as td:
+                tdp = pathlib.Path(td)
+                listf = tdp / "list.txt"
+                with open(listf, "w") as lf:
+                    for i, (ka, kb) in enumerate(keeps):
+                        part = tdp / f"p{i:04d}.wav"
+                        subprocess.run([ff, "-hide_banner", "-loglevel", "error", "-y",
+                                        "-ss", f"{ka:.3f}", "-to", f"{kb:.3f}", "-i", str(media),
+                                        "-c:a", "pcm_s16le", str(part)], check=True)
+                        lf.write(f"file '{part.name}'\n")
+                subprocess.run([ff, "-hide_banner", "-loglevel", "error", "-y",
+                                "-f", "concat", "-safe", "0", "-i", str(listf),
+                                "-c", "copy", str(cache_wav)], check=True)
+        audio_in = cache_wav
         audio_seek = []
 
     for size_key in size_keys:
@@ -782,14 +791,17 @@ def main():
               f"subtitles=filename={ass_path.name}:fontsdir='{FONTS_DIR}'")
         tmp = out.with_name(out.name + ".part.mp4")
         if args.quick:
-            # 速く返すための設定(原文 L148)。全編(原文 L151)・音なし・速いプリセット
+            # 速く返すための設定(原文 L148)。全編(原文 L151)・音つき(原文 L168)・
+            # 速いプリセット。音声はキャッシュ済み wav を使うので抽出コストはかからない
             dur_out = dur
             cmd = ([ff, "-hide_banner", "-loglevel", "error", "-y",
-                    "-stream_loop", "-1", "-i", str(bg),
-                    "-map", "0:v", "-an", "-t", f"{dur_out:.3f}",
-                    "-vf", vf,
-                    "-c:v", "libx264", "-preset", "veryfast", "-crf", "23",
-                    "-pix_fmt", "yuv420p", str(tmp)])
+                    "-stream_loop", "-1", "-i", str(bg)]
+                   + audio_seek + ["-i", str(audio_in),
+                   "-map", "0:v", "-map", "1:a", "-t", f"{dur_out:.3f}",
+                   "-vf", vf,
+                   "-c:v", "libx264", "-preset", "veryfast", "-crf", "23",
+                   "-pix_fmt", "yuv420p",
+                   "-c:a", "aac", "-b:a", "128k", str(tmp)])
         else:
             # 文字のエッジが中間フレームで潰れないよう crf 17 + aq-mode=3
             # (crf 20 で字幕の縁が荒れる実測。原文 L146・2026-10-02)
@@ -816,8 +828,8 @@ def main():
         print(f"[clipvid] done {size_key} / {dur:.1f}s / 字幕フォント {families['sub']} -> {out}",
               flush=True)
 
-    if concat_wav is not None:
-        concat_wav.unlink(missing_ok=True)
+    # 音声キャッシュ(clip_<key>_<seg>_audio_<hash>.wav)は消さない(原文 L168。
+    # 次のプレビューが再利用する。keep が変われば自動で作り直し・旧物は掃除される)
 
 
 if __name__ == "__main__":
