@@ -626,10 +626,16 @@ def main():
     if wav.exists():
         media = wav
 
-    bg_name = cfg.get("background") or ""
-    bg = BG_DIR / bg_name
-    if not bg_name or not bg.is_file():
-        sys.exit(f"[clipvid] 背景動画がありません: {bg}")
+    # 背景動画は assets/clip_backgrounds/ と clipvideo/背景動画out/ から探す(原文 L162)。
+    # 尺が足りない場合のループは ffmpeg の -stream_loop -1 が常時行っている
+    bg_name = pathlib.Path(cfg.get("background") or "").name
+    bg = None
+    for bg_dir in (BG_DIR, HERE / "clipvideo" / "背景動画out"):
+        if bg_name and (bg_dir / bg_name).is_file():
+            bg = bg_dir / bg_name
+            break
+    if bg is None:
+        sys.exit(f"[clipvid] 背景動画がありません: {bg_name}")
 
     stl = resolve_style(cfg, (styles.get("subtitle_styles") or [{}])[0])
     families = {}

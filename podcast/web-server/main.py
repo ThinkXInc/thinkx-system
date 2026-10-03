@@ -3667,13 +3667,24 @@ def list_clip_fonts():
                   if n.lower().endswith((".otf", ".ttf", ".ttc")))
 
 
+def clip_background_dirs():
+    """背景動画の置き場(優先順)。assets/clip_backgrounds/(原文 L61)に加えて
+    AE 書き出し先の clipvideo/背景動画out/ も選択肢にする(原文 L162)。"""
+    root = os.path.dirname(HERE)
+    return [os.path.join(ASSETS_DIR, "clip_backgrounds"),
+            os.path.join(root, "clipvideo", "背景動画out")]
+
+
 def list_clip_backgrounds():
-    """assets/clip_backgrounds/ の背景動画一覧（原文 L61）。"""
-    d = os.path.join(ASSETS_DIR, "clip_backgrounds")
-    if not os.path.isdir(d):
-        return []
-    return sorted(n for n in os.listdir(d)
-                  if n.lower().endswith((".mp4", ".mov", ".m4v", ".webm")))
+    """背景動画一覧。複数の置き場の和集合(同名は先勝ち)。"""
+    seen = {}
+    for d in clip_background_dirs():
+        if not os.path.isdir(d):
+            continue
+        for n in os.listdir(d):
+            if n.lower().endswith((".mp4", ".mov", ".m4v", ".webm")):
+                seen.setdefault(n, True)
+    return sorted(seen)
 
 
 def resolve_clip_style(cfg, sub_style, fonts, set_style=None):
@@ -5057,9 +5068,19 @@ def route_render_status():
 
 @app.get("/assets/<path:rel>")
 def route_assets(rel):
-    # スタイル調整パネルのライブプレビュー用(背景動画・フォント。原文 L126)。読み取りのみ
+    # スタイル調整パネルのライブプレビュー用(背景動画・フォント。原文 L126)。読み取りのみ。
+    # clip_backgrounds/ は複数の置き場(assets + clipvideo/背景動画out。原文 L162)から探す
+    rel = rel or ""
+    if rel.startswith("clip_backgrounds/"):
+        name = os.path.basename(rel[len("clip_backgrounds/"):])
+        for d in clip_background_dirs():
+            dr = os.path.realpath(d)
+            full = os.path.realpath(os.path.join(dr, name))
+            if full.startswith(dr + os.sep) and os.path.isfile(full):
+                return send_file(full, conditional=True)
+        return _text("not found", 404)
     d = os.path.realpath(ASSETS_DIR)
-    full = os.path.realpath(os.path.join(d, rel or ""))
+    full = os.path.realpath(os.path.join(d, rel))
     if not (full.startswith(d + os.sep) and os.path.isfile(full)):
         return _text("not found", 404)
     return send_file(full, conditional=True)
