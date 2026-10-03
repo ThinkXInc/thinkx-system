@@ -29,7 +29,7 @@ import transcript_edits  # 文字起こし修正のオーバーレイ(C-16)。tr
 from render import safe_name, keep_ranges  # ファイル名正規化と keep 区間計算を生成側と揃える
 from make_clip_video import (  # 字幕のまとまり(原文 L134)を表示と書き出しで共有
     clip_tokens as clip_src_tokens, build_captions as clip_captions,
-    font_fs_scale)  # libass の fs→em 比。プレビューの実寸合わせ(原文 L163)
+    font_fs_scale, font_family_name)  # fs→em 比と実ファミリー名(原文 L163/L165)
 DATA_DIR = os.path.realpath(
     os.environ.get("SITE_DATA_DIR") or os.path.join(os.path.dirname(HERE), "data")
 )
@@ -3747,6 +3747,10 @@ def render_clip_videos(idv, key):
     fx_styles = load_effect_styles()
     font_scales = {f: font_fs_scale(os.path.join(ASSETS_DIR, "fonts", f))
                    for f in list_clip_fonts()}
+    # Chrome の FontFace は .ttc を読めず黙って失敗するため、実ファミリー名
+    # (システムにインストール済みのフォント)へのフォールバックに使う(原文 L165)
+    font_families = {f: (font_family_name(os.path.join(ASSETS_DIR, "fonts", f)) or "")
+                     for f in list_clip_fonts()}
     style_sets = load_style_sets()
     last_set_name = style_sets.get("last_selected") or ""
     last_set = next((style_set for style_set in style_sets["sets"]
@@ -3873,8 +3877,10 @@ def render_clip_videos(idv, key):
                 "<div class='cvsgrp'><span class='cvsglabel'>文字</span>"
                 f"<select class='cvst' data-k='font'>{fo}</select>"
                 f"<label><input type='checkbox' class='cvst' data-k='bold'{' checked' if d.get('bold') else ''}>太字</label>"
-                f"　サイズ<input type='number' class='cvst' data-k='size' value='{d.get('size_pct')}'"
-                f" min='1' max='25' step='0.1' style='width:56px'>％"
+                # サイズ表示は幅1080基準の px(原文 L164。内部保存は従来どおり %)
+                f"　サイズ<input type='number' class='cvst' data-k='size'"
+                f" value='{round(float(d.get('size_pct') or 8) * 10.8)}'"
+                f" min='10' max='270' step='1' style='width:56px'>px"
                 f"　幅<input type='number' class='cvst' data-k='w' value='{d.get('width_pct')}'"
                 f" min='20' max='100' step='1' style='width:52px'>％</div>"
                 "<div class='cvsgrp'><span class='cvsglabel'>カラー</span>"
@@ -3999,8 +4005,8 @@ def render_clip_videos(idv, key):
         "<input type='color' id='fx_o1' value='#000000'>"
         "<input type='color' id='fx_o2' value='#000000'>"
         "<label><input type='checkbox' id='fx_og'>グラデ</label></p>"
-        "<p>サイズ<input id='fx_size' type='number' step='0.1' min='1' max='25'"
-        " style='width:56px' placeholder='--'>％"
+        "<p>サイズ<input id='fx_size' type='number' step='1' min='10' max='270'"
+        " style='width:56px' placeholder='--'>px"
         "　縁太<input id='fx_ow' type='number' step='1' min='0' max='40'"
         " style='width:48px' placeholder='--'>"
         "　影X<input id='fx_sx' type='number' step='1' min='-40' max='40'"
@@ -4034,15 +4040,17 @@ def render_clip_videos(idv, key):
         f"var CV_SETS={_js(style_sets)};"
         f"var CV_QUICK={_js(quick_maps)};var CV_QON={'true' if CLIP_RENDER_ENABLED else 'false'};"
         f"var CV_KEEPS={_js(quick_keeps)};"
-        f"var CV_FSCALE={_js(font_scales)};"
+        f"var CV_FSCALE={_js(font_scales)};var CV_FAMILY={_js(font_families)};"
         # ---- スタイルの収集(保存形式は make_clip_video と共有) ----
         "function cvStyleGet(card,el){var o={};"
         "card.querySelectorAll(\".cvstrow[data-el='\"+el+\"'] .cvst\").forEach(function(i){"
         "o[i.dataset.k]=(i.type==='checkbox')?i.checked:i.value;});"
         "var st={color:o.grad?[o.c1,o.c2]:[o.c1],outline:o.ograd?[o.o1,o.o2]:[o.o1],"
+        # サイズ入力は幅1080基準の px(原文 L164)。内部値は % に換算して保存
         "outline_w:parseFloat(o.ow)||0,shadow_x:parseFloat(o.sx)||0,"
         "shadow_y:parseFloat(o.sy)||0,shadow_blur:parseFloat(o.sb)||0,shadow_color:o.sc,"
-        "font:o.font,bold:!!o.bold,size_pct:parseFloat(o.size)||8,width_pct:parseFloat(o.w)||86,"
+        "font:o.font,bold:!!o.bold,size_pct:(parseFloat(o.size)||103)/10.8,"
+        "width_pct:parseFloat(o.w)||86,"
         "x_pct:parseFloat(o.x)||50,y_pct:parseFloat(o.y)||50};if('bgon' in o){st.bg_on=!!o.bgon;st.bg_color=o.bgc;st.bg_pad=parseFloat(o.bgp)||0;st.bg_pad_v=parseFloat(o.bgpv)||0;st.bg_radius=parseFloat(o.bgr)||0;st.bg_alpha=(o.bga===''||o.bga==null)?100:parseFloat(o.bga);}"
         "return st;}"
         "function cvCollect(){var out={};"
@@ -4065,14 +4073,19 @@ def render_clip_videos(idv, key):
         "if(r.ok)cvQuickKick(n);})"
         ".catch(function(){if(el)el.textContent='サーバーに接続できません';});}"
         # ---- フォント読み込み(/assets/fonts から @font-face 相当で) ----
+        # Chrome の FontFace は .ttc を黙って読めない(原文 L165 実測)。読み込みは
+        # 試みつつ、実ファミリー名(macOS にインストール済み)へのフォールバック連鎖を返す
         "var CVF={};"
         "function cvFontFamily(file){if(!file)return 'sans-serif';"
         "if(CVF[file])return CVF[file];"
-        "var fam='cvf_'+file.replace(/[^a-zA-Z0-9]/g,'_');CVF[file]=fam;"
+        "var fam='cvf_'+file.replace(/[^a-zA-Z0-9]/g,'_');"
+        "var chain='\"'+fam+'\"'+(CV_FAMILY[file]?',\"'+CV_FAMILY[file]+'\"':'')+',sans-serif';"
+        "CVF[file]=chain;"
         "try{var ff=new FontFace(fam,\"url('\"+window.APP+'/assets/fonts/'+encodeURIComponent(file)+\"')\");"
         "ff.load().then(function(f){document.fonts.add(f);"
-        "document.querySelectorAll('.cvprev').forEach(function(p){cvApplyPrev(+p.dataset.n);});});}"
-        "catch(e){}return fam;}"
+        "document.querySelectorAll('.cvprev').forEach(function(p){cvApplyPrev(+p.dataset.n);});"
+        "cvFxPrev();});}"
+        "catch(e){}return chain;}"
         # libass は \fs を usWin(アセント+ディセント)の高さとして描くが CSS は em。
         # フォントごとの比(サーバーがフォントファイルから算出)で CSS を fs/F に縮める(原文 L163)
         "function cvFontScale(fontFile){return CV_FSCALE[fontFile]||1;}"
@@ -4315,7 +4328,7 @@ def render_clip_videos(idv, key):
         "cvG('fx_o_on').checked=true;"
         "cvG('fx_o1').value=oc[0];cvG('fx_o2').value=oc[1]||oc[0];"
         "cvG('fx_og').checked=oc.length>1;"
-        "cvG('fx_size').value=(p.size_pct!=null?p.size_pct:base.size_pct);"
+        "cvG('fx_size').value=Math.round((p.size_pct!=null?p.size_pct:base.size_pct)*10.8);"
         "cvG('fx_ow').value=(p.outline_w!=null?p.outline_w:base.outline_w);"
         "cvG('fx_sx').value=(p.shadow_x!=null?p.shadow_x:base.shadow_x);"
         "cvG('fx_sy').value=(p.shadow_y!=null?p.shadow_y:base.shadow_y);"
@@ -4331,7 +4344,7 @@ def render_clip_videos(idv, key):
         "[cvG('fx_c1').value,cvG('fx_c2').value]:[cvG('fx_c1').value];"
         "if(cvG('fx_o_on').checked)p.outline=cvG('fx_og').checked?"
         "[cvG('fx_o1').value,cvG('fx_o2').value]:[cvG('fx_o1').value];"
-        "if(cvG('fx_size').value!=='')p.size_pct=parseFloat(cvG('fx_size').value);"
+        "if(cvG('fx_size').value!=='')p.size_pct=parseFloat(cvG('fx_size').value)/10.8;"
         "if(cvG('fx_ow').value!=='')p.outline_w=parseFloat(cvG('fx_ow').value);"
         "if(cvG('fx_sx').value!=='')p.shadow_x=parseFloat(cvG('fx_sx').value);"
         "if(cvG('fx_sy').value!=='')p.shadow_y=parseFloat(cvG('fx_sy').value);"
@@ -4441,7 +4454,8 @@ def render_clip_videos(idv, key):
         "S('sx',d.shadow_x!=null?d.shadow_x:d.shadow_w);"
         "S('sy',d.shadow_y!=null?d.shadow_y:d.shadow_w);"
         "S('sb',d.shadow_blur);"
-        "S('font',d.font);S('bold',d.bold);S('size',d.size_pct);S('w',d.width_pct);"
+        "S('font',d.font);S('bold',d.bold);"
+        "S('size',d.size_pct!=null?Math.round(d.size_pct*10.8):null);S('w',d.width_pct);"
         "S('x',d.x_pct);S('y',d.y_pct);"
         "S('bgon',d.bg_on);S('bgc',d.bg_color);S('bga',d.bg_alpha);"
         "S('bgp',d.bg_pad);S('bgpv',d.bg_pad_v);S('bgr',d.bg_radius);"
