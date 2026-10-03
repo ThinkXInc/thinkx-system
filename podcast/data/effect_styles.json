@@ -1,3 +1,12 @@
 {
-  "styles": []
+  "styles": [
+    {
+      "name": "薄赤",
+      "props": {
+        "color": [
+          "#f9b9b9"
+        ]
+      }
+    }
+  ]
 }

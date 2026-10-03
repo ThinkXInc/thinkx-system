@@ -38,7 +38,9 @@ GENERATED_FILES = {
     "asr_prompt.txt",
 }
 # 接尾辞で generated 行きにするもの（ID 名を含むファイル名になるため）
-GENERATED_SUFFIX = ("_全文.pdf", "_校正用.pdf")
+# .mp4 を save() に通すのは生成物(切り抜き書き出し等)だけ。元音源・元動画は
+# オーナーが直下へ手置きするもので、ここを通らない(find は旧位置=直下も見る)
+GENERATED_SUFFIX = ("_全文.pdf", "_校正用.pdf", ".mp4")
 GENERATED_CONTAINS = ("_校正用",)
 
 # 切り抜き編集(CLIP_PLAN)のファイル。clipkey を含むため名前が可変で、接頭辞+接尾辞で振り分ける。

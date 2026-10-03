@@ -12,6 +12,7 @@
 
 import os
 import re
+import glob
 import json
 import html
 import mimetypes
@@ -330,8 +331,9 @@ CLIP_CSS = """
 .cvprev { position:relative; width:250px; background:#111; border-radius:8px;
           overflow:hidden; aspect-ratio:1080/1920; }
 .cvprevbg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+/* 行間 1.18 は ASS(libass)の実測・背景ボックスの見積りと同じ値(原文 L155) */
 .pvtext { position:absolute; transform:translate(-50%,-50%);
-          text-align:center; line-height:1.3; white-space:pre-wrap; cursor:grab;
+          text-align:center; line-height:1.18; white-space:pre-wrap; cursor:grab;
           user-select:none; }
 /* 縁(stroke)層の基準を .pv-box に置く(原文 L139)。以前は基準が .pvtext だったため、
    背景ONで .pv-box に padding が付くと fill だけずれて縁がずれた */
@@ -2184,6 +2186,27 @@ def _write_json_atomic(path, doc):
     os.replace(tmp, path)
 
 
+def _append_json_history(path, hist_path, field):
+    """上書き前の内容を履歴へ退避(200件)。全量置き換えの定義ファイル
+    (effect_styles / style_sets)が1回の保存で黙って消えた実事故の保険(2026-10-03)。"""
+    import datetime
+    try:
+        if not os.path.isfile(path):
+            return
+        with open(path, encoding="utf-8") as f:
+            prev = f.read()
+        lines = []
+        if os.path.isfile(hist_path):
+            with open(hist_path, encoding="utf-8") as f:
+                lines = f.read().splitlines()
+        lines.append(json.dumps({"at": datetime.datetime.now().isoformat(timespec="seconds"),
+                                 field: prev}, ensure_ascii=False))
+        with open(hist_path, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines[-200:]) + "\n")
+    except Exception:
+        pass
+
+
 def _append_history(base, seg_path):
     """segments.json を上書きする前に、直前の内容を履歴へ退避する（保険）。
     edit/segments_history.jsonl に1行1スナップショットで貯める。最新200件だけ残す。"""
@@ -3362,7 +3385,10 @@ def save_style_sets(payload):
             row[el] = d
         clean.append(row)
     last = str(payload.get("last_selected") or "")
+    hist = os.path.join(DATA_DIR, "style_sets_history.jsonl")
+    _append_json_history(style_sets_path(), hist, "sets_json")
     _write_json_atomic(style_sets_path(), {"sets": clean, "last_selected": last})
+    _queue_for_sync(hist)
     _queue_for_sync(style_sets_path())
     return True
 
@@ -3418,11 +3444,10 @@ def save_effect_styles(payload):
             props["bold"] = bool(props["bold"])
         clean.append({"name": name, "props": props})
     path = effect_styles_path()
-    tmp = path + ".tmp"
-    with open(tmp, "w", encoding="utf-8") as f:
-        json.dump({"styles": clean}, f, ensure_ascii=False, indent=2)
-    os.replace(tmp, path)
-    _queue_for_sync(path)
+    hist = os.path.join(DATA_DIR, "effect_styles_history.jsonl")
+    _append_json_history(path, hist, "styles_json")
+    _write_json_atomic(path, {"styles": clean})
+    _queue_for_sync(path, hist)
     return True
 
 
@@ -3793,7 +3818,7 @@ def render_clip_videos(idv, key):
                 for t in cand_titles) + "</p>")
         parts.append(
             f"<div class='seg' id='cv{n}' data-cs='{cs}' data-ce='{ce}'"
-            f" data-sample=\"{esc((text or 'サンプル字幕')[:16])}\">"
+            f" data-sample=\"{esc(caption_rows[0]['text'] if caption_rows else 'サンプル字幕')}\">"
             f"<p><button class='gbtn' onclick='cvTitles({n})'>"
             f"{'タイトル候補生成' if not cand_titles else 'タイトル候補再生成'}</button>"
             f"　<span class='cvtstat meta'></span></p>"
@@ -3897,15 +3922,27 @@ def render_clip_videos(idv, key):
             "</div></div>")
         # 書き出し済みの動画（再生ウインドウ。原文 L68）。毎回上書き・溜めない(原文 L124)。
         # その下に整形ファイル名(タイトル_尺_規格)での .mp4 ダウンロードリンクを出す
-        nice_base = f"{safe_name((cfg.get('title') or f'クリップ{n + 1}').strip())}" \
-                    f"_{int(dur // 60)}m{int(dur % 60):02d}s"
+        # 書き出し済みファイルはタイトル_{短ID}_尺_サイズ.mp4(原文 L157)。タイトル変更で
+        # 名前がずれても見つかるよう短IDで探す。旧形式(clip_..._preview_...)も拾う
         previews = []
+        short_id = f"{key.split('_')[-1][:4]}{n}"
         for s in sizes:
-            pv = os.path.join(base, "generated", f"clip_{key}_preview_{n}_{s['key']}.mp4")
-            if os.path.isfile(pv):
-                rel = f"{idv}/generated/clip_{key}_preview_{n}_{s['key']}.mp4"
+            found = glob.glob(os.path.join(
+                base, "generated", f"*_{short_id}_*_{s['key']}.mp4"))
+            legacy = os.path.join(base, "generated",
+                                  f"clip_{key}_preview_{n}_{s['key']}.mp4")
+            if os.path.isfile(legacy):
+                found.append(legacy)
+            if found:
+                pv = max(found, key=os.path.getmtime)
+                rel = f"{idv}/generated/{os.path.basename(pv)}"
                 url = f"{approot()}/media/{urllib.parse.quote(rel)}"
-                nice = f"{nice_base}_{s['key']}.mp4"
+                nice = os.path.basename(pv)
+                if pv == legacy:
+                    # 旧形式のファイルでも、保存されるファイル名は新形式で出す(原文 L157)
+                    nice = (f"{safe_name((cfg.get('title') or f'クリップ{n + 1}').strip())}"
+                            f"_{short_id}_{int(dur // 60)}m{int(dur % 60):02d}s"
+                            f"_{s['key']}.mp4")
                 previews.append(
                     f"<div style='flex:1;min-width:200px;max-width:320px'>"
                     f"<div class='meta'>{esc(s['key'])}</div>"
@@ -4027,9 +4064,18 @@ def render_clip_videos(idv, key):
         "var box=prev.querySelector(\".pvtext[data-el='\"+el+\"']\");"
         "var txt=(el==='title')?(card.querySelector('.cvtitle').value||'タイトル')"
         ":(card.dataset.sample||'サンプル字幕');"
+        # 折り返しは書き出し(ASS)と同じ「文字数」規則で入れる(原文 L155)。
+        # CSS の幅折り返しに任せると行の切れ目が動画とずれる
+        "var pxv=Math.max(1,Math.round(wh[0]*st.size_pct/100));"
+        "var mcw=Math.max(2,Math.floor(wh[0]*st.width_pct/100/pxv));"
+        "var wrapped='';for(var ci=0;ci<txt.length;ci++){"
+        "if(ci&&ci%mcw===0)wrapped+='\\n';wrapped+=txt.charAt(ci);}"
+        "txt=wrapped;"
         "var fs=st.size_pct/100*pw;"
         "box.style.left=st.x_pct+'%';box.style.top=st.y_pct+'%';"
-        "box.style.width=st.width_pct+'%';"
+        # left:50% の絶対配置は shrink-to-fit が半幅に縛られ CSS が再折返しする。
+        # 折返しは \n が決めるので幅は内容いっぱいに(max-content)
+        "box.style.width='max-content';box.style.maxWidth='none';"
         "box.style.fontSize=fs+'px';"
         "box.style.fontFamily=cvFontFamily(st.font);"
         "box.style.fontWeight=st.bold?'700':'400';"
@@ -4298,7 +4344,12 @@ def render_clip_videos(idv, key):
         "if(bsrc&&bgv.getAttribute('data-src')!==bsrc){"
         "bgv.setAttribute('data-src',bsrc);bgv.src=bsrc;}"
         "var p=cvFxCollect();var W=box.clientWidth||480;var html='';"
+        # 折り返しは書き出しと同じ文字数規則(基準サイズ基準。原文 L155)
+        "var pxv=Math.max(1,Math.round(1080*base.size_pct/100));"
+        "var mcw=Math.max(2,Math.floor(1080*(base.width_pct/100)/pxv));var chc=0;"
         "blk.querySelectorAll('.cvtok').forEach(function(t){"
+        "if(chc&&chc+t.textContent.length>mcw){html+='<br>';chc=0;}"
+        "chc+=t.textContent.length;"
         "var tokSec=parseFloat(t.dataset.s);"
         "var inr=cvEdRange?(tokSec>=cvEdRange.a-0.005&&tokSec<=cvEdRange.b+0.005):true;"
         "var q=inr?Object.assign({},base,p):base;"

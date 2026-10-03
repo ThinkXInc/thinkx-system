@@ -690,19 +690,28 @@ def main():
         if args.quick:
             # 1/3 サイズ(偶数丸め)。見た目チェック用の実描画(原文 L147/L148)
             w, h = (w // 3) // 2 * 2, (h // 3) // 2 * 2
+        # ファイル名はタイトル_{短ID}_尺_サイズ（原文 L71・L157）。
+        # 短ID = 版ハッシュ先頭4桁 + 切り抜き番号（なるべく短く・一意に）
+        title = (cfg.get("title") or f"クリップ{args.seg + 1}").strip()
+        short_id = f"{args.key.split('_')[-1][:4]}{args.seg}"
+        nice_name = (f"{safe_name(title)}_{short_id}_"
+                     f"{int(dur // 60)}m{int(dur % 60):02d}s_{size_key}.mp4")
         if args.export:
-            # ファイル名はタイトル・長さ・サイズ規格から（原文 L71）
-            title = (cfg.get("title") or f"クリップ{args.seg + 1}").strip()
-            name = f"{safe_name(title)}_{int(dur // 60)}m{int(dur % 60):02d}s_{size_key}.mp4"
-            out = base / "contents" / "clip" / args.key / name
+            out = base / "contents" / "clip" / args.key / nice_name
         elif args.out:
             out = pathlib.Path(args.out)
         elif args.quick:
             out = pathlib.Path(
                 idpaths.save(str(base), f"clip_{args.key}_quick_{args.seg}_{size_key}.mp4"))
         else:
-            out = pathlib.Path(
-                idpaths.save(str(base), f"clip_{args.key}_preview_{args.seg}_{size_key}.mp4"))
+            out = pathlib.Path(idpaths.save(str(base), nice_name))
+            # 毎回上書き・溜めない(原文 L124): タイトルや尺が変わって名前がずれた
+            # 同じ短ID+サイズの旧ファイルと、旧形式(clip_..._preview_...)を消す
+            for old in out.parent.glob(f"*_{short_id}_*_{size_key}.mp4"):
+                if old != out:
+                    old.unlink()
+            (out.parent / f"clip_{args.key}_preview_{args.seg}_{size_key}.mp4"
+             ).unlink(missing_ok=True)
         out.parent.mkdir(parents=True, exist_ok=True)
 
         ass_path = gen / (f"clip_{args.key}_{args.seg}_{size_key}"
