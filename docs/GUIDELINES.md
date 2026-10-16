@@ -458,6 +458,9 @@ Rules（records と同じ形式）
   root 側 install の削除は sudo が要るためオーナー実行(settings で sudo は deny)。
 - **再発時の確認手順**: `command -v claude` と `npm ls -g --depth=0` の版が一致するか。
   食い違えば PATH か install の二重化。`claude --version` が「native binary not installed」なら上記 install.cjs を手で実行。
+- **追記(2026-10-01)**: postinstall 不発が再発したため(実測 2 回目)、実装方式を npm user install から
+  **native installer(`curl -fsSL https://claude.ai/install.sh | bash`・`~/.local/bin/claude`・自動更新あり)へ移行**(infra D-83)。
+  「sudo なしでセッション内から更新を完結させる」という本指示の本義は不変。npm 固有の復旧手順(install.cjs)は以後不要。
 
 
 ## ページを追加したら sitemap 更新をオーナーに提案する。priority は確認を仰ぐ(オーナー指示 2026-09-28)
@@ -471,3 +474,27 @@ Rules（records と同じ形式）
 - **文脈**: 2026-09-28、KOBITO 製品ページ(2026-09-04 公開)が sitemap に未掲載のままオーナーの指摘で追加になった。
   同セッションで generator 廃止(xml 直接編集へ一本化)を決めた際、「ページ追加と sitemap 更新が自動で結びつかなくなる」
   ことへの手当としてこのフローを定型化する指示が出た。
+
+
+## 方式の中で直す前に、方式自体を疑う(オーナー指摘 2026-10-01)
+
+- **原文**: 「だったら最初からnativeにしとけばよかっただろ」(claude の npm 導入が postinstall 不発で 2 度壊れ、native installer へ移行した直後。公式推奨は最初から native installer だった)
+- **解釈**: 外部ツールの導入・運用で障害が出たとき、目の前の壊れ方を既存方式の内側で直す前に、
+  「この方式は公式の現在の推奨か」「もっと単純な方式に乗り換えれば問題が構造ごと消えないか」を一度確認する。
+  同じ方式内の修理を 2 回やることになったら、それは方式自体を疑う合図。
+- **文脈**: 2026-09-28 に claude の root/user 二重 npm install を npm の枠内で修理(PATH 整理・install.cjs 復旧)。
+  10-01 に同型の postinstall 事故が再発し、公式ドキュメントを確認して初めて native installer が推奨と知り移行(D-83)。
+  最初に公式の導入方法一覧を見ていれば修理 2 回と障害 1 回は不要だった。
+
+## 44. コードを書く前に規約を読む・意味の無い変数名を使わない
+
+- **原文**: 「変数名がs2? ちゃんとコード規約を読んでいるのか？」(2026-10-02)
+- **解釈**: `docs/coding_guides/`(axioms の Naming: 必要十分・型が分かる・略語禁止・一貫性)を
+  コードを書く前に読むのは毎セッションの義務(workspace CLAUDE.md「読まずに書くことを禁ずる」)。
+  既存変数との衝突回避のために `s2`・`sz2`・`st_`・`e2` のような番号・記号付きの
+  捨て名を作るのは禁止。衝突したらどちらも意味のある名前に改める。
+- **文脈**: podcast 切り抜きトラックで、ループ変数 `s2` が既存の「秒」変数を潰して 500 を出し、
+  回避名も `sz2` という規約違反の名前にした。コンテキスト圧縮後のセッションで規約を
+  読み直さずにコードを書いていた。
+- **解決**: 指摘を受けて axioms / coding_guide / python.md を読み、該当2ファイルの
+  番号付き・記号付き変数名を一掃(style_def / font_file / size_key / tokens / merged 等)。

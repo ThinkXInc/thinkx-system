@@ -1972,3 +1972,26 @@ supercom-lb1   nginx = loadbalancer の設定      uwsgi_thinkx inactive(ユニ�
   オーナーが触ると「staging を起動しかない」等の残留状態になる — モック再起動でリセット。
   (2) Chrome 自動操作の find の ref 経由クリックで隣の「やめる」を誤打し完了表示が出ない空振りを
   1 回起こした(コードの不具合ではない)。座標クリック+直前スクショで再実測して確認した。
+- 2026-10-01 リモコン「Claudeをアップデート」押下で 500: `claude --version が失敗: [Errno 8]
+  Exec format error`(オーナーが本番入口で実測)。原因は 9-28 と同じ postinstall 不発 —
+  9-28 以降に claude update が走り(2.1.283→2.1.286)、bin/claude が shebang 無しの
+  「native binary not installed」プレースホルダに戻っていた。bash は ENOEXEC 時に sh で
+  やり直すため対話では文言が出るだけだが、python の subprocess はやり直さず Errno 8 になる
+  (server.py の GET /connect/update が即死)。復旧は install.cjs 実行 → 2.1.286・endpoint
+  same:true を実測。恒久対処(8598ab8・staging 反映済み): claude_version() 自身が失敗時に
+  install.cjs を一度だけ実行してやり直す(GET でも自動復旧)。update_claude 側の個別復旧は
+  重複になるため削除。postinstall 不発はこれで実測 2 回目 — claude update の既知の癖として扱う。
+- 2026-10-01 claude を native installer へ移行(D-83)の実測: kaz で install.sh 実行 →
+  ~/.local/bin/claude(→ ~/.local/share/claude/versions/2.1.286)・auth は ~/.claude 共有で
+  再ログイン不要(loggedIn:true を実測)。.profile は Ubuntu 標準の ~/.local/bin ブロックが
+  既に効いており、.bashrc のみ先頭(非対話ガード前)に追記。npm 側は
+  `npm uninstall -g @anthropic-ai/claude-code`(removed 2 packages)。動作中の tmux claude
+  (npm 版バイナリ)はファイル削除後もプロセスは生存 — 次の staging 停止→起動から native 版。
+  両 unit の PATH を ~/.local/bin 先頭に変更し daemon-reload + claude_connect restart 後、
+  /connect/update = {current: 2.1.286, latest: 2.1.286, same: true} を実測。
+- 2026-10-01 「Claudeをアップデート」ボタンの扱い(オーナー指示): native 移行(D-83)後は
+  自動更新により「更新を実行する」役割はほぼ出番がなく、現実装の版表示はディスク上の実体を
+  見るため動作中セッションの古さは教えない。それでも**暫定で残す(単に作り直しが面倒なため)**。
+  原文「とりあえず残しておく　単に作業が面倒なため　今後別の機能が追加されたらそのスペースを
+  空ける可能性が高いので覚えておけ」— 右下のスペースに新機能を置く話が出たら、このボタンの
+  撤去・縮小を先に提案する。

@@ -23,6 +23,7 @@ EDIT_FILES = {
     "ratings.json",         # オーナー評価（★）
     "cutlist.json",         # 手動のカット指定
     "trim_plan.json",       # 無音詰めの計画
+    "transcript_edits.json",  # 文字起こし修正のオーバーレイ(C-16。transcript.json は不変)
 }
 
 # 機械が作るもの。消しても作り直せる。
@@ -37,7 +38,9 @@ GENERATED_FILES = {
     "asr_prompt.txt",
 }
 # 接尾辞で generated 行きにするもの（ID 名を含むファイル名になるため）
-GENERATED_SUFFIX = ("_全文.pdf", "_校正用.pdf")
+# .mp4 を save() に通すのは生成物(切り抜き書き出し等)だけ。元音源・元動画は
+# オーナーが直下へ手置きするもので、ここを通らない(find は旧位置=直下も見る)
+GENERATED_SUFFIX = ("_全文.pdf", "_校正用.pdf", ".mp4")
 GENERATED_CONTAINS = ("_校正用",)
 
 # 切り抜き編集(CLIP_PLAN)のファイル。clipkey を含むため名前が可変で、接頭辞+接尾辞で振り分ける。
@@ -48,6 +51,7 @@ GENERATED_CONTAINS = ("_校正用",)
 CLIP_PREFIX = "clip_"
 CLIP_EDIT_SUFFIX = (".json", "_history.jsonl", "_journal.jsonl")
 CLIP_GEN_SUFFIX = ("_suggestions.json",)   # .json でも generated 行きの例外
+CLIP_GEN_CONTAINS = ("_titles_",)          # タイトル候補(再生成可能)も generated 行き
 
 EDIT_DIR = "edit"
 GEN_DIR = "generated"
@@ -59,7 +63,7 @@ EXP_DIR = "experiments"
 def subdir_for(name):
     """そのファイルが入るべきサブディレクトリ名を返す。直下なら空文字。"""
     if name.startswith(CLIP_PREFIX):
-        if name.endswith(CLIP_GEN_SUFFIX):
+        if name.endswith(CLIP_GEN_SUFFIX) or any(k in name for k in CLIP_GEN_CONTAINS):
             return GEN_DIR
         return EDIT_DIR if name.endswith(CLIP_EDIT_SUFFIX) else GEN_DIR
     if name in EDIT_FILES:

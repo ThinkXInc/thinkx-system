@@ -442,11 +442,11 @@ def deploy_to_production() -> dict:
 
 
 # ---- Claude Code の更新(押す=実行・オーナー指示 2026-09-28) --------------------------------
-# claude の実体は kaz の ~/.npm-global だけ(root install 廃止・docs/GUIDELINES.md 2026-09-28)なので sudo は不要。
-# GET は今の版と最新版を見せるだけで何も変えない。POST が更新の実行。
-# 更新しても動作中のセッション(tmux 内の claude)は旧版のまま — 次にセッションを作り直したときから新版。
+# claude は kaz の native installer 管理 ~/.local/bin だけ(npm 方式は postinstall 不発で実体が壊れる
+# 事故が 2 回起きたため廃止・D-83)なので sudo は不要。GET は今の版と最新版を見せるだけで何も変えない。
+# POST が更新の実行。native 版は裏で自動更新も走るため、通常は押した時点で「最新です」になる。
+# 更新しても動作中のセッション(tmux 内の claude)は旧版のまま — staging の停止→起動で反映(D-82)。
 
-INSTALL_CJS = Path.home() / ".npm-global/lib/node_modules/@anthropic-ai/claude-code/install.cjs"
 VERSION_PATTERN = re.compile(r"\d+\.\d+\.\d+")
 
 
@@ -459,6 +459,7 @@ def claude_version() -> str:
 
 
 def latest_version() -> str:
+    # 最新版の問い合わせ先は npm レジストリのまま(native 版と同じリリース列で公開が続いている)。npm 本体は /usr/local/bin
     rc, out = run(["npm", "view", "@anthropic-ai/claude-code", "version"], timeout=30)
     found = VERSION_PATTERN.search(out)
     if rc != 0 or not found:
@@ -502,12 +503,7 @@ def update_claude() -> dict:
         if rc != 0:
             raise RuntimeError(f"claude update が失敗: {out.strip()[:300]}")
         set_phase("update_verify")
-        try:
-            after = claude_version()
-        except RuntimeError:
-            # 「更新成功」表示でも postinstall(native binary 取得)が走らないことがある(2026-09-28 実測)。install.cjs で直る
-            run(["node", str(INSTALL_CJS)], timeout=300)
-            after = claude_version()
+        after = claude_version()  # postinstall 不発の復旧は claude_version 自身が行う
         return {"result": "already" if after == before else "updated", "before": before, "after": after}
     finally:
         set_phase("idle")

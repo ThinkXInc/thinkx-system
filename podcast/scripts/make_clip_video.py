@@ -1,27 +1,33 @@
 #!/usr/bin/env python3
-"""切り抜き動画を1本合成する（CLIP_PLAN C-8）。
+"""切り抜き動画を1本合成する（CLIP_PLAN C-8・C-17 改定）。
 
-構成要素は 音声（凍結音源の該当区間）+ 字幕（修正済みユニット）+ タイトル（全編表示）+
-背景動画（ループ）。スタイルは config/clip_styles.json（C-7）をデータとして読む。
-プログラムが全要素を結合して1本にする（原文 L36-37。After Effects を使わない）。
+構成要素は 音声 + 字幕 + タイトル（全編表示） + 背景動画（ループ）。
+C-17: 凍結音源は使わない。音声は**元音源**から、切り抜き区間 −（1次編集の drops）−
+（「間を詰める」の drops）の keep を抽出・連結する。字幕は修正オーバーレイ適用済みの
+単語トークン（元音源時刻）を、出力時間へ再配置してから clip_styles.json の caption
+パラメータで字幕行にまとめる。スタイルはコードに埋め込まない（原文 L53）。
 
-usage: python scripts/make_clip_video.py <ID> --key <CLIPKEY> --seg <N> --sizes <WxH>[,<WxH>…] \
-           [--out <出力パス>]
-  N は切り抜きの時系列順の番号（0始まり）。--out は単一サイズのときだけ指定できる。
-  省略時は generated/clip_<KEY>_preview_<N>_<WxH>.mp4 に書く。
+usage: python scripts/make_clip_video.py <ID> --key <KEY> --seg <N> --sizes <WxH>[,<WxH>…] \
+           [--out <出力パス>] [--export]
+  N は切り抜きの時系列順の番号（0始まり）。--export は contents/clip/<KEY>/ へ
+  ファイル名規則（タイトル_長さ_規格）で書き出す（C-9）。
 """
 import os
 import sys
 import json
 import struct
+import hashlib
 import pathlib
 import argparse
+import tempfile
 import subprocess
 
 HERE = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(HERE / "scripts"))
 import idpaths
-from render import load_conf, safe_name, keep_ranges
+import transcript_edits
+from render import find_media, keep_ranges, load_conf, safe_name
+from export_audio import aac_encoder
 
 FONTS_DIR = HERE / "assets" / "fonts"
 BG_DIR = HERE / "assets" / "clip_backgrounds"
@@ -51,6 +57,48 @@ def font_family_name(path):
     """フォントファイルの family 名（name テーブル）。libass はファイル名でなく
     family 名で探すため、ファイルから直接読む（依存を増やさない）。ttc は先頭フォント。"""
     data = pathlib.Path(path).read_bytes()
+    return _font_family_from_bytes(data)
+
+
+_FS_SCALE_CACHE = {}
+
+
+def font_fs_scale(path):
+    """libass は \\fs を「usWinAscent+usWinDescent の高さ」としてフォントを縮めて描く
+    (ヒラギノで 1.332。\\fs100 のインク高 68px と CSS 100px の 89px の比で実測確認。
+    2026-10-03・原文 L163)。CSS の em に対するこの比を返し、プレビューは
+    font-size = fs / この値 で動画と同じ実寸になる。"""
+    if str(path) in _FS_SCALE_CACHE:
+        return _FS_SCALE_CACHE[str(path)]
+    try:
+        data = pathlib.Path(path).read_bytes()
+
+        def u32(o):
+            return struct.unpack(">I", data[o:o + 4])[0]
+
+        def u16(o):
+            return struct.unpack(">H", data[o:o + 2])[0]
+
+        off = u32(12) if data[:4] == b"ttcf" else 0
+        num_tables = u16(off + 4)
+        rec = off + 12
+        tables = {}
+        for _ in range(num_tables):
+            tables[data[rec:rec + 4]] = u32(rec + 8)
+            rec += 16
+        upem = u16(tables[b"head"] + 18)
+        os2 = tables[b"OS/2"]
+        win_ascent, win_descent = u16(os2 + 74), u16(os2 + 76)
+        scale = (win_ascent + win_descent) / upem
+        if not (0.5 < scale < 3):
+            scale = 1.0
+    except Exception:
+        scale = 1.0
+    _FS_SCALE_CACHE[str(path)] = scale
+    return scale
+
+
+def _font_family_from_bytes(data):
 
     def u32(o):
         return struct.unpack(">I", data[o:o + 4])[0]
@@ -71,22 +119,37 @@ def font_family_name(path):
         return None
     count = u16(name_off + 2)
     str_off = name_off + u16(name_off + 4)
-    best = None
+    best = None          # family (nameID 16 > 1)
+    best_sub = None      # subfamily (nameID 17 > 2)
     r = name_off + 6
     for _ in range(count):
         pid, _eid, _lid, nid = u16(r), u16(r + 2), u16(r + 4), u16(r + 6)
         ln, so = u16(r + 8), u16(r + 10)
         r += 12
-        if nid not in (16, 1):
+        if nid not in (16, 1, 17, 2):
             continue
         raw = data[str_off + so:str_off + so + ln]
         s = raw.decode("mac_roman", "ignore") if pid == 1 else raw.decode("utf-16-be", "ignore")
         if not s:
             continue
-        score = (0 if nid == 16 else 1, 0 if pid == 3 else 1)
-        if best is None or score < best[0]:
-            best = (score, s)
-    return best[1] if best else None
+        if nid in (16, 1):
+            score = (0 if nid == 16 else 1, 0 if pid == 3 else 1)
+            if best is None or score < best[0]:
+                best = (score, s)
+        else:
+            score = (0 if nid == 17 else 1, 0 if pid == 3 else 1)
+            if best_sub is None or score < best_sub[0]:
+                best_sub = (score, s)
+    if best is None:
+        return None
+    fam = best[1]
+    # 同一 family の別ウェイト(ヒラギノ W3/W6/W8 等)を区別できるよう、
+    # Regular/Bold 以外のサブファミリーは family に含める(原文 L130 のバリエーション対応)
+    sub = best_sub[1] if best_sub else ""
+    if sub and sub.lower() not in ("regular", "bold", "italic", "bold italic") \
+            and sub not in fam:
+        fam = f"{fam} {sub}"
+    return fam
 
 
 def ass_time(t):
@@ -97,31 +160,124 @@ def ass_time(t):
     return f"{h}:{m:02d}:{s:05.2f}"
 
 
-def wrap_lines(text, max_chars, max_lines):
-    """CJK 前提の単純折り返し（文字数ベース）。超過分も捨てずに最終行へ入れる。"""
+def resolve_style(cfg, sub_style):
+    """スタイル調整パネル(原文 L126)の実効値。web-server/main.py の
+    resolve_clip_style と同じ既定を共有する(片方を変えたら両方直す)。"""
+    legacy_font = cfg.get("font") or ""
+    base = {
+        "sub": {"color": ["#ffffff"], "outline": ["#000000"], "outline_w": 8,
+                "shadow_x": 3, "shadow_y": 3, "shadow_blur": 0,
+                "shadow_color": "#000000", "font": legacy_font,
+                "bold": True,
+                "size_pct": float(cfg.get("size_pct") or sub_style.get("font_size_pct") or 8.3),
+                "width_pct": 86, "x_pct": 50, "y_pct": 62,
+                "bg_on": False, "bg_color": "#000000", "bg_pad": 24, "bg_pad_v": 8,
+                "bg_radius": 16, "bg_alpha": 70},
+        "title": {"color": ["#ffffff"], "outline": ["#000000"], "outline_w": 6,
+                  "shadow_x": 2, "shadow_y": 2, "shadow_blur": 0,
+                  "shadow_color": "#000000", "font": legacy_font,
+                  "bold": True, "size_pct": 6.4, "width_pct": 84, "x_pct": 50, "y_pct": 20,
+                  "bg_on": False, "bg_color": "#000000", "bg_pad": 24, "bg_pad_v": 8,
+                  "bg_radius": 16, "bg_alpha": 70},
+    }
+    st = cfg.get("style") or {}
+    out = {}
+    for k, d in base.items():
+        merged = dict(d)
+        saved = st.get(k) or {}
+        for kk, vv in saved.items():
+            if vv is not None:
+                merged[kk] = vv
+        # 旧データの移行(原文 L150): 影が1値(shadow_w)の保存なら X/Y に読み替える
+        if "shadow_w" in saved and "shadow_x" not in saved:
+            merged["shadow_x"] = merged["shadow_y"] = saved["shadow_w"]
+        out[k] = merged
+    return out
+
+
+def _hex_rgb(h):
+    h = (h or "#ffffff").lstrip("#")
+    if len(h) != 6:
+        h = "ffffff"
+    return int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+
+
+def ass_colour(h):
+    """#rrggbb → スタイル行用 &H00BBGGRR。"""
+    r, g, b = _hex_rgb(h)
+    return f"&H00{b:02X}{g:02X}{r:02X}"
+
+
+def _lerp_hex(a, b, t):
+    ra, ga, ba = _hex_rgb(a)
+    rb, gb, bb = _hex_rgb(b)
+    return (round(ra + (rb - ra) * t), round(ga + (gb - ga) * t),
+            round(ba + (bb - ba) * t))
+
+
+def styled_text(text, max_chars, fill, outline):
+    """折り返し + グラデーション。libass はグラデーションを持たないため、
+    2色指定のときは1文字ずつ色を補間した \\c / \\3c タグで焼く(原文 L126)。"""
     if max_chars < 4:
         max_chars = 4
     lines = [text[i:i + max_chars] for i in range(0, len(text), max_chars)]
-    if len(lines) > max_lines:
-        lines = lines[:max_lines - 1] + ["".join(lines[max_lines - 1:])]
-    return r"\N".join(lines)
+    if len(fill) < 2 and len(outline) < 2:
+        return r"\N".join(lines)
+    total = max(1, sum(len(ln) for ln in lines) - 1)
+    out_lines, idx = [], 0
+    for ln in lines:
+        buf = ""
+        for ch in ln:
+            t = idx / total
+            tags = ""
+            if len(fill) > 1:
+                r, g, b = _lerp_hex(fill[0], fill[1], t)
+                tags += rf"\c&H{b:02X}{g:02X}{r:02X}&"
+            if len(outline) > 1:
+                r, g, b = _lerp_hex(outline[0], outline[1], t)
+                tags += rf"\3c&H{b:02X}{g:02X}{r:02X}&"
+            buf += "{" + tags + "}" + ch
+            idx += 1
+        out_lines.append(buf)
+    return r"\N".join(out_lines)
 
 
-def pct_of(spec, size_key, default):
-    """{"1080x1920": 62, "default": 66} 形式の解決。"""
-    if isinstance(spec, dict):
-        return float(spec.get(size_key, spec.get("default", default)))
-    if spec is None:
-        return float(default)
-    return float(spec)
+def token_in_keeps(st, en, keeps):
+    """中点が keep 内、または端をまたぐ語は重なり 0.2 秒以上（main.py と同じ規則。
+    「重なり 0.2 秒以上」だけだと 0.2 秒未満の短い語が keep 内でも全部落ちる）。"""
+    mid = (st + en) / 2
+    if any(ka <= mid < kb for ka, kb in keeps):
+        return True
+    return sum(max(0.0, min(en, kb) - max(st, ka)) for ka, kb in keeps) >= 0.2
 
 
-def build_ass(w, h, size_key, styles, cfg, units, keeps, fontname):
-    """keeps = 凍結音源時間での有効区間 [(a,b),...]（「間を詰める」の drops を除いた残り。
-    C-15）。字幕タイムは詰めた後の出力時間へ再配置する。"""
-    sub = (styles.get("subtitle_styles") or [{}])[0]
-    tstyles = {t.get("key"): t for t in (styles.get("title_styles") or [])}
-    tstyle = tstyles.get(cfg.get("title_style")) or (styles.get("title_styles") or [{}])[0]
+def clip_tokens(base, geometry, keeps):
+    """keep に属する修正済みトークン（元音源時刻）。"""
+    tsegments, _st = transcript_edits.corrected_segments(str(base))
+    out = []
+    for tseg in tsegments:
+        for w in (tseg.get("words") or []):
+            st, en = w.get("start"), w.get("end")
+            if st is None or en is None:
+                continue
+            st, en = float(st), float(en)
+            tok = (w.get("word") or "").strip()
+            if not tok:
+                continue
+            if not token_in_keeps(st, en, keeps):
+                continue
+            out.append({"s": st, "e": en, "t": tok})
+    out.sort(key=lambda w: w["s"])
+    return out
+
+
+def build_captions(tokens, keeps, styles):
+    """トークンを出力時間へ再配置し、字幕行（caption）にまとめる（C-17。
+    表示のまとめ方はデータでなくスタイルの問題なのでここで行う）。"""
+    cap = styles.get("caption") or {}
+    max_chars = int(cap.get("max_chars") or 16)
+    gap_sec = float(cap.get("gap_sec") or 0.6)
+    min_show = float(cap.get("min_show_sec") or 0.8)
     kmap, acc = [], 0.0
     for ka, kb in keeps:
         kmap.append((ka, kb, acc))
@@ -134,26 +290,186 @@ def build_ass(w, h, size_key, styles, cfg, units, keeps, fontname):
                 return off + min(max(t, ka), kb) - ka
         return dur
 
-    sub_pct = float(cfg.get("size_pct") or sub.get("font_size_pct") or 4.7)
-    sub_px = int(round(h * sub_pct / 100))
-    sub_outline = max(1, int(round(sub_px * float(sub.get("outline_pct") or 0.35) / 4)))
-    sub_shadow = int(round(sub_px * float(sub.get("shadow_pct") or 0.15) / 4))
-    sub_cy = int(round(h * pct_of(sub.get("center_y_pct"), size_key, 65) / 100))
-    sub_mx = float(sub.get("margin_x_pct") or 7)
-    sub_max_chars = max(4, int((w * (1 - 2 * sub_mx / 100)) // sub_px))
+    caps, cur = [], None
+    for w in tokens:
+        a, b = remap(w["s"]), remap(w["e"])
+        if cur is not None and (a - cur["b"] >= gap_sec or len(cur["text"]) >= max_chars):
+            caps.append(cur)
+            cur = None
+        if cur is None:
+            cur = {"a": a, "b": max(b, a), "text": w["t"],
+                   "tokens": [{"s": w["s"], "t": w["t"]}]}
+        else:
+            cur["text"] += w["t"]
+            cur["b"] = max(cur["b"], b)
+            cur["tokens"].append({"s": w["s"], "t": w["t"]})
+        if cur["text"] and cur["text"][-1] in "。．！？!?":
+            caps.append(cur)
+            cur = None
+    if cur is not None:
+        caps.append(cur)
+    # 短すぎる表示は読めない。次の字幕開始までの範囲で最低表示時間を確保する
+    for i, c in enumerate(caps):
+        if c["b"] - c["a"] < min_show:
+            limit = caps[i + 1]["a"] if i + 1 < len(caps) else dur
+            c["b"] = min(max(c["b"], c["a"] + min_show), max(limit, c["a"]))
+    return caps, dur
 
-    ttl_px = int(round(h * float(tstyle.get("font_size_pct") or 3.6) / 100))
-    ttl_outline = max(1, int(round(ttl_px * float(tstyle.get("outline_pct") or 0.25) / 4)))
-    ttl_shadow = int(round(ttl_px * float(tstyle.get("shadow_pct") or 0.1) / 4))
-    ttl_y = int(round(h * pct_of(tstyle.get("top_y_pct"), size_key, 12) / 100))
-    ttl_mx = float(tstyle.get("margin_x_pct") or 8)
-    ttl_max_chars = max(4, int((w * (1 - 2 * ttl_mx / 100)) // ttl_px))
 
-    def style_line(name, px, st, outline, shadow):
-        bold = -1 if st.get("bold", True) else 0
-        return (f"Style: {name},{fontname},{px},{st.get('primary_colour', '&H00FFFFFF')},"
-                f"&H000000FF,{st.get('outline_colour', '&H00000000')},&H80000000,"
-                f"{bold},0,0,0,100,100,0,0,1,{outline},{shadow},5,20,20,20,1")
+def emit_caption_text(tokens, max_chars_n, base, effects, fxmap, w, px_base,
+                      force_color=None):
+    """キャプション本文を1文字ずつ組み立てる(原文 L134)。
+    各トークンは effects([{a,b,style}] 元音源時刻)に当たれば名前付きスタイルの
+    上書き(サイズ・色/グラデ・縁・影・フォント・太字・ポップ)を受ける。
+    折り返しは基準サイズの文字数で行う(部分的な拡大による幅増は近似のまま)。"""
+    scale = w / 1080.0
+
+    def styles_of(tok_s):
+        """このトークンに重なる全スタイル名。アニメとスタイルは共存し(原文 L142)、
+        広い範囲(=まとまり全体のアニメ)を先に、狭い範囲(=部分スタイル)を後に重ねる。"""
+        matched = [effect for effect in effects
+                   if float(effect["a"]) - 0.005 <= tok_s <= float(effect["b"]) + 0.005
+                   and str(effect.get("style")) in fxmap]
+        matched.sort(key=lambda effect: -(float(effect["b"]) - float(effect["a"])))
+        return tuple(str(effect["style"]) for effect in matched)
+
+    # 文字列に展開(文字ごとのスタイル名の組)
+    chars = []
+    for token in tokens:
+        style_names = styles_of(float(token["s"]))
+        for ch in token["t"]:
+            chars.append((ch, style_names))
+    # 折り返し位置(基準文字数)
+    if max_chars_n < 4:
+        max_chars_n = 4
+    total = max(1, len(chars) - 1)
+
+    def props_of(style_names):
+        if not style_names:
+            return base
+        merged = dict(base)
+        for name in style_names:
+            merged.update({k: v for k, v in fxmap.get(name, {}).items()
+                           if v is not None})
+        return merged
+
+    def run_tags(merged, style_names):
+        px = max(1, int(round(w * float(merged["size_pct"]) / 100)))
+        ow = round(float(merged.get("outline_w") or 0) * scale, 1)
+        fam = merged.get("_family") or ""
+        t = rf"\fs{px}\bord{ow}"
+        t += r"\b1" if merged.get("bold") else r"\b0"
+        if fam:
+            t += rf"\fn{fam}"
+        if force_color:
+            # 影レイヤー用(原文 L150): 本体色・縁色とも影色のシルエットにして、
+            # 影の広がり(blur)だけをこのレイヤーで表現する
+            blur = round(float(merged.get("shadow_blur") or 0) * scale, 1)
+            r, g, b = _hex_rgb(force_color)
+            t += (rf"\xshad0\yshad0\blur{blur}"
+                  rf"\c&H{b:02X}{g:02X}{r:02X}&\3c&H{b:02X}{g:02X}{r:02X}&")
+            if merged.get("anim") == "pop":
+                anim_ms = int(float(merged.get("anim_dur") or 0.25) * 1000)
+                t += rf"\fscx20\fscy20\t(0,{anim_ms},\fscx100\fscy100)"
+            else:
+                t += r"\fscx100\fscy100"
+            return "{" + t + "}"
+        if float(merged.get("shadow_blur") or 0) > 0:
+            shadow_x = shadow_y = 0   # ぼかし影は別レイヤーが描く(二重影の防止)
+        else:
+            shadow_x = round(float(merged.get("shadow_x") or 0) * scale, 1)
+            shadow_y = round(float(merged.get("shadow_y") or 0) * scale, 1)
+        t += rf"\xshad{shadow_x}\yshad{shadow_y}"
+        sr, sg, sb = _hex_rgb(merged.get("shadow_color") or "#000000")
+        t += rf"\4c&H{sb:02X}{sg:02X}{sr:02X}&"
+        oc = (merged.get("outline") or ["#000000"])
+        if len(oc) < 2:
+            r, g, b = _hex_rgb(oc[0])
+            t += rf"\3c&H{b:02X}{g:02X}{r:02X}&"
+        fc = (merged.get("color") or ["#ffffff"])
+        if len(fc) < 2:
+            r, g, b = _hex_rgb(fc[0])
+            t += rf"\c&H{b:02X}{g:02X}{r:02X}&"
+        # ポップ(拡大アニメ)。スライドはまとまり単位のみ(イベント移動のため)
+        if style_names and merged.get("anim") == "pop":
+            ms = int(float(merged.get("anim_dur") or 0.25) * 1000)
+            t += rf"\fscx20\fscy20\t(0,{ms},\fscx100\fscy100)"
+        else:
+            t += r"\fscx100\fscy100"
+        return "{" + t + "}"
+
+    out = []
+    current_names = object()   # 強制的に先頭でタグを吐く
+    current_props = None
+    column = 0
+    char_index = 0
+    for ch, style_names in chars:
+        if column >= max_chars_n:
+            out.append(r"\N")
+            column = 0
+        if style_names != current_names:
+            current_props = props_of(style_names)
+            out.append(run_tags(current_props, style_names))
+            current_names = style_names
+        # グラデーション(スタイルのスコープ内で全体に補間)。影レイヤーでは色を焼かない
+        fc = [] if force_color else (current_props.get("color") or ["#ffffff"])
+        oc = [] if force_color else (current_props.get("outline") or ["#000000"])
+        tags = ""
+        if len(fc) > 1:
+            r, g, b = _lerp_hex(fc[0], fc[1], char_index / total)
+            tags += rf"\c&H{b:02X}{g:02X}{r:02X}&"
+        if len(oc) > 1:
+            r, g, b = _lerp_hex(oc[0], oc[1], char_index / total)
+            tags += rf"\3c&H{b:02X}{g:02X}{r:02X}&"
+        if tags:
+            out.append("{" + tags + "}")
+        out.append(ch)
+        column += 1
+        char_index += 1
+    return "".join(out)
+
+
+def build_ass(w, h, stl, cfg, captions, dur, families, effects=None, fxmap=None):
+    """stl = resolve_style() の実効値(タイトル/字幕とも 色[1-2]・縁[1-2]・縁太・影・影色・
+    フォント・太字・サイズ(幅%)・位置(x/y %))。families = {"sub": family, "title": family}。
+    縁太・影は 1080 幅基準の px 指定を実寸へスケールする。位置は中央アンカー(\\an5)。"""
+    scale = w / 1080.0
+
+    def px_of(d):
+        return max(1, int(round(w * float(d["size_pct"]) / 100)))
+
+    def style_line(name, d, fam):
+        # 影はイベント側の \xshad \yshad が常に上書きするため Style 行は 0(原文 L150)
+        px = px_of(d)
+        bold = -1 if d.get("bold") else 0
+        ow = round(float(d.get("outline_w") or 0) * scale, 1)
+        return (f"Style: {name},{fam},{px},{ass_colour((d.get('color') or ['#ffffff'])[0])},"
+                f"&H000000FF,{ass_colour((d.get('outline') or ['#000000'])[0])},"
+                f"{ass_colour(d.get('shadow_color') or '#000000')},"
+                f"{bold},0,0,0,100,100,0,0,1,{ow},0,5,20,20,20,1")
+
+    def char_width(d):
+        """全角1文字の実幅(px)。libass は \\fs をフォント高として縮めて描くため、
+        文字の実幅(em)は fs/比 になる(原文 L166。比は font_fs_scale)。"""
+        return px_of(d) / font_fs_scale(FONTS_DIR / (d.get("font") or ""))
+
+    def max_chars(d):
+        # テキストボックスの幅はスタイルの width_pct(画面幅に対する%)が決める(原文 L130)。
+        # 1文字=fs幅で数えると幅100%でも実際は約75%にしかならない(原文 L166)
+        return max(2, int((w * float(d.get("width_pct") or 86) / 100) // char_width(d)))
+
+    def shadow_offsets(d):
+        """影の X/Y ずらし(1080 幅基準 px → 実寸。原文 L150)。"""
+        return (round(float(d.get("shadow_x") or 0) * scale, 1),
+                round(float(d.get("shadow_y") or 0) * scale, 1))
+
+    def pos_tag(d):
+        x = int(round(w * float(d.get("x_pct") or 50) / 100))
+        y = int(round(h * float(d.get("y_pct") or 50) / 100))
+        shadow_x, shadow_y = shadow_offsets(d)
+        if float(d.get("shadow_blur") or 0) > 0:
+            shadow_x = shadow_y = 0   # ぼかし影は別レイヤーが描く(二重影の防止)
+        return rf"{{\an5\pos({x},{y})\xshad{shadow_x}\yshad{shadow_y}}}"
 
     lines = [
         "[Script Info]",
@@ -167,34 +483,148 @@ def build_ass(w, h, size_key, styles, cfg, units, keeps, fontname):
         "Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, "
         "BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, "
         "BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding",
-        style_line("Sub", sub_px, sub, sub_outline, sub_shadow),
-        style_line("Title", ttl_px, tstyle, ttl_outline, ttl_shadow),
+        style_line("Sub", stl["sub"], families["sub"]),
+        style_line("Title", stl["title"], families["title"]),
         "",
         "[Events]",
         "Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text",
     ]
+    def bg_event(d, style_name, text, t0, t1):
+        """背景の角丸矩形(原文 L132/L133)。ASS に角丸ボックスが無いので描画コマンド
+        (\\p1 のベジェ角丸矩形)をテキストの背面レイヤーに焼く。半透明は \\1a で指定。
+        文字幅は 全角=1em・半角=0.55em の見積り(プレビューは CSS なので数 px の近似差は許容)"""
+        if not d.get("bg_on"):
+            return None
+        px = max(1, int(round(w * float(d["size_pct"]) / 100)))
+        mc0 = max_chars(d)
+        tl = [text[i:i + mc0] for i in range(0, len(text), mc0)] or [""]
+
+        glyph_w = char_width(d)   # 実幅は em = fs/比(原文 L166)
+
+        def _est(ln):
+            return sum(glyph_w if ord(ch) > 0xFF else glyph_w * 0.55 for ch in ln)
+
+        pad = float(d.get("bg_pad") or 0) * scale
+        pad_v = float(d.get("bg_pad_v") or 0) * scale
+        rad = float(d.get("bg_radius") or 0) * scale
+        bw = max(_est(ln) for ln in tl) + 2 * pad
+        bh = len(tl) * px * 1.18 + 2 * pad_v
+        rad = max(0.0, min(rad, bw / 2, bh / 2))
+        cx = w * float(d.get("x_pct") or 50) / 100
+        cy = h * float(d.get("y_pct") or 50) / 100
+        x0, y0 = cx - bw / 2, cy - bh / 2
+
+        def f(v):
+            return f"{v:.1f}"
+
+        r_ = rad
+        path = (f"m {f(r_)} 0 l {f(bw - r_)} 0 "
+                f"b {f(bw)} 0 {f(bw)} 0 {f(bw)} {f(r_)} "
+                f"l {f(bw)} {f(bh - r_)} "
+                f"b {f(bw)} {f(bh)} {f(bw)} {f(bh)} {f(bw - r_)} {f(bh)} "
+                f"l {f(r_)} {f(bh)} "
+                f"b 0 {f(bh)} 0 {f(bh)} 0 {f(bh - r_)} "
+                f"l 0 {f(r_)} "
+                f"b 0 0 0 0 {f(r_)} 0")
+        bg_red, bg_green, bg_blue = _hex_rgb(d.get("bg_color") or "#000000")
+        opacity = d.get("bg_alpha")
+        opacity = 100.0 if opacity is None else float(opacity)
+        alpha_hex = max(0, min(255, int(round(255 * (1 - opacity / 100)))))
+        return (f"Dialogue: 0,{ass_time(t0)},{ass_time(t1)},{style_name},,0,0,0,,"
+                rf"{{\an7\pos({x0:.1f},{y0:.1f})\p1\bord0\shad0"
+                rf"\1c&H{bg_blue:02X}{bg_green:02X}{bg_red:02X}&"
+                rf"\1a&H{alpha_hex:02X}&}}{path}{{\p0}}")
+
+    def shadow_head(d, move_ms=None, move_dy=0):
+        """影レイヤーの位置タグ。本体位置を影の X/Y ぶんずらして置く(原文 L150)。"""
+        shadow_x, shadow_y = shadow_offsets(d)
+        x = w * float(d.get("x_pct") or 50) / 100 + shadow_x
+        y = h * float(d.get("y_pct") or 50) / 100 + shadow_y
+        if move_ms:
+            return rf"{{\an5\move({x:.1f},{y + move_dy:.1f},{x:.1f},{y:.1f},0,{move_ms})}}"
+        return rf"{{\an5\pos({x:.1f},{y:.1f})}}"
+
+    def shadow_silhouette_tags(d):
+        """影レイヤーの描画タグ。本体と同じ字形(縁込み)を影色一色で塗り、blur で広げる。
+        \\blur は縁ごと滲むので本体イベントには掛けず、この別レイヤーだけに掛ける。"""
+        ow = round(float(d.get("outline_w") or 0) * scale, 1)
+        blur = round(float(d.get("shadow_blur") or 0) * scale, 1)
+        r, g, b = _hex_rgb(d.get("shadow_color") or "#000000")
+        colour = f"&H{b:02X}{g:02X}{r:02X}&"
+        return (rf"{{\bord{ow}\xshad0\yshad0\blur{blur}"
+                rf"\c{colour}\3c{colour}}}")
+
     title = (cfg.get("title") or "").strip()
     if title:
-        txt = wrap_lines(title, ttl_max_chars, int(tstyle.get("max_lines") or 3))
+        d = stl["title"]
+        ev = bg_event(d, "Title", title, 0, dur)
+        if ev:
+            lines.append(ev)
+        if float(d.get("shadow_blur") or 0) > 0:
+            plain = styled_text(title, max_chars(d), [], [])
+            lines.append(f"Dialogue: 0,{ass_time(0)},{ass_time(dur)},Title,,0,0,0,,"
+                         f"{shadow_head(d)}{shadow_silhouette_tags(d)}{plain}")
+        txt = styled_text(title, max_chars(d), d.get("color") or [], d.get("outline") or [])
         lines.append(f"Dialogue: 1,{ass_time(0)},{ass_time(dur)},Title,,0,0,0,,"
-                     f"{{\\an8\\pos({w // 2},{ttl_y})}}{txt}")
-    for u in units:
-        us, ue = float(u["s"]), float(u["e"])
-        # 有効区間と 0.2 秒以上重なる字幕だけ出す（端をまたぐユニットは音が流れるぶん
-        # 表示し、「詰めた間」に完全に入ったものは出さない）。時刻は remap が区間内に丸める
-        overlap = sum(max(0.0, min(ue, kb) - max(us, ka)) for ka, kb in keeps)
-        if overlap < 0.2:
+                     f"{pos_tag(d)}{txt}")
+    d = stl["sub"]
+    mc = max_chars(d)
+    effects = effects or []
+    fxmap = fxmap or {}
+    base_sub = dict(d, _family=families["sub"])
+    px_sub = px_of(d)
+
+    def whole_anim(tokens):
+        """slide_up のスタイルがまとまりの全トークンを覆っていれば返す(原文 L142。
+        内側に部分スタイルが重なっていてもスライドは生きる)。"""
+        for effect in effects:
+            props = fxmap.get(str(effect.get("style"))) or {}
+            if props.get("anim") != "slide_up":
+                continue
+            if all(float(effect["a"]) - 0.005 <= float(token["s"]) <= float(effect["b"]) + 0.005
+                   for token in tokens):
+                return props
+        return None
+
+    for c in captions:
+        if not c["text"].strip():
             continue
-        text = (u.get("t") or "").strip()
-        if not text:
-            continue
-        a, b = remap(us), remap(ue)
-        # 短すぎる表示は読めないので最低 0.8 秒は出す（次の字幕開始までに収める）
-        if b - a < 0.8:
-            b = min(dur, a + 0.8)
-        txt = wrap_lines(text, sub_max_chars, int(sub.get("max_lines") or 2))
-        lines.append(f"Dialogue: 0,{ass_time(a)},{ass_time(b)},Sub,,0,0,0,,"
-                     f"{{\\an5\\pos({w // 2},{sub_cy})}}{txt}")
+        ev = bg_event(d, "Sub", c["text"], c["a"], min(c["b"], dur))
+        if ev:
+            lines.append(ev)
+        tokens = c.get("tokens") or [{"s": -1, "t": c["text"]}]
+        if effects and fxmap:
+            txt = emit_caption_text(tokens, mc, base_sub, effects, fxmap, w, px_sub)
+        else:
+            txt = styled_text(c["text"], mc, d.get("color") or [], d.get("outline") or [])
+        wa = whole_anim(tokens) if (effects and fxmap) else None
+        move_ms = int(float(wa.get("anim_dur") or 0.3) * 1000) if wa else None
+        move_dy = int(round(h * 0.045))
+        if wa:
+            # 下からスライドして現れる(まとまり単位。原文 L134)
+            x = int(round(w * float(d.get("x_pct") or 50) / 100))
+            y = int(round(h * float(d.get("y_pct") or 50) / 100))
+            shadow_x, shadow_y = shadow_offsets(d)
+            if float(d.get("shadow_blur") or 0) > 0:
+                shadow_x = shadow_y = 0   # ぼかし影は別レイヤーが描く
+            head = (rf"{{\an5\move({x},{y + move_dy},{x},{y},0,{move_ms})"
+                    rf"\xshad{shadow_x}\yshad{shadow_y}}}")
+        else:
+            head = pos_tag(d)
+        if float(d.get("shadow_blur") or 0) > 0:
+            # 広がりのある影は別レイヤー(原文 L150)。本体と同じ動き・同じ字形で影色一色
+            if effects and fxmap:
+                shadow_body = emit_caption_text(
+                    tokens, mc, base_sub, effects, fxmap, w, px_sub,
+                    force_color=d.get("shadow_color") or "#000000")
+            else:
+                shadow_body = (shadow_silhouette_tags(d)
+                               + styled_text(c["text"], mc, [], []))
+            lines.append(
+                f"Dialogue: 0,{ass_time(c['a'])},{ass_time(min(c['b'], dur))},Sub,,0,0,0,,"
+                f"{shadow_head(d, move_ms, move_dy)}{shadow_body}")
+        lines.append(f"Dialogue: 1,{ass_time(c['a'])},{ass_time(min(c['b'], dur))},Sub,,0,0,0,,"
+                     f"{head}{txt}")
     return "\n".join(lines) + "\n"
 
 
@@ -206,6 +636,9 @@ def main():
     ap.add_argument("--sizes", required=True,
                     help="例 1080x1920,1080x1080（clip_styles.json の key をカンマ区切り）")
     ap.add_argument("--out", default=None, help="出力パス（単一サイズのときのみ）")
+    ap.add_argument("--quick", action="store_true",
+                    help="クイックプレビュー(原文 L147/L148/L151): 1/3 サイズ・全編・"
+                         "音なし・速い設定で generated/clip_<key>_quick_* へ出す")
     ap.add_argument("--export", action="store_true",
                     help="contents/clip/<KEY>/ にファイル名規則（タイトル_長さ_規格）で書き出す（C-9）")
     args = ap.parse_args()
@@ -220,59 +653,98 @@ def main():
     styles = json.loads((HERE / "config" / "clip_styles.json").read_text(encoding="utf-8"))
     cur = json.loads(pathlib.Path(idpaths.find(str(base), f"clip_{args.key}.json"))
                      .read_text(encoding="utf-8"))
+    if "geometry" not in cur:
+        sys.exit("[clipvid] この版ファイルに geometry がありません（旧形式）")
+    g = cur["geometry"]
+    g_drops = [tuple(map(float, d)) for d in g.get("drops") or []]
     clips = sorted(cur.get("clips") or [], key=lambda c: (c[0], c[1]))
     if not (0 <= args.seg < len(clips)):
         sys.exit(f"[clipvid] 切り抜き {args.seg} がありません（{len(clips)}本）")
     row = clips[args.seg]
     cs, ce = float(row[0]), float(row[1])
-    # 「間を詰める」で捨てた区間（C-15・原文 L99）。音声は keep を連結し、尺は正味
     row_drops = [tuple(map(float, d)) for d in (row[2] if len(row) > 2 else [])]
-    keeps = keep_ranges(cs, ce, row_drops)
+    # keep = 切り抜き −（1次編集の drops）−（詰めた間）。音声・字幕・尺の唯一の根拠（C-17）
+    keeps = keep_ranges(cs, ce, g_drops + row_drops)
     if not keeps:
         sys.exit("[clipvid] 有効区間がありません")
     dur = sum(b - a for a, b in keeps)
     cfg = (cur.get("video") or {}).get("clips", {}).get(str(args.seg)) or {}
 
-    audio = pathlib.Path(idpaths.find(str(base), f"clip_{args.key}_source.m4a"))
-    if not audio.is_file():
-        sys.exit("[clipvid] 凍結音源がありません（切り抜き編集画面で生成されます）")
+    media = find_media(base, args.id, None)
+    if not media or not media.exists():
+        sys.exit(f"[clipvid] メディアが見つかりません（{base}）")
+    wav = media.with_suffix(".wav")
+    if wav.exists():
+        media = wav
 
-    bg_name = cfg.get("background") or ""
-    bg = BG_DIR / bg_name
-    if not bg_name or not bg.is_file():
-        sys.exit(f"[clipvid] 背景動画がありません: {bg}")
+    # 背景動画は assets/clip_backgrounds/ と clipvideo/背景動画out/ から探す(原文 L162)。
+    # 尺が足りない場合のループは ffmpeg の -stream_loop -1 が常時行っている
+    bg_name = pathlib.Path(cfg.get("background") or "").name
+    bg = None
+    for bg_dir in (BG_DIR, HERE / "clipvideo" / "背景動画out"):
+        if bg_name and (bg_dir / bg_name).is_file():
+            bg = bg_dir / bg_name
+            break
+    if bg is None:
+        sys.exit(f"[clipvid] 背景動画がありません: {bg_name}")
 
-    font_name = cfg.get("font") or ""
-    font_path = FONTS_DIR / font_name
-    if not font_name or not font_path.is_file():
-        sys.exit(f"[clipvid] フォントがありません: {font_path}")
-    family = font_family_name(font_path) or pathlib.Path(font_name).stem
+    stl = resolve_style(cfg, (styles.get("subtitle_styles") or [{}])[0])
+    families = {}
+    for el in ("sub", "title"):
+        fn = stl[el].get("font") or ""
+        fp2 = FONTS_DIR / fn
+        if not fn or not fp2.is_file():
+            sys.exit(f"[clipvid] フォントがありません({el}): {fp2}")
+        families[el] = font_family_name(fp2) or pathlib.Path(fn).stem
+
+    captions, _dur2 = build_captions(clip_tokens(base, g, keeps), keeps, styles)
+
+    # 名前付きエフェクトスタイル(原文 L134)。定義は data/effect_styles.json(全エピソード共通)
+    effects = cur.get("effects") or []
+    fxmap = {}
+    fx_path = pathlib.Path(root) / "effect_styles.json"
+    if effects and fx_path.is_file():
+        try:
+            for style_def in (json.loads(fx_path.read_text(encoding="utf-8")).get("styles") or []):
+                props = dict(style_def.get("props") or {})
+                font_file = props.get("font")
+                if font_file and (FONTS_DIR / font_file).is_file():
+                    props["_family"] = font_family_name(FONTS_DIR / font_file)
+                fxmap[str(style_def.get("name"))] = props
+        except (OSError, json.JSONDecodeError):
+            pass
 
     ff = ffmpeg_with_subtitles()
     gen = pathlib.Path(idpaths.gen_dir(str(base)))
 
-    # 音声。drops が無ければ凍結音源を -ss/-t で直接切る。あれば keep を抽出して
-    # 無劣化連結した一時 wav を全サイズで使い回す（make_clip_source と同じ作法）
-    audio_in = audio
-    audio_seek = ["-ss", f"{cs:.3f}", "-t", f"{dur:.3f}"]
-    concat_wav = None
-    if row_drops:
-        import tempfile
-        concat_wav = gen / f"clip_{args.key}_{args.seg}_audio.part.wav"
-        with tempfile.TemporaryDirectory(dir=str(gen)) as td:
-            tdp = pathlib.Path(td)
-            listf = tdp / "list.txt"
-            with open(listf, "w") as lf:
-                for i, (ka, kb) in enumerate(keeps):
-                    part = tdp / f"p{i:04d}.wav"
-                    subprocess.run([ff, "-hide_banner", "-loglevel", "error", "-y",
-                                    "-ss", f"{ka:.3f}", "-to", f"{kb:.3f}", "-i", str(audio),
-                                    "-c:a", "pcm_s16le", str(part)], check=True)
-                    lf.write(f"file '{part.name}'\n")
-            subprocess.run([ff, "-hide_banner", "-loglevel", "error", "-y",
-                            "-f", "concat", "-safe", "0", "-i", str(listf),
-                            "-c", "copy", str(concat_wav)], check=True)
-        audio_in = concat_wav
+    # 音声。単一区間なら元音源を -ss/-t で直接切り、複数区間なら抽出して無劣化連結
+    # 音声は keep にだけ依存するので、抽出・連結の結果をキャッシュする(原文 L168。
+    # スタイル変更のたびの描画プレビューで音声抽出をやり直さないため)。
+    # キャッシュ名は keep のハッシュ。切り抜きやカットが変わればハッシュが変わる
+    audio_in = media
+    audio_seek = ["-ss", f"{keeps[0][0]:.3f}", "-t", f"{dur:.3f}"]
+    if len(keeps) > 1:
+        keeps_sig = hashlib.sha1(
+            json.dumps([[round(a, 3), round(b, 3)] for a, b in keeps]).encode()
+        ).hexdigest()[:8]
+        cache_wav = gen / f"clip_{args.key}_{args.seg}_audio_{keeps_sig}.wav"
+        if not cache_wav.is_file():
+            for old in gen.glob(f"clip_{args.key}_{args.seg}_audio*.wav"):
+                old.unlink()
+            with tempfile.TemporaryDirectory(dir=str(gen)) as td:
+                tdp = pathlib.Path(td)
+                listf = tdp / "list.txt"
+                with open(listf, "w") as lf:
+                    for i, (ka, kb) in enumerate(keeps):
+                        part = tdp / f"p{i:04d}.wav"
+                        subprocess.run([ff, "-hide_banner", "-loglevel", "error", "-y",
+                                        "-ss", f"{ka:.3f}", "-to", f"{kb:.3f}", "-i", str(media),
+                                        "-c:a", "pcm_s16le", str(part)], check=True)
+                        lf.write(f"file '{part.name}'\n")
+                subprocess.run([ff, "-hide_banner", "-loglevel", "error", "-y",
+                                "-f", "concat", "-safe", "0", "-i", str(listf),
+                                "-c", "copy", str(cache_wav)], check=True)
+        audio_in = cache_wav
         audio_seek = []
 
     for size_key in size_keys:
@@ -280,50 +752,84 @@ def main():
         if size is None:
             sys.exit(f"[clipvid] 未知のサイズ規格: {size_key}")
         w, h = int(size["w"]), int(size["h"])
+        if args.quick:
+            # 1/3 サイズ(偶数丸め)。見た目チェック用の実描画(原文 L147/L148)
+            w, h = (w // 3) // 2 * 2, (h // 3) // 2 * 2
+        # ファイル名はタイトル_{短ID}_尺_サイズ（原文 L71・L157）。
+        # 短ID = 版ハッシュ先頭4桁 + 切り抜き番号（なるべく短く・一意に）
+        title = (cfg.get("title") or f"クリップ{args.seg + 1}").strip()
+        short_id = f"{args.key.split('_')[-1][:4]}{args.seg}"
+        nice_name = (f"{safe_name(title)}_{short_id}_"
+                     f"{int(dur // 60)}m{int(dur % 60):02d}s_{size_key}.mp4")
         if args.export:
-            # ファイル名はタイトル・長さ・サイズ規格から（原文 L71）
-            title = (cfg.get("title") or f"クリップ{args.seg + 1}").strip()
-            name = f"{safe_name(title)}_{int(dur // 60)}m{int(dur % 60):02d}s_{size_key}.mp4"
-            out = base / "contents" / "clip" / args.key / name
+            out = base / "contents" / "clip" / args.key / nice_name
         elif args.out:
             out = pathlib.Path(args.out)
-        else:
+        elif args.quick:
             out = pathlib.Path(
-                idpaths.save(str(base), f"clip_{args.key}_preview_{args.seg}_{size_key}.mp4"))
+                idpaths.save(str(base), f"clip_{args.key}_quick_{args.seg}_{size_key}.mp4"))
+        else:
+            out = pathlib.Path(idpaths.save(str(base), nice_name))
+            # 毎回上書き・溜めない(原文 L124): タイトルや尺が変わって名前がずれた
+            # 同じ短ID+サイズの旧ファイルと、旧形式(clip_..._preview_...)を消す
+            for old in out.parent.glob(f"*_{short_id}_*_{size_key}.mp4"):
+                if old != out:
+                    old.unlink()
+            (out.parent / f"clip_{args.key}_preview_{args.seg}_{size_key}.mp4"
+             ).unlink(missing_ok=True)
         out.parent.mkdir(parents=True, exist_ok=True)
 
-        ass_path = gen / f"clip_{args.key}_{args.seg}_{size_key}.ass"
+        ass_path = gen / (f"clip_{args.key}_{args.seg}_{size_key}"
+                          f"{'_quick' if args.quick else ''}.ass")
         ass_path.write_text(
-            build_ass(w, h, size_key, styles, cfg, cur.get("units") or [], keeps, family),
+            build_ass(w, h, stl, cfg, captions, dur, families,
+                      effects=effects, fxmap=fxmap),
             encoding="utf-8")
 
         # フィルタ内のパス引用を避けるため、ass はファイル名だけ渡して cwd を generated/ にする
         vf = (f"scale={w}:{h}:force_original_aspect_ratio=increase,crop={w}:{h},setsar=1,fps=30,"
               f"subtitles=filename={ass_path.name}:fontsdir='{FONTS_DIR}'")
         tmp = out.with_name(out.name + ".part.mp4")
-        cmd = ([ff, "-hide_banner", "-loglevel", "error", "-y",
-                "-stream_loop", "-1", "-i", str(bg)]
-               + audio_seek + ["-i", str(audio_in),
-               "-map", "0:v", "-map", "1:a", "-t", f"{dur:.3f}",
-               "-vf", vf,
-               "-c:v", "libx264", "-preset", "medium", "-crf", "20", "-pix_fmt", "yuv420p",
-               "-c:a", "aac", "-b:a", "192k",
-               str(tmp)])
+        if args.quick:
+            # 速く返すための設定(原文 L148)。全編(原文 L151)・音つき(原文 L168)・
+            # 速いプリセット。音声はキャッシュ済み wav を使うので抽出コストはかからない
+            dur_out = dur
+            cmd = ([ff, "-hide_banner", "-loglevel", "error", "-y",
+                    "-stream_loop", "-1", "-i", str(bg)]
+                   + audio_seek + ["-i", str(audio_in),
+                   "-map", "0:v", "-map", "1:a", "-t", f"{dur_out:.3f}",
+                   "-vf", vf,
+                   "-c:v", "libx264", "-preset", "veryfast", "-crf", "23",
+                   "-pix_fmt", "yuv420p",
+                   "-c:a", "aac", "-b:a", "128k", str(tmp)])
+        else:
+            # 文字のエッジが中間フレームで潰れないよう crf 17 + aq-mode=3
+            # (crf 20 で字幕の縁が荒れる実測。原文 L146・2026-10-02)
+            dur_out = dur
+            cmd = ([ff, "-hide_banner", "-loglevel", "error", "-y",
+                    "-stream_loop", "-1", "-i", str(bg)]
+                   + audio_seek + ["-i", str(audio_in),
+                   "-map", "0:v", "-map", "1:a", "-t", f"{dur:.3f}",
+                   "-vf", vf,
+                   "-c:v", "libx264", "-preset", "medium", "-crf", "17",
+                   "-x264-params", "aq-mode=3", "-pix_fmt", "yuv420p",
+                   "-c:a", "aac", "-b:a", "192k",
+                   str(tmp)])
         subprocess.run(cmd, cwd=str(gen), check=True)
 
         probe = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration",
                                 "-of", "default=noprint_wrappers=1:nokey=1", str(tmp)],
                                capture_output=True, text=True)
         actual = float(probe.stdout.strip() or 0)
-        if abs(actual - dur) > 2.0:
+        if abs(actual - dur_out) > 2.0:
             tmp.unlink(missing_ok=True)
-            sys.exit(f"[clipvid] 出力尺が不一致（指定{dur:.1f}s / 実際{actual:.1f}s）")
+            sys.exit(f"[clipvid] 出力尺が不一致（指定{dur_out:.1f}s / 実際{actual:.1f}s）")
         tmp.replace(out)
-        print(f"[clipvid] done {size_key} / {dur:.1f}s / 字幕フォント {family} -> {out}",
+        print(f"[clipvid] done {size_key} / {dur:.1f}s / 字幕フォント {families['sub']} -> {out}",
               flush=True)
 
-    if concat_wav is not None:
-        concat_wav.unlink(missing_ok=True)
+    # 音声キャッシュ(clip_<key>_<seg>_audio_<hash>.wav)は消さない(原文 L168。
+    # 次のプレビューが再利用する。keep が変われば自動で作り直し・旧物は掃除される)
 
 
 if __name__ == "__main__":

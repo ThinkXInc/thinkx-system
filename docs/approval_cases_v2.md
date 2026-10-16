@@ -374,7 +374,104 @@ ask と deny のルールは hook の allow に勝つ。
 - **残るゲート**: なし。
 - **同型カウント**: staging claude_connect の観測は **A・T・U・AK で 4 回目**。stg.py に無い項目(再起動時刻・絶対時刻窓)は 1 回目。
 
+### AL. podcast dev サーバー(127.0.0.1:8012)の停止・起動
+- **生**: `lsof -ti :8012 | xargs kill 2>/dev/null; sleep 1; cd .../podcast/web-server && (PORT=8012 nohup venv/bin/python main.py > <scratchpad>/server8012.log 2>&1 &) && sleep…`(podcast セッション 2026-10-01)
+- **引き金**: **不明**(lsof / kill / nohup / cd は ask に無い)。AG・AJ と同じ「ask 語の無いローカル操作が止まる」型。要実測。
+- **クラス**: 変更(ローカル dev サーバーの停止・起動。自分のマシン・可逆)。
+- **正しい形**: dev サーバーの起動/再起動は固定スクリプト(ポート 8012・起動コマンド・ログ先をスクリプト内リテラルで持ち、
+  readiness 待ち(AH の結論)まで内蔵)。V の `dev_mock.sh` と同じ結論が対象を変えて再出(mock 8008 → thinkx dev 5050 → podcast dev 8012)。
+  サーバーごとに書くか「dev サーバー共通 1 本 + 対象名のホワイトリスト引数」かは作る時に決める(2 つに散らさない)。
+- **残るゲート**: なし(可逆なプロセス管理)。
+- **同型カウント**: dev サーバー/mock の停止・起動は M・V・AL で **3 回目 → 昇格条件に達した**。スクリプト未着手のまま対象が 3 つに増えた。
+- **再発(2026-10-02・5 回目)**: `cd .../podcast/web-server && nohup venv/bin/python main.py > <scratchpad>/podweb.log 2>&1 &` →
+  `sleep 2 && curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8010/ && curl -s 'http://127.0.0.1:8010/clip_videos?...' | head -c 300`。
+  起動(AL)+ 起動待ち + GET の code と本文確認(AM の型)が 1 つながりで出た = 作るべきスクリプトの要件そのもの
+  (起動/停止 + readiness 待ち + code + 本文の文字列有無)。ポートは今回 8010(固定集合は 5000/5050/8008/8010/8012 に拡大)。
+  localhost GET はこれで **8 回目**。
+- **再発(2026-10-02・6 回目)**: `lsof -nP -a -p <pid> -iTCP -sTCP:LISTEN; kill <pid>; sleep 1; cd .../podcast/web-server && nohup venv/bin/python ... & sleep 2; lsof -nP -iTCP:8010 -sTCP:LISTEN | tail -1; curl ... '%{http_code}' http://127.0.0.1:8010/`。
+  6 回目で昇格を実施: **`infra/scripts/devserver.py` 新設(2026-10-02)**。status / start / stop / restart / get。対象は固定集合
+  (podcast 8010・podcast2 8012・thinkx 5000)、GET のみ、stop は python プロセス限定のグループ TERM(:5000 の AirPlay を
+  巻き込まない)、本文は --save で保存して Read/Grep で分析。
+- **再発(2026-10-02・7 回目。devserver.py 新設の直後)**: `PID=$(lsof -tnP -iTCP:8010 -sTCP:LISTEN) && kill $PID; sleep 1; cd web-server && nohup ...`。
+  今回は引き金が明確(`$(lsof ...)` のコマンド置換)。wrapper が出来た直後に別セッションで生コマンドが出た =
+  T・U・AK と同じ**カタログ問題の実例**(スクリプトの存在が実行者に届いていない)。CLAUDE.md からの参照(文面提案済み・
+  オーナー判断待ち)が入るまで再発は続く見込み。
+- **再発(2026-10-02・8・9 回目)**: 同型(`$(lsof)` + kill + nohup + curl)が連続再出(8 回目は heredoc 編集 5 回目と同じ 1 コマンド、
+  9 回目は単独)。devserver.py 新設後も案内が無い限り使われないことの 2・3 例目。**これ以上の収録は数の更新のみとし、
+  解はカタログ(CLAUDE.md 参照)の設置に移っている。**
+
+### AM. ローカル JSON の中身確認(python3 -c)+ dev ページの文字列有無(curl GET)
+- **生**: `python3 -c "import json; d=json.load(open('data/新宿7-11才能と創造/edit/transcript_edits.json')); print('root edits after revert:', d['edits'])" && curl -s 'http://127.0.0.1:8012/clip_videos?id=...&key=...' | grep -o '版 2026[^<]*\|0分12秒\|元時刻アンカー検証' | head -5`
+- **引き金**: `curl`(ask・localhost)。
+- **クラス**: 観測(ローカルファイルの読み取り + dev ページの GET)。
+- **正しい形**: 2 つに分かれる。(1) JSON の中身は **Read ツール**で読める(承認なし)。python3 -c で読むのは Read の再発明
+  (V の Edit 再発明の読み取り版)。(2) ページの文字列確認は「ホスト固定・パスと探す文字列が引数」の GET 観測
+  (verify_deploy.py site と同じ形。2026-10-01 オーナー裁定: パスだけ引数なら可、URL 全体を引数にするのは不可)。
+  dev サーバー用はポート(5000/5050/8012 の固定集合)+ パス + 文字列を受ける 1 本に AH・Z・本件を畳める。
+- **残るゲート**: なし。
+- **同型カウント**: localhost curl の GET 観測は C・E・M・V・AH(+再発)・AM で **7 回目**。
+- **再発(2026-10-02・9 回目)**: `cd .../podcast && curl -s 'http://127.0.0.1:8010/clip_videos?...' > <scratchpad>/cv.html && python3 - <<'PYEOF' ...
+  for k in ["cvblk","cvtok",...]: print(k, h.count(k)) ... print(h[i-120:i+260]) PYEOF`。
+  ページを scratchpad に保存して出現回数と前後文脈を見る変種。見る項目が毎回違う(有無 → 件数 → 文脈)ことが確定したので、
+  dev 観測スクリプトは分析まで抱え込まず **「code を出し、本文を scratchpad のファイルに保存する」まで**を受け持つのがよい。
+  保存後の分析は Read / Grep ツールで承認なしにできる(python heredoc も不要になる)。引き金は curl 1 語なので、
+  取得だけ畳めば残りは全部止まらない。
+
+### AN. main.py から関数を python heredoc で削除 + import 確認 + dev へ curl POST
+- **生**: `python3 - <<'EOF' ... s=open('web-server/main.py').read(); start=s.index('def clip_full_text('); end=s.index('\n\n\ndef ', start); s=s[:start]+s[end+3:]; open(p,'w').write(s) EOF` → `venv/bin/python -c "...import main; print('import ok')" && curl -s -X POST 'http://127.0.0.1:8012/clip_suggest?id=...&key=...'`
+- **引き金**: `curl`(ask・localhost・**POST**)。heredoc の編集自体はセッションの許可セット次第(V の 3 回目と同じ)。
+- **クラス**: 編集(関数の削除)+ 観測(import 可)+ ローカル dev への操作(POST)。
+- **正しい形**: 関数の削除は **Edit ツール**(old_string に関数全体、new_string 空)。`s.index()` のスライス削除は
+  V の `t.replace()` より悪い — 目印(`\n\n\ndef `)がずれると隣の関数まで黙って消え、diff も残らない。
+  M・V(+同日再発)・AN で heredoc 編集は **4 回目**。import 確認は `venv/bin/python -c "import main"` で止まらない(そのままでよい)。
+  localhost への POST は GET と違い「見るだけ」でない(dev の処理を起動する)ので、裁定済みの安全枠(GET 限定)の外。
+  dev 相手の可逆な操作なので承認が出ても 1 回で済む形(dev 観測スクリプトに「POST は持たせない」を維持)が正しい。
+- **残るゲート**: localhost POST の承認(軽いが、観測スクリプトには畳まない)。
+- **再発(2026-10-02・localhost POST 2・3 回目)**: `curl -s -X POST http://127.0.0.1:8010/effect_styles -d '{...スタイル定義...}'` と
+  `curl -s -X POST http://127.0.0.1:8010/clip_save -d '{"op":"effects",...}'`(どちらも切り抜きのエフェクト機能のデバッグ)。
+  dev のデータを変える操作なので承認を残す判断は維持。ただし同じ機能のデバッグで POST → JSON 確認(python3 -c = Read の再発明)→
+  設定 cat が繰り返されており、**機能側のテストを固定スクリプト(podcast/scripts または web-server/tests)に置けば**
+  可視コマンドが python/bash になり curl の ask にも当たらず、手順も diff に残る。R の結論(テストはスクリプト化)と同じ。
+- **再発(2026-10-02・localhost POST 4〜6 回目)**: 同じエフェクト機能の後片付け(`POST /clip_save` effects:[] と `POST /effect_styles` styles:[])が
+  繰り返し出た(6 回目は + awk/sed/grep のコード確認 — こちらは止まらない)。python3 -c の JSON 確認(Read の再発明)も毎回同乗。
+  テスト固定スクリプト化(作る→検証→後片付けまで 1 本)の判断を強める。podcast トラックへの提案事項。
+- **同型カウント**: heredoc 編集 4 回目。「Edit を使え」が実行者に毎回届く場所(CLAUDE.md)に無いことが継続原因(T・V と同じカタログ問題。
+  2026-10-01 に CLAUDE.md への追記文面を提案済み・オーナー判断待ち)。
+- **再発(2026-10-02・heredoc 編集 5 回目)**: main.py のモーダル HTML / CSS / JS(文字列定数)を 5 箇所、python heredoc の
+  `rep(old,new)`(assert count==1 付き)で置換 → `ast.parse` で構文確認 → `$(lsof)` で再起動 → curl。置換の中身自体は丁寧
+  (一意性 assert・ラベル付き)だが、**Edit ツールなら同じ安全性が承認ゼロ・diff 可視で得られる**。assert 方式は失敗時に
+  5 箇所全部が止まり、成功しても変更が git diff にしか残らない(レビューは可能だが、どの置換がどれかは消える)。
+  ast.parse の構文確認は止まらないのでそのままでよい。
+
+### AO. dev サーバー停止 + main.py 埋め込み JS(CLIP_JS)を scratchpad へ書き出し
+- **生**: `lsof -ti :8012 | xargs kill 2>/dev/null; sleep 1; cd .../podcast/web-server && venv/bin/python -c "import main; open('<scratchpad>/cl6.js','w').write(main.CLIP_JS)"`(podcast セッション 2026-10-01・AL と同じセッション)
+- **引き金**: **不明**(ask 語なし)。AG・AJ・AL と同じ型で 4 件目。共通候補は絶対パスか `cd`。確定手順は AJ に記載済み
+  (同じセッションで相対パス版と絶対パス・パイプなし版を分けて打つ)。次にその
+  セッションを使うときに実測する。
+- **クラス**: 変更(dev サーバー停止・可逆)+ 観測(埋め込み定数の取り出し)。
+- **正しい形**: 2 つ。(1) 停止・起動は AL と同じ dev サーバー固定スクリプト(昇格条件到達済み)。
+  (2) python の中に JS が文字列定数(CLIP_JS)で埋まっているため、読むにも python -c の取り出しが要る =
+  **R(bash に埋め込まれた python の切り出し)と同型の 2 回目**。R の結論どおり、埋め込みコードは独立ファイル
+  (例 web-server/static または views 配下の .js)に出して python 側は読み込む形にすれば、Read ツールで直接読めて
+  取り出し自体が不要になる。podcast 側の設計変更なので findings 経由で提案(勝手に直さない)。
+- **残るゲート**: なし。
+- **同型カウント**: dev サーバー停止・起動は M・V・AL・AO で **4 回目**(スクリプト未着手)。埋め込みコードの切り出しは R・AO で 2 回目
+  (R の裁定「次に出たら独立ファイル化」に到達)。
+
 ---
+
+## 状態と次の一手(2026-10-01)
+
+- **着手済み**: `infra/scripts/verify_deploy.py` 新設(preview / landed <env> / site <env>。着地確認 7 回・本番 URL 観測 7 回の 2 型を畳んだ。
+  本番で実測済み・staging は停止中のため到達不可の FAIL 報告を確認)。`push_env.sh` に配布結果の検証を内蔵(値は出さない。事例 Q の畳み込み)。
+- **新規事例**: AL(dev サーバー再起動・昇格条件到達)・AM(localhost GET 7 回目)・AN(heredoc 編集 4 回目・localhost POST)・
+  AO(dev サーバー停止 4 回目・埋め込みコード切り出し 2 回目)。引き金不明のローカル系は AG・AJ・AL・AO の 4 件、全て要実測のまま。
+- **着手済み(2026-10-02 追加)**: `infra/scripts/devserver.py` 新設(AL+AM+AH の畳み込み。dev 停止・起動 6 回目で昇格実施)。
+- **次の一手(未着手)**: stg.py 拡張(AK: 再起動時刻・絶対時刻窓)、カタログ(infra/scripts/README.md 一覧 + CLAUDE.md 参照 — 文面提案済み)、
+  podcast エフェクト機能のテスト固定スクリプト(AN 再発 ×5 — podcast トラック側へ提案)。
+- **未決(オーナー選択待ち)**: 記録ファイルの settings の変え方(事例 AA の案 1〜3)。前提の実測 2026-10-01:
+  `docs/coding_guides/**` は **deny に入っていない**(ask の `docs/**` で止まっているだけ)。ask を外すなら規範の deny を併せて張る必要がある。
+  タイプ 6 以降(書き方の規律・引き金不明・Chrome 拡張)はオーナー指示で保留。
 
 ## 状態と次の一手(2026-09-18 セッション終了時・クローズ記録 2026-09-28)
 
