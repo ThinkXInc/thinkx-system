@@ -7,11 +7,16 @@ __pycache__/
 # データ・生成物。edit/ の判断データと編集履歴だけは git で運ぶ(D-52)。
 # edit_save_journal.jsonl(復旧用の受信ジャーナル)は端末ローカルに残し git 外
 data/**
+!data/effect_styles.json
+!data/effect_styles_history.jsonl
+!data/style_sets.json
+!data/style_sets_history.jsonl
 !data/*/
 !data/*/edit/
 !data/*/edit/*.json
 !data/*/edit/segments_history.jsonl
 !data/*/edit/clip_*_history.jsonl
+!data/*/edit/transcript_edits_history.jsonl
 *.mp4
 *.m4a
 *.wav
@@ -41,3 +46,6 @@ assets/clip_backgrounds/*
 preview_audio.m4a
 checkpoints/
 venv_enhance/
+
+# 切り抜き動画の置き場(オーナー指示 2026-10-02・原文 L131)
+clipvideo/

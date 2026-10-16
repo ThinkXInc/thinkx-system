@@ -12,6 +12,7 @@
 
 import os
 import re
+import glob
 import json
 import html
 import mimetypes
@@ -24,7 +25,11 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 import sys as _sys
 _sys.path.insert(0, os.path.join(os.path.dirname(HERE), "scripts"))
 import idpaths  # data/<ID>/ のファイル配置は idpaths が唯一の定義（D-002 改定）
-from render import safe_name  # 書き出しファイル名（タイトル部）の正規化を生成側と揃える
+import transcript_edits  # 文字起こし修正のオーバーレイ(C-16)。transcript.json は不変
+from render import safe_name, keep_ranges  # ファイル名正規化と keep 区間計算を生成側と揃える
+from make_clip_video import (  # 字幕のまとまり(原文 L134)を表示と書き出しで共有
+    clip_tokens as clip_src_tokens, build_captions as clip_captions,
+    font_fs_scale, font_family_name)  # fs→em 比と実ファミリー名(原文 L163/L165)
 DATA_DIR = os.path.realpath(
     os.environ.get("SITE_DATA_DIR") or os.path.join(os.path.dirname(HERE), "data")
 )
@@ -98,7 +103,7 @@ ul.ids li.delivered { background:#382626; }
 video { width: 100%; max-width: 860px; display: block; border-radius: 6px;
         background: #000; margin: 5px 0 11px; }
 .dl { font-size: 13px; margin-bottom: 13px; }
-.dl a { margin-right: 16px; color: inherit; }
+.dl a { margin-right: 16px; color: inherit; text-decoration: underline; }
 
 /* 要約・レビュー：少し行間をつける */
 .box.summary { background:#292929; border-radius:5px;
@@ -305,6 +310,130 @@ CLIP_CSS = """
 .cu:hover { background:#2563eb14; box-shadow:0 0 0 2px #2563eb22; }
 .cu input { font:inherit; color:inherit; background:#2563eb18;
             border:1px solid #2563eb88; border-radius:3px; padding:0 2px; }
+/* 削除済みテキストの空白プレースホルダ(原文 L112)。クリックで書き戻せる */
+.w.wdel, .cu.wdel { min-width:16px; border:1px dashed #9ca3af99; border-radius:3px;
+                    opacity:.6; cursor:text; }
+.w.wdel:hover, .cu.wdel:hover { background:#2563eb14; opacity:1; }
+/* トピック表示(原文 L113-119・ラフ 2026-10-01)。
+   区間 = トピックの時刻範囲どおりに行をまたいで半透明の水色で塗る(ラフ③+半透明)。
+   注記 = 右マージンに青テキストで 見出し・時刻範囲・全文(ラフ②)。色分けはせず水色単色 */
+.cliptl .tlrows { position:relative; }
+.topicfill { position:absolute; top:0; bottom:0; background:#63c5f52e;
+             pointer-events:none; }
+:root[data-theme="light"] .topicfill { background:#63c5f542; }
+.topicnote { position:absolute; width:260px; font-size:12px; line-height:1.7;
+             color:#2b8fd0; }
+.topicnote .tn-title { font-size:14px; font-weight:700; cursor:pointer; }
+.topicnote .tn-title:hover { text-decoration:underline; }
+.topicnote .tn-time { font-variant-numeric:tabular-nums; margin-bottom:4px; }
+.topicnote .tn-text { opacity:.85; }
+/* スタイル調整パネル(原文 L126)とライブプレビュー(位置ドラッグ。原文 L128) */
+.cvpanel { display:flex; gap:18px; align-items:flex-start; margin:8px 0 14px; }
+.cvprev { position:relative; width:250px; background:#111; border-radius:8px;
+          overflow:hidden; aspect-ratio:1080/1920; }
+.cvprevbg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+/* 行間 1.18 は ASS(libass)の実測・背景ボックスの見積りと同じ値(原文 L155) */
+.pvtext { position:absolute; transform:translate(-50%,-50%);
+          text-align:center; line-height:1.18; white-space:pre-wrap; cursor:grab;
+          user-select:none; }
+/* 縁(stroke)層の基準を .pv-box に置く(原文 L139)。以前は基準が .pvtext だったため、
+   背景ONで .pv-box に padding が付くと fill だけずれて縁がずれた */
+.pvtext .pv-box { position:relative; display:inline-block; }
+.pvtext .pv-stroke { position:absolute; inset:0; padding:inherit; box-sizing:border-box;
+                     color:transparent; z-index:0; }
+.pvtext .pv-fill { position:relative; z-index:1; }
+.pvguide { position:absolute; background:#7cd1ff; display:none; pointer-events:none; z-index:5; }
+.pvguide-v { left:50%; top:0; bottom:0; width:1px; }
+.pvguide-h { top:50%; left:0; right:0; height:1px; }
+.cvstyles { flex:1; min-width:320px; }
+/* 設定行の面(オーナー提供 CSS。原文 L135-L136)。背景色だけテーマで変える */
+.cvstrow { font-size:13px; line-height:2.4; margin-bottom:27px; background:#ffffff0d;
+           padding:4px 13px; }
+:root[data-theme="light"] .cvstrow { background:#f7f7f7; }
+.cvstrow b { margin-right:6px; }
+/* 設定行のグループ(文字/カラー/シャドウ/背景。AE・Illustrator 風の整列。原文 L152)。
+   区切り線は L140 の「背景と文字の区別」を全グループへ一般化したもの */
+.cvsgrp { position:relative; display:flex; align-items:center; gap:4px; flex-wrap:wrap;
+          line-height:2; padding-left:64px; }
+.cvsgrp + .cvsgrp { border-top:1px solid #ffffff14; }
+:root[data-theme="light"] .cvsgrp + .cvsgrp { border-top-color:#ececec; }
+.cvsglabel { position:absolute; left:0; top:0; width:60px; font-weight:700;
+             font-size:11px; opacity:.6; }
+.cvsgrp select { max-width:210px; }
+/* スタイルセット行(原文 L143/L144)。名前入力と保存ボタンは右寄せ・間に間隔 */
+.cvsetrow { display:flex; align-items:center; gap:8px; margin-bottom:6px;
+            flex-wrap:wrap; }
+.cvsetrow span, .cvsetrow button { white-space:nowrap; }
+.cvsetrow .cvsetname { width:120px; }
+.cvsetrow .cvsetname { margin-left:auto; }
+.cvsetrow .gbtn { margin-left:14px; }
+/* クイックプレビュー(原文 L147-L149)。縦長だけを静的プレビューの右に同じ高さで出す */
+.cvqcol { flex:0 0 auto; }
+.cvquick { position:relative; }
+.cvquick video { height:444px; width:auto; background:#000; border-radius:8px; display:block; }
+.cvqstat { max-width:250px; }
+/* エフェクト位置マーカー(原文 L153)。赤=テキストスタイル・青=アニメーション。
+   プレーヤーのシークバーのすぐ上に重ねる。クリックでその位置へ */
+.cvqmarks { position:absolute; left:10px; right:10px; bottom:42px; height:12px;
+            pointer-events:none; }
+.cvqdot { position:absolute; top:1px; width:9px; height:9px; border-radius:50%;
+          transform:translateX(-50%); cursor:pointer; pointer-events:auto;
+          box-shadow:0 0 0 1.5px #ffffffcc; }
+.cvqdot-deco { background:#e53935; }
+.cvqdot-anim { background:#1e88e5; }
+/* 書き出し直し中の描画プレビュー(原文 L160)。古い映像と分かるよう薄くしてラベルを重ねる */
+.cvq-stale video { opacity:.35; filter:grayscale(.6); }
+.cvq-stale::after { content:'変更を書き出し中…'; position:absolute; top:46%; left:0; right:0;
+                    text-align:center; color:#fff; font-size:13px; font-weight:700;
+                    text-shadow:0 1px 4px #000; pointer-events:none; }
+/* 全文のまとまり(=字幕1枚)とエフェクト割当(原文 L134) */
+.cvblk { border-radius:4px; }
+.cvblk:hover { outline:1px dashed #1a73e866; }
+.cvtok { font-style:normal; }
+.cvmenu { position:absolute; z-index:40; min-width:200px; background:#232323;
+          border:1px solid #444; border-radius:8px; padding:4px 0; font-size:13px;
+          box-shadow:0 4px 16px #0008; }
+:root[data-theme="light"] .cvmenu { background:#fff; border-color:#ddd; }
+.cvmi { padding:6px 14px; cursor:pointer; }
+.cvmi .cvchk { display:inline-block; width:1.2em; visibility:hidden; color:#1a73e8; }
+.cvmi.on .cvchk { visibility:visible; }
+.cvmi:hover { background:#1a73e822; }
+.cvmsep { border-top:1px solid #444; margin:4px 0; }
+:root[data-theme="light"] .cvmsep { border-color:#eee; }
+.cvmodal { position:fixed; z-index:50; left:50%; top:50%; transform:translate(-50%,-50%);
+           background:#232323; border:1px solid #444; border-radius:10px;
+           padding:14px 20px; width:min(560px,92vw); max-height:86vh; overflow:auto;
+           font-size:13px; line-height:2.3; box-shadow:0 8px 30px #000a; }
+:root[data-theme="light"] .cvmodal { background:#fff; border-color:#ddd; }
+.cvmodal input[type='color'] { width:26px; height:20px; padding:0; border:none;
+                               vertical-align:middle; background:none; }
+.cvmodal select { max-width:180px; }
+/* 定義UI内のライブプレビュー(原文 L141)。対象ブロックの字幕を近似表示し、
+   入力のたびに描き直す。アニメも変更のたびに再生し直す */
+.fxprev { position:relative; background:#111; border-radius:8px; padding:20px 10px;
+          text-align:center; line-height:1.35; margin:4px 0 10px; min-height:56px;
+          overflow:hidden; white-space:pre-wrap; }
+.fxprev .fxprevbg { position:absolute; inset:0; width:100%; height:100%;
+                    object-fit:cover; z-index:0; }
+.fxprev .fxprev-c { position:relative; z-index:1; }
+.fxprev .fxpt { display:inline-block; position:relative; }
+.fxprev .fxps { position:absolute; inset:0; z-index:0; }
+.fxprev .fxpf { position:relative; z-index:1; }
+@keyframes fxpop { from { transform:scale(.2); } to { transform:scale(1); } }
+@keyframes fxslide { from { transform:translateY(60%); opacity:0; }
+                     to { transform:translateY(0); opacity:1; } }
+.cvstrow input[type='color'] { width:26px; height:20px; padding:0; border:none;
+                               vertical-align:middle; background:none; }
+.cvstrow select { max-width:180px; }
+/* 動画作成画面: セグメント専用のタイトル候補チップ(原文 L123。3つ横並び・クリックで採用) */
+.cvtcands { display:flex; gap:10px; flex-wrap:wrap; margin:2px 0 10px 11px; }
+.cvtcand { font-size:13px; padding:4px 14px; cursor:pointer; background:transparent;
+           color:#1a73e8; border:1px solid #1a73e877; border-radius:16px; }
+.cvtcand:hover { background:#1a73e814; }
+/* ハイライト(名言・格言・キャッチー箇所。原文 L122)。テキスト行の上に半透明オレンジ */
+.hlfill { position:absolute; top:0; height:37px; background:#f5a62345;
+          border-radius:4px; pointer-events:none; }
+:root[data-theme="light"] .hlfill { background:#f0b35e59; }
 /* 切り抜きセグメント＝開始から終了までグラデーション（原文 L21）。
    開始側が明るい（開始と終了を色で見分ける。オーナー指示 2026-09-28・原文 L98） */
 .clipz { position:absolute; top:0; height:24px;
@@ -352,42 +481,70 @@ CLIP_CSS = """
 """
 
 CLIP_JS = r"""
-/* 切り抜き編集画面のタイムライン（1ページに1本）。凍結音源は連続なので
-   再生にスキップ処理はない。設計の正本は podcast/CLIP_PLAN.md。 */
+/* 切り抜き編集画面のタイムライン（1ページに1本）。設計の正本は podcast/CLIP_PLAN.md。
+   C-17: データ（切り抜き区間・テキスト）は元音源の絶対時刻で持ち、表示だけを
+   この版の1次形状(keeps)から導出した「詰め後時間」(view) に写像する。
+   凍結はなく、再生は元音源をカット部スキップで鳴らす（1次編集と同じ）。 */
 (function(){
 var root=document.getElementById('cliptl');
 if(!root) return;
 var D=JSON.parse(root.querySelector('script[type="application/json"]').textContent);
 var audio=document.getElementById('orig');
 var pxPerSec=parseFloat(localStorage.getItem('tl_pps'))||140;
-/* clips の要素は [開始, 終了] または [開始, 終了, drops]（drops = 「間を詰める」で
-   捨てた区間の列。C-15・原文 L99） */
+/* clips の要素は [開始, 終了] または [開始, 終了, drops]（すべて元音源時刻） */
 var clips=(D.clips||[]).map(function(c){
   var o=[+c[0],+c[1]];
   if(c[2]&&c[2].length) o.push(c[2].map(function(d){return [+d[0],+d[1]];}));
   return o;
 });
-var units=(D.units||[]).map(function(u){return {s:+u.s,e:+u.e,t:String(u.t)};});
-var pendingStart=null, playhead=0, selCi=-1;
+var units=(D.units||[]).map(function(u){
+  var w={s:+u.s,e:+u.e,t:String(u.t)};
+  if(u.o!=null) w.o=String(u.o);
+  if(u.insd) w.insd=1;
+  if(u.del) w.del=1;   /* 削除済み=空白プレースホルダ(原文 L112) */
+  return w;
+});
+var keeps=(D.keeps||[]).map(function(k){return [+k[0],+k[1]];});
+var NET=+D.duration||0;
+var pendingStart=null, playhead=(keeps[0]?keeps[0][0]:0), selCi=-1;
 var rows=[], laneW=0, built=false, playing=false;
 var undoStack=[], redoStack=[], lastOp='', saveTimer=null;
 var host=root.querySelector('.tlrows');
 var elTime=root.querySelector('.tltime'), elStat=root.querySelector('.tlstat');
 var elZoom=root.querySelector('.tlzoom'), elBtn=root.querySelector('.tlplay');
-var elSel=root.querySelector('.tlsel');
 var MINW=0.05, EPS=0.01;
+
+/* ---- 元音源時刻(src) ⇄ 詰め後時間(view) の写像 ---- */
+var kmap=(function(){ var m=[],acc=0;
+  keeps.forEach(function(k){ m.push([k[0],k[1],acc]); acc+=k[1]-k[0]; }); return m; })();
+function V(t){
+  for(var i=0;i<kmap.length;i++){ var k=kmap[i];
+    if(t<=k[1]) return k[2]+Math.min(Math.max(t,k[0]),k[1])-k[0]; }
+  return NET;
+}
+function SRC(tv){
+  tv=Math.max(0,Math.min(tv,NET));
+  for(var i=0;i<kmap.length;i++){ var k=kmap[i];
+    if(tv<=k[2]+(k[1]-k[0])) return k[0]+(tv-k[2]); }
+  return keeps.length?keeps[keeps.length-1][1]:0;
+}
+function inGeom(t){ return keeps.some(function(k){return k[0]<=t&&t<k[1];}); }
 
 function fmtAbs(t){
   var m=Math.floor(t/60), s=t-m*60;
   return m+':'+(s<10?'0':'')+s.toFixed(2);
 }
-function X(R,t){ return (t-R.t0)*pxPerSec; }
+function X(R,tv){ return (tv-R.t0)*pxPerSec; }
 function T(R,x){ return R.t0 + x/pxPerSec; }
 function clipAt(t){ for(var i=0;i<clips.length;i++){ if(clips[i][0]<=t&&t<clips[i][1]) return i; } return -1; }
 function inDrops(c,t){ return (c[2]||[]).some(function(d){return d[0]<=t&&t<d[1];}); }
-function clipNet(c){ return (c[1]-c[0])-(c[2]||[]).reduce(function(a,d){return a+(d[1]-d[0]);},0); }
+function viewNet(c){
+  /* この切り抜きの表示上の正味（1次drops は V が潰し、詰めた間は引く） */
+  var n=V(c[1])-V(c[0]);
+  (c[2]||[]).forEach(function(d){ n-=V(d[1])-V(d[0]); });
+  return Math.max(0,n);
+}
 function clampDrops(c){
-  /* 端の移動・分割の後に drops を区間内へ収める。空になったら消す */
   var ds=(c[2]||[]).map(function(d){return [Math.max(d[0],c[0]),Math.min(d[1],c[1])];})
     .filter(function(d){return d[1]-d[0]>EPS;});
   if(ds.length) c[2]=ds; else c.splice(2,1);
@@ -395,70 +552,114 @@ function clampDrops(c){
 }
 function setStatus(s){ if(elStat) elStat.textContent=s; }
 
-/* ---- 保存（C-5）。1次編集と同じ三重の作法:
-   操作の瞬間に localStorage へ同期的に記録 → サーバー送信は後追い（失敗は3秒再送）→
-   サーバー側で受信ジャーナル・履歴退避・git 同期キュー ---- */
-function journalNow(){
-  try{ var k='clip_journal_'+D.key, j=JSON.parse(localStorage.getItem(k)||'[]');
-       j.push({at:Date.now(),op:lastOp,clips:clips,units:units});
-       try{ localStorage.setItem(k,JSON.stringify(j)); }
-       catch(qe){ j=j.slice(Math.floor(j.length/2));
-                  try{ localStorage.setItem(k,JSON.stringify(j)); }catch(e2){} }
-       localStorage.setItem('clip_dirty_'+D.key,'1');
-  }catch(e){}
-}
-function scheduleSave(){ journalNow(); setStatus('未保存'); clearTimeout(saveTimer); saveTimer=setTimeout(doSave,0); }
-function doSave(){
-  setStatus('保存中…');
-  var rec={id:D.id,key:D.key,op:lastOp,clips:clips,units:units};
-  lastOp='';
-  fetch(window.APP+'/clip_save',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(rec)})
-  .then(function(r){
-    if(r.ok){ setStatus('保存済み'); try{ localStorage.removeItem('clip_dirty_'+D.key); }catch(e){} }
-    else{ setStatus('保存失敗（3秒後に再送します）'); clearTimeout(saveTimer); saveTimer=setTimeout(doSave,3000); }
-  })
-  .catch(function(){ setStatus('サーバーに接続できません（3秒後に再送します）');
-    clearTimeout(saveTimer); saveTimer=setTimeout(doSave,3000); });
+/* 文字の重なり解消（1次編集と同じ。原文 L108-111） */
+function relaxUnits(els){
+  var last=-1e9;
+  els.forEach(function(el){
+    var x=parseFloat(el.style.left)||0;
+    if(x<last){ x=last; el.style.left=x+'px'; }
+    last=x+el.offsetWidth+2;
+  });
 }
 
 function build(){
+  /* 再構築中にページ高が一瞬縮み、スクロール位置が 0 に丸められて飛ばされる
+     (テキスト編集の確定で実測 8590→0。2026-10-01)。前後で保存・復元する */
+  var sx=window.scrollX, sy=window.scrollY;
   host.innerHTML=''; rows=[];
   var probe=document.createElement('div'); probe.className='lane';
   host.appendChild(probe); laneW=probe.clientWidth||800; host.removeChild(probe);
   var rowSec=laneW/pxPerSec;
-  var nRows=Math.max(1,Math.ceil(D.duration/rowSec));
+  var nRows=Math.max(1,Math.ceil(NET/rowSec));
   if(elZoom) elZoom.textContent=pxPerSec.toFixed(0)+'px/秒・1行'+rowSec.toFixed(1)+'秒';
   var ui=0;
   for(var r=0;r<nRows;r++){
-    var t0=r*rowSec, t1=Math.min(D.duration,t0+rowSec);
+    var t0=r*rowSec, t1=Math.min(NET,t0+rowSec);
     var row=document.createElement('div'); row.className='row';
     var lane=document.createElement('div'); lane.className='lane'; row.appendChild(lane);
     var strip=document.createElement('div'); strip.className='strip'; lane.appendChild(strip);
-    var lastRight=-1e9, lastTsRight=-1e9, els=[], prevEnd=null;
-    while(ui<units.length && units[ui].s < t1){
+    var lastRight=-1e9, lastTsRight=-1e9, els=[], prevEndV=null;
+    while(ui<units.length && V(units[ui].s) < t1){
       var u=units[ui];
-      if(u.e<=t0){ ui++; continue; }
-      var x=(u.s-t0)*pxPerSec;
+      var vs=V(u.s);
+      if(V(u.e)<=t0){ ui++; continue; }
+      var x=(vs-t0)*pxPerSec;
       if(x<lastRight) x=lastRight;
-      var newBlock=(prevEnd===null || u.s-prevEnd>=0.8);
+      var newBlock=(prevEndV===null || vs-prevEndV>=0.8);
       if(newBlock && x>=lastTsRight){
         var ts=document.createElement('div'); ts.className='ts2';
-        ts.textContent=fmtAbs(u.s); ts.style.left=x+'px';
+        ts.textContent=fmtAbs(vs); ts.style.left=x+'px';
         lane.appendChild(ts); lastTsRight=x+ts.offsetWidth+8;
       }
-      var el=document.createElement('span'); el.className='cu';
-      el.textContent=u.t; el.style.left=x+'px';
+      var el=document.createElement('span'); el.className='cu'+(u.del?' wdel':'');
+      el.textContent=u.del?' ':u.t; el.style.left=x+'px';
       el.dataset.ui=ui;
       lane.appendChild(el); els.push(el);
-      lastRight=x+el.offsetWidth+6; prevEnd=u.e; ui++;
+      lastRight=x+el.offsetWidth+4; prevEndV=V(u.e); ui++;
     }
     host.appendChild(row);
+    relaxUnits(els);
     var R={t0:t0,t1:t1,strip:strip,els:els,lane:lane};
     rows.push(R); bindStrip(R);
   }
   built=true;
-  renderBars(); styleUnits(); movePlayhead();
+  renderBars(); styleUnits(); movePlayhead(); placeTopics();
+  window.scrollTo(sx, sy);
+  var relaxAll=function(){ rows.forEach(function(R){ relaxUnits(R.els); }); };
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(relaxAll);
+  setTimeout(relaxAll,300);
+}
+
+var topics=(D.topics||[]).map(function(t){
+  return {s:+t.s,e:+t.e,title:String(t.title||''),text:String(t.text||'')};});
+var highlights=(D.highlights||[]).map(function(h){
+  return {s:+h.s,e:+h.e,text:String(h.text||'')};});
+
+/* トピック表示(原文 L113-119・ラフ 2026-10-01):
+   区間は時刻範囲どおりに行をまたいで半透明の水色で塗り(クリックは透過)、
+   見出し・時刻・全文は右マージンの青テキストで開始行の横に置く */
+function placeTopics(){
+  host.querySelectorAll('.topicfill,.topicnote,.hlfill').forEach(function(n){ n.remove(); });
+  /* ハイライト: テキスト行の上に半透明オレンジを敷く(原文 L122・ラフ) */
+  highlights.forEach(function(h){
+    var va=V(h.s), vb=V(h.e);
+    rows.forEach(function(R){
+      var a=Math.max(va,R.t0), b=Math.min(vb,R.t1);
+      if(b-a<=0) return;
+      var f=document.createElement('div'); f.className='hlfill';
+      f.style.left=X(R,a)+'px'; f.style.width=Math.max(2,X(R,b)-X(R,a))+'px';
+      f.title=h.text;
+      R.lane.appendChild(f);
+    });
+  });
+  var lastBottom=-1e9;
+  topics.forEach(function(tp,ti){
+    var va=V(tp.s), vb=V(tp.e);
+    rows.forEach(function(R){
+      var a=Math.max(va,R.t0), b=Math.min(vb,R.t1);
+      if(b-a<=0) return;
+      var f=document.createElement('div'); f.className='topicfill';
+      f.style.left=X(R,a)+'px'; f.style.width=Math.max(2,X(R,b)-X(R,a))+'px';
+      R.lane.appendChild(f);
+    });
+    var sr=rows.find(function(R){return R.t0<=va&&va<R.t1;});
+    if(!sr) return;
+    var note=document.createElement('div'); note.className='topicnote';
+    var dm=Math.floor((vb-va)/60), ds=Math.round((vb-va)-dm*60);
+    note.innerHTML="<div class='tn-title'></div>"+
+      "<div class='tn-time'>"+fmtAbs(va)+'〜'+fmtAbs(vb)+'（'+dm+'分'+(ds<10?'0':'')+ds+'秒）</div>'+
+      "<div class='tn-text'></div>";
+    note.querySelector('.tn-title').textContent=(ti+1)+'. '+tp.title;
+    note.querySelector('.tn-text').textContent=tp.text;
+    note.querySelector('.tn-title').onclick=function(){
+      playhead=tp.s; movePlayhead(); if(playing) audio.currentTime=playhead; };
+    note.style.left=(laneW+16)+'px';
+    var top=sr.lane.parentNode.offsetTop;
+    if(top<lastBottom+10) top=lastBottom+10;   /* 前の注記と重ならないよう下げる */
+    note.style.top=top+'px';
+    host.appendChild(note);
+    lastBottom=top+note.offsetHeight;
+  });
 }
 
 function renderBars(){
@@ -469,73 +670,77 @@ function renderBars(){
     base.style.left='0px'; base.style.width=W+'px'; R.strip.appendChild(base);
     /* 切り抜きの間（どの切り抜きにも入らない区間）は黒（原文 L98）。
        まだ1本も無いときは全部黒にせず土台色のまま */
-    if(clips.length){
+    var vclips=clips.map(function(c){return [V(c[0]),V(c[1]),c];})
+      .sort(function(a,b){return a[0]-b[0];});
+    if(vclips.length){
       var t=0;
-      clips.slice().sort(function(a,b){return a[0]-b[0];}).concat([[D.duration,D.duration]])
-        .forEach(function(c){
-          var a=Math.max(t,R.t0), b=Math.min(c[0],R.t1);
-          if(b-a>0){
-            var g=document.createElement('div'); g.className='gapz';
-            g.style.left=X(R,a)+'px'; g.style.width=Math.max(1,X(R,b)-X(R,a))+'px';
-            R.strip.appendChild(g);
-          }
-          t=Math.max(t,c[1]);
-        });
+      vclips.concat([[NET,NET,null]]).forEach(function(vc){
+        var a=Math.max(t,R.t0), b=Math.min(vc[0],R.t1);
+        if(b-a>0){
+          var g=document.createElement('div'); g.className='gapz';
+          g.style.left=X(R,a)+'px'; g.style.width=Math.max(1,X(R,b)-X(R,a))+'px';
+          R.strip.appendChild(g);
+        }
+        t=Math.max(t,vc[1]);
+      });
     }
-    /* 切り抜きセグメント。開始（明）→終了（暗）で1本のグラデーション。行をまたいでも
-       background-position をずらして1本につながって見えるようにする */
-    clips.forEach(function(c,ci){
-      var a=Math.max(c[0],R.t0), b=Math.min(c[1],R.t1);
+    /* 切り抜き。開始（明）→終了（暗）の1本のグラデーション（view 座標で描く） */
+    vclips.forEach(function(vc){
+      var va=vc[0], vb=vc[1], c=vc[2];
+      var a=Math.max(va,R.t0), b=Math.min(vb,R.t1);
       if(b-a<=0) return;
       var d=document.createElement('div'); d.className='clipz';
       d.style.left=X(R,a)+'px'; d.style.width=Math.max(1,X(R,b)-X(R,a))+'px';
-      d.style.backgroundSize=((c[1]-c[0])*pxPerSec)+'px 100%';
-      d.style.backgroundPosition=(-(a-c[0])*pxPerSec)+'px 0';
+      d.style.backgroundSize=Math.max(1,(vb-va)*pxPerSec)+'px 100%';
+      d.style.backgroundPosition=(-(a-va)*pxPerSec)+'px 0';
       R.strip.appendChild(d);
-      /* (a) 結合で捨てた間（drops）は切り抜きの中でも黒 */
+      /* 「間を詰める」で捨てた間は切り抜きの中でも黒（1次dropsと重なる部分は幅0になる） */
       (c[2]||[]).forEach(function(dr){
-        var da=Math.max(dr[0],R.t0), db=Math.min(dr[1],R.t1);
+        var da=Math.max(V(dr[0]),R.t0), db=Math.min(V(dr[1]),R.t1);
         if(db-da<=0) return;
         var g2=document.createElement('div'); g2.className='gapz';
         g2.style.left=X(R,da)+'px'; g2.style.width=Math.max(1,X(R,db)-X(R,da))+'px';
         R.strip.appendChild(g2);
       });
-      /* 開始端＝太い白線 / 終了端＝細い白線（開始が分かりにくい問題。原文 L98） */
-      if(c[0]>=R.t0-1e-9&&c[0]<=R.t1){
+      /* 開始端＝太い白線 / 終了端＝細い白線（原文 L98） */
+      if(va>=R.t0-1e-9&&va<=R.t1){
         var es=document.createElement('div'); es.className='clipedge-s';
-        es.style.left=X(R,c[0])+'px'; R.strip.appendChild(es);
+        es.style.left=X(R,va)+'px'; R.strip.appendChild(es);
       }
-      if(c[1]>=R.t0&&c[1]<=R.t1+1e-9){
+      if(vb>=R.t0&&vb<=R.t1+1e-9){
         var ee=document.createElement('div'); ee.className='clipedge-e';
-        ee.style.left=(X(R,c[1])-2)+'px'; R.strip.appendChild(ee);
+        ee.style.left=(X(R,vb)-2)+'px'; R.strip.appendChild(ee);
       }
-      if(ci===selCi){
+      if(clips.indexOf(c)===selCi){
         var sel=document.createElement('div'); sel.className='clipsel';
         sel.style.left=X(R,a)+'px'; sel.style.width=Math.max(1,X(R,b)-X(R,a))+'px';
         R.strip.appendChild(sel);
       }
     });
     /* 隣接する切り抜きの境界（分割線） */
-    for(var i=0;i+1<clips.length;i++){
-      if(Math.abs(clips[i][1]-clips[i+1][0])>EPS) continue;
-      var bt=clips[i][1];
+    for(var i=0;i+1<vclips.length;i++){
+      if(Math.abs(vclips[i][1]-vclips[i+1][0])>EPS) continue;
+      var bt=vclips[i][1];
       if(bt<R.t0||bt>R.t1) continue;
       var sp=document.createElement('div'); sp.className='splitline';
       sp.style.left=(X(R,bt)-6)+'px'; R.strip.appendChild(sp);
     }
     /* S（開始指定）の保留マーカー */
-    if(pendingStart!=null && pendingStart>=R.t0 && pendingStart<=R.t1){
-      var st=document.createElement('div'); st.className='startline';
-      st.style.left=X(R,pendingStart)+'px'; R.strip.appendChild(st);
-      var sl=document.createElement('div'); sl.className='startlabel';
-      sl.textContent='S 開始'; sl.style.left=(X(R,pendingStart)+4)+'px';
-      R.strip.appendChild(sl);
+    if(pendingStart!=null){
+      var pv=V(pendingStart);
+      if(pv>=R.t0 && pv<=R.t1){
+        var st=document.createElement('div'); st.className='startline';
+        st.style.left=X(R,pv)+'px'; R.strip.appendChild(st);
+        var sl=document.createElement('div'); sl.className='startlabel';
+        sl.textContent='S 開始'; sl.style.left=(X(R,pv)+4)+'px';
+        R.strip.appendChild(sl);
+      }
     }
     R.hover=document.createElement('div'); R.hover.className='hoverline'; R.strip.appendChild(R.hover);
     R.play=document.createElement('div'); R.play.className='playline'; R.strip.appendChild(R.play);
     R.tlab=document.createElement('div'); R.tlab.className='tlabel'; R.strip.appendChild(R.tlab);
   });
-  var kept=clips.reduce(function(a,c){return a+clipNet(c);},0);
+  var kept=clips.reduce(function(a,c){return a+viewNet(c);},0);
   var el=root.querySelector('.tlkeep');
   if(el){ var m=Math.floor(kept/60), s=Math.round(kept-m*60);
     el.textContent=clips.length+'本・計 '+m+'分'+(s<10?'0':'')+s+'秒'; }
@@ -546,8 +751,6 @@ function styleUnits(){
     R.els.forEach(function(el){
       var u=units[+el.dataset.ui]; if(!u) return;
       var mid=(u.s+u.e)/2;
-      /* まだ1本も指定していない段階では沈ませない（全部カット済みに見えるため）。
-         切り抜きの中でも「詰めた間」(drops) は沈ませる */
       var ci2=clipAt(mid);
       el.classList.toggle('out', clips.length>0 && (ci2<0 || inDrops(clips[ci2],mid)));
     });
@@ -556,9 +759,10 @@ function styleUnits(){
 
 function movePlayhead(){
   rows.forEach(function(R){ if(R.play) R.play.style.display='none'; });
-  var R=rows.find(function(R){return R.t0<=playhead&&playhead<R.t1;})||rows[rows.length-1];
-  if(R&&R.play){ R.play.style.left=X(R,playhead)+'px'; R.play.style.display='block'; }
-  if(elTime) elTime.textContent=fmtAbs(playhead);
+  var pv=V(playhead);
+  var R=rows.find(function(R){return R.t0<=pv&&pv<R.t1;})||rows[rows.length-1];
+  if(R&&R.play){ R.play.style.left=X(R,pv)+'px'; R.play.style.display='block'; }
+  if(elTime) elTime.textContent=fmtAbs(pv);
 }
 
 function highlight(t){
@@ -570,18 +774,27 @@ function highlight(t){
   if(el) el.classList.add('playing');
 }
 
-/* ---- 再生（連続音源。スキップなし） ---- */
+/* ---- 再生。元音源をカット部スキップで鳴らす（1次編集と同じ） ---- */
 function tick(){
   if(!playing) return;
   var t=audio.currentTime;
-  if(t>=D.duration){ stop(); return; }
-  playhead=t; movePlayhead(); highlight(t);
+  if(V(t)>=NET-0.01 && t>=(keeps.length?keeps[keeps.length-1][1]:0)){ stop(); return; }
+  if(!inGeom(t)){
+    var nk=keeps.find(function(k){return k[0]>t;});
+    if(!nk){ stop(); return; }
+    audio.currentTime=nk[0]+0.001;
+  }
+  playhead=audio.currentTime; movePlayhead(); highlight(playhead);
   requestAnimationFrame(tick);
 }
 function applyRate(){ try{ audio.playbackRate=parseFloat(localStorage.getItem('tl_rate')||'1'); }catch(e){} }
 function play(){
-  if(!audio){ setStatus('凍結音源がまだありません'); return; }
+  if(!audio){ setStatus('元音源がありません'); return; }
   applyRate();
+  if(!inGeom(playhead)){
+    var nk=keeps.find(function(k){return k[0]>=playhead;});
+    playhead=nk?nk[0]:(keeps[0]?keeps[0][0]:0);
+  }
   var go=function(){
     try{ audio.currentTime=playhead; }
     catch(err){ setStatus('シークできません: '+err.name); return; }
@@ -605,26 +818,25 @@ function stop(){
   root.querySelectorAll('.cu.playing').forEach(function(x){x.classList.remove('playing');});
 }
 
-var pbox=null, hoverT=null;
+var pbox=null, hoverT=null;   /* hoverT は元音源時刻 */
 function closeMenu(){ if(pbox){ pbox.remove(); pbox=null; } }
 function esc(t){ return String(t).replace(/[&<>]/g,function(c){
   return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; }); }
 
-/* ---- 編集操作（C-3）。すべて Undo できる ---- */
-function snapshot(){ return JSON.stringify({c:clips,u:units,p:pendingStart}); }
-function restore(s){ var d=JSON.parse(s); clips=d.c; units=d.u; pendingStart=d.p; }
+/* ---- 編集操作（C-3/C-15）。すべて元音源時刻・すべて Undo できる ---- */
+function snapshot(){ return JSON.stringify({c:clips,p:pendingStart}); }
+function restore(s){ var d=JSON.parse(s); clips=d.c; pendingStart=d.p; }
 function pushUndo(){ undoStack.push(snapshot()); if(undoStack.length>200)undoStack.shift(); redoStack=[]; }
 function undo(){ if(!undoStack.length){ setStatus('取り消す操作がありません'); return; }
-  redoStack.push(snapshot()); restore(undoStack.pop()); selCi=-1; lastOp='undo'; afterEdit(true); }
+  redoStack.push(snapshot()); restore(undoStack.pop()); selCi=-1; lastOp='undo'; afterEdit(); }
 function redo(){ if(!redoStack.length) return;
-  undoStack.push(snapshot()); restore(redoStack.pop()); selCi=-1; lastOp='redo'; afterEdit(true); }
-function afterEdit(rebuildRows){
+  undoStack.push(snapshot()); restore(redoStack.pop()); selCi=-1; lastOp='redo'; afterEdit(); }
+function afterEdit(){
   clips.sort(function(a,b){return a[0]-b[0];});
-  if(rebuildRows){ build(); } else { renderBars(); styleUnits(); movePlayhead(); }
+  renderBars(); styleUnits(); movePlayhead();
   scheduleSave();
 }
 function normalizeClips(){
-  /* 重なりは1本に統合する（drops も持ち寄って区間内に収める） */
   clips.sort(function(a,b){return a[0]-b[0];});
   var out=[];
   clips.forEach(function(c){
@@ -645,7 +857,6 @@ function normalizeClips(){
 function markStart(t){
   var ci=clipAt(t);
   if(ci>=0){
-    /* 切り抜きの中で S ＝ その時点で分割（原文 L17）。drops は位置で左右に配る */
     var c=clips[ci];
     if(t-c[0]<MINW||c[1]-t<MINW){ setStatus('端に近すぎて分割できません'); return; }
     pushUndo(); lastOp='split@'+t.toFixed(1);
@@ -685,7 +896,7 @@ function gapNeighbors(t){
   return {prev:prev,next:next};
 }
 function joinGap(t){
-  /* (b)「間も含めて1本にする」＝ E が S まで伸びる。間の音も入る（原文 L99） */
+  /* (b)「間も含めて1本にする」＝ E が S まで伸びる（原文 L99） */
   if(clipAt(t)>=0){ setStatus('ここは切り抜きの中です'); return; }
   var nb=gapNeighbors(t);
   if(nb.prev===null||nb.next===null){ setStatus('この空白の前後に切り抜きがありません'); return; }
@@ -699,8 +910,7 @@ function joinGap(t){
   setStatus('間も含めて1つの切り抜きにしました（間の音は入ります）');
 }
 function dropGap(t){
-  /* (a)「間を詰めて1本にする」＝間の音は捨てて前後をつなぐ。間はこの切り抜きの
-     drops として除外され、動画では詰められる（原文 L99） */
+  /* (a)「間を詰めて1本にする」＝間の音は捨てて前後をつなぐ（原文 L99） */
   if(clipAt(t)>=0){ setStatus('ここは切り抜きの中です'); return; }
   var nb=gapNeighbors(t);
   if(nb.prev===null||nb.next===null){ setStatus('この空白の前後に切り抜きがありません'); return; }
@@ -720,28 +930,29 @@ function deleteSel(){
   setStatus('切り抜きを解除しました（音は消えていません。S/E で指定し直せます）');
 }
 
-/* 端のドラッグ調整 */
+/* 端のドラッグ調整（src 座標で動かし、表示は view） */
 var dragging=null;
 function edgesAt(R,x){
   var out=[];
   clips.forEach(function(c,ci){
-    if(c[1]<=R.t0||c[0]>=R.t1) return;
-    if(c[0]>=R.t0-1e-9&&Math.abs(x-X(R,c[0]))<8) out.push({ci:ci,which:0});
-    if(c[1]<=R.t1+1e-9&&Math.abs(x-X(R,c[1]))<8) out.push({ci:ci,which:1});
+    var va=V(c[0]), vb=V(c[1]);
+    if(vb<=R.t0||va>=R.t1) return;
+    if(va>=R.t0-1e-9&&Math.abs(x-X(R,va))<8) out.push({ci:ci,which:0});
+    if(vb<=R.t1+1e-9&&Math.abs(x-X(R,vb))<8) out.push({ci:ci,which:1});
   });
   return out;
 }
 document.addEventListener('mousemove',function(ev){
   if(!dragging) return;
   var R=dragging.R;
-  var t=T(R, ev.clientX-R.strip.getBoundingClientRect().left);
+  var t=SRC(T(R, ev.clientX-R.strip.getBoundingClientRect().left));
   var c=clips[dragging.ci]; if(!c) return;
   if(dragging.which===0){
-    var lo=0;
+    var lo=keeps.length?keeps[0][0]:0;
     clips.forEach(function(o,i){ if(i!==dragging.ci&&o[1]<=c[1]&&o[1]>lo) lo=o[1]; });
     c[0]=Math.min(Math.max(t,lo),c[1]-MINW);
   }else{
-    var hi=D.duration;
+    var hi=keeps.length?keeps[keeps.length-1][1]:0;
     clips.forEach(function(o,i){ if(i!==dragging.ci&&o[0]>=c[0]&&o[0]<hi) hi=o[0]; });
     c[1]=Math.max(Math.min(t,hi),c[0]+MINW);
   }
@@ -758,55 +969,77 @@ function bindStrip(R){
     R.hover.style.left=x+'px'; R.hover.style.display='block';
     R.tlab.style.left=(x+4)+'px'; R.tlab.style.display='block';
     R.tlab.textContent=fmtAbs(T(R,x));
+    R.strip.style.cursor=edgesAt(R,x).length?'ew-resize':'crosshair';
   });
   R.strip.addEventListener('mouseleave',function(){
     R.hover.style.display='none'; R.tlab.style.display='none';
   });
   R.lane.addEventListener('mousemove',function(ev){
-    hoverT=T(R, ev.clientX-R.strip.getBoundingClientRect().left);
+    hoverT=SRC(T(R, ev.clientX-R.strip.getBoundingClientRect().left));
   });
   R.lane.addEventListener('mouseleave',function(){ hoverT=null; });
   R.lane.addEventListener('contextmenu',function(ev){
     ev.preventDefault();
-    var t=T(R, ev.clientX-R.strip.getBoundingClientRect().left);
+    var t=SRC(T(R, ev.clientX-R.strip.getBoundingClientRect().left));
     openCtx(t, ev.clientX, ev.clientY, ev.target.closest('.cu'));
-  });
-  R.strip.addEventListener('mousemove',function(ev){
-    var x=ev.clientX-R.strip.getBoundingClientRect().left;
-    R.strip.style.cursor=edgesAt(R,x).length?'ew-resize':'crosshair';
   });
   R.strip.addEventListener('mousedown',function(ev){
     ev.preventDefault(); closeMenu();
     var x=ev.clientX-R.strip.getBoundingClientRect().left;
     var cand=edgesAt(R,x);
     if(cand.length){ pushUndo(); dragging={R:R,ci:cand[0].ci,which:cand[0].which}; return; }
-    playhead=T(R,x);
+    playhead=SRC(T(R,x));
     selCi=clipAt(playhead);
     renderBars(); movePlayhead();
     if(playing) audio.currentTime=playhead;
   });
 }
 
-/* ---- テキスト修正（C-4・原文 L25-29）。字幕の元になるので直せなければならない ---- */
+/* ---- テキスト修正（C-16/C-17）。根の transcript_edits に保存される ---- */
+function sendEdit(op, after){
+  fetch(window.APP+'/transcript_edit',{method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(Object.assign({id:D.id},op))})
+  .then(function(r){ return r.text().then(function(t){ return {ok:r.ok,t:t}; }); })
+  .then(function(res){
+    if(!res.ok){ setStatus(res.t==='stale_transcript'
+      ?'文字起こしが作り直されているため修正できません'
+      :'テキストを保存できません: '+res.t); return; }
+    after();
+  })
+  .catch(function(){ setStatus('サーバーに接続できません'); });
+}
 function editUnit(el){
   var ui=+el.dataset.ui, u=units[ui]; if(!u) return;
   if(el.querySelector('input')) return;
   var inp=document.createElement('input');
-  inp.value=u.t; inp.size=Math.max(u.t.length+2,8);
+  inp.value=u.t; inp.size=Math.max(u.t.length+2,6);
   el.textContent=''; el.appendChild(inp); inp.focus();
   var closed=false;
   var done=function(commit){
     if(closed) return; closed=true;
     var v=inp.value;
-    if(commit&&v!==u.t){
-      pushUndo(); lastOp='text@'+u.s.toFixed(1);
-      if(v.trim()===''){ units.splice(ui,1); setStatus('テキストを削除しました'); }
-      else { u.t=v; setStatus('テキストを修正しました'); }
-      afterEdit(true);
+    if(!commit||v===u.t){ if(u.ins&&u.t===''){ units.splice(ui,1); } build(); return; }
+    if(u.ins||u.insd){
+      sendEdit({op:'insert', t:u.s, text:v.trim()},
+        function(){
+          if(v.trim()===''){ units.splice(ui,1); setStatus('挿入テキストを取り消しました（保存済み）'); }
+          else{ u.t=v; delete u.ins; u.insd=1; setStatus('テキストを挿入しました（保存済み）'); }
+          build();
+        });
+    }else if(v.trim()===''){
+      /* 消しても位置は空白プレースホルダとして残す(原文 L112) */
+      sendEdit({op:'delete', s:u.s, e:u.e, orig:(u.o!=null?u.o:u.t)},
+        function(){ if(u.o==null) u.o=u.t; u.t=''; u.del=1;
+          build(); setStatus('テキストを削除しました（空白をクリックで書き戻せます）'); });
     }else{
-      /* 取り消し。挿入直後の空ユニットはゴミになるので消す */
-      if(u.t===''){ units.splice(ui,1); }
-      build();
+      sendEdit({op:'replace', s:u.s, e:u.e, orig:(u.o!=null?u.o:u.t), text:v},
+        function(){
+          if(u.o==null) u.o=u.t;
+          u.t=v; delete u.del;
+          if(v===u.o) delete u.o;
+          build(); setStatus('テキストを修正しました（保存済み）');
+        });
     }
   };
   inp.addEventListener('keydown',function(ev){
@@ -821,32 +1054,25 @@ host.addEventListener('click',function(ev){
   editUnit(el);
 });
 function insertUnit(t){
-  pushUndo(); lastOp='instext@'+t.toFixed(1);
-  var next=null; units.forEach(function(u){ if(u.s>t&&(next===null||u.s<next)) next=u.s; });
-  var e=Math.min(t+3, next!==null?next:D.duration, D.duration);
-  if(e-t<0.3) e=Math.min(t+0.5,D.duration);
-  var nu={s:+t.toFixed(3),e:+e.toFixed(3),t:''};
-  units.push(nu); units.sort(function(a,b){return a.s-b.s;});
-  build();
+  var nu={s:+t.toFixed(3), e:+(t+1.5).toFixed(3), t:'', ins:true};
+  var pos=units.findIndex(function(u){ return u.s>t; });
+  if(pos<0) pos=units.length;
+  units.splice(pos,0,nu); build();
   var idx=units.indexOf(nu);
   var el=root.querySelector(".cu[data-ui='"+idx+"']");
   if(el) editUnit(el);
 }
-window.clipTextMenu=function(t,cuEl){
-  var items=[];
-  if(cuEl) items.push({a:'delunit',label:'このテキストを削除'});
-  items.push({a:'insunit',label:'ここにテキストを挿入'});
-  return items;
-};
-window.clipTextRun=function(act,t,cuEl){
-  if(act==='delunit'&&cuEl){
-    var ui=+cuEl.dataset.ui;
-    if(!units[ui]) return;
-    pushUndo(); lastOp='deltext@'+t.toFixed(1);
-    units.splice(ui,1); afterEdit(true);
-    setStatus('テキストを削除しました');
-  }else if(act==='insunit'){ insertUnit(t); }
-};
+function deleteUnitEl(cuEl){
+  var ui=+cuEl.dataset.ui, u=units[ui]; if(!u) return;
+  if(u.ins||u.insd){
+    sendEdit({op:'insert', t:u.s, text:''},
+      function(){ units.splice(ui,1); build(); setStatus('挿入テキストを取り消しました（保存済み）'); });
+  }else{
+    sendEdit({op:'delete', s:u.s, e:u.e, orig:(u.o!=null?u.o:u.t)},
+      function(){ if(u.o==null) u.o=u.t; u.t=''; u.del=1;
+        build(); setStatus('テキストを削除しました（空白をクリックで書き戻せます）'); });
+  }
+}
 
 /* 右クリックメニュー。即実行しない作法は1次編集と同じ（オーナー指示 2026-08-05） */
 function openCtx(t,cx,cy,cuEl){
@@ -857,13 +1083,13 @@ function openCtx(t,cx,cy,cuEl){
   var items=[{a:'play',label:'ここから再生'},
              {a:'start',label:'ここを開始にする（S）'},
              {a:'end',label:'ここを終了にする（E）'}];
-  /* 空白では結合を2種類に分ける（紛らわしい問題。原文 L99） */
   if(clipAt(t)<0){
     items.push({a:'dropgap',label:'間を詰めて1本にする（間の音は捨てる）'});
     items.push({a:'join',label:'間も含めて1本にする（E を S まで伸ばす）'});
   }
-  if(window.clipTextMenu) items=items.concat(window.clipTextMenu(t,cuEl));
-  var html='<b>'+fmtAbs(t)+'</b><div class="btns" style="flex-direction:column;align-items:stretch">';
+  if(cuEl) items.push({a:'delunit',label:'このテキストを削除'});
+  items.push({a:'insunit',label:'ここにテキストを挿入'});
+  var html='<b>'+fmtAbs(V(t))+'</b><div class="btns" style="flex-direction:column;align-items:stretch">';
   items.forEach(function(it){ html+='<button data-a="'+it.a+'">'+esc(it.label)+'</button>'; });
   html+='<button data-a="close">閉じる</button></div>';
   pbox.innerHTML=html;
@@ -876,8 +1102,8 @@ function openCtx(t,cx,cy,cuEl){
       else if(act==='end'){ markEnd(t); }
       else if(act==='join'){ joinGap(t); }
       else if(act==='dropgap'){ dropGap(t); }
-      else if(act==='close'){ }
-      else if(window.clipTextRun){ window.clipTextRun(act,t,cuEl); }
+      else if(act==='delunit'&&cuEl){ deleteUnitEl(cuEl); }
+      else if(act==='insunit'){ insertUnit(t); }
     };
   });
 }
@@ -891,8 +1117,7 @@ document.addEventListener('keydown',function(e){
   else if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='z'){ e.preventDefault(); e.shiftKey?redo():undo(); }
   else if((e.metaKey||e.ctrlKey)&&(e.key==='='||e.key==='+')){ e.preventDefault(); setZoom(pxPerSec*1.4); }
   else if((e.metaKey||e.ctrlKey)&&e.key==='-'){ e.preventDefault(); setZoom(pxPerSec/1.4); }
-  /* S＝開始・E＝終了（原文 L17-18）。現在時刻バーの位置に効く。
-     マウスが行の上にあるときはその位置を優先する（⌘D と同じ考え方） */
+  /* S＝開始・E＝終了（原文 L17-18）。マウスがあればその位置、なければ再生位置 */
   else if(!e.metaKey&&!e.ctrlKey&&!e.altKey&&e.key.toLowerCase()==='s'){
     e.preventDefault(); markStart(hoverT!=null?hoverT:playhead); }
   else if(!e.metaKey&&!e.ctrlKey&&!e.altKey&&e.key.toLowerCase()==='e'){
@@ -900,6 +1125,31 @@ document.addEventListener('keydown',function(e){
   else if(e.key==='Delete'||e.key==='Backspace'){ e.preventDefault(); deleteSel(); }
   else if(e.key==='Escape'&&pendingStart!=null){ pendingStart=null; renderBars(); setStatus('開始指定を取り消しました'); }
 });
+
+/* ---- 保存（C-5。切り抜き区間と動画設定だけ。テキストは根が正） ---- */
+function journalNow(){
+  try{ var k='clip_journal_'+D.key, j=JSON.parse(localStorage.getItem(k)||'[]');
+       j.push({at:Date.now(),op:lastOp,clips:clips});
+       try{ localStorage.setItem(k,JSON.stringify(j)); }
+       catch(qe){ j=j.slice(Math.floor(j.length/2));
+                  try{ localStorage.setItem(k,JSON.stringify(j)); }catch(e2){} }
+       localStorage.setItem('clip_dirty_'+D.key,'1');
+  }catch(e){}
+}
+function scheduleSave(){ journalNow(); setStatus('未保存'); clearTimeout(saveTimer); saveTimer=setTimeout(doSave,0); }
+function doSave(){
+  setStatus('保存中…');
+  var rec={id:D.id,key:D.key,op:lastOp,clips:clips};
+  lastOp='';
+  fetch(window.APP+'/clip_save',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(rec)})
+  .then(function(r){
+    if(r.ok){ setStatus('保存済み'); try{ localStorage.removeItem('clip_dirty_'+D.key); }catch(e){} }
+    else{ setStatus('保存失敗（3秒後に再送します）'); clearTimeout(saveTimer); saveTimer=setTimeout(doSave,3000); }
+  })
+  .catch(function(){ setStatus('サーバーに接続できません（3秒後に再送します）');
+    clearTimeout(saveTimer); saveTimer=setTimeout(doSave,3000); });
+}
 
 function setZoom(v){
   pxPerSec=Math.max(20,Math.min(600,v));
@@ -913,6 +1163,20 @@ if(zo) zo.onclick=function(){ setZoom(pxPerSec/1.4); };
 var ub=root.querySelector('.tlundo'), rb=root.querySelector('.tlredo');
 if(ub) ub.onclick=undo;
 if(rb) rb.onclick=redo;
+/* 「前の版の切り抜き編集を適用」（C-17・原文 L106） */
+var ab=root.querySelector('.tlapply');
+if(ab) ab.onclick=function(){
+  ab.disabled=true; setStatus('前の版の切り抜き編集を適用しています…');
+  var q=new URLSearchParams(location.search);
+  fetch(window.APP+'/clip_apply_prev?id='+encodeURIComponent(q.get('id'))
+    +'&key='+encodeURIComponent(q.get('key')),{method:'POST'})
+  .then(function(r){ return r.text().then(function(t){ return {ok:r.ok,t:t}; }); })
+  .then(function(res){
+    if(!res.ok){ ab.disabled=false; setStatus('適用できません: '+res.t); return; }
+    location.reload();
+  })
+  .catch(function(){ ab.disabled=false; setStatus('サーバーに接続できません'); });
+};
 var sp=root.querySelector('.tlspeed');
 if(sp){
   sp.value=localStorage.getItem('tl_rate')||'1';
@@ -940,26 +1204,26 @@ build();
       if(!jj.length){ setStatus('復元できる編集がありません'); return; }
       pushUndo(); lastOp='restore-unsaved';
       var last=jj[jj.length-1];
-      clips=(last.clips||[]).map(function(c){return [+c[0],+c[1]];});
-      units=(last.units||[]).map(function(u){return {s:+u.s,e:+u.e,t:String(u.t)};});
-      selCi=-1; afterEdit(true); rb2.remove();
+      clips=(last.clips||[]).map(function(c){
+        var o=[+c[0],+c[1]];
+        if(c[2]&&c[2].length) o.push(c[2].map(function(d){return [+d[0],+d[1]];}));
+        return o;
+      });
+      selCi=-1; afterEdit(); rb2.remove();
     }catch(e){ setStatus('復元に失敗しました'); }
   };
   var bar=root.querySelector('.tlbar');
   if(bar) bar.appendChild(rb2);
 })();
 
-/* C-3〜C-5 が使う内部状態への窓口 */
+/* セグメント参考などからの窓口（playhead は元音源時刻） */
 window.clipTL={
-  get clips(){ return clips; }, set clips(v){ clips=v; },
-  get units(){ return units; }, set units(v){ units=v; },
-  get pendingStart(){ return pendingStart; }, set pendingStart(v){ pendingStart=v; },
-  get playhead(){ return playhead; }, get hoverT(){ return hoverT; },
-  get selCi(){ return selCi; }, set selCi(v){ selCi=v; },
+  get clips(){ return clips; },
+  get units(){ return units; },
+  get playhead(){ return playhead; },
   D:D, refresh:function(){ renderBars(); styleUnits(); movePlayhead(); },
   rebuild:build, setStatus:setStatus, clipAt:clipAt,
-  undoStack:undoStack, redoStack:redoStack,
-  movePlayhead:movePlayhead, setPlayhead:function(t){ playhead=t; movePlayhead(); }
+  setPlayhead:function(t){ playhead=t; movePlayhead(); }
 };
 })();
 """
@@ -983,6 +1247,19 @@ function fmtJp(t){
 function fmtAbs(t){
   var h=Math.floor(t/3600), m=Math.floor((t%3600)/60), s=Math.floor(t%60);
   return (h?h+':':'')+((m<10&&h)?'0':'')+m+':'+(s<10?'0':'')+s;
+}
+
+/* 文字の重なり解消（オーナー案1・原文 L108-111）。各語を「前の語の右端+2px」まで
+   右へ押し出す。左→右の1パスで完結する（後の語を右へ動かしても前との重なりは
+   生まれないため）。配置時の幅測定が最終描画とズレることがある（実測 2026-10-01:
+   9912語ページで 7861 ペアが数px食い込み）ので、フォント確定後にもう一度かける。 */
+function relaxWords(els){
+  var last=-1e9;
+  els.forEach(function(el){
+    var x=parseFloat(el.style.left)||0;
+    if(x<last){ x=last; el.style.left=x+'px'; }
+    last=x+el.offsetWidth+2;
+  });
 }
 
 function makeTimeline(root){
@@ -1033,6 +1310,9 @@ function makeTimeline(root){
     for(var i=r[0];i<=r[1];i++) st[i]=1; }); return st; })();
 
   function build(){
+    /* 再構築中にページ高が一瞬縮み、スクロール位置が丸められて飛ぶことがある
+       (切り抜き画面で実測。テキスト修正の確定後の再構築も通る)。前後で保存・復元 */
+    var sx=window.scrollX, sy=window.scrollY;
     host.innerHTML=''; rows=[];
     var probe=document.createElement('div'); probe.className='lane';
     host.appendChild(probe); laneW=probe.clientWidth||800; host.removeChild(probe);
@@ -1070,18 +1350,24 @@ function makeTimeline(root){
         }
         var el=document.createElement('span');
         el.className='w'+((w.p&&w.p!==D.mainSpk)?(' s'+(w.p<=8?w.p:'x')):'')
-                        +(hlSet[wi]?' hl':'');
-        el.textContent=w.t; el.style.left=x+'px';
-        el.dataset.s=w.s; el.dataset.e=w.e;
+                        +(hlSet[wi]?' hl':'')+(w.del?' wdel':'');
+        el.textContent=w.del?' ':w.t; el.style.left=x+'px';
+        el.dataset.s=w.s; el.dataset.e=w.e; el.dataset.wi=wi;
         lane.appendChild(el); els.push(el);
         lastRight=x+el.offsetWidth; prevEnd=w.e; prevSpk=w.p; wi++;
       }
       host.appendChild(row);
+      relaxWords(els);
       var R={t0:t0,t1:t1,strip:strip,els:els,bars:[]};
       rows.push(R); bindStrip(R);
     }
     built=true;
     renderBars(); styleWords(); movePlayhead();
+    window.scrollTo(sx, sy);
+    /* フォント確定後に幅が変わって食い込むことがあるので、もう一度だけ押し直す */
+    var relaxAll=function(){ rows.forEach(function(R){ relaxWords(R.els); }); };
+    if(document.fonts&&document.fonts.ready) document.fonts.ready.then(relaxAll);
+    setTimeout(relaxAll,300);
   }
   function renderBars(){
     rows.forEach(function(R){
@@ -1206,16 +1492,19 @@ function makeTimeline(root){
   var pbox=null;
   var hoverT=null;   /* マウスが行の上にあるときの時刻。⌘D はここで割る */
   function closePend(){ if(pbox){ pbox.remove(); pbox=null; } }
-  function openCtx(R,t,cx,cy){
+  function openCtx(R,t,cx,cy,wEl){
     /* 右クリックメニュー。即実行は誤操作しやすい（オーナー指示・2026-08-05）ので
        メニューから選んで実行する */
     closePend();
     pbox=document.createElement('div'); pbox.className='pbox';
     pbox.style.left=Math.min(cx,window.innerWidth-260)+'px';
-    pbox.style.top=Math.min(cy+8,window.innerHeight-140)+'px';
+    pbox.style.top=Math.min(cy+8,window.innerHeight-200)+'px';
     pbox.innerHTML='<b>'+fmtAbs(t)+'</b>'+
-      '<div class="btns"><button data-a="split">ここでスプリット</button>'+
+      '<div class="btns" style="flex-direction:column;align-items:stretch">'+
+      '<button data-a="split">ここでスプリット</button>'+
       '<button data-a="play">ここから再生</button>'+
+      (wEl?'<button data-a="deltext">このテキストを削除</button>':'')+
+      '<button data-a="instext">ここにテキストを挿入</button>'+
       '<button data-a="close">閉じる</button></div>';
     document.body.appendChild(pbox);
     pbox.querySelectorAll('button').forEach(function(b){
@@ -1223,6 +1512,8 @@ function makeTimeline(root){
         var act=b.dataset.a; closePend();
         if(act==='split'){ playhead=t; movePlayhead(); splitAt(t); }
         else if(act==='play'){ selectInst(api); playhead=t; movePlayhead(); play(); }
+        else if(act==='deltext'&&wEl){ deleteWordEl(wEl); }
+        else if(act==='instext'){ insertWordAt(t); }
       };
     });
   }
@@ -1407,7 +1698,7 @@ function makeTimeline(root){
       ev.preventDefault();
       selectInst(api);
       var t=T(R, ev.clientX-R.strip.getBoundingClientRect().left);
-      openCtx(R, t, ev.clientX, ev.clientY);
+      openCtx(R, t, ev.clientX, ev.clientY, ev.target.closest('.w'));
     });
     R.strip.addEventListener('dblclick',function(ev){
       /* 黄（無音）をダブルクリック＝その無音だけ落とす */
@@ -1464,11 +1755,88 @@ function makeTimeline(root){
     if(pendingDrag) pendingDrag=null;
     if(dragging){ dragging=null; lastOp='trim'; scheduleSave(); }
   });
+  /* ---- 文字起こしの修正（C-16）。単語クリック＝入力欄（オーナー指示・原文 L104）。
+     修正は transcript.json でなく edit/transcript_edits.json（根のオーバーレイ）へ。
+     シークはバークリックが担う。 ---- */
+  function sendEdit(op, after){
+    fetch(window.APP+'/transcript_edit',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(Object.assign({id:D.id},op))})
+    .then(function(r){ return r.text().then(function(t){ return {ok:r.ok,t:t}; }); })
+    .then(function(res){
+      if(!res.ok){ setStatus(res.t==='stale_transcript'
+        ?'文字起こしが作り直されているため修正できません（transcript_edits を作り直してください）'
+        :'テキストを保存できません: '+res.t); return; }
+      after();
+    })
+    .catch(function(){ setStatus('サーバーに接続できません'); });
+  }
+  function editWord(el){
+    var wi=+el.dataset.wi, w=D.words[wi]; if(!w) return;
+    if(el.querySelector('input')) return;
+    var inp=document.createElement('input');
+    inp.value=w.t; inp.size=Math.max(w.t.length+2,6);
+    el.textContent=''; el.appendChild(inp); inp.focus();
+    var closed=false;
+    var done=function(commit){
+      if(closed) return; closed=true;
+      var v=inp.value;
+      if(!commit||v===w.t){ if(w.ins&&w.t===''){ D.words.splice(wi,1); } build(); return; }
+      /* 挿入された語(新規 .ins / 保存済み .insd)は insert の上書き・取り消しで扱い、
+         それ以外は raw 原文(w.o があればそれ)をキーに replace/delete する(C-16) */
+      if(w.ins||w.insd){
+        sendEdit({op:'insert', t:w.s, text:v.trim()},
+          function(){
+            if(v.trim()===''){ D.words.splice(wi,1); setStatus('挿入テキストを取り消しました（保存済み）'); }
+            else{ w.t=v; delete w.ins; w.insd=1; setStatus('テキストを挿入しました（保存済み）'); }
+            build();
+          });
+      }else if(v.trim()===''){
+        /* 消しても位置は空白プレースホルダとして残し、クリックで書き戻せる(原文 L112) */
+        sendEdit({op:'delete', s:w.s, e:w.e, orig:(w.o!=null?w.o:w.t)},
+          function(){ if(w.o==null) w.o=w.t; w.t=''; w.del=1;
+            build(); setStatus('テキストを削除しました（空白をクリックで書き戻せます）'); });
+      }else{
+        sendEdit({op:'replace', s:w.s, e:w.e, orig:(w.o!=null?w.o:w.t), text:v},
+          function(){
+            if(w.o==null) w.o=w.t;
+            w.t=v; delete w.del;
+            if(v===w.o) delete w.o;   /* 原文に戻した = 修正の取り消し */
+            build(); setStatus('テキストを修正しました（保存済み）');
+          });
+      }
+    };
+    inp.addEventListener('keydown',function(ev){
+      ev.stopPropagation();
+      if(ev.key==='Enter'){ done(true); }
+      else if(ev.key==='Escape'){ done(false); }
+    });
+    inp.addEventListener('blur',function(){ done(true); });
+  }
+  function insertWordAt(t){
+    var nw={t:'', s:+t.toFixed(3), e:+(t+1.5).toFixed(3), p:D.mainSpk, ins:true};
+    var pos=D.words.findIndex(function(w){ return w.s>t; });
+    if(pos<0) pos=D.words.length;
+    D.words.splice(pos,0,nw); build();
+    var el=host.querySelector(".w[data-s='"+nw.s+"']");
+    if(el) editWord(el);
+  }
+  function deleteWordEl(el){
+    var wi=+el.dataset.wi, w=D.words[wi]; if(!w) return;
+    if(w.ins||w.insd){
+      /* 挿入した語の削除は本当に消える(元データに位置が無いため) */
+      sendEdit({op:'insert', t:w.s, text:''},
+        function(){ D.words.splice(wi,1); build(); setStatus('挿入テキストを取り消しました（保存済み）'); });
+    }else{
+      sendEdit({op:'delete', s:w.s, e:w.e, orig:(w.o!=null?w.o:w.t)},
+        function(){ if(w.o==null) w.o=w.t; w.t=''; w.del=1;
+          build(); setStatus('テキストを削除しました（空白をクリックで書き戻せます）'); });
+    }
+  }
   host.addEventListener('click',function(ev){
     var el=ev.target.closest('.w'); if(!el) return;
     selectInst(api);
-    playhead=+el.dataset.s; movePlayhead();
-    if(active===api) audio.currentTime=playhead;
+    editWord(el);
   });
 
   if(elBtn) elBtn.onclick=function(){ selectInst(api); (active===api)?stop():play(); };
@@ -1562,10 +1930,14 @@ document.addEventListener('keydown',function(e){
   else if(e.key==='Delete'||e.key==='Backspace'){ e.preventDefault(); a.delSel(); }
 });
 
-/* 画面に入ってから組む。7セグメントぶんの単語を最初に全部DOM化すると重いため */
+/* 画面に入ってから組む。7セグメントぶんの単語を最初に全部DOM化すると重いため。
+   ?eager=1 は遅延せず即組む（バックグラウンドタブでは IntersectionObserver が
+   発火しないため、自動テスト・デバッグ用に残す） */
+var eagerBuild=new URLSearchParams(location.search).get('eager')==='1';
 document.querySelectorAll('.tl').forEach(function(root){
   var a=makeTimeline(root);
   insts.push(a);
+  if(eagerBuild){ a.build(); return; }
   var io=new IntersectionObserver(function(es){
     es.forEach(function(en){
       if(en.isIntersecting&&!a.isBuilt()){ a.build(); io.disconnect(); }
@@ -1635,15 +2007,24 @@ def timeline_block(idv, sg, tsegments, silence, main_spk=1, cutdecs=None, quotes
             if st is None or en is None or not (s <= st < e):
                 continue
             tok = (w.get("word") or "").strip()
-            if not tok:
+            # 削除済みの語は空白プレースホルダとして残す(原文 L112)
+            if not tok and not w.get("deleted"):
                 continue
             spk = w.get("speaker") or tseg.get("speaker") or ""
             try:
                 pno = int(str(spk).split("_")[-1])
             except ValueError:
                 pno = 0
-            words.append({"t": tok, "s": round(float(st), 3),
-                          "e": round(float(en), 3), "p": pno})
+            wd = {"t": tok, "s": round(float(st), 3),
+                  "e": round(float(en), 3), "p": pno}
+            # 文字修正(C-16)の再修正用キー。o = 機械出力の原文 / insd = 挿入された語
+            if w.get("edited") and w.get("orig_word") is not None:
+                wd["o"] = w["orig_word"]
+            if w.get("inserted"):
+                wd["insd"] = 1
+            if w.get("deleted"):
+                wd["del"] = 1
+            words.append(wd)
     words.sort(key=lambda w: w["s"])
     sil = [[max(a, s), min(b, e)] for a, b in silence if b > s and a < e]
     sil = [[round(a, 3), round(b, 3)] for a, b in sil if b - a > 0.01]
@@ -1689,12 +2070,18 @@ def timeline_block(idv, sg, tsegments, silence, main_spk=1, cutdecs=None, quotes
         f"<div class='tlhelp'>文字は時間軸上の位置に置いてあるので、文字間の空白がそのまま無音の長さです。"
         f"バーは常に1本の帯で、{vad_note}、黒＝カット済み。"
         "Space 再生（カット部はスキップ）・<b>⌘D＝マウス位置でスプリット</b>・"
-        "右クリック＝メニュー（スプリット/再生）・端をドラッグでトリム・"
-        "クリックで選択して Delete で削除・⌘Z 取り消し・⌘± ズーム。自動保存されます。</div>"
+        "右クリック＝メニュー（スプリット/再生/テキスト削除・挿入）・端をドラッグでトリム・"
+        "バーをクリックで選択して Delete で削除・<b>文字をクリック＝修正</b>（根の文字起こしに保存）・"
+        "⌘Z 取り消し・⌘± ズーム。自動保存されます。</div>"
         f"<div class='tlrows'><div class='tlwait'>スクロールすると組み上がります（単語 {len(words)}）…</div></div>"
         f"<script type='application/json'>{data}</script>"
         "</div>"
     )
+
+
+def _js(v):
+    """ページ埋め込み用 JSON。</script> でスクリプトが切れないようにする。"""
+    return json.dumps(v, ensure_ascii=False).replace("<", "\\u003c")
 
 
 def _queue_for_sync(*paths):
@@ -1740,7 +2127,17 @@ def apply_timeline_save(payload):
     except (TypeError, ValueError):
         return False
     sid = str(payload.get("sid") or "")
+    lk = _segments_lock(base)
+    try:
+        return _apply_timeline_save_locked(base, seg_path, payload, idx, sid)
+    finally:
+        lk.close()
+
+
+def _apply_timeline_save_locked(base, seg_path, payload, idx, sid):
     seg = _load_json(seg_path, {})
+    if not seg.get("segments"):
+        return False   # 壊れた・半端な読み取りには上書きしない(履歴から復旧する)
     changed = False
     for sg in seg.get("segments", []):
         # 対応づけは sid が正（index は細分化・並べ替えで変わるため。2026-08-08）。
@@ -1773,10 +2170,47 @@ def apply_timeline_save(payload):
     if not changed:
         return False
     _append_history(base, seg_path)
-    with open(seg_path, "w", encoding="utf-8") as f:
-        json.dump(seg, f, ensure_ascii=False, indent=2)
+    _write_json_atomic(seg_path, seg)
     _queue_for_sync(seg_path, os.path.join(idpaths.edit_dir(base), "segments_history.jsonl"))
     return True
+
+
+def _segments_lock(base):
+    """segments.json の read-modify-write を直列化する排他ロック。
+    連続 POST の競合による lost-update / 半端読み取り上書きの予防(2026-10-02。
+    clip_save で geometry が消えた実障害と同じ系統)。"""
+    import fcntl
+    lk = open(os.path.join(idpaths.edit_dir(base), ".segments.lock"), "w")
+    fcntl.flock(lk, fcntl.LOCK_EX)
+    return lk
+
+
+def _write_json_atomic(path, doc):
+    tmp = path + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(doc, f, ensure_ascii=False, indent=2)
+    os.replace(tmp, path)
+
+
+def _append_json_history(path, hist_path, field):
+    """上書き前の内容を履歴へ退避(200件)。全量置き換えの定義ファイル
+    (effect_styles / style_sets)が1回の保存で黙って消えた実事故の保険(2026-10-03)。"""
+    import datetime
+    try:
+        if not os.path.isfile(path):
+            return
+        with open(path, encoding="utf-8") as f:
+            prev = f.read()
+        lines = []
+        if os.path.isfile(hist_path):
+            with open(hist_path, encoding="utf-8") as f:
+                lines = f.read().splitlines()
+        lines.append(json.dumps({"at": datetime.datetime.now().isoformat(timespec="seconds"),
+                                 field: prev}, ensure_ascii=False))
+        with open(hist_path, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines[-200:]) + "\n")
+    except Exception:
+        pass
 
 
 def _append_history(base, seg_path):
@@ -1998,6 +2432,11 @@ def load_id_data(idv):
     sil_by_index = {s.get("index"): s for s in sil.get("segments", [])}
     ex = _load_json(idpaths.find(base, "exclude_zones.json"), {})
     tr = _load_json(idpaths.find(base, "transcript.json"), {})
+    # 文字起こし修正のオーバーレイ(C-16)。stale(再文字起こし後)なら適用しない
+    _edoc = transcript_edits.load(base)
+    _est = transcript_edits.status(base, _edoc)
+    if _est == "ok":
+        tr = dict(tr, segments=transcript_edits.apply_to_segments(tr.get("segments", []), _edoc))
     # カット候補リストは ID ごと（data/<ID>/cutlist.json）。CUTLIST 環境変数で上書き可。
     cutlist_path = os.environ.get("CUTLIST") or idpaths.find(base, "cutlist.json")
     cutlist = _load_json(cutlist_path, {"speakers": [], "manual": []})
@@ -2021,6 +2460,8 @@ def load_id_data(idv):
         # メイン話者＝最多話者（docs/編集規則.md「Speaker 1 = 大塚さん（最多話者）」）。
         # この話者だけ既定色、他はオレンジ系にして会話相手を見分けられるようにする。
         "main_speaker": _main_speaker(tr),
+        # 文字起こし修正の状態（stale = 再文字起こしで指紋不一致・適用停止中）
+        "edits_status": _est,
     }
 
 
@@ -2401,6 +2842,10 @@ def render_id(idv):
         f"<div class='crumb'><a href='{approot()}/'>← 一覧</a></div>",
         f"<h1>{esc(idv)}</h1>",
     ]
+    if d.get("edits_status") == "stale":
+        parts.append("<p class='meta' style='color:#e11d48'>⚠ 文字起こしが作り直されたため、"
+                     "保存済みのテキスト修正(transcript_edits.json)を適用していません。"
+                     "修正を引き継ぐか破棄するか判断が必要です。</p>")
     if not segments:
         # まだ処理していない ID。何が足りないかだけ出す
         base = os.path.join(DATA_DIR, idv)
@@ -2415,14 +2860,7 @@ def render_id(idv):
     # 元音源（無編集）。カット済み区間のクリック時にここから再生して内容を確認できるようにする
     # 再生用は preview_audio.m4a を最優先。元音源が ALAC だと Chrome / Firefox が
     # 再生できないため（2026-08-05 実測）。作り方: python scripts/make_preview_audio.py <ID>
-    _b = os.path.join(DATA_DIR, idv)
-    names = sorted(os.listdir(_b))
-    _pv = idpaths.find(_b, "preview_audio.m4a")
-    src_name = os.path.relpath(_pv, _b) if os.path.exists(_pv) else None
-    if not src_name:
-        src_name = next((n for n in names if n.lower().endswith(".m4a")), None)
-    if not src_name:
-        src_name = next((n for n in names if n.lower().endswith(".mp4")), None)
+    src_name = source_audio_name(idv)
     if src_name:
         # preload='none' だと尺が分からずシークできない。タイムラインは 800秒などの
         # 絶対時刻へ飛ぶので metadata まで読ませる。
@@ -2603,7 +3041,17 @@ def apply_decision(idv, cid, action, status_only=False):
         _queue_for_sync(dec_path)
         return True
     seg_path = idpaths.find(base, "segments.json")
+    lk = _segments_lock(base)
+    try:
+        return _apply_decision_locked(dec_path, dec, seg_path, target, action)
+    finally:
+        lk.close()
+
+
+def _apply_decision_locked(dec_path, dec, seg_path, target, action):
     seg = _load_json(seg_path, {})
+    if not seg.get("segments"):
+        return False
     st, en = float(target["start_sec"]), float(target["end_sec"])
     for sg in seg.get("segments", []):
         s0, e0 = sg["start_sec"], sg["end_sec"]
@@ -2618,10 +3066,8 @@ def apply_decision(idv, cid, action, status_only=False):
         else:
             sg["drops"] = [d for d in drops
                            if not (abs(d[0] - cs) < 0.3 and abs(d[1] - ce) < 0.3)]
-    with open(dec_path, "w", encoding="utf-8") as f:
-        json.dump(dec, f, ensure_ascii=False, indent=2)
-    with open(seg_path, "w", encoding="utf-8") as f:
-        json.dump(seg, f, ensure_ascii=False, indent=2)
+    _write_json_atomic(dec_path, dec)
+    _write_json_atomic(seg_path, seg)
     _queue_for_sync(dec_path, seg_path)
     return True
 
@@ -2649,7 +3095,17 @@ def set_seg_flag(idv, sid, field, on):
     except Exception:
         pass
     seg_path = idpaths.find(base, "segments.json")
+    lk = _segments_lock(base)
+    try:
+        return _set_seg_flag_locked(base, seg_path, sid, field, on)
+    finally:
+        lk.close()
+
+
+def _set_seg_flag_locked(base, seg_path, sid, field, on):
     seg = _load_json(seg_path, {})
+    if not seg.get("segments"):
+        return False
     changed = False
     for sg in seg.get("segments", []):
         if sg.get("sid") == sid:
@@ -2661,25 +3117,78 @@ def set_seg_flag(idv, sid, field, on):
     if not changed:
         return False
     _append_history(base, seg_path)
-    with open(seg_path, "w", encoding="utf-8") as f:
-        json.dump(seg, f, ensure_ascii=False, indent=2)
+    _write_json_atomic(seg_path, seg)
     _queue_for_sync(seg_path, os.path.join(idpaths.edit_dir(base), "segments_history.jsonl"))
     return True
 
 
+def apply_transcript_edit(payload):
+    """/transcript_edit: 文字起こし修正(C-16)を edit/transcript_edits.json へ保存する。
+    作法は他の編集保存と同型: 受信ジャーナル(fsync) → 履歴退避 → 全量書き → 同期キュー。
+    transcript.json 自体には書かない(generated の契約を守る)。"""
+    import datetime
+    idv = str(payload.get("id") or "")
+    if idv not in list_ids():
+        return "bad_id"
+    base = os.path.join(DATA_DIR, idv)
+    try:
+        journal = os.path.join(idpaths.edit_dir(base), "edit_save_journal.jsonl")
+        with open(journal, "a", encoding="utf-8") as f:
+            f.write(json.dumps({"at": datetime.datetime.now().isoformat(timespec="milliseconds"),
+                                "payload": dict(payload, op_group="transcript_edit")},
+                               ensure_ascii=False) + "\n")
+            f.flush()
+            os.fsync(f.fileno())
+    except Exception:
+        pass
+    # read-modify-write を flock で直列化する。速い連続編集や複数プロセス(別ポートの
+    # サーバー等)で後の書き込みが前の1件を飲み込む実障害があった(2026-10-01・原文 L127)
+    import fcntl
+    lock_path = os.path.join(idpaths.edit_dir(base), ".transcript_edits.lock")
+    with open(lock_path, "w") as lk:
+        fcntl.flock(lk, fcntl.LOCK_EX)
+        doc, err = transcript_edits.upsert(base, payload)
+        if err:
+            return err
+        path = idpaths.find(base, transcript_edits.EDITS_NAME)
+        # 履歴退避(200件)
+        try:
+            if os.path.isfile(path):
+                with open(path, encoding="utf-8") as f:
+                    prev = f.read()
+                hist = os.path.join(idpaths.edit_dir(base), "transcript_edits_history.jsonl")
+                lines = []
+                if os.path.isfile(hist):
+                    with open(hist, encoding="utf-8") as f:
+                        lines = f.read().splitlines()
+                lines.append(json.dumps({"at": datetime.datetime.now().isoformat(timespec="seconds"),
+                                         "edits_json": prev}, ensure_ascii=False))
+                with open(hist, "w", encoding="utf-8") as f:
+                    f.write("\n".join(lines[-200:]) + "\n")
+        except Exception:
+            pass
+        out = idpaths.save(base, transcript_edits.EDITS_NAME)
+        tmp = out + ".part"
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(doc, f, ensure_ascii=False, indent=2)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(tmp, out)   # 書き込みは原子的に(部分書きで壊れたファイルを読ませない)
+    _queue_for_sync(out, os.path.join(idpaths.edit_dir(base), "transcript_edits_history.jsonl"))
+    return "ok"
+
+
 # ---------- 切り抜き（CLIP_PLAN）----------
 # 設計の正本は podcast/CLIP_PLAN.md、仕様原文は docs/CLIP_SPEC_20260928_原文.md。
-# 「切り抜きを作成」を押した瞬間の1次編集状態（区間+drops）を凍結し、
-# clipkey = <sid>_<hash8> に紐づける。1次編集を後から変えても既存の切り抜き編集には
-# 影響しない（別の clipkey = 別の切り抜き編集画面になる。原文 L73-78）。
+# C-17 改定(2026-10-01): 凍結は廃止。切り抜き区間は**元音源の絶対時刻**で持ち、
+# 隙間なしタイムライン・正味尺・字幕・音声連結はすべて表示/生成時に導出する。
+# key = <sid>_<hash8> は「1次編集の版の識別子」(版ごとに切り抜き編集画面が対応)。
+# 版ファイルは自分の1次形状(geometry)だけをピンし、テキスト・音源は持たない。
 # 既存の segments.json には一切書き込まない（大原則1）。
-
-CLIP_UNIT_GAP = 0.8        # 字幕ユニットの区切り: この秒数以上の間隔（オーナー裁定 2026-09-28）
-CLIP_UNIT_PUNCT = "。．！？!?"
 
 
 def clip_key_of(sg):
-    """凍結キー。1次編集の状態（区間+drops）が変わると別のキーになる。"""
+    """版キー。1次編集の状態（区間+drops）が変わると別のキー=別の切り抜き編集画面になる。"""
     import hashlib
     canon = json.dumps({"segStart": round(float(sg["start_sec"]), 3),
                         "segEnd": round(float(sg["end_sec"]), 3),
@@ -2690,105 +3199,67 @@ def clip_key_of(sg):
     return f"{sg.get('sid')}_{h8}"
 
 
-def build_clip_source(idv, sg):
-    """凍結スナップショット（clip_<key>_source.json の中身）を作る。
-    transcript の単語を drops で間引き、編集後時間軸（カットを詰めた連続時間）へ再配置し、
-    字幕ユニット（0.8秒以上の間隔または句読点で区切った文字のまとまり）にまとめる。"""
-    import datetime
-    base = os.path.join(DATA_DIR, idv)
-    tr = _load_json(idpaths.find(base, "transcript.json"), {})
+def clip_geometry_of(sg):
+    """版ファイルにピンする1次形状。履歴の回転(200件)に依存せず古い版を開けるようにする。"""
     s, e = float(sg["start_sec"]), float(sg["end_sec"])
-    drops = sorted([[max(s, float(a)), min(e, float(b))] for a, b in (sg.get("drops") or [])
+    drops = sorted([[max(s, round(float(a), 3)), min(e, round(float(b), 3))]
+                    for a, b in (sg.get("drops") or [])
                     if float(b) > s and float(a) < e])
-    # keep 区間と、各 keep の編集後開始オフセット
-    keeps, t = [], s
-    for a, b in drops:
-        if a - t > 0.01:
-            keeps.append([t, a])
-        t = max(t, b)
-    if e - t > 0.01:
-        keeps.append([t, e])
-    kmap, acc = [], 0.0
-    for a, b in keeps:
-        kmap.append((a, b, acc))
-        acc += b - a
+    return {"start_sec": round(s, 3), "end_sec": round(e, 3), "drops": drops}
 
-    def remap(t0):
-        for a, b, off in kmap:
-            if a <= t0 <= b:
-                return off + (t0 - a)
-        return None
 
-    words = []
-    for tseg in tr.get("segments", []):
+def geometry_keeps(geometry):
+    """geometry の keep 区間 [(a,b),…]（元音源時刻）。"""
+    return keep_ranges(float(geometry["start_sec"]), float(geometry["end_sec"]),
+                       [tuple(map(float, d)) for d in geometry.get("drops") or []])
+
+
+def token_in_keeps(st, en, keeps):
+    """語を keep に含めるかの判定。**中点が keep 内**（1次編集のグレー判定と同じ基準なので
+    両画面のテキスト集合が構成上一致する）、または端をまたぐ長い語は重なり 0.2 秒以上。
+    「重なり 0.2 秒以上」だけだと、0.2 秒未満の短い語(「の」「が」等)が keep の内側に
+    あっても全部落ちる(2026-10-01 実測: keep 内 3,247 語中 2,142 語が消えていた)。"""
+    mid = (st + en) / 2
+    if any(ka <= mid < kb for ka, kb in keeps):
+        return True
+    return sum(max(0.0, min(en, kb) - max(st, ka)) for ka, kb in keeps) >= 0.2
+
+
+def clip_tokens(idv, geometry):
+    """切り抜き画面・生成が使う単語トークン列（元音源の絶対時刻・修正オーバーレイ適用済み）。
+    粒度は1次編集と同じ（結合しない。原文 L104 の粒度問題への対応）。"""
+    base = os.path.join(DATA_DIR, idv)
+    tsegments, est = transcript_edits.corrected_segments(base)
+    keeps = geometry_keeps(geometry)
+    out = []
+    for tseg in tsegments:
         for w in (tseg.get("words") or []):
             st, en = w.get("start"), w.get("end")
-            if st is None or en is None or not (s <= st < e):
+            if st is None or en is None:
                 continue
+            st, en = float(st), float(en)
             tok = (w.get("word") or "").strip()
-            if not tok:
+            # 削除済みの語は空白プレースホルダとして残す(原文 L112)。字幕・候補・全文の
+            # 生成側は空テキストを拾わないので出力には乗らない
+            if not tok and not w.get("deleted"):
                 continue
-            mid = (float(st) + float(en)) / 2
-            if remap(mid) is None:      # カットされた単語は落とす
+            if not token_in_keeps(st, en, keeps):
                 continue
-            ns, ne = remap(float(st)), remap(float(en))
-            if ns is None:
-                ns = remap(mid) - (mid - float(st))
-            if ne is None:
-                ne = ns + (float(en) - float(st))
-            words.append({"t": tok, "s": round(max(0.0, ns), 3), "e": round(max(0.0, ne), 3)})
-    words.sort(key=lambda w: w["s"])
-    units, cur = [], None
-    for w in words:
-        if cur is not None and w["s"] - cur["e"] >= CLIP_UNIT_GAP:
-            units.append(cur)
-            cur = None
-        if cur is None:
-            cur = {"s": w["s"], "e": w["e"], "t": w["t"]}
-        else:
-            cur["t"] += w["t"]
-            cur["e"] = w["e"]
-        if cur["t"] and cur["t"][-1] in CLIP_UNIT_PUNCT:
-            units.append(cur)
-            cur = None
-    if cur is not None:
-        units.append(cur)
-    return {"id": idv, "sid": sg.get("sid") or "", "key": clip_key_of(sg),
-            "created_at": datetime.datetime.now().isoformat(timespec="seconds"),
-            "seg": {"index": sg.get("index"), "title": sg.get("title") or "",
-                    "start_sec": s, "end_sec": e, "drops": drops},
-            "duration": round(acc, 3), "units": units}
+            wd = {"t": tok, "s": round(st, 3), "e": round(en, 3)}
+            if w.get("edited") and w.get("orig_word") is not None:
+                wd["o"] = w["orig_word"]
+            if w.get("inserted"):
+                wd["insd"] = 1
+            if w.get("deleted"):
+                wd["del"] = 1
+            out.append(wd)
+    out.sort(key=lambda w: w["s"])
+    return out, est
 
 
-# 凍結音源の生成プロセス。key=(ID, clipkey) → subprocess.Popen
-CLIP_SOURCE_RENDERS = {}
-
-
-def start_clip_source_render(idv, key):
-    """凍結音源（generated/clip_<key>_source.m4a）をバックグラウンド生成する。"""
-    import subprocess
-    base = os.path.join(DATA_DIR, idv)
-    if os.path.isfile(idpaths.find(base, f"clip_{key}_source.m4a")):
-        return "done"
-    k = (idv, key)
-    p = CLIP_SOURCE_RENDERS.get(k)
-    if p is not None and p.poll() is None:
-        return "already_running"
-    root = os.path.dirname(HERE)
-    py = os.path.join(root, "venv", "bin", "python")
-    if not os.path.isfile(py):
-        py = _sys.executable
-    gen = idpaths.gen_dir(base)
-    logf = open(os.path.join(gen, f"clip_{key}_source.log"), "w", encoding="utf-8")
-    CLIP_SOURCE_RENDERS[k] = subprocess.Popen(
-        [py, os.path.join(root, "scripts", "make_clip_source.py"), idv, "--key", key],
-        cwd=root, stdout=logf, stderr=subprocess.STDOUT)
-    return "started"
-
-
-def create_clip(idv, sid):
-    """「切り抜きを作成」。現在の1次編集状態を凍結して clipkey を返す。
-    同じ状態の凍結が既にあればそれをそのまま使う（再凍結しない）。"""
+def open_clip(idv, sid):
+    """「このバージョンの切り抜き編集画面へ」。現在の1次状態の版キーを返し、
+    版ファイルが無ければ geometry だけをピンして作る（凍結はしない。C-17）。"""
     import datetime
     if idv not in list_ids() or not sid:
         return None
@@ -2799,32 +3270,191 @@ def create_clip(idv, sid):
     if sg is None or not sg.get("production"):
         return None
     key = clip_key_of(sg)
-    src_path = idpaths.find(base, f"clip_{key}_source.json")
-    if not os.path.isfile(src_path):
+    path = idpaths.find(base, f"clip_{key}.json")
+    if not os.path.isfile(path):
         try:
             journal = os.path.join(idpaths.edit_dir(base), "edit_save_journal.jsonl")
             with open(journal, "a", encoding="utf-8") as f:
                 f.write(json.dumps({"at": datetime.datetime.now().isoformat(timespec="milliseconds"),
-                                    "payload": {"op": "clip_create", "id": idv, "sid": sid,
+                                    "payload": {"op": "clip_open", "id": idv, "sid": sid,
                                                 "key": key}}, ensure_ascii=False) + "\n")
                 f.flush()
                 os.fsync(f.fileno())
         except Exception:
             pass
-        source = build_clip_source(idv, sg)
-        sp = idpaths.save(base, f"clip_{key}_source.json")
-        with open(sp, "w", encoding="utf-8") as f:
-            json.dump(source, f, ensure_ascii=False, indent=2)
-        # 編集の現在状態。units は source のコピーから修正していく
-        cur = {"id": idv, "key": key, "sid": source["sid"], "title": source["seg"]["title"],
-               "created_at": source["created_at"], "clips": [],
-               "units": source["units"], "video": {}}
+        cur = {"id": idv, "key": key, "sid": sg.get("sid") or "",
+               "title": sg.get("title") or "",
+               "created_at": datetime.datetime.now().isoformat(timespec="seconds"),
+               "geometry": clip_geometry_of(sg), "clips": [], "video": {}}
         cp = idpaths.save(base, f"clip_{key}.json")
         with open(cp, "w", encoding="utf-8") as f:
             json.dump(cur, f, ensure_ascii=False, indent=2)
-        _queue_for_sync(sp, cp)
-    start_clip_source_render(idv, key)
+        _queue_for_sync(cp)
     return key
+
+
+def apply_prev_clip(idv, key):
+    """「前の版の切り抜き編集を適用」(C-17・原文 L106)。最新の他版の clips/video を
+    この版へコピーする。座標は元音源時刻なので変換不要 — 1次編集でカットを解除した
+    区間を跨ぐ切り抜きは新しい geometry の下で自動的に広がり、新カットは自動で詰まる。"""
+    import datetime
+    if idv not in list_ids() or not re.fullmatch(r"[0-9a-f]{12}_[0-9a-f]{8}", key or ""):
+        return "bad_id"
+    base = os.path.join(DATA_DIR, idv)
+    path = idpaths.find(base, f"clip_{key}.json")
+    cur = _load_json(path, None)
+    if not cur or "geometry" not in cur:
+        return "not_found"
+    if cur.get("clips"):
+        return "not_empty"
+    sid = key.split("_")[0]
+    prev = None
+    for v in list_clip_versions(idv, sid):
+        if v["key"] != key:
+            src = _load_json(os.path.join(base, idpaths.EDIT_DIR, f"clip_{v['key']}.json"), None)
+            if src and "geometry" in src:
+                prev = src
+                break   # list は新しい順
+    if prev is None:
+        return "no_prev"
+    try:
+        journal = os.path.join(idpaths.edit_dir(base), "edit_save_journal.jsonl")
+        with open(journal, "a", encoding="utf-8") as f:
+            f.write(json.dumps({"at": datetime.datetime.now().isoformat(timespec="milliseconds"),
+                                "payload": {"op": "clip_apply_prev", "id": idv, "key": key,
+                                            "from": prev.get("key")}},
+                               ensure_ascii=False) + "\n")
+            f.flush()
+            os.fsync(f.fileno())
+    except Exception:
+        pass
+    cur["clips"] = prev.get("clips") or []
+    cur["video"] = prev.get("video") or {}
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(cur, f, ensure_ascii=False, indent=2)
+    _queue_for_sync(path)
+    return "ok"
+
+
+EFFECT_STYLE_KEYS = {"size_pct", "color", "outline", "outline_w",
+                     "shadow_x", "shadow_y", "shadow_blur", "shadow_w",
+                     "shadow_color", "font", "bold", "anim", "anim_dur"}
+
+
+STYLE_SET_KEYS = {"color", "outline", "outline_w", "shadow_w",
+                  "shadow_x", "shadow_y", "shadow_blur", "shadow_color",
+                  "font", "bold", "size_pct", "width_pct", "x_pct", "y_pct",
+                  "bg_on", "bg_color", "bg_pad", "bg_pad_v", "bg_radius", "bg_alpha"}
+
+
+def style_sets_path():
+    return os.path.join(DATA_DIR, "style_sets.json")
+
+
+def load_style_sets():
+    """タイトル+字幕の設定セット(原文 L143)。全エピソード共通の1ファイル。
+    last_selected = 最後に選ばれたセット名(次回の既定)。"""
+    doc = _load_json(style_sets_path(), None) or {}
+    sets = []
+    for style_set in (doc.get("sets") or []):
+        if isinstance(style_set, dict) and style_set.get("name"):
+            sets.append({"name": str(style_set["name"]),
+                         "title": style_set.get("title") or {},
+                         "sub": style_set.get("sub") or {}})
+    return {"sets": sets, "last_selected": str(doc.get("last_selected") or "")}
+
+
+def save_style_sets(payload):
+    sets = payload.get("sets")
+    if not isinstance(sets, list) or len(sets) > 20:
+        return False
+    clean = []
+    for style_set in sets:
+        name = str((style_set or {}).get("name") or "").strip()
+        if not name or len(name) > 40 or "<" in name:
+            return False
+        row = {"name": name}
+        for el in ("title", "sub"):
+            d = {k: v for k, v in ((style_set or {}).get(el) or {}).items()
+                 if k in STYLE_SET_KEYS and v is not None}
+            for k in ("color", "outline"):
+                if k in d:
+                    cols = [str(c) for c in (d[k] or [])][:2]
+                    if not cols or not all(re.fullmatch(r"#[0-9a-fA-F]{6}", c) for c in cols):
+                        return False
+                    d[k] = cols
+            if "shadow_color" in d and \
+                    not re.fullmatch(r"#[0-9a-fA-F]{6}", str(d["shadow_color"])):
+                return False
+            if "font" in d and ("/" in str(d["font"]) or os.sep in str(d["font"])):
+                return False
+            row[el] = d
+        clean.append(row)
+    last = str(payload.get("last_selected") or "")
+    hist = os.path.join(DATA_DIR, "style_sets_history.jsonl")
+    _append_json_history(style_sets_path(), hist, "sets_json")
+    _write_json_atomic(style_sets_path(), {"sets": clean, "last_selected": last})
+    _queue_for_sync(hist)
+    _queue_for_sync(style_sets_path())
+    return True
+
+
+def effect_styles_path():
+    return os.path.join(DATA_DIR, "effect_styles.json")
+
+
+def load_effect_styles():
+    """名前付きエフェクトスタイル(原文 L134)。全エピソード共通の1ファイル。"""
+    doc = _load_json(effect_styles_path(), None) or {}
+    out = []
+    for style_def in (doc.get("styles") or []):
+        if isinstance(style_def, dict) and style_def.get("name"):
+            out.append({"name": str(style_def["name"]),
+                        "props": style_def.get("props") or {}})
+    return out
+
+
+def save_effect_styles(payload):
+    """スタイル定義の全量置き換え(想定は10パターン程度・上限20。原文 L134)。"""
+    styles = payload.get("styles")
+    if not isinstance(styles, list) or len(styles) > 20:
+        return False
+    clean = []
+    for style_def in styles:
+        name = str((style_def or {}).get("name") or "").strip()
+        if not name or len(name) > 40 or "<" in name:
+            return False
+        props = {k: v for k, v in ((style_def or {}).get("props") or {}).items()
+                 if k in EFFECT_STYLE_KEYS and v is not None}
+        for k in ("color", "outline"):
+            if k in props:
+                cols = [str(c) for c in (props[k] or [])][:2]
+                if not cols or not all(re.fullmatch(r"#[0-9a-fA-F]{6}", c) for c in cols):
+                    return False
+                props[k] = cols
+        for k in ("size_pct", "outline_w", "shadow_w", "shadow_x", "shadow_y",
+                  "shadow_blur", "anim_dur"):
+            if k in props:
+                try:
+                    props[k] = float(props[k])
+                except (TypeError, ValueError):
+                    return False
+        if "shadow_color" in props and \
+                not re.fullmatch(r"#[0-9a-fA-F]{6}", str(props["shadow_color"])):
+            return False
+        if "font" in props and ("/" in str(props["font"]) or os.sep in str(props["font"])):
+            return False
+        if "anim" in props and props["anim"] not in ("slide_up", "pop"):
+            return False
+        if "bold" in props:
+            props["bold"] = bool(props["bold"])
+        clean.append({"name": name, "props": props})
+    path = effect_styles_path()
+    hist = os.path.join(DATA_DIR, "effect_styles_history.jsonl")
+    _append_json_history(path, hist, "styles_json")
+    _write_json_atomic(path, {"styles": clean})
+    _queue_for_sync(path, hist)
+    return True
 
 
 def apply_clip_save(payload):
@@ -2849,15 +3479,34 @@ def apply_clip_save(payload):
     path = idpaths.find(base, f"clip_{key}.json")
     if not os.path.isfile(path):
         return False
+    # read-modify-write を flock で直列化し、本体は tmp→os.replace の原子置換で書く。
+    # 連続 POST の競合で半端な読み取り({})をそのまま書き戻し、geometry ごと消えた
+    # 実障害があった(2026-10-02 実測・原文 L127 と同じ lost-update 系。履歴から復旧済み)
+    import fcntl
+    lock_path = os.path.join(idpaths.edit_dir(base), f".clip_{key}.lock")
+    with open(lock_path, "w") as lk:
+        fcntl.flock(lk, fcntl.LOCK_EX)
+        return _apply_clip_save_locked(base, path, key, payload)
+
+
+def _apply_clip_save_locked(base, path, key, payload):
+    import datetime
     cur = _load_json(path, {})
+    if "geometry" not in cur:
+        return False   # 壊れた・半端な読み取りには上書きしない(履歴から復旧する)
     changed = False
     if "clips" in payload:
+        # 切り抜きはこの版の1次形状の範囲内に丸める（元音源時刻。C-17）
+        g = cur.get("geometry") or {}
+        g0 = float(g.get("start_sec", 0.0))
+        g1 = float(g.get("end_sec", 1e12))
         clean = []
         for c in payload.get("clips") or []:
             try:
                 a, b = float(c[0]), float(c[1])
             except (TypeError, ValueError, IndexError):
                 return False
+            a, b = max(a, g0), min(b, g1)
             if b <= a:
                 continue
             row = [round(a, 3), round(b, 3)]
@@ -2876,19 +3525,23 @@ def apply_clip_save(payload):
             clean.append(row)
         cur["clips"] = sorted(clean, key=lambda r: (r[0], r[1]))
         changed = True
-    if "units" in payload:
-        clean_u = []
-        for u in payload.get("units") or []:
-            try:
-                s, e = float(u["s"]), float(u["e"])
-                t = str(u.get("t") or "")
-            except (TypeError, ValueError, KeyError):
-                return False
-            clean_u.append({"s": round(s, 3), "e": round(e, 3), "t": t})
-        cur["units"] = sorted(clean_u, key=lambda u: u["s"])
-        changed = True
+    # units は C-17 で廃止（テキストは根の transcript_edits が正）。受け取っても無視する
     if "video" in payload and isinstance(payload.get("video"), dict):
         cur["video"] = payload["video"]
+        changed = True
+    if "effects" in payload:
+        # 名前付きスタイルの貼り付け範囲(元音源時刻。原文 L134)。定義本体は別ファイル
+        clean_fx = []
+        for e in payload.get("effects") or []:
+            try:
+                a, b = float(e["a"]), float(e["b"])
+                nm = str(e["style"])
+            except (TypeError, ValueError, KeyError):
+                return False
+            if b < a or not nm:
+                continue
+            clean_fx.append({"a": round(a, 3), "b": round(b, 3), "style": nm})
+        cur["effects"] = sorted(clean_fx, key=lambda fx: (fx["a"], fx["b"]))
         changed = True
     if not changed:
         return False
@@ -2907,14 +3560,16 @@ def apply_clip_save(payload):
             f.write("\n".join(lines[-200:]) + "\n")
     except Exception:
         pass
-    with open(path, "w", encoding="utf-8") as f:
+    tmp = path + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
         json.dump(cur, f, ensure_ascii=False, indent=2)
+    os.replace(tmp, path)
     _queue_for_sync(path, os.path.join(idpaths.edit_dir(base), f"clip_{key}_history.jsonl"))
     return True
 
 
 def list_clip_versions(idv, sid):
-    """このセグメントの凍結版一覧（新しい順）。1次編集を変えた後でも古い切り抜き編集へ
+    """このセグメントの版一覧（新しい順）。1次編集を変えた後でも古い版の切り抜き編集へ
     ここから到達できる（原文 L76-77 の「版ごとに別画面」の入口）。"""
     base = os.path.join(DATA_DIR, idv)
     ed = os.path.join(base, idpaths.EDIT_DIR)
@@ -2922,12 +3577,14 @@ def list_clip_versions(idv, sid):
         return []
     out = []
     for n in sorted(os.listdir(ed)):
-        if n.startswith(f"clip_{sid}_") and n.endswith("_source.json"):
-            key = n[len("clip_"):-len("_source.json")]
-            src = _load_json(os.path.join(ed, n), {})
-            cur = _load_json(os.path.join(ed, f"clip_{key}.json"), {})
-            out.append({"key": key, "created_at": src.get("created_at") or "",
-                        "nclips": len(cur.get("clips") or [])})
+        m = re.fullmatch(rf"clip_{re.escape(sid)}_([0-9a-f]{{8}})\.json", n)
+        if not m:
+            continue
+        cur = _load_json(os.path.join(ed, n), {})
+        if "geometry" not in cur:
+            continue   # 旧形式(凍結時代)は版として扱わない
+        out.append({"key": f"{sid}_{m.group(1)}", "created_at": cur.get("created_at") or "",
+                    "nclips": len(cur.get("clips") or [])})
     out.sort(key=lambda v: v["created_at"], reverse=True)
     return out
 
@@ -2943,8 +3600,9 @@ CLIP_RENDER_ENABLED = os.uname().nodename.split(".")[0] not in ("web1", "web1-st
 CLIP_VID_RENDERS = {}
 
 
-def start_clip_video_render(idv, key, seg, sizes, export=False):
-    """make_clip_video.py をバックグラウンドで走らせる（C-8 生成 / C-9 書き出し）。"""
+def start_clip_video_render(idv, key, seg, sizes, export=False, quick=False):
+    """make_clip_video.py をバックグラウンドで走らせる（C-8 生成 / C-9 書き出し。
+    quick=小サイズ・全編・音なしの実描画プレビュー。原文 L147/L148/L151）。"""
     import subprocess
     if not CLIP_RENDER_ENABLED:
         return "disabled"
@@ -2956,7 +3614,7 @@ def start_clip_video_render(idv, key, seg, sizes, export=False):
         return "bad_seg"
     if not sizes:
         return "no_sizes"
-    k = (idv, key, seg, export)
+    k = (idv, key, seg, "quick" if quick else export)
     p = CLIP_VID_RENDERS.get(k)
     if p is not None and p.poll() is None:
         return "already_running"
@@ -2966,23 +3624,26 @@ def start_clip_video_render(idv, key, seg, sizes, export=False):
         py = _sys.executable
     base = os.path.join(DATA_DIR, idv)
     gen = idpaths.gen_dir(base)
-    logf = open(os.path.join(gen, f"clip_{key}_render_{seg}{'_export' if export else ''}.log"),
+    tag = "quick" if quick else "render"
+    logf = open(os.path.join(gen, f"clip_{key}_{tag}_{seg}{'_export' if export else ''}.log"),
                 "w", encoding="utf-8")
     cmd = [py, os.path.join(root, "scripts", "make_clip_video.py"), idv,
            "--key", key, "--seg", str(seg), "--sizes", ",".join(sizes)]
     if export:
         cmd.append("--export")
+    if quick:
+        cmd.append("--quick")
     CLIP_VID_RENDERS[k] = subprocess.Popen(cmd, cwd=root, stdout=logf,
                                            stderr=subprocess.STDOUT)
     return "started"
 
 
-def clip_video_render_status(idv, key, seg, export=False):
+def clip_video_render_status(idv, key, seg, export=False, quick=False):
     try:
         seg = int(seg)
     except (TypeError, ValueError):
         return "bad_seg"
-    p = CLIP_VID_RENDERS.get((idv, key, seg, export))
+    p = CLIP_VID_RENDERS.get((idv, key, seg, "quick" if quick else export))
     if p is None:
         return "none"
     if p.poll() is None:
@@ -3007,22 +3668,65 @@ def list_clip_fonts():
                   if n.lower().endswith((".otf", ".ttf", ".ttc")))
 
 
+def clip_background_dirs():
+    """背景動画の置き場(優先順)。assets/clip_backgrounds/(原文 L61)に加えて
+    AE 書き出し先の clipvideo/背景動画out/ も選択肢にする(原文 L162)。"""
+    root = os.path.dirname(HERE)
+    return [os.path.join(ASSETS_DIR, "clip_backgrounds"),
+            os.path.join(root, "clipvideo", "背景動画out")]
+
+
 def list_clip_backgrounds():
-    """assets/clip_backgrounds/ の背景動画一覧（原文 L61）。"""
-    d = os.path.join(ASSETS_DIR, "clip_backgrounds")
-    if not os.path.isdir(d):
-        return []
-    return sorted(n for n in os.listdir(d)
-                  if n.lower().endswith((".mp4", ".mov", ".m4v", ".webm")))
+    """背景動画一覧。複数の置き場の和集合(同名は先勝ち)。"""
+    seen = {}
+    for d in clip_background_dirs():
+        if not os.path.isdir(d):
+            continue
+        for n in os.listdir(d):
+            if n.lower().endswith((".mp4", ".mov", ".m4v", ".webm")):
+                seen.setdefault(n, True)
+    return sorted(seen)
 
 
-def clip_full_text(units, cs, ce, drops=None):
-    """切り抜き区間に重なる字幕ユニットのテキスト全文。「詰めた間」(drops) の中は除く。"""
-    def dropped(u):
-        mid = (float(u["s"]) + float(u["e"])) / 2
-        return any(d[0] <= mid < d[1] for d in (drops or []))
-    return "".join(u.get("t") or "" for u in units
-                   if float(u["e"]) > cs and float(u["s"]) < ce and not dropped(u))
+def resolve_clip_style(cfg, sub_style, fonts, set_style=None):
+    """スタイル調整パネル(原文 L126)の実効値。保存済み cfg['style'] を既定値に重ねる。
+    make_clip_video.py 側の resolve と同じ既定を共有する。
+    set_style は最後に選ばれたスタイルセット(原文 L143)。カード自身の保存値が
+    まだ無いときだけ既定として敷く(一度でも保存すれば cfg['style'] が正)。"""
+    legacy_font = cfg.get("font") or (fonts[0] if fonts else "")
+    base = {
+        "sub": {"color": ["#ffffff"], "outline": ["#000000"], "outline_w": 8,
+                "shadow_x": 3, "shadow_y": 3, "shadow_blur": 0,
+                "shadow_color": "#000000", "font": legacy_font,
+                "bold": True,
+                "size_pct": float(cfg.get("size_pct") or sub_style.get("font_size_pct") or 8.3),
+                "width_pct": 86, "x_pct": 50, "y_pct": 62,
+                "bg_on": False, "bg_color": "#000000", "bg_pad": 24, "bg_pad_v": 8,
+                "bg_radius": 16, "bg_alpha": 70},
+        "title": {"color": ["#ffffff"], "outline": ["#000000"], "outline_w": 6,
+                  "shadow_x": 2, "shadow_y": 2, "shadow_blur": 0,
+                  "shadow_color": "#000000", "font": legacy_font,
+                  "bold": True, "size_pct": 6.4, "width_pct": 84, "x_pct": 50, "y_pct": 20,
+                  "bg_on": False, "bg_color": "#000000", "bg_pad": 24, "bg_pad_v": 8,
+                  "bg_radius": 16, "bg_alpha": 70},
+    }
+    st = cfg.get("style") or {}
+    out = {}
+    for k, d in base.items():
+        merged = dict(d)
+        if not st and set_style:
+            for kk, vv in (set_style.get(k) or {}).items():
+                if vv is not None:
+                    merged[kk] = vv
+        saved = st.get(k) or {}
+        for kk, vv in saved.items():
+            if vv is not None:
+                merged[kk] = vv
+        # 旧データの移行(原文 L150): 影が1値(shadow_w)の保存なら X/Y に読み替える
+        if "shadow_w" in saved and "shadow_x" not in saved:
+            merged["shadow_x"] = merged["shadow_y"] = saved["shadow_w"]
+        out[k] = merged
+    return out
 
 
 def render_clip_videos(idv, key):
@@ -3032,13 +3736,26 @@ def render_clip_videos(idv, key):
     if idv not in list_ids():
         return None
     base = os.path.join(DATA_DIR, idv)
-    src = _load_json(idpaths.find(base, f"clip_{key}_source.json"), None)
-    if not src:
+    cur = _load_json(idpaths.find(base, f"clip_{key}.json"), None)
+    if not cur or "geometry" not in cur:
         return None
-    cur = _load_json(idpaths.find(base, f"clip_{key}.json"), {})
+    g = cur["geometry"]
+    g_drops = [tuple(map(float, d)) for d in g.get("drops") or []]
+    tokens, _est = clip_tokens(idv, g)
     clips = sorted(cur.get("clips") or [], key=lambda c: (c[0], c[1]))
-    units = cur.get("units") or []
     styles = load_clip_styles()
+    fx_styles = load_effect_styles()
+    font_scales = {f: font_fs_scale(os.path.join(ASSETS_DIR, "fonts", f))
+                   for f in list_clip_fonts()}
+    # Chrome の FontFace は .ttc を読めず黙って失敗するため、実ファミリー名
+    # (システムにインストール済みのフォント)へのフォールバックに使う(原文 L165)
+    font_families = {f: (font_family_name(os.path.join(ASSETS_DIR, "fonts", f)) or "")
+                     for f in list_clip_fonts()}
+    style_sets = load_style_sets()
+    last_set_name = style_sets.get("last_selected") or ""
+    last_set = next((style_set for style_set in style_sets["sets"]
+                     if style_set["name"] == last_set_name), None)
+    effects_cur = cur.get("effects") or []
     fonts = list_clip_fonts()
     bgs = list_clip_backgrounds()
     video = cur.get("video") or {}
@@ -3049,8 +3766,8 @@ def render_clip_videos(idv, key):
     parts = [
         f"<div class='crumb'><a href='{approot()}/clip?id={urllib.parse.quote(idv)}&key={urllib.parse.quote(key)}'>"
         f"← 切り抜き編集</a></div>",
-        f"<h1>動画の作成　{esc(src['seg'].get('title') or '')}</h1>",
-        f"<p class='meta'>凍結版 {esc((src.get('created_at') or '')[:16].replace('T', ' '))}"
+        f"<h1>動画の作成　{esc(cur.get('title') or '')}</h1>",
+        f"<p class='meta'>版 {esc((cur.get('created_at') or '')[:16].replace('T', ' '))}"
         f"　切り抜き {len(clips)}本（タイムラインの時系列順）</p>",
     ]
     if not fonts:
@@ -3063,14 +3780,19 @@ def render_clip_videos(idv, key):
         parts.append("<p class='meta'>切り抜きがまだありません。切り抜き編集画面で S / E で"
                      "区間を指定してください。</p>")
     default_sizes = [s["key"] for s in sizes if s.get("default_on")]
+    quick_maps = {}
+    quick_keeps = {}   # 元音源時刻→プレビュー時刻の変換用(エフェクト位置マーカー。原文 L153)
     for n, row in enumerate(clips):
         cs, ce = float(row[0]), float(row[1])
         row_drops = row[2] if len(row) > 2 else []
         cfg = per.get(str(n)) or {}
-        # 尺は正味（「間を詰める」で捨てた drops を除く。C-15）
-        dur = (ce - cs) - sum(d[1] - d[0] for d in row_drops)
+        # 尺は正味（1次編集の drops と「間を詰める」の drops の両方を除く。C-17）
+        row_keeps = keep_ranges(cs, ce, g_drops + [tuple(map(float, d)) for d in row_drops])
+        dur = sum(b - a for a, b in row_keeps)
         m2, s2 = divmod(int(round(dur)), 60)
-        text = clip_full_text(units, cs, ce, row_drops)
+        text = "".join(
+            t["t"] for t in tokens
+            if token_in_keeps(float(t["s"]), float(t["e"]), row_keeps))
         checked_sizes = cfg.get("sizes") if cfg.get("sizes") is not None else default_sizes
         size_boxes = "".join(
             f"<label style='margin-right:14px'><input type='checkbox' class='cvsize' value='{esc(s['key'])}'"
@@ -3078,82 +3800,268 @@ def render_clip_videos(idv, key):
             f"{esc(s['label'])}</label>"
             for s in sizes)
         font_opts = "".join(
-            f"<option value='{esc(f2)}'{' selected' if cfg.get('font') == f2 else ''}>{esc(f2)}</option>"
-            for f2 in fonts) or "<option value=''>（assets/fonts が空）</option>"
+            f"<option value='{esc(font_file)}'"
+            f"{' selected' if cfg.get('font') == font_file else ''}>{esc(font_file)}</option>"
+            for font_file in fonts) or "<option value=''>（assets/fonts が空）</option>"
         bg_opts = "".join(
             f"<option value='{esc(b)}'{' selected' if cfg.get('background') == b else ''}>{esc(b)}</option>"
             for b in bgs) or "<option value=''>（assets/clip_backgrounds が空）</option>"
         tstyle_opts = "".join(
             f"<option value='{esc(t['key'])}'{' selected' if cfg.get('title_style') == t['key'] else ''}>"
             f"{esc(t.get('label') or t['key'])}</option>" for t in title_styles)
-        size_pct = cfg.get("size_pct") or sub_style.get("font_size_pct") or 4.7
+        size_pct = cfg.get("size_pct") or sub_style.get("font_size_pct") or 8.3
+        # クイックプレビュー(原文 L147/L148): 既存ファイルの mtime(キャッシュ破り用)
+        quick_map = {}
+        for size_def in sizes:
+            # リアルタイムプレビューは縦長だけ(原文 L149)。正方形は出さない
+            if int(size_def["h"]) <= int(size_def["w"]):
+                continue
+            quick_path = os.path.join(
+                base, "generated", f"clip_{key}_quick_{n}_{size_def['key']}.mp4")
+            if os.path.isfile(quick_path):
+                quick_map[size_def["key"]] = int(os.path.getmtime(quick_path))
+        quick_maps[str(n)] = quick_map
+        quick_keeps[str(n)] = [[round(ka, 3), round(kb, 3)] for ka, kb in row_keeps]
+        # このセグメント専用のタイトル候補(原文 L123)。見出し行の上にボタン・下に3つ横並び
+        # 全文は字幕のまとまりごとに全角スペースで区切る(原文 L134)。まとめ方は
+        # 書き出し側 build_captions と同じ関数で、表示と動画の区切りがずれない
+        caption_rows, _view_dur = clip_captions(
+            clip_src_tokens(base, g, row_keeps), row_keeps, styles)
+        blocks = "　".join(
+            "<span class='cvblk'>" + "".join(
+                f"<i class='cvtok' data-s='{token['s']}'>{esc(token['t'])}</i>"
+                for token in caption["tokens"])
+            + "</span>" for caption in caption_rows)
+        tdoc = _load_json(idpaths.find(base, f"clip_{key}_titles_{n}.json"), None)
+        cand_titles = [str(t) for t in ((tdoc or {}).get("titles") or [])][:3]
+        cand_html = ""
+        if cand_titles:
+            cand_html = ("<p class='cvtcands'>" + "".join(
+                f"<button class='cvtcand' onclick='cvPick(this,{n})'>{esc(t)}</button>"
+                for t in cand_titles) + "</p>")
         parts.append(
-            f"<div class='seg' id='cv{n}' data-cs='{cs}' data-ce='{ce}'>"
+            f"<div class='seg' id='cv{n}' data-cs='{cs}' data-ce='{ce}'"
+            f" data-sample=\"{esc(caption_rows[0]['text'] if caption_rows else 'サンプル字幕')}\">"
+            f"<p><button class='gbtn' onclick='cvTitles({n})'>"
+            f"{'タイトル候補生成' if not cand_titles else 'タイトル候補再生成'}</button>"
+            f"　<span class='cvtstat meta'></span></p>"
             f"<div class='seghd'><h2><span class='rank'>{n + 1}</span>　"
             f"{fmt_time(cs)}〜{fmt_time(ce)}　{m2}分{s2:02d}秒</h2></div>"
-            f"<div class='box summary'>{esc(text) or '（この区間にテキストがありません）'}</div>"
+            f"{cand_html}"
+            f"<div class='box summary cvtext'>{blocks or '（この区間にテキストがありません）'}</div>"
             "<p class='meta'>"
             f"タイトル <input type='text' class='cvtitle' value=\"{esc(cfg.get('title') or '')}\""
-            f" placeholder='動画の見出し（全編表示）' style='width:340px' onchange='cvSave({n})'>"
-            f"　スタイル <select class='cvtstyle' onchange='cvSave({n})'>{tstyle_opts}</select></p>"
-            "<p class='meta'>"
-            f"フォント <select class='cvfont' onchange='cvSave({n})'>{font_opts}</select>"
-            f"　字幕サイズ <button onclick='cvStep({n},-1)'>−</button>"
-            f"<input type='number' class='cvsizepct' value='{size_pct}' step='0.1' min='1' max='12'"
-            f" style='width:60px' onchange='cvSave({n})'>"
-            f"<button onclick='cvStep({n},1)'>＋</button>（高さ%）"
-            f"　背景 <select class='cvbg' onchange='cvSave({n})'>{bg_opts}</select></p>"
+            f" placeholder='動画の見出し（全編表示）' style='width:340px'"
+            f" oninput='cvApplyPrev({n})' onchange='cvSave({n})'>"
+            f"　背景 <select class='cvbg' onchange='cvBg({n});cvSave({n})'>{bg_opts}</select></p>"
             f"<p class='meta'>書き出しサイズ {size_boxes}</p>")
-        # 生成済みプレビュー（動画の再生ウインドウ。原文 L68）。生成のたびに ?v= で更新
+        # スタイル調整パネル(原文 L126)+ライブプレビュー(位置はドラッグ指定。原文 L128)。
+        # 書き出しに時間がかかるため、見た目は CSS で即時に確認し、書き出し時に ASS へ変換する
+        stl = resolve_clip_style(cfg, sub_style, fonts,
+                                 set_style=None if cfg.get("style") else last_set)
+        prev_bg = cfg.get("background") or (bgs[0] if bgs else "")
+
+        def _srow(el_key, label, d):
+            fo = "".join(
+                f"<option value='{esc(font_file)}'"
+                f"{' selected' if d.get('font') == font_file else ''}>{esc(font_file)}</option>"
+                for font_file in fonts) or "<option value=''>（fonts が空）</option>"
+            c = (d.get("color") or ["#ffffff"])
+            o = (d.get("outline") or ["#000000"])
+            c2_hide = "" if len(c) > 1 else " style='display:none'"
+            o2_hide = "" if len(o) > 1 else " style='display:none'"
+            # Illustrator / After Effects 風に「文字・カラー・シャドウ・背景」の
+            # ラベル付き行へグループ分けする(原文 L152)。data-k は従来と同一
+            return (
+                f"<div class='cvstrow' data-el='{el_key}'><b>{label}</b>"
+                "<div class='cvsgrp'><span class='cvsglabel'>文字</span>"
+                f"<select class='cvst' data-k='font'>{fo}</select>"
+                f"<label><input type='checkbox' class='cvst' data-k='bold'{' checked' if d.get('bold') else ''}>太字</label>"
+                # サイズ表示は幅1080基準の px(原文 L164。内部保存は従来どおり %)
+                f"　サイズ<input type='number' class='cvst' data-k='size'"
+                f" value='{round(float(d.get('size_pct') or 8) * 10.8)}'"
+                f" min='10' max='270' step='1' style='width:56px'>px"
+                f"　幅<input type='number' class='cvst' data-k='w' value='{d.get('width_pct')}'"
+                f" min='20' max='100' step='1' style='width:52px'>％</div>"
+                "<div class='cvsgrp'><span class='cvsglabel'>カラー</span>"
+                f"色<input type='color' class='cvst' data-k='c1' value='{c[0]}'>"
+                f"<input type='color' class='cvst cvst-c2' data-k='c2'"
+                f" value='{c[1] if len(c) > 1 else c[0]}'{c2_hide}>"
+                f"<label><input type='checkbox' class='cvst' data-k='grad'{' checked' if len(c) > 1 else ''}>グラデ</label>"
+                f"　縁<input type='color' class='cvst' data-k='o1' value='{o[0]}'>"
+                f"<input type='color' class='cvst cvst-o2' data-k='o2'"
+                f" value='{o[1] if len(o) > 1 else o[0]}'{o2_hide}>"
+                f"<label><input type='checkbox' class='cvst' data-k='ograd'{' checked' if len(o) > 1 else ''}>グラデ</label>"
+                f"　縁太<input type='number' class='cvst' data-k='ow' value='{d.get('outline_w')}'"
+                f" min='0' max='40' step='1' style='width:48px'></div>"
+                "<div class='cvsgrp'><span class='cvsglabel'>シャドウ</span>"
+                f"X<input type='number' class='cvst' data-k='sx' value='{d.get('shadow_x')}'"
+                f" min='-40' max='40' step='1' style='width:46px'>"
+                f"　Y<input type='number' class='cvst' data-k='sy' value='{d.get('shadow_y')}'"
+                f" min='-40' max='40' step='1' style='width:46px'>"
+                f"　ぼかし<input type='number' class='cvst' data-k='sb' value='{d.get('shadow_blur')}'"
+                f" min='0' max='60' step='1' style='width:46px'>"
+                f"　色<input type='color' class='cvst' data-k='sc' value='{d.get('shadow_color')}'></div>"
+                "<div class='cvsgrp'><span class='cvsglabel'>背景</span>"
+                f"<label><input type='checkbox' class='cvst' data-k='bgon'"
+                f"{' checked' if d.get('bg_on') else ''}>あり</label>"
+                f"<input type='color' class='cvst' data-k='bgc' value='{d.get('bg_color')}'>"
+                f"　不透明度<input type='number' class='cvst' data-k='bga' value='{d.get('bg_alpha')}'"
+                f" min='0' max='100' step='5' style='width:52px'>％"
+                f"　左右pad<input type='number' class='cvst' data-k='bgp' value='{d.get('bg_pad')}'"
+                f" min='0' max='200' step='2' style='width:56px'>"
+                f"　上下pad<input type='number' class='cvst' data-k='bgpv' value='{d.get('bg_pad_v')}'"
+                f" min='0' max='200' step='2' style='width:56px'>"
+                f"　角丸<input type='number' class='cvst' data-k='bgr' value='{d.get('bg_radius')}'"
+                f" min='0' max='100' step='2' style='width:56px'></div>"
+                + f"<input type='hidden' class='cvst' data-k='x' value='{d.get('x_pct')}'>"
+                f"<input type='hidden' class='cvst' data-k='y' value='{d.get('y_pct')}'>"
+                "</div>")
+
+        bg_src = f"{approot()}/assets/clip_backgrounds/{urllib.parse.quote(prev_bg)}" if prev_bg else ""
+        parts.append(
+            "<div class='cvpanel'>"
+            "<div>"
+            f"<div class='cvprev' data-n='{n}'>"
+            f"<video class='cvprevbg' muted autoplay loop playsinline src='{bg_src}'></video>"
+            "<div class='pvguide pvguide-v'></div><div class='pvguide pvguide-h'></div>"
+            "<div class='pvtext' data-el='title'><span class='pv-box'><span class='pv-stroke'></span><span class='pv-fill'></span></span></div>"
+            "<div class='pvtext' data-el='sub'><span class='pv-box'><span class='pv-stroke'></span><span class='pv-fill'></span></span></div>"
+            "</div>"
+            "<div class='meta' style='font-size:11px'>テキストをドラッグで位置調整（中央に吸着）</div>"
+            "</div>"
+            f"<div class='cvqcol'><div class='cvquick' data-n='{n}'></div>"
+            "<div class='meta cvqstat' style='font-size:11px'></div></div>"
+            f"<div class='cvstyles'>"
+            "<div class='meta cvsetrow'><span>スタイルセット</span>"
+            f"<select class='cvset' onchange='cvSetApply({n})'>"
+            "<option value=''>（選択）</option>"
+            + "".join(f"<option{' selected' if style_set['name'] == last_set_name else ''}>"
+                      f"{esc(style_set['name'])}</option>"
+                      for style_set in style_sets["sets"])
+            + "</select>"
+            "<span class='cvsetstat'></span>"
+            f"<input class='cvsetname' placeholder='名前を付けて保存'>"
+            f"<button class='gbtn' onclick='cvSetSave({n})'>セット保存</button></div>"
+            f"{_srow('title', 'タイトル', stl['title'])}{_srow('sub', '字幕', stl['sub'])}"
+            "</div></div>")
+        # 書き出し済みの動画（再生ウインドウ。原文 L68）。毎回上書き・溜めない(原文 L124)。
+        # その下に整形ファイル名(タイトル_尺_規格)での .mp4 ダウンロードリンクを出す
+        # 書き出し済みファイルはタイトル_{短ID}_尺_サイズ.mp4(原文 L157)。タイトル変更で
+        # 名前がずれても見つかるよう短IDで探す。旧形式(clip_..._preview_...)も拾う
         previews = []
+        short_id = f"{key.split('_')[-1][:4]}{n}"
         for s in sizes:
-            pv = os.path.join(base, "generated", f"clip_{key}_preview_{n}_{s['key']}.mp4")
-            if os.path.isfile(pv):
-                rel = f"{idv}/generated/clip_{key}_preview_{n}_{s['key']}.mp4"
+            found = glob.glob(os.path.join(
+                base, "generated", f"*_{short_id}_*_{s['key']}.mp4"))
+            legacy = os.path.join(base, "generated",
+                                  f"clip_{key}_preview_{n}_{s['key']}.mp4")
+            if os.path.isfile(legacy):
+                found.append(legacy)
+            if found:
+                pv = max(found, key=os.path.getmtime)
+                rel = f"{idv}/generated/{os.path.basename(pv)}"
+                url = f"{approot()}/media/{urllib.parse.quote(rel)}"
+                nice = os.path.basename(pv)
+                if pv == legacy:
+                    # 旧形式のファイルでも、保存されるファイル名は新形式で出す(原文 L157)
+                    nice = (f"{safe_name((cfg.get('title') or f'クリップ{n + 1}').strip())}"
+                            f"_{short_id}_{int(dur // 60)}m{int(dur % 60):02d}s"
+                            f"_{s['key']}.mp4")
                 previews.append(
                     f"<div style='flex:1;min-width:200px;max-width:320px'>"
                     f"<div class='meta'>{esc(s['key'])}</div>"
                     f"<video class='cvpv' data-size='{esc(s['key'])}' controls preload='metadata'"
                     f" style='width:100%;max-width:320px'"
-                    f" src='{approot()}/media/{urllib.parse.quote(rel)}?v={int(os.path.getmtime(pv))}'>"
-                    "</video></div>")
+                    f" src='{url}?v={int(os.path.getmtime(pv))}'>"
+                    "</video>"
+                    f"<div class='dl'><a href='{url}' download=\"{esc(nice)}\">{esc(nice)}</a></div>"
+                    "</div>")
         if CLIP_RENDER_ENABLED:
-            gen_btn = f"<button class='gbtn' onclick='cvRender({n})'>生成</button>"
-            exp_btn = f"<button class='gbtn' onclick='cvExport({n})'>書き出し</button>"
+            gen_btn = f"<button class='gbtn' onclick='cvRender({n})'>書き出し</button>"
         else:
-            note = "動画の生成・書き出しはローカル(mac)で行います（オーナー裁定 2026-09-28）"
-            gen_btn = f"<button class='gbtn' disabled title='{note}'>生成</button>"
-            exp_btn = f"<button class='gbtn' disabled title='{note}'>書き出し</button>"
-        # 書き出し済みファイル（このカードのタイトルで始まるもの）
-        exp_dir = os.path.join(base, "contents", "clip", key)
-        prefix = safe_name((cfg.get("title") or f"クリップ{n + 1}").strip())
-        exports = []
-        if os.path.isdir(exp_dir):
-            for fn2 in sorted(os.listdir(exp_dir)):
-                if fn2.startswith(prefix) and fn2.endswith(".mp4"):
-                    rel = f"{idv}/contents/clip/{key}/{fn2}"
-                    exports.append(f"<a href='{approot()}/media/{urllib.parse.quote(rel)}'"
-                                   f" download>{esc(fn2)}</a>")
-        exp_html = ("<p class='meta dl'>書き出し済み: " + "　".join(exports) + "</p>") if exports else ""
+            note = "動画の書き出しはローカル(mac)で行います（オーナー裁定 2026-09-28）"
+            gen_btn = f"<button class='gbtn' disabled title='{note}'>書き出し</button>"
         parts.append(
-            f"<p class='meta'>{gen_btn}　{exp_btn}"
+            f"<p class='meta'>{gen_btn}"
             f"　<span class='cvstat meta'></span></p>"
             f"<div class='cvpvs' style='display:flex;gap:12px;flex-wrap:wrap'>{''.join(previews)}</div>"
-            f"{exp_html}"
             "</div>")
+    fo_all = "".join(f"<option value='{esc(font_file)}'>{esc(font_file)}</option>"
+                     for font_file in fonts)
+    parts.append(
+        "<div class='cvmodal' id='fxmodal' style='display:none'>"
+        "<h3 style='margin:0 0 8px'>エフェクトスタイル定義</h3>"
+        "<div class='fxprev' id='fx_prev'>"
+        "<video class='fxprevbg' id='fx_prev_bg' muted autoplay loop playsinline></video>"
+        "<div class='fxprev-c' id='fx_prev_c'></div></div>"
+        "<p>対象 <select id='fx_pick' onchange='cvFxPick()'></select>"
+        "　名前 <input id='fx_name' type='text' style='width:140px'></p>"
+        "<p><label><input type='checkbox' id='fx_c_on'>色</label>"
+        "<input type='color' id='fx_c1' value='#ffffff'>"
+        "<input type='color' id='fx_c2' value='#ffffff'>"
+        "<label><input type='checkbox' id='fx_cg'>グラデ</label>"
+        "　<label><input type='checkbox' id='fx_o_on'>縁色</label>"
+        "<input type='color' id='fx_o1' value='#000000'>"
+        "<input type='color' id='fx_o2' value='#000000'>"
+        "<label><input type='checkbox' id='fx_og'>グラデ</label></p>"
+        "<p>サイズ<input id='fx_size' type='number' step='1' min='10' max='270'"
+        " style='width:56px' placeholder='--'>px"
+        "　縁太<input id='fx_ow' type='number' step='1' min='0' max='40'"
+        " style='width:48px' placeholder='--'>"
+        "　影X<input id='fx_sx' type='number' step='1' min='-40' max='40'"
+        " style='width:46px' placeholder='--'>"
+        "Y<input id='fx_sy' type='number' step='1' min='-40' max='40'"
+        " style='width:46px' placeholder='--'>"
+        "ぼかし<input id='fx_sb' type='number' step='1' min='0' max='60'"
+        " style='width:46px' placeholder='--'>"
+        "<label><input type='checkbox' id='fx_sc_on'>影色</label>"
+        "<input type='color' id='fx_sc' value='#000000'></p>"
+        f"<p>フォント<select id='fx_font'><option value=''>（継承）</option>{fo_all}</select>"
+        "　太字<select id='fx_bold'><option value=''>（継承）</option>"
+        "<option value='1'>太字</option><option value='0'>標準</option></select></p>"
+        "<p>アニメ<select id='fx_anim'><option value=''>なし</option>"
+        "<option value='slide_up'>下からスライド</option><option value='pop'>ポップ</option>"
+        "</select>　長さ<input id='fx_dur' type='number' step='0.05' min='0.05' max='2'"
+        " value='0.3' style='width:56px'>秒</p>"
+        "<p class='meta'>開いた時点の字幕設定が初期値(原文 L158)。ここから変えた値がこのスタイルになる。"
+        "チェックを外した色は字幕設定に従う</p>"
+        "<p><button class='gbtn' onclick='cvFxSaveDef()'>保存</button>　"
+        "<button class='gbtn' onclick='cvFxDelDef()'>削除</button>　"
+        "<button class='gbtn' onclick='cvEdClose()'>閉じる</button>"
+        "　<span id='fx_stat' class='meta'></span></p>"
+        "</div>")
     step = styles.get("subtitle_size_step_pct") or 0.3
+    size_map = {s["key"]: [s["w"], s["h"]] for s in sizes}
     parts.append(
         "<script>"
-        f"var CV_STEP={step};"
+        f"var CV_SIZES={json.dumps(size_map)};"
+        f"var CV_FX={_js(fx_styles)};var CV_EFFECTS={_js(effects_cur)};"
+        f"var CV_SETS={_js(style_sets)};"
+        f"var CV_QUICK={_js(quick_maps)};var CV_QON={'true' if CLIP_RENDER_ENABLED else 'false'};"
+        f"var CV_KEEPS={_js(quick_keeps)};"
+        f"var CV_FSCALE={_js(font_scales)};var CV_FAMILY={_js(font_families)};"
+        # ---- スタイルの収集(保存形式は make_clip_video と共有) ----
+        "function cvStyleGet(card,el){var o={};"
+        "card.querySelectorAll(\".cvstrow[data-el='\"+el+\"'] .cvst\").forEach(function(i){"
+        "o[i.dataset.k]=(i.type==='checkbox')?i.checked:i.value;});"
+        "var st={color:o.grad?[o.c1,o.c2]:[o.c1],outline:o.ograd?[o.o1,o.o2]:[o.o1],"
+        # サイズ入力は幅1080基準の px(原文 L164)。内部値は % に換算して保存
+        "outline_w:parseFloat(o.ow)||0,shadow_x:parseFloat(o.sx)||0,"
+        "shadow_y:parseFloat(o.sy)||0,shadow_blur:parseFloat(o.sb)||0,shadow_color:o.sc,"
+        "font:o.font,bold:!!o.bold,size_pct:(parseFloat(o.size)||103)/10.8,"
+        "width_pct:parseFloat(o.w)||86,"
+        "x_pct:parseFloat(o.x)||50,y_pct:parseFloat(o.y)||50};if('bgon' in o){st.bg_on=!!o.bgon;st.bg_color=o.bgc;st.bg_pad=parseFloat(o.bgp)||0;st.bg_pad_v=parseFloat(o.bgpv)||0;st.bg_radius=parseFloat(o.bgr)||0;st.bg_alpha=(o.bga===''||o.bga==null)?100:parseFloat(o.bga);}"
+        "return st;}"
         "function cvCollect(){var out={};"
         "document.querySelectorAll('[id^=cv]').forEach(function(card){"
         "if(!/^cv\\d+$/.test(card.id))return;var n=card.id.slice(2);"
+        "var sub=cvStyleGet(card,'sub');"
         "out[n]={title:card.querySelector('.cvtitle').value,"
-        "title_style:card.querySelector('.cvtstyle').value,"
-        "font:card.querySelector('.cvfont').value,"
-        "size_pct:parseFloat(card.querySelector('.cvsizepct').value)||4.7,"
+        "font:sub.font,size_pct:sub.size_pct,"
         "background:card.querySelector('.cvbg').value,"
-        "sizes:[].slice.call(card.querySelectorAll('.cvsize:checked')).map(function(c){return c.value;})};});"
+        "sizes:[].slice.call(card.querySelectorAll('.cvsize:checked')).map(function(c){return c.value;}),"
+        "style:{title:cvStyleGet(card,'title'),sub:sub}};});"
         "return out;}"
         "function cvSave(n){var q=new URLSearchParams(location.search);"
         "var card=document.getElementById('cv'+n);"
@@ -3161,38 +4069,138 @@ def render_clip_videos(idv, key):
         "fetch(window.APP+'/clip_save',{method:'POST',headers:{'Content-Type':'application/json'},"
         "body:JSON.stringify({id:q.get('id'),key:q.get('key'),op:'video-settings',"
         "video:{clips:cvCollect()}})})"
-        ".then(function(r){if(el)el.textContent=r.ok?'保存済み':'保存失敗';})"
+        ".then(function(r){if(el)el.textContent=r.ok?'保存済み':'保存失敗';"
+        "if(r.ok)cvQuickKick(n);})"
         ".catch(function(){if(el)el.textContent='サーバーに接続できません';});}"
-        "function cvStep(n,d){var card=document.getElementById('cv'+n);"
-        "var inp=card.querySelector('.cvsizepct');"
-        "inp.value=(Math.round(((parseFloat(inp.value)||4.7)+d*CV_STEP)*10)/10);cvSave(n);}"
-        # 生成: 設定を保存 → make_clip_video をバックグラウンド実行 → 完了でリロード
-        # （プレビューの <video> はサーバー側がファイルの有無で組むため）
-        "function cvRender(n){var q=new URLSearchParams(location.search);"
-        "var card=document.getElementById('cv'+n);var el=card.querySelector('.cvstat');"
-        "var sizes=[].slice.call(card.querySelectorAll('.cvsize:checked')).map(function(c){return c.value;});"
-        "if(!sizes.length){el.textContent='書き出しサイズを選んでください';return;}"
-        "el.textContent='設定を保存中…';"
-        "fetch(window.APP+'/clip_save',{method:'POST',headers:{'Content-Type':'application/json'},"
-        "body:JSON.stringify({id:q.get('id'),key:q.get('key'),op:'video-settings',"
-        "video:{clips:cvCollect()}})}).then(function(){"
-        "el.textContent='生成を開始しています…';"
-        "return fetch(window.APP+'/clip_render',{method:'POST',"
-        "headers:{'Content-Type':'application/json'},"
-        "body:JSON.stringify({id:q.get('id'),key:q.get('key'),seg:n,sizes:sizes})});})"
+        # ---- フォント読み込み(/assets/fonts から @font-face 相当で) ----
+        # Chrome の FontFace は .ttc を黙って読めない(原文 L165 実測)。読み込みは
+        # 試みつつ、実ファミリー名(macOS にインストール済み)へのフォールバック連鎖を返す
+        "var CVF={};"
+        "function cvFontFamily(file){if(!file)return 'sans-serif';"
+        "if(CVF[file])return CVF[file];"
+        "var fam='cvf_'+file.replace(/[^a-zA-Z0-9]/g,'_');"
+        "var chain='\"'+fam+'\"'+(CV_FAMILY[file]?',\"'+CV_FAMILY[file]+'\"':'')+',sans-serif';"
+        "CVF[file]=chain;"
+        "try{var ff=new FontFace(fam,\"url('\"+window.APP+'/assets/fonts/'+encodeURIComponent(file)+\"')\");"
+        "ff.load().then(function(f){document.fonts.add(f);"
+        "document.querySelectorAll('.cvprev').forEach(function(p){cvApplyPrev(+p.dataset.n);});"
+        "cvFxPrev();});}"
+        "catch(e){}return chain;}"
+        # libass は \fs を usWin(アセント+ディセント)の高さとして描くが CSS は em。
+        # フォントごとの比(サーバーがフォントファイルから算出)で CSS を fs/F に縮める(原文 L163)
+        "function cvFontScale(fontFile){return CV_FSCALE[fontFile]||1;}"
+        # ---- ライブプレビュー(原文 L126)。CSS 2層(縁=stroke層/本体=fill層)で近似 ----
+        "function cvApplyPrev(n){var card=document.getElementById('cv'+n);if(!card)return;"
+        "var prev=card.querySelector('.cvprev');"
+        "var szk=(card.querySelector('.cvsize:checked')||{}).value||Object.keys(CV_SIZES)[0];"
+        "var wh=CV_SIZES[szk]||[1080,1920];"
+        "prev.style.aspectRatio=wh[0]+' / '+wh[1];"
+        "var pw=prev.clientWidth||240;var scale=pw/wh[0];"
+        "['title','sub'].forEach(function(el){"
+        "var st=cvStyleGet(card,el);"
+        "var box=prev.querySelector(\".pvtext[data-el='\"+el+\"']\");"
+        "var txt=(el==='title')?(card.querySelector('.cvtitle').value||'タイトル')"
+        ":(card.dataset.sample||'サンプル字幕');"
+        # 折り返しは書き出し(ASS)と同じ「文字数」規則で入れる(原文 L155)。
+        # CSS の幅折り返しに任せると行の切れ目が動画とずれる
+        # 1文字の実幅は em = fs/比(原文 L166)。書き出し側 max_chars と同じ規則
+        "var pxv=Math.max(1,Math.round(wh[0]*st.size_pct/100));"
+        "var charW=pxv/cvFontScale(st.font);"
+        "var mcw=Math.max(2,Math.floor(wh[0]*st.width_pct/100/charW));"
+        "var wrapped='';for(var ci=0;ci<txt.length;ci++){"
+        "if(ci&&ci%mcw===0)wrapped+='\\n';wrapped+=txt.charAt(ci);}"
+        "txt=wrapped;"
+        # 動画側(libass)の実寸に合わせる: fs は行高なので CSS は fs/F、行送りは fs(原文 L163)
+        "var fam=cvFontFamily(st.font);var fscale=cvFontScale(st.font);"
+        "var fsLine=st.size_pct/100*pw;var fs=fsLine/fscale;"
+        "box.style.left=st.x_pct+'%';box.style.top=st.y_pct+'%';"
+        # left:50% の絶対配置は shrink-to-fit が半幅に縛られ CSS が再折返しする。
+        # 折返しは \n が決めるので幅は内容いっぱいに(max-content)
+        "box.style.width='max-content';box.style.maxWidth='none';"
+        "box.style.fontSize=fs+'px';box.style.lineHeight=fsLine+'px';"
+        "box.style.fontFamily=fam;"
+        "box.style.fontWeight=st.bold?'700':'400';"
+        "var pb=box.querySelector('.pv-box');"
+        "var sk=box.querySelector('.pv-stroke'),fl=box.querySelector('.pv-fill');"
+        "if(st.bg_on){var bc=st.bg_color||'#000000';""var al=(st.bg_alpha==null?100:st.bg_alpha)/100;""pb.style.background='rgba('+parseInt(bc.substr(1,2),16)+','+parseInt(bc.substr(3,2),16)""+','+parseInt(bc.substr(5,2),16)+','+al+')';""pb.style.padding=(st.bg_pad_v*scale)+'px '+(st.bg_pad*scale)+'px';""pb.style.borderRadius=(st.bg_radius*scale)+'px';}"
+        "else{pb.style.background='none';pb.style.padding='0';pb.style.borderRadius='0';}"
+        "sk.textContent=txt;fl.textContent=txt;"
+        "var ow=st.outline_w*scale;"
+        "sk.style.webkitTextStroke=(ow*2)+'px '+st.outline[0];"
+        "var shx=st.shadow_x*scale,shy=st.shadow_y*scale,shb=st.shadow_blur*scale;"
+        "sk.style.textShadow=(shx||shy||shb)?"
+        "(shx+'px '+shy+'px '+shb+'px '+st.shadow_color):'none';"
+        "if(st.color.length>1){fl.style.background='linear-gradient(90deg,'+st.color[0]+','+st.color[1]+')';"
+        "fl.style.webkitBackgroundClip='text';fl.style.backgroundClip='text';"
+        "fl.style.color='transparent';}"
+        "else{fl.style.background='none';fl.style.webkitBackgroundClip='initial';fl.style.color=st.color[0];}"
+        "});}"
+        "function cvBg(n){var card=document.getElementById('cv'+n);"
+        "var v=card.querySelector('.cvprevbg');"
+        "v.src=window.APP+'/assets/clip_backgrounds/'+encodeURIComponent(card.querySelector('.cvbg').value);}"
+        # ---- ドラッグで位置指定(原文 L128)。中央線はライトブルーで表示・±2%で吸着 ----
+        "var cvDrag=null;"
+        "document.addEventListener('mousedown',function(ev){"
+        "var box=ev.target.closest('.pvtext');if(!box)return;"
+        "var prev=box.closest('.cvprev');"
+        "cvDrag={n:+prev.dataset.n,el:box.dataset.el,prev:prev};"
+        "prev.querySelectorAll('.pvguide').forEach(function(g){g.style.display='block';});"
+        "ev.preventDefault();});"
+        "document.addEventListener('mousemove',function(ev){"
+        "if(!cvDrag)return;"
+        "var r=cvDrag.prev.getBoundingClientRect();"
+        "var x=(ev.clientX-r.left)/r.width*100,y=(ev.clientY-r.top)/r.height*100;"
+        "if(Math.abs(x-50)<2)x=50;if(Math.abs(y-50)<2)y=50;"
+        "x=Math.max(2,Math.min(98,x));y=Math.max(2,Math.min(98,y));"
+        "var card=document.getElementById('cv'+cvDrag.n);"
+        "var row=card.querySelector(\".cvstrow[data-el='\"+cvDrag.el+\"']\");"
+        "row.querySelector(\"[data-k='x']\").value=x.toFixed(1);"
+        "row.querySelector(\"[data-k='y']\").value=y.toFixed(1);"
+        "cvApplyPrev(cvDrag.n);});"
+        "document.addEventListener('mouseup',function(){"
+        "if(!cvDrag)return;"
+        "cvDrag.prev.querySelectorAll('.pvguide').forEach(function(g){g.style.display='none';});"
+        "var n=cvDrag.n;cvDrag=null;cvSave(n);});"
+        # 入力変更 → 即プレビュー + 保存。グラデのチェックで2色目の表示を切り替え
+        "document.addEventListener('change',function(ev){"
+        "var row=ev.target.closest('.cvstrow');if(!row)return;"
+        "var card=row.closest('.seg');var n=+card.id.slice(2);"
+        "if(ev.target.dataset.k==='grad')row.querySelector('.cvst-c2').style.display=ev.target.checked?'':'none';"
+        "if(ev.target.dataset.k==='ograd')row.querySelector('.cvst-o2').style.display=ev.target.checked?'':'none';"
+        "cvApplyPrev(n);cvSave(n);});"
+        # macOS のカラーピッカーはパネルを閉じるまで change を出さない(原文 L169)。
+        # input をデバウンス保存して、色をいじるだけでも描画プレビューの再描画まで届かせる
+        "var cvInputTimers={};"
+        "document.addEventListener('input',function(ev){"
+        "var row=ev.target.closest('.cvstrow');if(!row)return;"
+        "var n=+row.closest('.seg').id.slice(2);cvApplyPrev(n);"
+        "clearTimeout(cvInputTimers[n]);"
+        "cvInputTimers[n]=setTimeout(function(){cvSave(n);},900);});"
+        "document.addEventListener('change',function(ev){"
+        "if(ev.target.classList.contains('cvsize')){"
+        "var card=ev.target.closest('.seg');cvApplyPrev(+card.id.slice(2));}});"
+        "document.addEventListener('DOMContentLoaded',function(){"
+        "document.querySelectorAll('.cvprev').forEach(function(p){cvApplyPrev(+p.dataset.n);});});"
+        # タイトル候補(原文 L123): 生成→完了でリロード。候補クリックでタイトル欄に入れて保存
+        "function cvTitles(n){var q=new URLSearchParams(location.search);"
+        "var card=document.getElementById('cv'+n);var el=card.querySelector('.cvtstat');"
+        "el.textContent='生成中…（30秒前後）';"
+        "fetch(window.APP+'/clip_titles?id='+encodeURIComponent(q.get('id'))"
+        "+'&key='+encodeURIComponent(q.get('key'))+'&seg='+n,{method:'POST'})"
         ".then(function(r){return r.text();}).then(function(st){"
         "if(st!=='started'&&st!=='already_running'){el.textContent='開始できません: '+st;return;}"
-        "el.textContent='生成中…（サイズごとに数十秒〜数分）';"
         "var iv=setInterval(function(){"
-        "fetch(window.APP+'/clip_render_status?id='+encodeURIComponent(q.get('id'))"
+        "fetch(window.APP+'/clip_titles_status?id='+encodeURIComponent(q.get('id'))"
         "+'&key='+encodeURIComponent(q.get('key'))+'&seg='+n)"
         ".then(function(r){return r.text();}).then(function(s){"
         "if(s==='done'){clearInterval(iv);location.reload();}"
         "else if(s.indexOf('failed')===0){clearInterval(iv);"
-        "el.textContent='生成失敗（generated/clip_…_render_'+n+'.log を確認）';}});},3000);})"
+        "el.textContent='生成できません: '+s.slice(7);}});},3000);})"
         ".catch(function(){el.textContent='サーバーに接続できません';});}"
-        # 書き出し: チェック済みの全規格を contents/clip/<key>/ へ（原文 L70-71）
-        "function cvExport(n){var q=new URLSearchParams(location.search);"
+        "function cvPick(el,n){var card=document.getElementById('cv'+n);"
+        "card.querySelector('.cvtitle').value=el.textContent;cvApplyPrev(n);cvSave(n);}"
+        # 書き出し(表示名。原文 L129): 設定を保存 → make_clip_video 実行 → 完了でリロード
+        "function cvRender(n){var q=new URLSearchParams(location.search);"
         "var card=document.getElementById('cv'+n);var el=card.querySelector('.cvstat');"
         "var sizes=[].slice.call(card.querySelectorAll('.cvsize:checked')).map(function(c){return c.value;});"
         "if(!sizes.length){el.textContent='書き出しサイズを選んでください';return;}"
@@ -3203,18 +4211,373 @@ def render_clip_videos(idv, key):
         "el.textContent='書き出しを開始しています…';"
         "return fetch(window.APP+'/clip_render',{method:'POST',"
         "headers:{'Content-Type':'application/json'},"
-        "body:JSON.stringify({id:q.get('id'),key:q.get('key'),seg:n,sizes:sizes,export:1})});})"
+        "body:JSON.stringify({id:q.get('id'),key:q.get('key'),seg:n,sizes:sizes})});})"
         ".then(function(r){return r.text();}).then(function(st){"
         "if(st!=='started'&&st!=='already_running'){el.textContent='開始できません: '+st;return;}"
         "el.textContent='書き出し中…（サイズごとに数十秒〜数分）';"
         "var iv=setInterval(function(){"
         "fetch(window.APP+'/clip_render_status?id='+encodeURIComponent(q.get('id'))"
-        "+'&key='+encodeURIComponent(q.get('key'))+'&seg='+n+'&export=1')"
+        "+'&key='+encodeURIComponent(q.get('key'))+'&seg='+n)"
         ".then(function(r){return r.text();}).then(function(s){"
         "if(s==='done'){clearInterval(iv);location.reload();}"
         "else if(s.indexOf('failed')===0){clearInterval(iv);"
-        "el.textContent='書き出し失敗（generated/clip_…_render_'+n+'_export.log を確認）';}});},3000);})"
+        "el.textContent='書き出し失敗（generated/clip_…_render_'+n+'.log を確認）';}});},3000);})"
         ".catch(function(){el.textContent='サーバーに接続できません';});}"
+        # ---- エフェクトスタイル(原文 L134)。まとまり/選択部分を右クリックで割当 ----
+        # 着色の棲み分け(原文 L159): アニメ=青系・テキストスタイル=赤/オレンジ系
+        # (位置マーカーの 青丸/赤丸 と同じ意味)。スタイルごとに同系内で色味を変える
+        "var CV_PAL_ANIM=['#1e88e540','#4fc3f746','#3f51b53c','#00acc440','#5c9dff46'];"
+        "var CV_PAL_DECO=['#e5393540','#fb8c0048','#f4511e42','#ffb30048','#ff704346'];"
+        "function cvG(i){return document.getElementById(i);}"
+        "function cvEsc(s){var d=document.createElement('span');d.textContent=s;return d.innerHTML;}"
+        "function cvFxIdx(nm){for(var i=0;i<CV_FX.length;i++)if(CV_FX[i].name===nm)return i;return -1;}"
+        "function cvFxProps(nm){var p=null;"
+        "CV_FX.forEach(function(styleDef){if(styleDef.name===nm)p=styleDef.props||{};});return p;}"
+        "function cvOverlap(e,a,b){return !(e.b<a-0.005||e.a>b+0.005);}"
+        # 着色はアニメ=ブロック全体(広いpad)・スタイル=部分(狭いpad)の入れ子(原文 L142)
+        "function cvTint(){document.querySelectorAll('.cvblk').forEach(function(blk){"
+        "var ts=blk.querySelectorAll('.cvtok');if(!ts.length)return;"
+        "var a=parseFloat(ts[0].dataset.s),b=parseFloat(ts[ts.length-1].dataset.s);"
+        "var animEffect=null;CV_EFFECTS.forEach(function(e){var p=cvFxProps(e.style);"
+        "if(p&&p.anim&&cvOverlap(e,a,b))animEffect=e;});"
+        "if(animEffect){var i=cvFxIdx(animEffect.style);"
+        "blk.style.background=CV_PAL_ANIM[(i<0?0:i)%CV_PAL_ANIM.length];"
+        "blk.style.padding='3px 5px';blk.title=animEffect.style;}"
+        "else{blk.style.background='';blk.style.padding='';blk.removeAttribute('title');}"
+        "ts.forEach(function(t){var tokSec=parseFloat(t.dataset.s);var decoEffect=null;"
+        "CV_EFFECTS.forEach(function(e){var p=cvFxProps(e.style);"
+        "if(p&&!p.anim&&e.a-0.005<=tokSec&&tokSec<=e.b+0.005)decoEffect=e;});"
+        "if(decoEffect){var j=cvFxIdx(decoEffect.style);"
+        "t.style.background=CV_PAL_DECO[(j<0?0:j)%CV_PAL_DECO.length];"
+        "t.style.borderRadius='3px';t.style.padding='0 1px';t.title=decoEffect.style;}"
+        "else{t.style.background='';t.style.padding='';t.removeAttribute('title');}});});"
+        "cvQuickMarksAll();}"
+        "function cvFxAssignSave(){var q=new URLSearchParams(location.search);"
+        "fetch(window.APP+'/clip_save',{method:'POST',headers:{'Content-Type':'application/json'},"
+        "body:JSON.stringify({id:q.get('id'),key:q.get('key'),op:'effects',effects:CV_EFFECTS})});}"
+        "function cvFxRemove(r){CV_EFFECTS=CV_EFFECTS.filter(function(e){"
+        "return e.b<r.a-0.005||e.a>r.b+0.005;});}"
+        # 割当はトグル(原文 L142)。アニメ付きスタイルは常にブロック全体(blockR)へ、
+        # アニメ無しスタイルは選択範囲(r)へ。層(アニメ/スタイル)が違えば共存する
+        "function cvFxApply(r,nm,blockR){if(!r)return;"
+        "var p=cvFxProps(nm)||{};var anim=!!p.anim;var tgt=(anim&&blockR)?blockR:r;"
+        "var hit=CV_EFFECTS.some(function(e){return e.style===nm&&cvOverlap(e,tgt.a,tgt.b);});"
+        "if(hit){CV_EFFECTS=CV_EFFECTS.filter(function(e){"
+        "return !(e.style===nm&&cvOverlap(e,tgt.a,tgt.b));});}"
+        "else{CV_EFFECTS=CV_EFFECTS.filter(function(e){var q=cvFxProps(e.style);"
+        "if((!!(q&&q.anim))!==anim)return true;return !cvOverlap(e,tgt.a,tgt.b);});"
+        "CV_EFFECTS.push({a:tgt.a,b:tgt.b,style:nm});}"
+        "CV_EFFECTS.sort(function(x,y){return x.a-y.a;});cvTint();cvFxAssignSave();"
+        "if(cvMenuCard!=null)cvQuickKick(cvMenuCard);}"
+        "var cvMenuEl=null,cvMenuRange=null,cvMenuBlock=null,cvMenuCard=null;"
+        "function cvMenuClose(){if(cvMenuEl){cvMenuEl.remove();cvMenuEl=null;}}"
+        "document.addEventListener('contextmenu',function(ev){"
+        "var blk=ev.target.closest('.cvblk');if(!blk)return;ev.preventDefault();cvMenuClose();"
+        "var segCard=blk.closest('.seg');cvMenuCard=segCard?+segCard.id.slice(2):null;"
+        "var toks=[];var sel=window.getSelection();"
+        "if(sel&&!sel.isCollapsed){blk.querySelectorAll('.cvtok').forEach(function(t){"
+        "if(sel.containsNode(t,true))toks.push(t);});}"
+        "if(!toks.length)toks=[].slice.call(blk.querySelectorAll('.cvtok'));"
+        "if(!toks.length)return;"
+        "var ss=toks.map(function(t){return parseFloat(t.dataset.s);});"
+        "cvMenuRange={a:Math.min.apply(null,ss),b:Math.max.apply(null,ss)};"
+        "var blockSecs=[].slice.call(blk.querySelectorAll('.cvtok'))"
+        ".map(function(t){return parseFloat(t.dataset.s);});"
+        "cvMenuBlock={a:Math.min.apply(null,blockSecs),b:Math.max.apply(null,blockSecs)};"
+        "var m=document.createElement('div');m.className='cvmenu';var h='';"
+        "CV_FX.forEach(function(st,ix){"
+        "var on=CV_EFFECTS.some(function(e){return e.style===st.name"
+        "&&cvOverlap(e,cvMenuRange.a,cvMenuRange.b);});"
+        "h+=\"<div class='cvmi\"+(on?' on':'')+\"' data-act='apply' data-i='\"+ix+\"'>\""
+        "+\"<span class='cvchk'>✓</span>\"+cvEsc(st.name)+'</div>';});"
+        "if(CV_FX.length)h+=\"<div class='cvmsep'></div>\";"
+        "h+=\"<div class='cvmi' data-act='new'>新規スタイル定義…</div>\";"
+        "h+=\"<div class='cvmi' data-act='edit'>スタイルの編集・削除…</div>\";"
+        "h+=\"<div class='cvmi' data-act='reset'>個別スタイルをリセット</div>\";"
+        "m.innerHTML=h;document.body.appendChild(m);"
+        "m.style.left=Math.min(ev.pageX,window.scrollX+document.documentElement.clientWidth-230)+'px';"
+        "m.style.top=ev.pageY+'px';cvMenuEl=m;});"
+        "document.addEventListener('mousedown',function(ev){"
+        "if(cvMenuEl&&!cvMenuEl.contains(ev.target))cvMenuClose();});"
+        "document.addEventListener('click',function(ev){var mi=ev.target.closest('.cvmi');"
+        "if(!mi)return;var act=mi.dataset.act,r=cvMenuRange,br=cvMenuBlock;"
+        "var nm=(mi.dataset.i!=null)?CV_FX[+mi.dataset.i].name:'';cvMenuClose();"
+        "if(act==='apply')cvFxApply(r,nm,br);"
+        "else if(act==='reset'){cvFxRemove(r);cvTint();cvFxAssignSave();"
+        "if(cvMenuCard!=null)cvQuickKick(cvMenuCard);}"
+        "else if(act==='new')cvFxEditor('',r);"
+        "else if(act==='edit')cvFxEditor(CV_FX.length?CV_FX[0].name:'',null);});"
+        # スタイル定義画面(保存・削除。原文 L134)。モーダル本体は HTML 側に1つ
+        "var cvEdRange=null;"
+        "function cvEdClose(){cvG('fxmodal').style.display='none';}"
+        "function cvFxEditor(nm,range){cvEdRange=range||null;"
+        "cvG('fxmodal').style.display='block';cvG('fx_stat').textContent='';"
+        "var h=\"<option value=''>（新規）</option>\";"
+        "CV_FX.forEach(function(styleDef){"
+        "h+='<option'+(styleDef.name===nm?' selected':'')+'>'+cvEsc(styleDef.name)+'</option>';});"
+        "cvG('fx_pick').innerHTML=h;cvFxFill(nm);}"
+        "function cvFxPick(){cvFxFill(cvG('fx_pick').value);}"
+        # 対象カードの字幕の実効値(エフェクト適用前)。定義UIの初期値に敷く(原文 L158)
+        "function cvFxBase(){var blk=null;"
+        "if(cvEdRange){var ts=document.querySelectorAll('.cvtok');"
+        "for(var i=0;i<ts.length;i++){var sec=parseFloat(ts[i].dataset.s);"
+        "if(sec>=cvEdRange.a-0.005&&sec<=cvEdRange.b+0.005){blk=ts[i].closest('.cvblk');break;}}}"
+        "var card=blk?blk.closest('.seg'):document.querySelector('.seg');"
+        "return cvStyleGet(card,'sub');}"
+        "function cvFxFill(nm){var st=null;"
+        "CV_FX.forEach(function(styleDef){if(styleDef.name===nm)st=styleDef;});"
+        "var p=(st&&st.props)||{};var base=cvFxBase();"
+        "var col=p.color||base.color;var oc=p.outline||base.outline;"
+        "cvG('fx_name').value=nm||'';"
+        "cvG('fx_c_on').checked=true;"
+        "cvG('fx_c1').value=col[0];cvG('fx_c2').value=col[1]||col[0];"
+        "cvG('fx_cg').checked=col.length>1;"
+        "cvG('fx_o_on').checked=true;"
+        "cvG('fx_o1').value=oc[0];cvG('fx_o2').value=oc[1]||oc[0];"
+        "cvG('fx_og').checked=oc.length>1;"
+        "cvG('fx_size').value=Math.round((p.size_pct!=null?p.size_pct:base.size_pct)*10.8);"
+        "cvG('fx_ow').value=(p.outline_w!=null?p.outline_w:base.outline_w);"
+        "cvG('fx_sx').value=(p.shadow_x!=null?p.shadow_x:base.shadow_x);"
+        "cvG('fx_sy').value=(p.shadow_y!=null?p.shadow_y:base.shadow_y);"
+        "cvG('fx_sb').value=(p.shadow_blur!=null?p.shadow_blur:base.shadow_blur);"
+        "cvG('fx_sc_on').checked=true;"
+        "cvG('fx_sc').value=p.shadow_color||base.shadow_color;"
+        "cvG('fx_font').value=p.font||base.font||'';"
+        "cvG('fx_bold').value=((p.bold!=null?p.bold:base.bold)?'1':'0');"
+        "cvG('fx_anim').value=p.anim||'';"
+        "cvG('fx_dur').value=(p.anim_dur==null?0.3:p.anim_dur);cvFxPrev();}"
+        "function cvFxCollect(){var p={};"
+        "if(cvG('fx_c_on').checked)p.color=cvG('fx_cg').checked?"
+        "[cvG('fx_c1').value,cvG('fx_c2').value]:[cvG('fx_c1').value];"
+        "if(cvG('fx_o_on').checked)p.outline=cvG('fx_og').checked?"
+        "[cvG('fx_o1').value,cvG('fx_o2').value]:[cvG('fx_o1').value];"
+        "if(cvG('fx_size').value!=='')p.size_pct=parseFloat(cvG('fx_size').value)/10.8;"
+        "if(cvG('fx_ow').value!=='')p.outline_w=parseFloat(cvG('fx_ow').value);"
+        "if(cvG('fx_sx').value!=='')p.shadow_x=parseFloat(cvG('fx_sx').value);"
+        "if(cvG('fx_sy').value!=='')p.shadow_y=parseFloat(cvG('fx_sy').value);"
+        "if(cvG('fx_sb').value!=='')p.shadow_blur=parseFloat(cvG('fx_sb').value);"
+        "if(cvG('fx_sc_on').checked)p.shadow_color=cvG('fx_sc').value;"
+        "if(cvG('fx_font').value)p.font=cvG('fx_font').value;"
+        "if(cvG('fx_bold').value!=='')p.bold=cvG('fx_bold').value==='1';"
+        "if(cvG('fx_anim').value){p.anim=cvG('fx_anim').value;"
+        "p.anim_dur=parseFloat(cvG('fx_dur').value)||0.3;}return p;}"
+        "function cvFxPost(then){fetch(window.APP+'/effect_styles',{method:'POST',"
+        "headers:{'Content-Type':'application/json'},body:JSON.stringify({styles:CV_FX})})"
+        ".then(function(r){if(!r.ok)cvG('fx_stat').textContent='保存できません';"
+        "else if(then)then();})"
+        ".catch(function(){cvG('fx_stat').textContent='サーバーに接続できません';});}"
+        "function cvFxSaveDef(){var nm=cvG('fx_name').value.trim();"
+        "if(!nm){cvG('fx_stat').textContent='名前を入れてください';return;}"
+        "if(CV_FX.length>=20&&cvFxIdx(nm)<0){cvG('fx_stat').textContent='スタイルは20個まで';return;}"
+        "var p=cvFxCollect();var i=cvFxIdx(nm);"
+        "if(i<0)CV_FX.push({name:nm,props:p});else CV_FX[i].props=p;"
+        "cvFxPost(function(){cvG('fx_stat').textContent='保存しました';"
+        "if(cvEdRange){cvFxApply(cvEdRange,nm,cvMenuBlock);cvEdRange=null;}cvFxEditor(nm,null);"
+        "cvG('fx_stat').textContent='保存しました';cvTint();cvQuickKickForStyle(nm);});}"
+        "function cvFxDelDef(){var nm=cvG('fx_name').value.trim();var i=cvFxIdx(nm);"
+        "if(i<0){cvG('fx_stat').textContent='未保存のスタイルです';return;}"
+        "var victims=CV_EFFECTS.filter(function(e){return e.style===nm;});"
+        "CV_FX.splice(i,1);"
+        "CV_EFFECTS=CV_EFFECTS.filter(function(e){return e.style!==nm;});"
+        "cvFxPost(function(){cvTint();cvFxAssignSave();cvFxEditor('',null);"
+        "cvG('fx_stat').textContent='削除しました';"
+        "victims.forEach(function(e){cvQuickKickForRange(e);});});}"
+        # スタイル定義の変更・削除も描画プレビューへ即反映する(原文 L160)。
+        # そのスタイルが貼られているカードだけを書き出し直す
+        "function cvQuickKickForRange(e){Object.keys(CV_KEEPS).forEach(function(n){"
+        "var ks=CV_KEEPS[n]||[];"
+        "if(ks.some(function(k){return e.b>=k[0]&&e.a<=k[1];}))cvQuickKick(+n);});}"
+        "function cvQuickKickForStyle(nm){CV_EFFECTS.forEach(function(e){"
+        "if(e.style===nm)cvQuickKickForRange(e);});}"
+        # 定義UI内のライブプレビュー(原文 L141)。対象ブロック全体を基準スタイルで出し、
+        # 指定範囲(無ければ全体)へ今の入力値を重ねる。入力のたびに描き直す
+        "function cvFxPrev(){var box=cvG('fx_prev');if(!box)return;"
+        "var bc=cvG('fx_prev_c');"
+        "var blk=null;"
+        "if(cvEdRange){var ts=document.querySelectorAll('.cvtok');"
+        "for(var i=0;i<ts.length;i++){var s0=parseFloat(ts[i].dataset.s);"
+        "if(s0>=cvEdRange.a-0.005&&s0<=cvEdRange.b+0.005){blk=ts[i].closest('.cvblk');break;}}}"
+        "if(!blk)blk=document.querySelector('.cvblk');"
+        "if(!blk){bc.textContent='（テキストがありません）';return;}"
+        "var card=blk.closest('.seg');var base=cvStyleGet(card,'sub');"
+        # 背景はそのカードで選択中の背景動画(原文 L145)。src が変わる時だけ差し替える
+        "var bgv=cvG('fx_prev_bg');var bgsel=card.querySelector('.cvbg');"
+        "var bsrc=(bgsel&&bgsel.value)?window.APP+'/assets/clip_backgrounds/'"
+        "+encodeURIComponent(bgsel.value):'';"
+        "if(bsrc&&bgv.getAttribute('data-src')!==bsrc){"
+        "bgv.setAttribute('data-src',bsrc);bgv.src=bsrc;}"
+        "var p=cvFxCollect();var W=box.clientWidth||480;var html='';"
+        "bc.style.lineHeight=(base.size_pct/100*W)+'px';"
+        # 折り返しは書き出しと同じ文字数規則(実幅 em = fs/比。原文 L155/L166)
+        "var pxv=Math.max(1,Math.round(1080*base.size_pct/100));"
+        "var mcw=Math.max(2,Math.floor(1080*(base.width_pct/100)"
+        "/(pxv/cvFontScale(base.font))));var chc=0;"
+        "blk.querySelectorAll('.cvtok').forEach(function(t){"
+        "if(chc&&chc+t.textContent.length>mcw){html+='<br>';chc=0;}"
+        "chc+=t.textContent.length;"
+        "var tokSec=parseFloat(t.dataset.s);"
+        "var inr=cvEdRange?(tokSec>=cvEdRange.a-0.005&&tokSec<=cvEdRange.b+0.005):true;"
+        "var q=inr?Object.assign({},base,p):base;"
+        # サイズは静的プレビューと同じ規則(libass の行高基準に合わせ fs/F。原文 L158/L163)
+        "var famT=cvFontFamily(q.font||base.font);"
+        "var fs=((q.size_pct||base.size_pct)/100*W)/cvFontScale(q.font||base.font);"
+        "var col=q.color||base.color;var oc=q.outline||base.outline;"
+        # 縁太の二重掛け(ここで×2・stroke指定でさらに×2=4倍)を修正(原文 L158)
+        "var ow=(q.outline_w!=null?q.outline_w:base.outline_w)*W/1080;"
+        "var shx=(q.shadow_x!=null?q.shadow_x:base.shadow_x)*W/1080;"
+        "var shy=(q.shadow_y!=null?q.shadow_y:base.shadow_y)*W/1080;"
+        "var shb=(q.shadow_blur!=null?q.shadow_blur:base.shadow_blur)*W/1080;"
+        "var scol=q.shadow_color||base.shadow_color;"
+        # 縁はメインプレビューと同じ2層(stroke層+fill層)。単層の paint-order では
+        # グラデ(background-clip:text)が縁の下に沈む(2026-10-02 実測)
+        "var st='font-size:'+fs+'px;font-weight:'+((q.bold!=null?q.bold:base.bold)?'700':'400')"
+        "+';font-family:'+famT;"
+        "var sk='-webkit-text-stroke:'+(ow*2)+'px '+oc[0]+';color:transparent'"
+        "+((shx||shy||shb)?';text-shadow:'+shx+'px '+shy+'px '+shb+'px '+scol:'');"
+        "var fl='';"
+        "if(col.length>1)fl='background:linear-gradient(90deg,'+col[0]+','+col[1]+')"
+        ";-webkit-background-clip:text;background-clip:text;color:transparent';"
+        "else fl='color:'+col[0];"
+        "var ch=cvEsc(t.textContent);"
+        "html+=\"<span class='fxpt\"+(inr?' fxpt-fx':'')+\"' style='\"+st+\"'>\""
+        "+\"<span class='fxps' style='\"+sk+\"'>\"+ch+'</span>'"
+        "+\"<span class='fxpf' style='\"+fl+\"'>\"+ch+'</span></span>';});"
+        "bc.innerHTML=html;"
+        "var an=cvG('fx_anim').value;var du=parseFloat(cvG('fx_dur').value)||0.3;"
+        "if(an)bc.querySelectorAll('.fxpt-fx').forEach(function(fxSpan){"
+        "fxSpan.style.animation=(an==='pop'?'fxpop':'fxslide')+' '+du+'s ease-out';});}"
+        "document.addEventListener('input',function(ev){"
+        "if(ev.target.closest('#fxmodal'))cvFxPrev();});"
+        "document.addEventListener('change',function(ev){"
+        "if(ev.target.closest('#fxmodal'))cvFxPrev();});"
+        # スタイルセット(原文 L143)。選択=カードの入力へ流し込み+last_selected 更新。
+        # セット保存=今のタイトル/字幕設定一式を名前で保持(同名は上書き)
+        "function cvSetFill(card,el,d){var row=card.querySelector(\".cvstrow[data-el='\"+el+\"']\");"
+        "function S(k,v){var i=row.querySelector(\"[data-k='\"+k+\"']\");if(!i)return;"
+        "if(i.type==='checkbox')i.checked=!!v;else if(v!=null)i.value=v;}"
+        "var c=d.color||['#ffffff'],o=d.outline||['#000000'];"
+        "S('c1',c[0]);S('c2',c[1]||c[0]);S('grad',c.length>1);"
+        "S('o1',o[0]);S('o2',o[1]||o[0]);S('ograd',o.length>1);"
+        "S('ow',d.outline_w);S('sc',d.shadow_color);"
+        "S('sx',d.shadow_x!=null?d.shadow_x:d.shadow_w);"
+        "S('sy',d.shadow_y!=null?d.shadow_y:d.shadow_w);"
+        "S('sb',d.shadow_blur);"
+        "S('font',d.font);S('bold',d.bold);"
+        "S('size',d.size_pct!=null?Math.round(d.size_pct*10.8):null);S('w',d.width_pct);"
+        "S('x',d.x_pct);S('y',d.y_pct);"
+        "S('bgon',d.bg_on);S('bgc',d.bg_color);S('bga',d.bg_alpha);"
+        "S('bgp',d.bg_pad);S('bgpv',d.bg_pad_v);S('bgr',d.bg_radius);"
+        "row.querySelector('.cvst-c2').style.display=c.length>1?'':'none';"
+        "row.querySelector('.cvst-o2').style.display=o.length>1?'':'none';}"
+        "function cvSetsPost(then){fetch(window.APP+'/style_sets',{method:'POST',"
+        "headers:{'Content-Type':'application/json'},body:JSON.stringify(CV_SETS)})"
+        ".then(function(r){if(r.ok&&then)then();});}"
+        "function cvSetApply(n){var card=document.getElementById('cv'+n);"
+        "var nm=card.querySelector('.cvset').value;if(!nm)return;"
+        "var st=null;CV_SETS.sets.forEach(function(styleSet){"
+        "if(styleSet.name===nm)st=styleSet;});if(!st)return;"
+        "cvSetFill(card,'title',st.title||{});cvSetFill(card,'sub',st.sub||{});"
+        "CV_SETS.last_selected=nm;cvSetsPost(null);"
+        "cvApplyPrev(n);cvSave(n);}"
+        "function cvSetSave(n){var card=document.getElementById('cv'+n);"
+        "var el=card.querySelector('.cvsetstat');"
+        "var nm=(card.querySelector('.cvsetname').value||'').trim()"
+        "||card.querySelector('.cvset').value;"
+        "if(!nm){el.textContent='セット名を入れてください';return;}"
+        "var st={name:nm,title:cvStyleGet(card,'title'),sub:cvStyleGet(card,'sub')};"
+        "var i=-1;CV_SETS.sets.forEach(function(styleSet,ix){if(styleSet.name===nm)i=ix;});"
+        "if(i<0){if(CV_SETS.sets.length>=20){el.textContent='セットは20個まで';return;}"
+        "CV_SETS.sets.push(st);}else CV_SETS.sets[i]=st;"
+        "CV_SETS.last_selected=nm;"
+        "el.textContent='保存中…';cvSetsPost(function(){location.reload();});}"
+        # クイックプレビュー(原文 L147/L148): 保存のたびにデバウンスして小サイズ実描画を
+        # 自動生成し、できたら <video> を差し替える。ボタンは置かない(L148)
+        "function cvQuickUrl(n,sz){var q=new URLSearchParams(location.search);"
+        "return window.APP+'/media/'+encodeURIComponent(q.get('id'))+'/generated/'"
+        "+encodeURIComponent('clip_'+q.get('key')+'_quick_'+n+'_'+sz+'.mp4');}"
+        "function cvVerticalSize(){var found='';Object.keys(CV_SIZES).forEach(function(k){"
+        "if(CV_SIZES[k][1]>CV_SIZES[k][0]&&!found)found=k;});return found;}"
+        # 音つき(原文 L168)。ミュートはプレーヤーの音量ボタンで切り替え、選択を記憶する。
+        # 初回はブラウザの自動再生制限のためミュートで始まる(一度音を出せば以後は音つき)
+        "function cvQuickMutedPref(){"
+        "try{return localStorage.getItem('cvq_muted')!=='0';}catch(e){return true;}}"
+        "function cvQuickDraw(n){var card=document.getElementById('cv'+n);"
+        "var host=card.querySelector('.cvquick');if(!host)return;"
+        "var mtimes=CV_QUICK[String(n)]||{};var html='';var muted=cvQuickMutedPref();"
+        "Object.keys(mtimes).forEach(function(sizeKey){"
+        "html+=\"<video controls \"+(muted?'muted ':'')+\"autoplay loop playsinline\""
+        "+\" src='\"+cvQuickUrl(n,sizeKey)+'?v='+mtimes[sizeKey]+\"'></video>\";});"
+        "if(html)html+=\"<div class='cvqmarks'></div>\";"
+        "host.innerHTML=html;cvQuickMarks(n);"
+        "var video=host.querySelector('video');if(!video)return;"
+        "if(!muted){video.muted=false;"
+        "var playing=video.play();if(playing&&playing.catch)playing.catch(function(){});}"
+        "video.addEventListener('volumechange',function(){"
+        "try{localStorage.setItem('cvq_muted',video.muted?'1':'0');}catch(e){}});}"
+        "var cvQT={},cvQPend={},cvQPoll={};"
+        "function cvQuickKick(n){if(!CV_QON)return;"
+        "clearTimeout(cvQT[n]);cvQT[n]=setTimeout(function(){cvQuickStart(n);},800);}"
+        "function cvQuickStart(n){var q=new URLSearchParams(location.search);"
+        "var card=document.getElementById('cv'+n);"
+        "var sizes=[cvVerticalSize()].filter(Boolean);if(!sizes.length)return;"
+        "var st=card.querySelector('.cvqstat');"
+        "var host=card.querySelector('.cvquick');"
+        "fetch(window.APP+'/clip_quick',{method:'POST',"
+        "headers:{'Content-Type':'application/json'},"
+        "body:JSON.stringify({id:q.get('id'),key:q.get('key'),seg:n,sizes:sizes})})"
+        ".then(function(r){return r.text();}).then(function(state){"
+        # already_running(別タブやリロード前のページが開始した描画)でもポーリングを
+        # 開始する。以前はポーリング無しで完了を検知できず差し替わらなかった(原文 L167)
+        "if(state==='already_running'){cvQPend[n]=1;"
+        "if(host)host.classList.add('cvq-stale');"
+        "if(st)st.textContent='描画プレビューを生成中…';"
+        "cvQuickWatch(n,sizes,st,host);return;}"
+        "if(state!=='started'){if(st)st.textContent='';return;}"
+        # 書き出し直し中は古い映像と分かるように薄くしてラベルを重ねる(原文 L160)
+        "if(host)host.classList.add('cvq-stale');"
+        "if(st)st.textContent='描画プレビューを生成中…';"
+        "cvQuickWatch(n,sizes,st,host);});}"
+        "function cvQuickWatch(n,sizes,st,host){var q=new URLSearchParams(location.search);"
+        "clearInterval(cvQPoll[n]);cvQPoll[n]=setInterval(function(){"
+        "fetch(window.APP+'/clip_quick_status?id='+encodeURIComponent(q.get('id'))"
+        "+'&key='+encodeURIComponent(q.get('key'))+'&seg='+n)"
+        ".then(function(r){return r.text();}).then(function(state){"
+        "if(state==='running')return;clearInterval(cvQPoll[n]);"
+        "if(cvQPend[n]){cvQPend[n]=0;cvQuickStart(n);return;}"
+        "if(state==='done'){var mtimes=CV_QUICK[String(n)]=CV_QUICK[String(n)]||{};"
+        "var now=Date.now();sizes.forEach(function(sizeKey){mtimes[sizeKey]=now;});"
+        "if(host)host.classList.remove('cvq-stale');"
+        "cvQuickDraw(n);if(st)st.textContent='描画プレビュー';}"
+        "else if(st)st.textContent='描画プレビューを生成できません';});},1000);}"
+        "document.addEventListener('DOMContentLoaded',function(){"
+        "Object.keys(CV_QUICK).forEach(function(n){cvQuickDraw(+n);});});"
+        # エフェクト位置マーカー(原文 L153)。赤=テキストスタイル・青=アニメーション。
+        # 元音源時刻を keep の累積でプレビュー時刻へ変換し、クリックでその位置へ飛ぶ
+        "function cvViewTime(n,srcSec){var ks=CV_KEEPS[String(n)]||[];var off=0;"
+        "for(var i=0;i<ks.length;i++){var k=ks[i];"
+        "if(srcSec<=k[1])return off+Math.max(0,Math.min(srcSec,k[1])-k[0]);"
+        "off+=k[1]-k[0];}return off;}"
+        "function cvClipDur(n){var ks=CV_KEEPS[String(n)]||[];var off=0;"
+        "ks.forEach(function(k){off+=k[1]-k[0];});return off;}"
+        "function cvQuickMarks(n){var card=document.getElementById('cv'+n);if(!card)return;"
+        "var host=card.querySelector('.cvqmarks');if(!host)return;"
+        "var ks=CV_KEEPS[String(n)]||[];var dur=cvClipDur(n);if(!dur)return;"
+        "var html='';"
+        "CV_EFFECTS.forEach(function(e){"
+        "var hit=ks.some(function(k){return e.b>=k[0]&&e.a<=k[1];});if(!hit)return;"
+        "var p=cvFxProps(e.style)||{};var anim=!!p.anim;"
+        "var t=cvViewTime(n,e.a);"
+        "html+=\"<span class='cvqdot \"+(anim?'cvqdot-anim':'cvqdot-deco')"
+        "+\"' title='\"+cvEsc(e.style)+\"' data-t='\"+t.toFixed(2)"
+        "+\"' style='left:\"+(t/dur*100).toFixed(2)+\"%'></span>\";});"
+        "host.innerHTML=html;}"
+        "function cvQuickMarksAll(){Object.keys(CV_KEEPS).forEach(function(n){"
+        "cvQuickMarks(+n);});}"
+        "document.addEventListener('click',function(ev){"
+        "var dot=ev.target.closest('.cvqdot');if(!dot)return;"
+        "var video=dot.closest('.cvquick').querySelector('video');if(!video)return;"
+        "video.currentTime=Math.max(0,parseFloat(dot.dataset.t)-0.3);video.play();});"
+        "document.addEventListener('DOMContentLoaded',cvTint);"
         "</script>")
     return page(f"動画の作成 {idv}", "".join(parts))
 
@@ -3265,33 +4628,65 @@ def clip_suggest_status(idv, key):
     return "done"
 
 
-def render_clip_suggestions(idv, key):
-    """切り抜き編集画面の見出し直下に出す「セグメント参考」（C-12・原文 L86-95）。"""
+# セグメントごとのタイトル候補生成(原文 L123)。key=(ID, key, seg) → Popen
+CLIP_TITLE_PROCS = {}
+
+
+def start_clip_titles(idv, key, seg):
+    """動画作成画面のセグメント(=切り抜き)1本ぶんのタイトル候補3つを生成する。
+    再実行=ゼロから作り直して差し替え。"""
+    import subprocess
+    if idv not in list_ids() or not re.fullmatch(r"[0-9a-f]{12}_[0-9a-f]{8}", key or ""):
+        return "bad_id"
+    try:
+        seg = int(seg)
+    except (TypeError, ValueError):
+        return "bad_seg"
+    k = (idv, key, seg)
+    p = CLIP_TITLE_PROCS.get(k)
+    if p is not None and p.poll() is None:
+        return "already_running"
+    root = os.path.dirname(HERE)
+    cands = [os.path.join(root, ".venv-openai", "bin", "python"),
+             os.path.join(root, "venv", "bin", "python"), _sys.executable]
+    py = next((c for c in cands if os.path.isfile(c)), _sys.executable)
+    base = os.path.join(DATA_DIR, idv)
+    gen = idpaths.gen_dir(base)
+    logf = open(os.path.join(gen, f"clip_{key}_titles_{seg}.log"), "w", encoding="utf-8")
+    CLIP_TITLE_PROCS[k] = subprocess.Popen(
+        [py, os.path.join(root, "scripts", "suggest_clip_titles.py"), idv,
+         "--key", key, "--seg", str(seg)],
+        cwd=root, stdout=logf, stderr=subprocess.STDOUT)
+    return "started"
+
+
+def clip_titles_status(idv, key, seg):
+    try:
+        seg = int(seg)
+    except (TypeError, ValueError):
+        return "bad_seg"
+    p = CLIP_TITLE_PROCS.get((idv, key, seg))
+    if p is None:
+        return "none"
+    if p.poll() is None:
+        return "running"
+    if p.returncode != 0:
+        try:
+            gen = idpaths.gen_dir(os.path.join(DATA_DIR, idv))
+            with open(os.path.join(gen, f"clip_{key}_titles_{seg}.log"), encoding="utf-8") as f:
+                lines = [ln for ln in f.read().splitlines() if ln.strip()]
+            return "failed:" + (lines[-1][-200:] if lines else str(p.returncode))
+        except Exception:
+            return f"failed({p.returncode})"
+    return "done"
+
+
+def render_clip_suggestions(idv, key, geometry):
+    """参考セグメント(トピック)の再生成ボタン。タイムラインの直上にボタンだけを置く
+    (原文 L121。候補の中身はタイムライン上の水色の塗りと右マージンの注記が持つ)。"""
     base = os.path.join(DATA_DIR, idv)
     sug = _load_json(idpaths.find(base, f"clip_{key}_suggestions.json"), None)
-
-    def ts2(t):
-        m3 = int(t // 60)
-        return f"{m3}:{t - m3 * 60:05.2f}"
-
-    items = []
-    for it in (sug or {}).get("suggestions", []):
-        try:
-            s3, e3 = float(it["s"]), float(it["e"])
-        except (KeyError, TypeError, ValueError):
-            continue
-        dm, ds = divmod(int(round(e3 - s3)), 60)
-        # 見出し候補は3つを「 / 」区切りで並べる(原文 L100)
-        titles = [t for t in (it.get("titles") or []) if str(t).strip()] or [it.get("title") or ""]
-        items.append(
-            "<div class='sugitem'>"
-            f"<div class='sugtitle'>・{esc(' / '.join(str(t) for t in titles))}</div>"
-            f"<div class='sugtime'><a onclick='window.clipTL&&clipTL.setPlayhead({s3:.3f})'>"
-            f"{ts2(s3)}〜{ts2(e3)}（{dm}分{ds:02d}秒）</a></div>"
-            f"<div class='sugtext'>{esc(it.get('text'))}</div></div>")
-    label = "再生成" if items else "セグメント参考を生成"
-    body = "".join(items) if items else (
-        "<div class='meta'>AI による切り抜き候補（5〜10件・見出し/範囲/全文）をここに出します。</div>")
+    label = "参考セグメント再生成" if (sug or {}).get("suggestions") else "参考セグメントを生成"
     js = (
         "<script>"
         "function clipSuggest(){var q=new URLSearchParams(location.search);"
@@ -3312,53 +4707,90 @@ def render_clip_suggestions(idv, key):
         ".catch(function(){b.disabled=false;el.textContent='サーバーに接続できません';});}"
         "</script>")
     return (
-        "<div class='sugbox'><div class='sughd'><b>セグメント参考</b>"
-        f"<button class='gbtn' id='sugbtn' onclick='clipSuggest()'>{label}</button>"
-        "<span id='sugstat' class='meta'></span></div>"
-        f"{body}</div>{js}")
+        f"<p><button class='gbtn' id='sugbtn' onclick='clipSuggest()'>{label}</button>"
+        "　<span id='sugstat' class='meta'></span></p>" + js)
+
+
+def source_audio_name(idv):
+    """ブラウザ再生用の音源ファイル名（ID 直下からの相対）。preview_audio.m4a を最優先
+    （元が ALAC だと Chrome/Firefox で鳴らないため。D-021）。render_id と切り抜き画面で共用。"""
+    base = os.path.join(DATA_DIR, idv)
+    names = sorted(os.listdir(base))
+    pv = idpaths.find(base, "preview_audio.m4a")
+    if os.path.exists(pv):
+        return os.path.relpath(pv, base)
+    for ext in (".m4a", ".mp4"):
+        n = next((n for n in names if n.lower().endswith(ext)), None)
+        if n:
+            return n
+    return None
 
 
 def render_clip(idv, key):
-    """切り抜き編集画面（CLIP_PLAN C-2〜C-4）。機能はセグメント決定とテキスト修正の
-    2つだけに絞る（原文 L64）。タイムラインは凍結版の編集後時間軸で隙間なく連続。"""
+    """切り抜き編集画面（C-2〜C-4・C-17 改定）。機能はセグメント決定とテキスト修正の
+    2つだけに絞る（原文 L64）。タイムラインはこの版の1次形状(geometry)から毎回導出した
+    詰め後時間で表示し、データ（切り抜き区間・テキスト修正）は元音源の絶対時刻で持つ。"""
     if idv not in list_ids():
         return None
     base = os.path.join(DATA_DIR, idv)
-    src = _load_json(idpaths.find(base, f"clip_{key}_source.json"), None)
-    if not src:
+    cur = _load_json(idpaths.find(base, f"clip_{key}.json"), None)
+    if not cur or "geometry" not in cur:
         return None
-    cur = _load_json(idpaths.find(base, f"clip_{key}.json"), {})
-    audio = idpaths.find(base, f"clip_{key}_source.m4a")
-    audio_ok = os.path.isfile(audio)
-    dur = src.get("duration") or 0
-    m, s2 = divmod(int(round(dur)), 60)
+    g = cur["geometry"]
+    tokens, est = clip_tokens(idv, g)
+    keeps = geometry_keeps(g)
+    net = sum(b - a for a, b in keeps)
+    m, s2 = divmod(int(round(net)), 60)
+    sid = cur.get("sid") or key.split("_")[0]
+    vers = list_clip_versions(idv, sid)
+    has_prev = any(v["key"] != key for v in vers)
+    applyable = (not cur.get("clips")) and has_prev
     parts = [
         f"<div class='crumb'><a href='{approot()}/id?id={urllib.parse.quote(idv)}'>← 1次編集（{esc(idv)}）</a></div>",
-        f"<h1>切り抜き編集　{esc(src['seg'].get('title') or '')}</h1>",
-        f"<p class='meta'>凍結版 {esc((src.get('created_at') or '')[:16].replace('T', ' '))}"
+        f"<h1>切り抜き編集　{esc(cur.get('title') or '')}</h1>",
+        f"<p class='meta'>版 {esc((cur.get('created_at') or '')[:16].replace('T', ' '))}"
         f"　尺 {m}分{s2:02d}秒</p>",
-        # 見出し直下に AI のセグメント参考（C-12・原文 L86-95）
-        render_clip_suggestions(idv, key),
     ]
-    if not audio_ok:
-        parts.append("<p class='meta' id='srcwait'>凍結音源を生成中です…（できあがると自動で表示が変わります）</p>")
-        parts.append(
-            "<script>var _iv=setInterval(function(){"
-            "fetch(window.APP+'/clip_source_status?id='+encodeURIComponent(new URLSearchParams(location.search).get('id'))"
-            "+'&key='+encodeURIComponent(new URLSearchParams(location.search).get('key')))"
-            ".then(function(r){return r.text();}).then(function(s){"
-            "if(s==='done'){clearInterval(_iv);location.reload();}"
-            "else if(s.indexOf('failed')===0){clearInterval(_iv);"
-            "document.getElementById('srcwait').textContent='凍結音源の生成に失敗しました"
-            "（generated/clip_…_source.log を確認）';}});},3000);</script>")
-    else:
-        rel = os.path.relpath(audio, DATA_DIR)
-        parts.append(f"<audio id='orig' src='{approot()}/media/{urllib.parse.quote(rel)}'"
+    if est == "stale":
+        parts.append("<p class='meta' style='color:#e11d48'>⚠ 文字起こしが作り直されたため、"
+                     "保存済みのテキスト修正を適用していません。</p>")
+    # 見出し直下に AI のセグメント参考（C-12・原文 L86-95）
+    parts.append(render_clip_suggestions(idv, key, g))
+    src_name = source_audio_name(idv)
+    if src_name:
+        parts.append(f"<audio id='orig' src='{approot()}/media/{urllib.parse.quote(idv + '/' + src_name)}'"
                      " preload='metadata' style='display:none'></audio>")
-    data = json.dumps({"id": idv, "key": key, "duration": dur,
-                       "units": cur.get("units") or [],
-                       "clips": cur.get("clips") or []},
+    # トピック帯(原文 L113-115): 候補の区間を番号付きでタイムライン上に出す
+    sug = _load_json(idpaths.find(base, f"clip_{key}_suggestions.json"), None)
+    topics = []
+    for it in (sug or {}).get("suggestions", []):
+        try:
+            ts3, te3 = float(it["s"]), float(it["e"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        titles = [t for t in (it.get("titles") or []) if str(t).strip()] or [it.get("title") or ""]
+        topics.append({"s": ts3, "e": te3, "title": str(titles[0]),
+                       "text": str(it.get("text") or "")})
+    # ハイライト(名言・格言・キャッチー箇所。原文 L122)。テキストの上に半透明オレンジで敷く
+    highlights = []
+    for h in (sug or {}).get("highlights", []):
+        try:
+            highlights.append({"s": float(h["s"]), "e": float(h["e"]),
+                               "text": str(h.get("text") or "")})
+        except (KeyError, TypeError, ValueError):
+            continue
+    data = json.dumps({"id": idv, "key": key, "duration": round(net, 3),
+                       "keeps": [[round(a, 3), round(b, 3)] for a, b in keeps],
+                       "units": tokens,
+                       "clips": cur.get("clips") or [],
+                       "topics": topics,
+                       "highlights": highlights,
+                       "applyable": applyable},
                       ensure_ascii=False).replace("</", "<\\/")
+    apply_btn = ("<button class='gbtn tlapply' title='1次編集で版が分かれる前の切り抜き編集を"
+                 "この版へコピーします（座標は元音源時刻なので、解除した区間は自動で広がり、"
+                 "新しいカットは自動で詰まります）'>前の編集を適用</button>"
+                 if applyable else "")
     parts.append(
         "<div class='cliptl' id='cliptl'>"
         "<div class='tlbar'>"
@@ -3370,16 +4802,17 @@ def render_clip(idv, key):
         "<option value='1.35'>1.35x</option><option value='1.5'>1.5x</option></select>"
         "<span class='tlzoom'></span>"
         "<button class='tlundo'>↩ 元に戻す</button><button class='tlredo'>↪ やり直す</button>"
+        f"{apply_btn}"
         # 「動画の作成」はこのツールバー(再生〜やり直す)の並びに置く(オーナー指示・原文 L103)
         f"<a class='gbtn' href='{approot()}/clip_videos?id={urllib.parse.quote(idv)}"
         f"&key={urllib.parse.quote(key)}'>動画の作成 →</a>"
         "<span class='tlstat'>保存済み</span>"
         "</div>"
         "<div class='tlhelp'>Space 再生/停止・<b>S＝切り抜きの開始</b>・<b>E＝終了</b>・"
-        "右クリック＝メニュー（再生/開始/終了/この間を詰める/テキスト削除・挿入）・"
-        "文字クリックで編集・切り抜きをクリックで選択して Delete で解除・⌘Z 取り消し・⌘± ズーム。"
-        "自動保存されます。</div>"
-        f"<div class='tlrows'><div class='tlwait'>組み上げ中…（字幕ユニット {len(cur.get('units') or [])}）</div></div>"
+        "右クリック＝メニュー（再生/開始/終了/間を詰める・伸ばす/テキスト削除・挿入）・"
+        "文字クリックで修正（根の文字起こしに保存）・切り抜きをクリックで選択して Delete で解除・"
+        "⌘Z 取り消し・⌘± ズーム。切り抜きは自動保存されます。</div>"
+        f"<div class='tlrows'><div class='tlwait'>組み上げ中…（単語 {len(tokens)}）</div></div>"
         f"<script type='application/json'>{data}</script>"
         "</div>")
     return page(f"切り抜き編集 {idv}", "".join(parts))
@@ -3547,7 +4980,7 @@ def route_delivered():
 
 @app.post("/clip_create")
 def route_clip_create():
-    key = create_clip(request.args.get("id") or "", request.args.get("sid") or "")
+    key = open_clip(request.args.get("id") or "", request.args.get("sid") or "")
     return _text("ok:" + key if key else "ng", 200 if key else 400)
 
 
@@ -3557,6 +4990,15 @@ def route_clip():
     if content is None:
         return _html(page("404", f"<h1>404</h1><a href='{approot()}/'>一覧へ</a>"), 404)
     return _html(content)
+
+
+@app.post("/transcript_edit")
+def route_transcript_edit():
+    try:
+        st = apply_transcript_edit(request.get_json(force=True) or {})
+    except Exception:
+        st = "bad_request"
+    return _text(st, 200 if st == "ok" else 400)
 
 
 @app.post("/clip_suggest")
@@ -3571,6 +5013,20 @@ def route_clip_suggest_status():
                                      request.args.get("key") or ""))
 
 
+@app.post("/clip_titles")
+def route_clip_titles():
+    st = start_clip_titles(request.args.get("id") or "", request.args.get("key") or "",
+                           request.args.get("seg"))
+    return _text(st)
+
+
+@app.get("/clip_titles_status")
+def route_clip_titles_status():
+    return _text(clip_titles_status(request.args.get("id") or "",
+                                    request.args.get("key") or "",
+                                    request.args.get("seg")))
+
+
 @app.post("/clip_render")
 def route_clip_render():
     try:
@@ -3581,6 +5037,26 @@ def route_clip_render():
     except Exception:
         st = "bad_request"
     return _text(st)
+
+
+@app.post("/clip_quick")
+def route_clip_quick():
+    try:
+        d = request.get_json(force=True) or {}
+        st = start_clip_video_render(str(d.get("id") or ""), str(d.get("key") or ""),
+                                     d.get("seg"),
+                                     [str(size_key) for size_key in (d.get("sizes") or [])],
+                                     quick=True)
+    except Exception:
+        st = "bad_request"
+    return _text(st)
+
+
+@app.get("/clip_quick_status")
+def route_clip_quick_status():
+    return _text(clip_video_render_status(request.args.get("id") or "",
+                                          request.args.get("key") or "",
+                                          request.args.get("seg"), quick=True))
 
 
 @app.get("/clip_render_status")
@@ -3608,26 +5084,54 @@ def route_clip_save():
     return _text("ok" if ok else "ng", 200 if ok else 400)
 
 
-@app.get("/clip_source_status")
-def route_clip_source_status():
-    idv, key = request.args.get("id") or "", request.args.get("key") or ""
-    if idv not in list_ids() or not key:
-        return _text("ng", 400)
-    base = os.path.join(DATA_DIR, idv)
-    if os.path.isfile(idpaths.find(base, f"clip_{key}_source.m4a")):
-        return _text("done")
-    p = CLIP_SOURCE_RENDERS.get((idv, key))
-    if p is not None and p.poll() is None:
-        return _text("running")
-    if p is not None and p.returncode != 0:
-        return _text(f"failed({p.returncode})")
-    return _text("none")
+@app.post("/style_sets")
+def route_style_sets():
+    try:
+        ok = save_style_sets(request.get_json(force=True) or {})
+    except Exception:
+        ok = False
+    return _text("ok" if ok else "ng", 200 if ok else 400)
+
+
+@app.post("/effect_styles")
+def route_effect_styles():
+    try:
+        ok = save_effect_styles(request.get_json(force=True) or {})
+    except Exception:
+        ok = False
+    return _text("ok" if ok else "ng", 200 if ok else 400)
+
+
+@app.post("/clip_apply_prev")
+def route_clip_apply_prev():
+    st = apply_prev_clip(request.args.get("id") or "", request.args.get("key") or "")
+    return _text(st, 200 if st == "ok" else 400)
 
 
 @app.get("/render_status")
 def route_render_status():
     return _text(render_status(request.args.get("id") or "",
                                request.args.get("sid") or ""))
+
+
+@app.get("/assets/<path:rel>")
+def route_assets(rel):
+    # スタイル調整パネルのライブプレビュー用(背景動画・フォント。原文 L126)。読み取りのみ。
+    # clip_backgrounds/ は複数の置き場(assets + clipvideo/背景動画out。原文 L162)から探す
+    rel = rel or ""
+    if rel.startswith("clip_backgrounds/"):
+        name = os.path.basename(rel[len("clip_backgrounds/"):])
+        for d in clip_background_dirs():
+            dr = os.path.realpath(d)
+            full = os.path.realpath(os.path.join(dr, name))
+            if full.startswith(dr + os.sep) and os.path.isfile(full):
+                return send_file(full, conditional=True)
+        return _text("not found", 404)
+    d = os.path.realpath(ASSETS_DIR)
+    full = os.path.realpath(os.path.join(d, rel))
+    if not (full.startswith(d + os.sep) and os.path.isfile(full)):
+        return _text("not found", 404)
+    return send_file(full, conditional=True)
 
 
 @app.get("/media/<path:rel>")

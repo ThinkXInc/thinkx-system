@@ -1,8 +1,7 @@
 # thinkx-system ワークスペース — Claude Code への作業指示書
 
-このディレクトリは ThinkX 全システムのリファクタリングを進める**ワークスペース**である。
-ワークスペース自体は git 管理しない。各サブディレクトリが独立した git リポジトリ(clone)である。
-あなた(Claude Code)はこのルートから起動され、下記の規律に従って計画を実行する。
+このディレクトリは ThinkX 全システムの**ワークスペース**である。
+あなた(Claude Code)はこのルートかその直下のサブプロジェクト直下から起動され、下記の規律に従って計画を実行する。
 以下では`thinkx-system/`をルートとした絶対パスで参照ファイルが記載される．これはClaude Codeが`thinkx-system/<project>`内で起動される場合でも対象ファイルを参照できるようにするため．
 
 **歴史の調査は `ARCHIVE.md` が指す旧リポジトリ(凍結アーカイブ)で行う。** この monorepo は
@@ -31,7 +30,8 @@ polyrepo + vendoring 構成をファイルコピーで集約したもので、�
 
 **monorepoへの移行関連 **: `ROADMAP.md, NEXT_CYCLE.md, MONOREPO_PLAN.md, CHANGES_2026_REFACTOR.md`はmonorepoへの移行とそれに伴うリファクタリングについてであり，完了とともに`thinkx-system/docs/archive/monorepo_refactor_2026/`内に格納される．
 
-
+上記の規約と指示、設計議論はサブプロジェクト下の `thinkx-system/<project>/docs` で同じ構造が保たれている．
+各サブプロジェクトの作業の際には規約や最新の議論 `thinkx-system/<project>/docs/discussion/`を読み開始する．
 
 
 
@@ -42,8 +42,8 @@ polyrepo + vendoring 構成をファイルコピーで集約したもので、�
 - **セッションは使い捨て、状態はファイルが持つ。** セッション開始時は必ず次から現在地を復元する:
   1. `docs/ROADMAP.md` の進捗チェック
   2. 対象リポジトリの `git log --oneline -10`(ブランチ refactor/2026)
-  3. 対象リポジトリの `CHECKSUMS.md` / `findings.md`
-  復元した現在地を最初の応答で宣言してから作業に入る。記憶に頼らない。
+  3. 対象リポジトリの `CHECKSUMS.md` / `findings.md` / `docs/GUIDELINES.md`  / `docs/discussion/discussion_{date}_{title}.md`
+  復元した現在地を最初の応答で宣言してから作業に入る。記憶に頼らない。現在日時直近のdiscussionには目を通すこと。
 - 計画書の項目は**1項目=1コミット**、完了条件をコマンドで満たしてからコミット、
   満たせなければ「戻し方」で破棄して報告・停止(各計画書の指示文と同一)。
 
@@ -106,9 +106,6 @@ polyrepo + vendoring 構成をファイルコピーで集約したもので、�
 - `.claude/settings.json` が強制する。**settings 自体を書き換えない。**
 - 計画書(`*_PLAN.md`)は読み取り専用。実行者が自分の指示書を書き換えることは許されない。
   計画に問題を見つけたら findings.md に記録して報告する。
-- thinkx / kazukiotsukacom は Phase 2.5 開始まで**読み取り専用**。Phase 2.5 開始時に
-  人間が settings.json のスコープを「サイト全体 deny」から「vendoring 先のみ deny」へ
-  切り替える(S トラック計画 S-0a に手順明記)。
 - quantz-web 内の submodule 領域(`web-server/libcommon`, `vectordb_server/libcommon`,
   `web-server/views/src/js/simplicity`)は編集禁止。これらへの変更は各原本リポジトリで行う。
 - auth 内の libcommon スナップショット(vendoring された `auth/**/libcommon/`)も同様に
@@ -187,3 +184,14 @@ context: {状況}
 
 `docs/DECISIONS.md`  決定事項をリスト化する  
 1. bashスクリプトにはexitを書かない
+
+
+## 観測と編集の道具(承認削減・D-53)
+
+- 「読むだけの確認」(サーバー・サイト・手元の dev サーバー)は、生の ssh / curl / kill を
+  書く前に、必ず `infra/scripts/README.md` 冒頭の観測スクリプト一覧を引く。主なもの:
+  デプロイの反映前差分・着地・URL 応答 = `verify_deploy.py`、staging のログ/state = `stg.py`、
+  手元 dev サーバーの起動/停止/ページ確認 = `devserver.py`、EC2 の状態 = `status.sh`。
+  一覧に無い観測だけ生コマンドで行い、`docs/approval_cases_v2.md` に 1 ケース追記する。
+- ファイルの書き換えに bash / python のワンライナーや heredoc を使わない。Edit ツールを使う
+  (承認が出ず、diff も見える)。ローカルファイルを読むのも python -c でなく Read ツール。

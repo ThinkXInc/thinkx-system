@@ -1,3 +1,17 @@
+## 観測スクリプト一覧(生の ssh / curl を書く前にここを引く)
+
+| 確認したいこと | コマンド |
+|---|---|
+| 本番に何が出るかの事前差分 | `python3 infra/scripts/verify_deploy.py preview` |
+| デプロイ着地(先端一致・ファイル内文字列・unit 起動時刻) | `python3 infra/scripts/verify_deploy.py landed staging/prod [--file F --contains S]` |
+| 公開 URL の応答(code・時間・IP・本文の文字列) | `python3 infra/scripts/verify_deploy.py site staging/prod [--repeat N] [--path P] [--contains S]` |
+| staging の unit・tmux・state・外形 | `python3 infra/scripts/stg.py check` |
+| staging のログ | `python3 infra/scripts/stg.py log --unit claude_connect --since-min 30` |
+| staging の state 遷移の見守り | `python3 infra/scripts/stg.py watch` |
+| 手元 dev サーバーの状態・起動・停止・再起動 | `python3 infra/scripts/devserver.py status/start/stop/restart <podcast/podcast2/thinkx>` |
+| 手元 dev ページの確認(code・文字列・本文保存) | `python3 infra/scripts/devserver.py get <name> <パス> [--contains S] [--save]` |
+| EC2 の状態 | `bash infra/scripts/status.sh staging/prod` |
+
 # infra/scripts 仕様(ゼロから再実装できる要件)
 
 各スクリプトが「何を満たすべきか」を書く。実装ではなく要件。
@@ -7,6 +21,23 @@
 setup_*.sh の記述原則・書式・verify、観測系/変更系、bash/python の規約は
 `docs/coding_guides/`(genral.md / bash.md / python.md + thinkx_coding_axioms/guide)に集約。**書く前に読む。**
 本書は各スクリプトの「要件(何を満たすか)」だけを書く。
+
+## 観測スクリプト一覧(生の ssh / curl を書く前にここを引く)
+
+ワークスペース CLAUDE.md「観測と編集の道具」が参照する一覧。読むだけの確認はまずここから選ぶ。
+一覧に無い観測だけ生コマンドで行い、`docs/approval_cases_v2.md` に 1 ケース追記する。
+
+| 確認したいこと | コマンド |
+|---|---|
+| 本番に何が出るかの事前差分 | `python3 infra/scripts/verify_deploy.py preview` |
+| デプロイ着地(先端一致・ファイル内文字列・unit 起動時刻) | `python3 infra/scripts/verify_deploy.py landed staging/prod [--file F --contains S]` |
+| 公開 URL の応答(code・時間・IP・本文の文字列) | `python3 infra/scripts/verify_deploy.py site staging/prod [--repeat N] [--path P] [--contains S]` |
+| staging の unit・tmux・state・外形 | `python3 infra/scripts/stg.py check` |
+| staging のログ | `python3 infra/scripts/stg.py log --unit claude_connect --since-min 30` |
+| staging の state 遷移の見守り | `python3 infra/scripts/stg.py watch` |
+| 手元 dev サーバーの状態・起動・停止・再起動 | `python3 infra/scripts/devserver.py status/start/stop/restart <podcast/podcast2/thinkx>` |
+| 手元 dev ページの確認(code・文字列・本文保存) | `python3 infra/scripts/devserver.py get <name> <パス> [--contains S] [--save]` |
+| EC2 の状態 | `bash infra/scripts/status.sh staging/prod` |
 
 ## status.sh 【観測系】
 今どのインフラが立っているかを表示。

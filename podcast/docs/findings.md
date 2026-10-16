@@ -447,3 +447,32 @@ cut_decisions の該当Cを keep に更新するところまでで1セット
   タイトル 8%。寸法は全て高さ%で持ち、生成側が px に変換する。
 - **UI事故(C-2)**: 切り抜き画面のコンテナに class="tl" を使うと既存 TIMELINE_JS が拾って
   同じ DOM を二重に組んで壊れる(NaN 表示)。専用 class .cliptl に分離して解決。
+- **モーダル内プレビューの縁(2026-10-02)**: 単層 span の `-webkit-text-stroke` +
+  `paint-order:stroke fill` は `background-clip:text` のグラデ本体と両立しない
+  (縁がグラデを塗りつぶす。Chrome 実測)。メインプレビュー同様、縁層(absolute・
+  color:transparent)+本体層の2層に分けて解決。.pvtext 側も同根のバグがあった:
+  stroke 層の位置基準が .pv-box でなく .pvtext だったため、背景 ON で padding が
+  付くと本体だけずれて「縁がずれる」(原文 L139)。.pv-box を position:relative に
+  し stroke 層へ padding:inherit で解決。
+- **原因不明の effects 保存(2026-10-02 09:10:53)**: エフェクト割当の検証中、
+  clip_c0ca90d5a542_0a4eb77d に「テストポップを除いた effects」の保存が1件入った
+  (journal 実測)。UI からの到達経路は『個別スタイルをリセット』クリックのみだが、
+  同一手順の再実行では再現せず。履歴(clip_*_history.jsonl)で復元可能なため続行。
+  再発したら cvFxAssignSave の呼び出し元ログを仕込んで特定する。
+- **clip 版ファイルの geometry 消失(2026-10-02・根治済み)**: apply_clip_save は
+  flock 無しの read-modify-write + 非原子書き込みだった。連続 POST の競合で
+  半端な読み取り(JSON 壊れ → _load_json が {})に effects だけ載せて書き戻し、
+  geometry・clips・video が消えた(履歴 jsonl にも壊れた1エントリが残った)。
+  L127 の文字修正消失と同じ lost-update 系。対処: clip_save / timeline_save /
+  decision / seg_flag の segments 系書き込み全部に flock 直列化 + tmp→os.replace
+  原子置換 + 「geometry/segments の無い読み取りには上書きしない」ガード。
+  履歴から完全版を復元済み(10並列 POST の負荷テストで再発しないことを確認)。
+- **テスト書き込みがオーナーの実データを上書き(2026-10-02→10-03 復旧)**: 実装検証の
+  curl テストを本物のクリップ版ファイルと effect_styles.json に向けて行っていたため、
+  オーナーが並行して付けていたエフェクト割当を2度上書きし(13:49「赤字」7件・
+  14:19「薄赤」7件)、全量置き換えの /effect_styles 掃除がスタイル定義も消した。
+  復旧: 割当は clip ジャーナルの 14:15:32 の全量から、「薄赤」の定義は 14:15 の
+  quick ASS のタグから #f9b9b9 を逆算して復元。「赤字」の正確な色は復元不能。
+  対策: ①effect_styles / style_sets に上書き前履歴(_history.jsonl・200件)を追加
+  ②オーナーの実データへのテスト書き込みを禁止(検証は build_ass をメモリ上で呼ぶ・
+  描画はフレーム抽出で確認する。保存系 API を叩く検証は専用のテスト版ファイルで行う)。
