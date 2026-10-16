@@ -21,19 +21,16 @@ printf '現在の IP: %s\n' "$IP"
 # (旧単数形 my_office_ip が残っていればリスト形式へ自動移行)
 sed -i.bak 's|^my_office_ip = "\(.*\)"|my_office_ips = ["\1"]|' "$TF/terraform.tfvars"
 if grep -q "\"$IP/32\"" "$TF/terraform.tfvars"; then
-  printf '%s は tfvars には既にある(手元の設定。AWS の SG に反映済みとは限らない)\n' "$IP/32"
+  :
 else
   sed -i.bak "/^my_office_ips/s|\]|, \"$IP/32\"]|" "$TF/terraform.tfvars"
   printf '# %s を追加 %s\n' "$IP/32" "$(date +%F)" >> "$TF/terraform.tfvars"
-  printf '%s を tfvars に追記した\n' "$IP/32"
 fi
-grep "^my_office_ips" "$TF/terraform.tfvars"
 
-# 何が変わるかを terraform より先に人間語で出す: tfvars(望む状態)と AWS 上の
-# 各 SG の 22 番許可(現状)を突き合わせ、SG ごとに「追加/削除される IP」を明示する。
-# tfvars にあっても前回の apply が完走していなければ SG には無い — その区別を見せる。
-DESIRED="$(grep '^my_office_ips' "$TF/terraform.tfvars" | grep -o '[0-9][0-9.]*/32' | LC_ALL=C sort)"
-
+# 知りたいことは1つ「この IP はどの SG で SSH を許可されているか」。
+# それを ✓/✗ の一覧で先に見せ、✗ の分だけが追加される、と1行で言い切る。
+# tfvars にあっても前回の apply が完走していなければ SG は ✗ のまま(手元の設定と
+# AWS の実態は別物)なので、判定は必ず AWS 側(describe-security-groups)で行う。
 sg_ssh_cidrs() {
   aws ec2 describe-security-groups --filters "Name=group-name,Values=$1" \
     --query "SecurityGroups[0].IpPermissions[?ToPort==\`22\`].IpRanges[].CidrIp" \
@@ -41,17 +38,26 @@ sg_ssh_cidrs() {
 }
 
 echo
-echo '==== SG の 22 番許可と tfvars の差分(これが適用される変更) ===='
+printf 'この IP(%s)から SSH できるか:\n' "$IP"
 PROD_DELTA=0
-for sg in supercom-prod-web-sg supercom-prod-lb-sg; do
-  LIVE="$(sg_ssh_cidrs "$sg")"
-  ADD="$(comm -23 <(printf '%s\n' "$DESIRED") <(printf '%s\n' "$LIVE") | tr '\n' ' ')"
-  DEL="$(comm -13 <(printf '%s\n' "$DESIRED") <(printf '%s\n' "$LIVE") | tr '\n' ' ')"
-  if [ -z "${ADD// /}" ] && [ -z "${DEL// /}" ]; then
-    printf '%s: 変更なし(tfvars と一致)\n' "$sg"
+for sg in supercom-prod-web-sg supercom-prod-lb-sg supercom-staging-web-sg supercom-staging-lb-sg; do
+  if sg_ssh_cidrs "$sg" | grep -q "^$IP/32$"; then
+    printf '  %b✓ 許可済み%b  %s\n' "$G" "$Z" "$sg"
   else
+    printf '  %b✗ 未許可%b    %s → これから追加する\n' "$R" "$Z" "$sg"
+    case "$sg" in supercom-prod-*) PROD_DELTA=1 ;; esac
+  fi
+done
+echo '  (既存の許可 IP は消さない。追加だけ)'
+
+# 例外(削除)が起きるときだけ注意を出す: prod の SG は terraform が tfvars の
+# リストに揃えるため、tfvars から消した IP は SG からも消える。通常は出ない。
+DESIRED="$(grep '^my_office_ips' "$TF/terraform.tfvars" | grep -o '[0-9][0-9.]*/32' | LC_ALL=C sort)"
+for sg in supercom-prod-web-sg supercom-prod-lb-sg; do
+  DEL="$(comm -13 <(printf '%s\n' "$DESIRED") <(sg_ssh_cidrs "$sg") | tr '\n' ' ')"
+  if [ -n "${DEL// /}" ]; then
     PROD_DELTA=1
-    printf '%s: 追加 [%s] 削除 [%s](記載のない既存 IP は維持)\n' "$sg" "${ADD% }" "${DEL% }"
+    printf '  %b注意%b: %s からは %sが削除される(tfvars に無いため)\n' "$Y" "$Z" "$sg" "$DEL"
   fi
 done
 
@@ -64,8 +70,11 @@ done
 # 期待する差分は env ごとに「0 to add, 2 to change, 0 to destroy」(web/lb の SG のみ・
 # update in-place)。それ以外が出たら no で止める(何も変わらない)。
 if [ "$PROD_DELTA" -eq 0 ]; then
-  echo 'prod の SG は tfvars と一致。terraform apply は飛ばす'
+  echo
+  echo 'prod の SG は変更不要。terraform は実行しない'
 else
+  echo
+  printf '%bこれから terraform を実行する。確認プロンプトが出たら、上の一覧どおり(追加だけ)なら yes。%b\n' "$Y" "$Z"
   for E in prod staging; do
     [ -f "$TF/envs/$E/terraform.tfstate" ] || continue
     terraform -chdir="$TF/envs/$E" apply \
