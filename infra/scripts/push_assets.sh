@@ -46,7 +46,21 @@ push_assets() {
     [ -d "$ws/$site/web-server/views/video" ] || { skip=$((skip+1)); continue; }
 
     loc="$( (cd "$ws/$site/web-server/views/video" && find . -type f | sort | xargs wc -c) 2>/dev/null | __norm_manifest )"
-    rem="$( ssh -o ConnectTimeout=8 "$host" "cd /src/$site/web-server/views/video && find . -type f | sort | xargs wc -c" 2>/dev/null | __norm_manifest )"
+
+    # 箱の一覧が「取れない」のと「空」なのは別物。ssh が落ちると出力が空になり、
+    # そのまま突き合わせると「箱が空=全部配り直し」に見える(2026-10-16 実測。
+    # IP 許可切れで ssh 不達のとき、使用中の動画が全件「手元のみ」と誤表示された)。
+    # 取れないときは判定せず FAIL で止める。
+    rem_rc=0
+    rem_raw="$( ssh -o BatchMode=yes -o ConnectTimeout=8 "$host" "cd /src/$site/web-server/views/video && find . -type f | sort | xargs wc -c" 2>/dev/null )" || rem_rc=$?
+    if [ "$rem_rc" -eq 255 ]; then
+      printf '%b\n' "${R}FAIL: $site: $host へ ssh 不達。箱の中身は不明(配らない)。IP 許可切れなら add_current_office_ip.sh${Z}"
+      fail=$((fail+1)); continue
+    elif [ "$rem_rc" -ne 0 ]; then
+      printf '%b\n' "${R}FAIL: $site: $host に /src/$site/web-server/views/video が無いか読めない(配らない)${Z}"
+      fail=$((fail+1)); continue
+    fi
+    rem="$( printf '%s\n' "$rem_raw" | __norm_manifest )"
 
     if [ -n "$loc" ] && [ "$loc" = "$rem" ]; then
       echo "$site: アセットは $host と一致(送るものなし)"
