@@ -42,22 +42,28 @@ push_assets() {
 
   ws="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")/../.." && pwd)"
 
+  # ssh 不達は site に依らないので、site ごとに同じ FAIL を繰り返さず最初に1回だけ判定する。
+  # 不達のまま進むと箱の一覧が空に見え「全部配り直し」と誤判定する(2026-10-16 実測)。
+  if ! ssh -o BatchMode=yes -o ConnectTimeout=8 "$host" true 2>/dev/null; then
+    printf '%b\n' "${R}FAIL: $host へ ssh 不達。アセットは確認も配布もできない${Z}"
+    echo   "  典型は IP 許可切れ。直すには: bash infra/scripts/add_current_office_ip.sh"
+    return 1
+  fi
+
   for site in "$@"; do
     [ -d "$ws/$site/web-server/views/video" ] || { skip=$((skip+1)); continue; }
 
     loc="$( (cd "$ws/$site/web-server/views/video" && find . -type f | sort | xargs wc -c) 2>/dev/null | __norm_manifest )"
 
-    # 箱の一覧が「取れない」のと「空」なのは別物。ssh が落ちると出力が空になり、
-    # そのまま突き合わせると「箱が空=全部配り直し」に見える(2026-10-16 実測。
-    # IP 許可切れで ssh 不達のとき、使用中の動画が全件「手元のみ」と誤表示された)。
-    # 取れないときは判定せず FAIL で止める。
+    # 箱の一覧が「取れない」のと「空」なのは別物。取れないまま突き合わせると
+    # 「箱が空=全部配り直し」に見えるため、取れないときは判定せず止める。
     rem_rc=0
     rem_raw="$( ssh -o BatchMode=yes -o ConnectTimeout=8 "$host" "cd /src/$site/web-server/views/video && find . -type f | sort | xargs wc -c" 2>/dev/null )" || rem_rc=$?
     if [ "$rem_rc" -eq 255 ]; then
-      printf '%b\n' "${R}FAIL: $site: $host へ ssh 不達。箱の中身は不明(配らない)。IP 許可切れなら add_current_office_ip.sh${Z}"
+      printf '%b\n' "${R}FAIL: $site: ssh が途中で切れた。配らない${Z}"
       fail=$((fail+1)); continue
     elif [ "$rem_rc" -ne 0 ]; then
-      printf '%b\n' "${R}FAIL: $site: $host に /src/$site/web-server/views/video が無いか読めない(配らない)${Z}"
+      printf '%b\n' "${R}FAIL: $site: 箱 /src/$site/web-server/views/video が無いか読めない。配らない${Z}"
       fail=$((fail+1)); continue
     fi
     rem="$( printf '%s\n' "$rem_raw" | __norm_manifest )"
@@ -83,7 +89,7 @@ push_assets() {
   done
 
   if [ "$fail" -gt 0 ]; then
-    printf '%b\n' "${R}FAIL: push_assets -> $host 失敗 $fail 件(配布 $sent 件・一致 $same 件)${Z}"
+    printf '%b\n' "${R}FAIL: push_assets: $host で $fail 件失敗。配布 $sent・一致 $same${Z}"
   fi
   return "$fail"
 }
