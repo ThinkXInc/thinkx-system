@@ -61,24 +61,113 @@ for sg in supercom-prod-web-sg supercom-prod-lb-sg; do
   fi
 done
 
-# apply は SG のみに限定(-target)+承認プロンプト必須。
+# apply は SG のみに限定(-target)+人間の yes 必須。
 # 2026-08-06 の事故: -auto-approve の全体 apply が AMI 追従の「インスタンス要再作成」
 # 差分を巻き込み、prod/staging の全4台を破壊再作成した。IP 追加で触ってよいのは
 # SG だけであり、それ以外の差分をこのスクリプトから適用してはならない。
-# -input=false を付けない: 付けると terraform は承認を聞けず「承認されなかった」として
-# apply を失敗させる(公式 docs)。差分があるときは必ず "Enter a value:" で yes を打つ。
-# 期待する差分は env ごとに「0 to add, 2 to change, 0 to destroy」(web/lb の SG のみ・
-# update in-place)。それ以外が出たら no で止める(何も変わらない)。
+#
+# terraform の生の plan は SG ルールをセット丸ごと -旧/+新 で出すため、どこが変わるのか
+# 読めない(2026-10-16 オーナー指摘)。plan をファイルに保存して JSON から人間語の差分に
+# 要約し、yes ならその保存した plan をそのまま適用する。見せた内容と適用される内容が
+# 同一であることは plan ファイルが保証する。承認は terraform のプロンプトではなく
+# このスクリプト自身の yes/no で取る。
 if [ "$PROD_DELTA" -eq 0 ]; then
   echo
   echo 'prod の SG は変更不要。terraform は実行しない'
 else
-  echo
-  printf '%bこれから terraform を実行する。確認プロンプトが出たら、上の一覧どおり(追加だけ)なら yes。%b\n' "$Y" "$Z"
   for E in prod staging; do
     [ -f "$TF/envs/$E/terraform.tfstate" ] || continue
-    terraform -chdir="$TF/envs/$E" apply \
-      -target=aws_security_group.web -target=aws_security_group.lb
+    PLANF="$(mktemp)"; PLANJ="$(mktemp)"
+    terraform -chdir="$TF/envs/$E" plan -input=false \
+      -target=aws_security_group.web -target=aws_security_group.lb \
+      -out="$PLANF" > /dev/null
+    terraform -chdir="$TF/envs/$E" show -json "$PLANF" > "$PLANJ"
+    echo
+    printf '==== これから適用される変更 %s ====\n' "$E"
+    SUMRC=0
+    python3 - "$PLANJ" <<'PY' || SUMRC=$?
+import json, sys
+
+def ports(r):
+    if r.get("protocol") in ("-1", None):
+        return "全ポート"
+    f, t = r.get("from_port"), r.get("to_port")
+    return f"ポート{f}" if f == t else f"ポート{f}-{t}"
+
+def key(r):
+    return (r.get("protocol"), r.get("from_port"), r.get("to_port"))
+
+def diff_rules(before, after, label, out):
+    bmap, amap = {}, {}
+    for r in before or []:
+        bmap.setdefault(key(r), r)
+    for r in after or []:
+        amap.setdefault(key(r), r)
+    for k, ar in amap.items():
+        br = bmap.get(k)
+        if br is None:
+            continue
+        for field, word in (("cidr_blocks", "IP"), ("security_groups", "SG")):
+            add = sorted(set(ar.get(field) or []) - set(br.get(field) or []))
+            dele = sorted(set(br.get(field) or []) - set(ar.get(field) or []))
+            if add:
+                out.append(f"  {label}{ports(ar)}: 許可{word}に追加 {' '.join(add)}")
+            if dele:
+                out.append(f"  {label}{ports(ar)}: 許可{word}から削除 {' '.join(dele)}")
+    bonly = [r for k, r in bmap.items() if k not in amap]
+    aonly = [r for k, r in amap.items() if k not in bmap]
+    for ar in list(aonly):
+        m = [br for br in bonly if (br.get("description") or "") == (ar.get("description") or "")]
+        if m:
+            br = m[0]
+            bonly.remove(br)
+            aonly.remove(ar)
+            d = ar.get("description") or ""
+            out.append(f"  {label}{ports(br)} → {ports(ar)} に変更" + (f": {d}" if d else ""))
+    for ar in aonly:
+        allow = " ".join((ar.get("cidr_blocks") or []) + (ar.get("security_groups") or []))
+        out.append(f"  {label}ルール追加: {ports(ar)} 許可 {allow}")
+    for br in bonly:
+        out.append(f"  {label}ルール削除: {ports(br)}")
+
+d = json.load(open(sys.argv[1]))
+changed = 0
+for rc in d.get("resource_changes", []):
+    ch = rc.get("change") or {}
+    actions = set(ch.get("actions") or [])
+    if actions & {"create", "delete"}:
+        changed += 1
+        print(f"  注意: {rc.get('address')} の作成/削除が含まれる。想定外なので no で止めて調べること")
+        continue
+    if "update" not in actions:
+        continue
+    before, after = ch.get("before") or {}, ch.get("after") or {}
+    name = ((after.get("tags") or {}).get("Name")) or after.get("name") or rc.get("address")
+    out = []
+    diff_rules(before.get("ingress"), after.get("ingress"), "", out)
+    diff_rules(before.get("egress"), after.get("egress"), "外向き ", out)
+    if out:
+        changed += 1
+        print(f"{name}:")
+        print("\n".join(out))
+sys.exit(3 if changed else 0)
+PY
+    if [ "$SUMRC" -eq 0 ]; then
+      echo '変更なし'
+      rm -f "$PLANF" "$PLANJ"
+      continue
+    elif [ "$SUMRC" -ne 3 ]; then
+      echo '要約に失敗したので terraform の生の差分を出す:'
+      terraform -chdir="$TF/envs/$E" show "$PLANF"
+    fi
+    printf 'この変更を適用するか (yes/no): '
+    read -r ANS
+    if [ "$ANS" = "yes" ]; then
+      terraform -chdir="$TF/envs/$E" apply "$PLANF"
+    else
+      echo '適用しない。何も変わっていない'
+    fi
+    rm -f "$PLANF" "$PLANJ"
   done
 fi
 
