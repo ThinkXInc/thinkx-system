@@ -21,12 +21,40 @@ printf '現在の IP: %s\n' "$IP"
 # (旧単数形 my_office_ip が残っていればリスト形式へ自動移行)
 sed -i.bak 's|^my_office_ip = "\(.*\)"|my_office_ips = ["\1"]|' "$TF/terraform.tfvars"
 if grep -q "\"$IP/32\"" "$TF/terraform.tfvars"; then
-  printf '%s は既に許可リストにある\n' "$IP/32"
+  printf '%s は tfvars には既にある(手元の設定。AWS の SG に反映済みとは限らない)\n' "$IP/32"
 else
   sed -i.bak "/^my_office_ips/s|\]|, \"$IP/32\"]|" "$TF/terraform.tfvars"
   printf '# %s を追加 %s\n' "$IP/32" "$(date +%F)" >> "$TF/terraform.tfvars"
+  printf '%s を tfvars に追記した\n' "$IP/32"
 fi
 grep "^my_office_ips" "$TF/terraform.tfvars"
+
+# 何が変わるかを terraform より先に人間語で出す: tfvars(望む状態)と AWS 上の
+# 各 SG の 22 番許可(現状)を突き合わせ、SG ごとに「追加/削除される IP」を明示する。
+# tfvars にあっても前回の apply が完走していなければ SG には無い — その区別を見せる。
+DESIRED="$(grep '^my_office_ips' "$TF/terraform.tfvars" | grep -o '[0-9][0-9.]*/32' | LC_ALL=C sort)"
+
+sg_ssh_cidrs() {
+  aws ec2 describe-security-groups --filters "Name=group-name,Values=$1" \
+    --query "SecurityGroups[0].IpPermissions[?ToPort==\`22\`].IpRanges[].CidrIp" \
+    --output text 2>/dev/null | tr '\t' '\n' | grep -v '^None$' | LC_ALL=C sort || true
+}
+
+echo
+echo '==== SG の 22 番許可と tfvars の差分(これが適用される変更) ===='
+PROD_DELTA=0
+for sg in supercom-prod-web-sg supercom-prod-lb-sg; do
+  LIVE="$(sg_ssh_cidrs "$sg")"
+  ADD="$(comm -23 <(printf '%s\n' "$DESIRED") <(printf '%s\n' "$LIVE") | tr '\n' ' ')"
+  DEL="$(comm -13 <(printf '%s\n' "$DESIRED") <(printf '%s\n' "$LIVE") | tr '\n' ' ')"
+  if [ -z "${ADD// /}" ] && [ -z "${DEL// /}" ]; then
+    printf '%s: 変更なし(tfvars と一致)\n' "$sg"
+  else
+    PROD_DELTA=1
+    printf '%s: 追加 [%s] 削除 [%s](記載のない既存 IP は維持)\n' "$sg" "${ADD% }" "${DEL% }"
+  fi
+done
+
 # apply は SG のみに限定(-target)+承認プロンプト必須。
 # 2026-08-06 の事故: -auto-approve の全体 apply が AMI 追従の「インスタンス要再作成」
 # 差分を巻き込み、prod/staging の全4台を破壊再作成した。IP 追加で触ってよいのは
@@ -35,17 +63,25 @@ grep "^my_office_ips" "$TF/terraform.tfvars"
 # apply を失敗させる(公式 docs)。差分があるときは必ず "Enter a value:" で yes を打つ。
 # 期待する差分は env ごとに「0 to add, 2 to change, 0 to destroy」(web/lb の SG のみ・
 # update in-place)。それ以外が出たら no で止める(何も変わらない)。
-for E in prod staging; do
-  [ -f "$TF/envs/$E/terraform.tfstate" ] || continue
-  terraform -chdir="$TF/envs/$E" apply \
-    -target=aws_security_group.web -target=aws_security_group.lb
-done
+if [ "$PROD_DELTA" -eq 0 ]; then
+  echo 'prod の SG は tfvars と一致。terraform apply は飛ばす'
+else
+  for E in prod staging; do
+    [ -f "$TF/envs/$E/terraform.tfstate" ] || continue
+    terraform -chdir="$TF/envs/$E" apply \
+      -target=aws_security_group.web -target=aws_security_group.lb
+  done
+fi
 
 # staging: SG の 22 番に現在 IP を追加(既存の許可は残す)
 for sg in supercom-staging-web-sg supercom-staging-lb-sg; do
   gid="$(aws ec2 describe-security-groups --filters "Name=group-name,Values=$sg" --query "SecurityGroups[0].GroupId" --output text)"
-  aws ec2 authorize-security-group-ingress --group-id "$gid" --protocol tcp --port 22 --cidr "$IP/32" > /dev/null 2>&1 || true
-  printf '%s: %s/32 を許可\n' "$sg" "$IP"
+  if sg_ssh_cidrs "$sg" | grep -q "^$IP/32$"; then
+    printf '%s: %s/32 は既に許可済み(変更なし)\n' "$sg" "$IP"
+  else
+    aws ec2 authorize-security-group-ingress --group-id "$gid" --protocol tcp --port 22 --cidr "$IP/32" > /dev/null
+    printf '%s: %s/32 を追加した\n' "$sg" "$IP"
+  fi
 done
 
 # インスタンスを作り直すとホスト鍵が変わり(2026-08-06 の全損復旧で実際に変わった)、
