@@ -30,14 +30,14 @@ deploy_staging() {
   # ファイルを指して 404 になる。変更が無ければ何も送らないので、毎回呼んで差し支えない。
   banner "アセット(views/video)を確かめる"
   bash infra/scripts/push_assets.sh supercom-web1-stg thinkx transformism kazukiotsukacom ||
-    { printf '%b\n' "${R}FAIL: アセットの配布に失敗しました。サーバーには触れていません${Z}"; return 1; }
+    { printf '%b\n' "${R}ここで停止。サーバーはまだ何も変わっていない。上の FAIL の原因を直して、同じコマンドをもう一度${Z}"; return 1; }
 
   # podcast の data は例外規則の別スクリプトで配る(D-52 改定 2026-09-17)。
   # 引数なし = ローカル data/ 全体をサーバーへ完全同期(削除なし・edit/ は git が正)。
   # デプロイ = commit されたものを出す操作なので、これが git commit との連動点
   banner "アセット(podcast データ)を確かめる"
   bash infra/scripts/push_assets_podcast.sh staging ||
-    { printf '%b\n' "${R}FAIL: podcast データの配布に失敗しました。サーバーには触れていません${Z}"; return 1; }
+    { printf '%b\n' "${R}ここで停止。サーバーはまだ何も変わっていない。上の FAIL の原因を直して、同じコマンドをもう一度${Z}"; return 1; }
 
   # 実行する本体は origin/develop から取り出して ssh の標準入力で渡す。サーバーの
   # checkout にあるファイルを使うと、そのファイル自体をこれから配る回に「まだ無い」で止まる

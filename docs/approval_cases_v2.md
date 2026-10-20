@@ -458,6 +458,19 @@ ask と deny のルールは hook の allow に勝つ。
 - **同型カウント**: dev サーバー停止・起動は M・V・AL・AO で **4 回目**(スクリプト未着手)。埋め込みコードの切り出しは R・AO で 2 回目
   (R の裁定「次に出たら独立ファイル化」に到達)。
 
+### AP. k00bot2 の生死確認(本番 web1 の cron/log + data repo の push 履歴 + 投稿の公開確認)
+
+- **生**: ①`ssh -o ConnectTimeout=15 supercom-web1 'tail -80 /src/thinkx-system-k00bot2/k00bot2/data/log_daily.txt'`(+ ls / cat /etc/cron.d/k00bot2)
+  ②`gh api repos/kazukiotsuka/k00bot2/commits --jq ...`(sync push の日付一覧)③`curl https://cdn.syndication.twimg.com/tweet-result?id=<x_post_id>&token=a`(投稿が X 上で公開されているかの無認証確認)
+- **引き金**: `ssh`(ask・本番)・`curl` 外部(ask)。`gh api` は読み取り。
+- **クラス**: 観測(オーナー報告「K00BOT が止まっている」の切り分け。読み取りのみ)。
+- **正しい形**: k00bot2 専用の生死観測 wrapper(例 `k00bot_check.py`): (a) web1 の log_daily.txt 末尾と /etc/cron.d/k00bot2 の有無、
+  (b) data repo の直近 sync 日付と抜け(gh api・固定 repo)、(c) 最新 x_post_id の syndication 公開確認、を 1 コマンドで。
+  パス・repo 名は固定リテラル。前回(2026-08-12)と今回で同じ切り分けを 2 回手書きしており、症状の定番
+  (cron 消失 / クレジット枯渇 / 403)ごとに判定を印字できる。
+- **残るゲート**: なし。
+- **同型カウント**: 本番 ssh 観測 **6 回目**(Q・T・U・AE・AF・AP)。k00bot2 生死確認としては 2026-08-12(v2 収録外)と合わせ実質 2 回目。
+
 ---
 
 ## 状態と次の一手(2026-10-01)

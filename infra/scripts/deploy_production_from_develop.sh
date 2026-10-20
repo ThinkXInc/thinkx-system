@@ -100,9 +100,10 @@ deploy_production_from_develop() {
   # 変更が無ければ何も送らないので、毎回呼んで差し支えない。
   banner "アセット(views/video)を確かめる"
   if ! bash infra/scripts/push_assets.sh supercom-web1 thinkx transformism kazukiotsukacom; then
-    printf '%b\n' "${R}FAIL: アセットの配布に失敗しました${Z}"
-    printf '%b\n' "${Y}  release の凍結と production への取り込みは終わっています。${Z}"
-    printf '%b\n' "${Y}  サーバーにはまだ触れていません。原因を直して同じコマンドをもう一度実行してください。${Z}"
+    echo
+    printf '%b\n' "${R}ここで停止。サーバーはまだ何も変わっていない${Z}"
+    printf '%b\n' "${Y}  済み: release の凍結・production への取り込み${Z}"
+    printf '%b\n' "${Y}  次に: 上の FAIL の原因を直して、同じコマンドをもう一度${Z}"
     return 1
   fi
 
@@ -110,9 +111,10 @@ deploy_production_from_develop() {
   # 引数なし = ローカル data/ 全体を本番へ完全同期(削除なし・edit/ は git が正)
   banner "アセット(podcast データ)を確かめる"
   if ! bash infra/scripts/push_assets_podcast.sh prod; then
-    printf '%b\n' "${R}FAIL: podcast データの配布に失敗しました${Z}"
-    printf '%b\n' "${Y}  release の凍結と production への取り込みは終わっています。${Z}"
-    printf '%b\n' "${Y}  サーバーにはまだ触れていません。原因を直して同じコマンドをもう一度実行してください。${Z}"
+    echo
+    printf '%b\n' "${R}ここで停止。サーバーはまだ何も変わっていない${Z}"
+    printf '%b\n' "${Y}  済み: release の凍結・production への取り込み・views/video の配布${Z}"
+    printf '%b\n' "${Y}  次に: 上の FAIL の原因を直して、同じコマンドをもう一度${Z}"
     return 1
   fi
 
