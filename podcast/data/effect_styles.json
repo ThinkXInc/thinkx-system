@@ -7,6 +7,25 @@
           "#f9b9b9"
         ]
       }
+    },
+    {
+      "name": "赤字",
+      "props": {
+        "color": [
+          "#ff6666"
+        ],
+        "outline": [
+          "#000000"
+        ],
+        "size_pct": 13.333333333333332,
+        "outline_w": 11.0,
+        "shadow_x": 0.0,
+        "shadow_y": 0.0,
+        "shadow_blur": 0.0,
+        "shadow_color": "#000000",
+        "font": "ヒラギノ角ゴシック W6.ttc",
+        "bold": true
+      }
     }
   ]
 }

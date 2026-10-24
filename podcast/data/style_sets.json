@@ -1,4 +1,111 @@
 {
-  "sets": [],
-  "last_selected": ""
+  "sets": [
+    {
+      "name": "A",
+      "title": {
+        "color": [
+          "#ffffff"
+        ],
+        "outline": [
+          "#000000"
+        ],
+        "outline_w": 0,
+        "shadow_x": 0,
+        "shadow_y": 0,
+        "shadow_blur": 0,
+        "shadow_color": "#000000",
+        "font": "ヒラギノ角ゴシック W3.ttc",
+        "bold": true,
+        "size_pct": 11.481481481481481,
+        "width_pct": 85,
+        "x_pct": 50,
+        "y_pct": 23.4,
+        "bg_on": false,
+        "bg_color": "#000000",
+        "bg_pad": 24,
+        "bg_pad_v": 8,
+        "bg_radius": 16,
+        "bg_alpha": 70
+      },
+      "sub": {
+        "color": [
+          "#ffffff"
+        ],
+        "outline": [
+          "#000000"
+        ],
+        "outline_w": 11,
+        "shadow_x": 0,
+        "shadow_y": 0,
+        "shadow_blur": 0,
+        "shadow_color": "#000000",
+        "font": "ヒラギノ角ゴシック W6.ttc",
+        "bold": true,
+        "size_pct": 12.777777777777777,
+        "width_pct": 85,
+        "x_pct": 50,
+        "y_pct": 50,
+        "bg_on": false,
+        "bg_color": "#ffffff",
+        "bg_pad": 10,
+        "bg_pad_v": 8,
+        "bg_radius": 6,
+        "bg_alpha": 60
+      }
+    },
+    {
+      "name": "A(タイトル黒)",
+      "title": {
+        "color": [
+          "#000000"
+        ],
+        "outline": [
+          "#000000"
+        ],
+        "outline_w": 0,
+        "shadow_x": 0,
+        "shadow_y": 0,
+        "shadow_blur": 0,
+        "shadow_color": "#000000",
+        "font": "ヒラギノ角ゴシック W3.ttc",
+        "bold": true,
+        "size_pct": 11.481481481481481,
+        "width_pct": 85,
+        "x_pct": 50,
+        "y_pct": 23.4,
+        "bg_on": false,
+        "bg_color": "#000000",
+        "bg_pad": 24,
+        "bg_pad_v": 8,
+        "bg_radius": 16,
+        "bg_alpha": 70
+      },
+      "sub": {
+        "color": [
+          "#ffffff"
+        ],
+        "outline": [
+          "#000000"
+        ],
+        "outline_w": 11,
+        "shadow_x": 0,
+        "shadow_y": 0,
+        "shadow_blur": 0,
+        "shadow_color": "#000000",
+        "font": "ヒラギノ角ゴシック W6.ttc",
+        "bold": true,
+        "size_pct": 12.777777777777777,
+        "width_pct": 85,
+        "x_pct": 50,
+        "y_pct": 50,
+        "bg_on": false,
+        "bg_color": "#ffffff",
+        "bg_pad": 10,
+        "bg_pad_v": 8,
+        "bg_radius": 6,
+        "bg_alpha": 60
+      }
+    }
+  ],
+  "last_selected": "A(タイトル黒)"
 }
