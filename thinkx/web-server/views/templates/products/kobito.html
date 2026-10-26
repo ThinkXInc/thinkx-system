@@ -385,8 +385,7 @@
     .about-kobito-columns .check-item-body p { display: none; }
     .about-kobito-columns .about-kobito-figure { flex: 1; min-width: 0; margin-top: 10px; }
     .about-kobito-summary { margin-top: 26px; font-size: 16.5px; font-weight: 900; color: var(--ink); line-height: 1.8; }
-    .professional-header { display: flex; align-items: flex-start; gap: 26px; }
-    .professional-header .story-heading { flex: 0 0 auto; }
+    .professional-side { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
     .balloon { position: relative; background: #fff; border: 1px solid #e2e5ec; box-shadow: 0 6px 18px rgba(20,30,60,.10); border-radius: 8px; padding: 12px 18px; font-size: 13.5px; color: var(--ink); margin-top: 6px; }
     .balloon::after { content: ""; position: absolute; left: 30px; bottom: -10px; border: 10px solid transparent; border-top-color: #fff; border-bottom: 0; }
     .professional-columns { display: grid; grid-template-columns: 1.25fr 1fr; gap: 26px; margin-top: 20px; }
@@ -464,7 +463,6 @@
       .knowhow-columns { flex-direction: column; }
       .case-study-columns { flex-direction: column; }
       .day-one-columns { flex-direction: column; }
-      .professional-header { flex-direction: column; }
       .professional-columns { grid-template-columns: 1fr; }
       .phone-mock { flex: none; width: 260px; margin: 0 auto; }
       .case-study-text { flex: none; }
@@ -473,13 +471,14 @@
       .bigquote.mid { font-size: 17px; }
       .hero-inner { padding: 18px 20px 26px 20px; display: flex; flex-direction: column; }
       .hero-right { display: contents; }
-      .hero-catchphrase { order: -2; font-size: 13px; }
-      .hero-top { order: -1; margin-top: 12px; }
-      .hero-badge { order: 1; align-self: flex-start; margin-top: 14px; }
+      .hero-catchphrase { order: -2; font-size: 14px; }
+      .hero-top { order: -1; margin-top: 18px; }
+      .nav-uses { display: none; }
+      .hero-badge { order: 1; align-self: flex-start; margin-top: 24px; font-size: 15px; padding: 4px 16px; }
       .hero-main { order: 2; }
-      .hero-footer { order: 3; margin-top: 30px; }
+      .hero-footer { order: 3; margin-top: 34px; }
       .floating-hexagons { order: 4; }
-      .hero-top { flex-direction: column; gap: 10px; }
+      .hero-top { flex-direction: column; gap: 14px; }
       .nav ul { gap: 14px; padding-top: 0; overflow-x: auto; }
       .nav a { font-size: 13px; }
       .hero-brand-row { gap: 14px; }
@@ -494,7 +493,7 @@
       .hero-badge { font-size: 13px; padding: 3px 14px; }
       .hero-message { font-size: 12.5px; padding: 6px 12px; }
       .floating-hexagons { display: none; }
-      .hero-cta .btn { flex: 1 1 100%; text-align: center; padding: 12px 10px; }
+      .hero-cta .btn { flex: 1 1 100%; text-align: center; padding: 15px 10px; }
       .page { padding: 0 20px 70px 20px; }
       .section { margin-top: 115px; }
       .section.price-top { margin-top: 56px; }
@@ -508,8 +507,9 @@
       .contact { padding: 30px 20px; }
       .faq summary { font-size: 15px; }
       /* モバイルの可読性: 見出しの折り返しと行間・余白のリズム(PC版は不変) */
-      .hero-title { font-size: 19px; line-height: 1.7; }
-      .hero-base { font-size: 14px; }
+      .hero-title { font-size: 30px; line-height: 1.55; margin-top: 20px; }
+      .hero-base { font-size: 17px; margin-top: 28px; }
+      .hero-cta { margin-top: 32px; gap: 16px; }
       .story-heading { font-size: 23px; line-height: 1.65; margin-top: 10px; }
       .section-title { font-size: 23px; line-height: 1.65; }
       .story-lead, .section-lead { line-height: 2.05; margin-top: 14px; }
@@ -543,7 +543,7 @@
         </div>
         <nav class="nav">
           <ul>
-            <li><a href="#uses">使いみち</a></li>
+            <li class="nav-uses"><a href="#uses">使いみち</a></li>
             <li><a href="#price">プランと価格</a></li>
             <li><a href="#flow">導入の流れ</a></li>
             <li><a href="#faq">FAQ</a></li>
@@ -676,10 +676,7 @@
     <!-- ↓↓↓↓ プロの現場では(資料p.5) ↓↓↓↓ -->
     <section class="section" id="professional">
       <span class="section-badge">プロの現場では</span>
-      <div class="professional-header">
-        <h2 class="story-heading">プロは、AIの設計に任せません。</h2>
-        <div class="balloon">エージェントに自由にシステムを作らせるのは、<br>複数の大工が<span class="emphasis">建築家なしで自由にビルを建てる</span>のに似ています。</div>
-      </div>
+      <h2 class="story-heading">プロは、AIの設計に任せません。</h2>
       <div class="professional-columns">
         <div class="check-list">
           <div class="check-item">
@@ -704,9 +701,12 @@
             </div>
           </div>
         </div>
-        <div class="green-box">
-          <p class="green-box-title">あなたの仕事に置き換えると</p>
-          <p class="green-box-body">自分の仕事の「考えるステップ」を全部文書化してAIに渡せば、AIはそのとおりに仕事をします。その<span class="green-emphasis">文書化済みのプロのノウハウ</span>が、システム開発の世界にはすでに存在します。問題は、それを持っているかどうかです。</p>
+        <div class="professional-side">
+          <div class="balloon">エージェントに自由にシステムを作らせるのは、<br>複数の大工が<span class="emphasis">建築家なしで自由にビルを建てる</span>のに似ています。</div>
+          <div class="green-box">
+            <p class="green-box-title">あなたの仕事に置き換えると</p>
+            <p class="green-box-body">自分の仕事の「考えるステップ」を全部文書化してAIに渡せば、AIはそのとおりに仕事をします。その<span class="green-emphasis">文書化済みのプロのノウハウ</span>が、システム開発の世界にはすでに存在します。問題は、それを持っているかどうかです。</p>
+          </div>
         </div>
       </div>
       <div class="navy-band">
