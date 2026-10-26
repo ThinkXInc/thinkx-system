@@ -63,13 +63,13 @@
         "ar": "منتجاتنا"
     },
     "menu_content_kobito": {
-        "ja": "KOBITOサーバークラウド",
-        "en": "KOBITO Server Cloud",
-        "zh": "KOBITO Server Cloud",
-        "es": "KOBITO Server Cloud",
-        "ru": "KOBITO Server Cloud",
-        "fr": "KOBITO Server Cloud",
-        "ar": "KOBITO Server Cloud"
+        "ja": "ThinkXエージェントシステムベースキット(KOBITO)",
+        "en": "ThinkX Agent System Base Kit (KOBITO)",
+        "zh": "ThinkX Agent System Base Kit (KOBITO)",
+        "es": "ThinkX Agent System Base Kit (KOBITO)",
+        "ru": "ThinkX Agent System Base Kit (KOBITO)",
+        "fr": "ThinkX Agent System Base Kit (KOBITO)",
+        "ar": "ThinkX Agent System Base Kit (KOBITO)"
     },
     "menu_title_blog": {
         "ja": "ブログニュース",

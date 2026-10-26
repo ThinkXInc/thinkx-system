@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-{# KOBITO サーバークラウド LP。イベントページと同じく base.html / header / footer / main.css に依存しない独立ページ。 #}
+{# ThinkXエージェントシステムベースキット(KOBITO) LP。イベントページと同じく base.html / header / footer / main.css に依存しない独立ページ。 #}
 {# 文言の正本は infra/assets/KOBITO/documents/04_機能説明資料_v6.pdf・05_価格説明資料_v2.pdf と #}
 {# infra/docs/discussion/discussion_260903_KobitoSalesPlanning.md(オーナー発言)。主語は「運用」(構築・移行は導入役務)。 #}
 {# ヘッダーは写真+一言+ボタンのみ(オーナー指示 2026-09-04: コピー文はヘッダーに要らない)。価格はヘッダー直後。 #}
@@ -8,10 +8,10 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8">
-  <title>KOBITO サーバークラウド ─ サーバーの“コビト”にスマホで指示。エンジニアなしで自社サイトを運用する</title>
+  <title>ThinkXエージェントシステムベースキット(KOBITO) ─ サーバーの“コビト”にスマホで直接指示。</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="ClaudeCodeベース。AI開発10年のThinkXが自ら開発し使用するWeb運用エージェントのデフォルトセットアップパッケージ。スマホで指示するだけでページ追加・更新・公開。環境はお客様のもの。Lite 78万円から。">
-  <meta name="keywords" content="KOBITO, コビト, サーバークラウド, ThinkX, Claude Code, サイト運用, AIエージェント, ホームページ更新">
+  <meta name="description" content="ClaudeCodeベース。プロ仕様のエージェントシステムベースキット。AI企業が10年蓄積してきた設計基盤が今すぐ手に入る。スマホで指示するだけでページ追加・更新・公開。環境はお客様のもの。Lite 78万円から。">
+  <meta name="keywords" content="KOBITO, コビト, エージェントシステムベースキット, ThinkX, Claude Code, サイト運用, AIエージェント, 社内システム, ホームページ更新">
   <meta name="format-detection" content="telephone=no">
 
   {# favicon は KOBITO ロゴ(KOBITOhT.png)の文字を除いた絵の部分(箱+コビト全体。オーナー選択 2026-09-06: 顔だけ案より全体案)。/favicon.ico は nginx が thinkx 本体のものを返すので使わない。 #}
@@ -23,13 +23,13 @@
 
   <!-- Open Graph -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="KOBITO サーバークラウド ─ サーバーの“コビト”にスマホで指示。">
-  <meta property="og:description" content="AI開発10年のThinkXが自ら開発し使用するWeb運用エージェントのデフォルトセットアップパッケージ。スマホで指示するだけでページ追加・更新・公開。Lite 78万円から。">
+  <meta property="og:title" content="ThinkXエージェントシステムベースキット(KOBITO) ─ サーバーの“コビト”にスマホで直接指示。">
+  <meta property="og:description" content="プロ仕様のエージェントシステムベースキット。AI企業が10年蓄積してきた設計基盤が今すぐ手に入る。スマホで指示するだけでページ追加・更新・公開。Lite 78万円から。">
   <meta property="og:url" content="https://thinkxinc.com/products/KOBITO">
   <meta property="og:image" content="https://thinkxinc.com/img/products/KOBITO/banner.jpg">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="KOBITO サーバークラウド ─ サーバーの“コビト”にスマホで指示。">
-  <meta name="twitter:description" content="AI開発10年のThinkXが自ら開発し使用するWeb運用エージェントのデフォルトセットアップパッケージ。スマホで指示するだけでページ追加・更新・公開。Lite 78万円から。">
+  <meta name="twitter:title" content="ThinkXエージェントシステムベースキット(KOBITO) ─ サーバーの“コビト”にスマホで直接指示。">
+  <meta name="twitter:description" content="プロ仕様のエージェントシステムベースキット。AI企業が10年蓄積してきた設計基盤が今すぐ手に入る。スマホで指示するだけでページ追加・更新・公開。Lite 78万円から。">
   <meta name="twitter:image" content="https://thinkxinc.com/img/products/KOBITO/banner.jpg">
 
   <!-- Google Tag Manager -->
@@ -67,59 +67,79 @@
     a { color: var(--blue); }
 
     /* ---- メニュー: 写真の上に透過で重ねる(バーは置かない)。該当節へ smooth scroll ---- */
-    .hero-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 30px; }
-    .nav ul { list-style: none; display: flex; gap: 22px; white-space: nowrap; padding-top: 14px; }
-    .nav a { color: #fff; font-size: 14px; font-weight: 700; text-decoration: none; letter-spacing: .02em; }
-    .nav a:hover { opacity: .8; }
+    .hero-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 30px; flex-wrap: wrap; row-gap: 10px; }
+    .nav { flex: 1; min-width: 0; }
+    .nav ul { list-style: none; display: flex; gap: 22px; white-space: nowrap; padding-top: 14px; flex-wrap: wrap; row-gap: 6px; justify-content: flex-end; }
+    .nav a { color: var(--navy); font-size: 14px; font-weight: 700; text-decoration: none; letter-spacing: .02em; transition: color 0.3s cubic-bezier(0.65, 0, 0.34, 1); }
+    .nav a:hover { color: var(--blue); }
 
-    /* ---- ヘッダー: 写真 + バナーのコピー + ボタン ---- */
-    /* 高さは NNTM と同じ vh 指定。aspect-ratio + max-height は制約が幅へ移って横長画面で右が白くなるので使わない */
+    /* ---- ヘッダー: 製品資料の表紙と同じ要素・レイアウト(白背景・写真なし) ---- */
     .hero {
       position: relative;
-      display: flex;
       width: 100%;
-      height: 80vh;
-      min-height: 560px;
-      background: url("/img/products/KOBITO/beach.jpg") center 28% / cover no-repeat;
-      overflow: hidden;
-    }
-    .hero::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, rgba(255,255,255,.10) 0%, rgba(0,0,0,0) 35%, rgba(0,0,0,.55) 100%);
+      background: #fff;
+      border-bottom: 1px solid #ececec;
     }
     .hero-inner {
-      position: relative;
-      z-index: 1;
-      flex: 1;
       max-width: 1100px;
       width: 100%;
       margin: 0 auto;
-      padding: 34px 40px 56px 40px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      padding: 26px 40px 46px 40px;
     }
-    .hero-logo { width: 300px; }
-    .hero-word { color: #ffffff; max-width: 1020px; }
-    .hero-base { font-size: 25px; font-weight: 700; letter-spacing: .04em; }
-    .hero-title { font-size: 42px; font-weight: 800; line-height: 1.3; letter-spacing: .01em; margin-top: 4px; }
-    .hero-sub { margin-top: 12px; font-size: 25px; font-weight: 600; line-height: 1.5; }
-    .hero-cta { margin-top: 28px; display: flex; gap: 14px; flex-wrap: wrap; }
+    .hero-brand-row { display: flex; align-items: center; gap: 28px; }
+    .hero-logo { width: 263px; }
+    .hero-subsidy-logo { width: 215px; }
+    .hero-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; margin-top: 2px; }
+    .hero-badge { display: inline-block; background: #111; color: #fff; padding: 5px 20px; font-size: 20px; font-weight: 700; letter-spacing: .04em; }
+    .hero-catch { font-size: 17px; font-weight: 800; color: var(--navy); }
+    .hero-question {
+      display: none;
+      background: #eef1f6;
+      color: var(--ink);
+      font-weight: 800;
+      font-size: 18px;
+      line-height: 1.5;
+      padding: 10px 20px;
+      border-radius: 4px;
+      margin-top: 2px;
+    }
+    .hero-main { display: flex; align-items: center; gap: 24px; margin-top: 28px; }
+    .hero-word { color: var(--ink); flex: 1; min-width: 0; }
+    .hero-base { font-size: 20px; font-weight: 800; letter-spacing: .02em; }
+    .hero-title { font-size: 35px; font-weight: 800; line-height: 1.5; letter-spacing: .01em; margin-top: 22px; }
+    .hero-illustration { width: 186px; flex: 0 0 auto; }
+    .hero-footer { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 71px; }
+    .hero-message { background: #111; color: #fff; font-weight: 800; font-size: 21px; line-height: 1.55; padding: 8px 18px; }
+    /* ThinkX 六角形バッジ: CSS 描画・スクロール追従(fixed)・2つが別々にゆらぐ */
+    .floating-hexagons { position: fixed; right: 18px; bottom: 16px; width: 205px; height: 178px; z-index: 50; pointer-events: none; text-decoration: none; }
+    .hexagon-wrap { position: absolute; will-change: transform; display: block; }
+    .hexagon { pointer-events: auto; cursor: pointer; }
+    .hexagon-wrap.large { left: 0; top: 0; }
+    .hexagon-wrap.small { right: 0; bottom: 0; }
+    .hexagon { clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .hexagon-large { width: 148px; height: 170px; background: linear-gradient(100deg, #7c5ea8, #a254a1); color: #fff; }
+    .hexagon-large .hexagon-text { font-size: 29px; font-weight: 500; letter-spacing: .01em; }
+    .hexagon-large .hexagon-subtext { font-size: 13px; font-weight: 500; }
+    .hexagon-small { width: 78px; height: 88px; background: linear-gradient(100deg, #b0529f, #d1509c); }
+    .hexagon-small img { width: 48px; }
+    .hero .btn-ghost { background: #fff; color: var(--navy); border: 1px solid #c9ccd4; }
+    .hero .btn-ghost:hover { background: #f4f5f8; color: var(--navy); border-color: #9aa1b0; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); }
+    .hero-cta { margin-top: 36px; display: flex; gap: 14px; flex-wrap: wrap; }
     .btn {
       display: inline-block;
       padding: 7px 34px;
       border-radius: 6px;
       font-weight: 700;
-      font-size: 16px;
+      font-size: 19px;
       text-decoration: none;
       letter-spacing: .06em;
-      transition: opacity .2s;
+      transition: background-color 0.4s cubic-bezier(0.65, 0, 0.34, 1), color 0.4s cubic-bezier(0.65, 0, 0.34, 1), border-color 0.4s cubic-bezier(0.65, 0, 0.34, 1), box-shadow 0.4s cubic-bezier(0.65, 0, 0.34, 1), transform 0.125s;
     }
-    .btn:hover { opacity: .88; }
+    .btn:active { transform: scale(0.98); }
     .btn-primary { background: #717171; color: #fff; }
+    .btn-primary:hover { background: #4a4a4a; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12); }
     .btn-ghost { background: rgba(255,255,255,.92); color: var(--navy); }
+    .btn-ghost:hover { background: #fff; color: #000; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.10); }
 
     /* ---- 本文 ---- */
     .page { max-width: 980px; margin: 0 auto; padding: 0 28px 100px 28px; }
@@ -139,17 +159,25 @@
     .price-lead { margin-top: 28px; max-width: none; }
     .plan { border: 1px solid var(--line); border-radius: 14px; padding: 28px 26px; display: flex; flex-direction: column; }
     .plan.featured { border: 2px solid var(--green); }
-    .plan .name { font-size: 22px; font-weight: 800; color: var(--navy); }
-    .plan .badge { font-size: 12px; font-weight: 700; color: var(--blue); letter-spacing: .1em; }
-    .plan.featured .badge { color: var(--green); }
-    .plan .price { margin-top: 10px; font-size: 38px; font-weight: 800; line-height: 1.2; color: var(--ink); }
+    .plan .name { font-size: 28px; font-weight: 900; color: var(--navy); margin-top: 4px; }
+    .plan .plan-target { font-size: 13px; font-weight: 900; color: var(--navy); line-height: 1.6; }
+    .plan.featured .plan-target { color: var(--green); }
+    .plan .price { margin-top: 8px; font-size: 46px; font-weight: 900; line-height: 1.2; color: var(--ink); }
     .plan .price small { font-size: 14px; font-weight: 500; color: var(--ink-soft); margin-left: 4px; }
     .plan .split { margin-top: 6px; font-size: 13px; color: var(--ink-soft); }
     .plan ul { list-style: none; margin-top: 18px; font-size: 14px; display: flex; flex-direction: column; gap: 8px; }
-    .plan ul li::before { content: "✓ "; color: var(--green); font-weight: 800; }
+    .plan ul li::before { content: ""; display: inline-block; width: 13px; height: 13px; margin-right: 7px; background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" fill="none" stroke="%230b8a2f" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg>') no-repeat center / contain; }
     .plan .btn { margin-top: auto; text-align: center; margin-top: 22px; }
+    .price-notes { display: grid; grid-template-columns: 1.1fr 1fr; gap: 24px; margin-top: 28px; align-items: start; }
+    .price-notes .running { margin-top: 0; }
+    .price-faq { background: var(--paper-soft); border-radius: 12px; padding: 24px 28px; }
+    .price-faq .price-faq-title { font-weight: 900; font-size: 15px; color: var(--ink); }
+    .price-faq p { margin-top: 12px; font-size: 14px; color: var(--ink); }
+    .price-faq .price-faq-title { margin-top: 0; }
+    .price-subsidy-logo { width: 170px; display: block; margin-top: 16px; margin-left: auto; }
+    .green-emphasis { color: var(--green); font-weight: 700; }
     .running { margin-top: 28px; border-radius: 12px; background: var(--paper-soft); padding: 24px 28px; }
-    .running h3 { font-size: 17px; color: var(--navy); }
+    .running h3 { font-size: 17px; color: var(--green); }
     .running table { margin-top: 12px; width: 100%; border-collapse: collapse; font-size: 15px; }
     .running td { padding: 8px 0; border-bottom: 1px solid var(--line); }
     .running td:last-child { text-align: right; font-weight: 700; white-space: nowrap; }
@@ -242,11 +270,11 @@
     .sub-title + .features { margin-top: 12px; }
 
     /* 導入の流れ */
-    .flow { margin-top: 36px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; counter-reset: flow; }
-    .flow li { list-style: none; counter-increment: flow; padding: 22px 20px; background: var(--paper-soft); border-radius: 12px; }
-    .flow li::before { content: "STEP " counter(flow); font-size: 12px; font-weight: 800; letter-spacing: .15em; color: var(--blue); }
-    .flow h3 { margin-top: 6px; font-size: 17px; color: var(--navy); }
-    .flow p { margin-top: 8px; font-size: 14px; color: var(--ink-soft); }
+    .flow { margin-top: 36px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; counter-reset: flow; }
+    .flow li { list-style: none; counter-increment: flow; padding: 28px 24px; background: var(--paper-soft); border-radius: 12px; }
+    .flow li::before { content: "STEP " counter(flow); font-size: 13px; font-weight: 800; letter-spacing: .18em; color: var(--navy); }
+    .flow h3 { margin-top: 4px; font-size: 17px; font-weight: 900; color: var(--navy); }
+    .flow p { margin-top: 18px; font-size: 14px; color: var(--ink); }
     .flow-note { margin-top: 20px; display: flex; gap: 14px; flex-wrap: wrap; }
     .flow-note span { padding: 6px 16px; background: var(--navy); color: #fff; border-radius: 20px; font-size: 14px; font-weight: 700; }
 
@@ -287,7 +315,9 @@
     /* 問い合わせ */
     .contact { margin-top: 96px; background: var(--paper-soft); border-radius: 16px; padding: 44px 40px; }
     .contact .section-lead { margin-top: 10px; }
-    .inquiry-form { margin-top: 28px; max-width: 620px; }
+    .contact { text-align: center; }
+    .contact .section-lead { margin-left: auto; margin-right: auto; }
+    .inquiry-form { margin-top: 28px; max-width: 620px; margin-left: auto; margin-right: auto; text-align: left; }
     .inquiry-form .input-fields { display: flex; flex-direction: column; gap: 12px; }
     .inquiry-form input[type="text"],
     .inquiry-form input[type="email"],
@@ -307,14 +337,17 @@
       padding: 16px;
       border: none;
       border-radius: 8px;
-      background: var(--green);
+      background: linear-gradient(100deg, #7c5ea8, #a254a1);
       color: #fff;
       font-family: var(--sans);
       font-size: 17px;
       font-weight: 700;
       letter-spacing: .1em;
       cursor: pointer;
+      transition: box-shadow 0.4s cubic-bezier(0.65, 0, 0.34, 1), transform 0.125s;
     }
+    .inquiry-form input[type="submit"]:hover { background: linear-gradient(100deg, #69508f, #8d4789); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18); }
+    .inquiry-form input[type="submit"]:active { transform: scale(0.98); }
     .inquiry-form input[type="submit"]:disabled { opacity: .5; }
     .inquiry-form .mind-check { font-size: 14px; color: var(--ink-soft); }
     .inquiry-form p.message { text-align: center; font-size: 15px; min-height: 1.5em; }
@@ -325,23 +358,141 @@
     .page-foot { margin-top: 90px; text-align: center; font-size: 12px; letter-spacing: .2em; color: var(--ink-soft); }
     .page-foot img { width: 120px; margin: 0 auto 14px auto; }
 
+    /* ---- 序盤ストーリー(資料p.3〜5のレイアウトを踏襲・文言そのまま) ---- */
+    .section-badge { display: inline-block; background: #111; color: #fff; font-weight: 800; font-size: 21px; padding: 3px 14px; border-radius: 4px; }
+    .story-heading { margin-top: 12px; font-size: 30px; font-weight: 900; color: var(--navy); line-height: 1.5; }
+    .story-lead { margin-top: 10px; font-size: 15.5px; color: var(--ink); }
+    .emphasis { font-weight: 900; color: var(--navy); }
+    .story-box { background: #eef3fa; border-radius: 8px; padding: 16px 22px; margin-top: 22px; }
+    .story-box .story-box-title { font-weight: 800; color: var(--navy); font-size: 15px; }
+    .story-box .story-box-body { margin-top: 6px; font-size: 14.5px; color: var(--ink); }
+    .story-quote { margin-top: 28px; font-size: 24px; font-weight: 800; color: var(--ink); line-height: 1.6; }
+    .story-quote .marker { background: linear-gradient(transparent 35%, #ffe24d 35%, #ffe24d 92%, transparent 92%); }
+    .story-quote-sub { margin-top: 6px; font-size: 13.5px; font-weight: 600; color: var(--ink-soft); }
+    .navy-band { margin-top: 28px; background: var(--navy); border-radius: 8px; padding: 16px 22px; color: #fff; }
+    .navy-band .navy-band-main { font-weight: 800; font-size: 16px; }
+    .navy-band .navy-band-sub { margin-top: 6px; font-size: 13px; opacity: .92; }
+    .light-band { margin-top: 24px; background: #eef3fa; border-radius: 8px; padding: 14px 20px; font-size: 15px; color: var(--ink); }
+    .three-points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 22px; }
+    .three-points > div { background: #eef3fa; border-radius: 8px; padding: 16px 18px; }
+    .three-points .point-number { display: inline-block; width: 30px; height: 30px; border-radius: 6px; background: var(--navy); color: #fff; font-weight: 800; text-align: center; line-height: 30px; }
+    .three-points h3 { margin-top: 8px; font-size: 16px; color: var(--navy); line-height: 1.6; }
+    .three-points p { margin-top: 8px; font-size: 13.5px; color: var(--ink); }
+    .section-badge.green { background: var(--green); }
+    .about-kobito-columns { display: flex; align-items: center; gap: 34px; margin-top: 24px; }
+    .about-kobito-columns .check-list { flex: 1.1; display: flex; flex-direction: column; justify-content: center; gap: 24px; }
+    .about-kobito-columns .check-item { margin-top: 0; }
+    .about-kobito-columns .check-item-body p { display: none; }
+    .about-kobito-columns .about-kobito-figure { flex: 1; min-width: 0; margin-top: 10px; }
+    .about-kobito-summary { margin-top: 26px; font-size: 16.5px; font-weight: 900; color: var(--ink); line-height: 1.8; }
+    .professional-header { display: flex; align-items: flex-start; gap: 26px; }
+    .professional-header .story-heading { flex: 0 0 auto; }
+    .balloon { position: relative; background: #fff; border: 1px solid #e2e5ec; box-shadow: 0 6px 18px rgba(20,30,60,.10); border-radius: 8px; padding: 12px 18px; font-size: 13.5px; color: var(--ink); margin-top: 6px; }
+    .balloon::after { content: ""; position: absolute; left: 30px; bottom: -10px; border: 10px solid transparent; border-top-color: #fff; border-bottom: 0; }
+    .professional-columns { display: grid; grid-template-columns: 1.25fr 1fr; gap: 26px; margin-top: 20px; }
+    .check-list .check-item { margin-top: 16px; display: flex; align-items: flex-start; gap: 10px; }
+    .check-list .check-item:first-child { margin-top: 0; }
+    .check-icon { display: inline-flex; width: 20px; height: 20px; background: var(--green); border-radius: 5px; align-items: center; justify-content: center; margin-top: 4px; flex: 0 0 auto; }
+    .check-item-body h3 { font-size: 18px; color: var(--navy); line-height: 1.6; }
+    .check-item-body p { margin-top: 6px; font-size: 14px; color: var(--ink); }
+    .green-box { background: #e7f3ea; border-radius: 8px; padding: 16px 18px; align-self: start; }
+    .green-box .green-box-title { color: var(--green); font-weight: 800; font-size: 14.5px; }
+    .green-box .green-box-body { margin-top: 6px; font-size: 14px; color: var(--ink); }
+
+    /* ---- 使いみち(A/B/C + 具体例) ---- */
+    /* ---- ノウハウが、最初から入っている(資料p.7) ---- */
+    .knowhow-columns { display: flex; align-items: flex-start; gap: 32px; margin-top: 8px; }
+    .knowhow-main { flex: 1; }
+    .knowhow-closing { margin-top: 20px; font-weight: 900; color: var(--ink); font-size: 15.5px; }
+    .knowhow-side { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+    .included-functions { background: #eef3fa; border-radius: 8px; padding: 14px 18px; }
+    .included-functions-title { font-weight: 900; color: var(--navy); font-size: 14px; }
+    .included-functions ul { list-style: none; margin-top: 8px; }
+    .included-functions li { font-size: 13.5px; color: var(--ink); line-height: 1.9; }
+    .design-principles { background: var(--paper-soft); border-radius: 8px; padding: 16px 18px; }
+    .design-principles-title { font-weight: 900; color: var(--navy); font-size: 14.5px; }
+    .design-principles-list { list-style: none; margin-top: 10px; }
+    .design-principles-list li { display: flex; align-items: flex-start; gap: 8px; font-size: 13.5px; color: var(--ink); margin-top: 6px; }
+    .design-principles-list .check-icon { width: 16px; height: 16px; margin-top: 3px; }
+    .technology-stack { width: 100%; margin-top: 14px; border-collapse: collapse; font-size: 13px; }
+    .technology-stack tr { border-top: 1px solid #e2e6ee; }
+    .technology-stack th { text-align: left; color: var(--navy); font-weight: 800; padding: 7px 8px 7px 0; width: 96px; vertical-align: top; }
+    .technology-stack td { color: var(--ink); padding: 7px 0; }
+    .technology-stack-note { margin-top: 10px; font-size: 12.5px; color: var(--ink-soft); }
+
+    /* ---- 企業の運用が、初日から動く(資料p.8) ---- */
+    .day-one-columns { display: flex; align-items: center; gap: 44px; margin-top: 20px; }
+    .day-one-columns .check-list { flex: 1.2; display: flex; flex-direction: column; gap: 30px; }
+    .day-one-columns .check-item { margin-top: 0; }
+    .phone-mock { flex: 0 0 300px; border: 10px solid #1c222e; border-radius: 42px; background: #fff; padding: 18px 14px 28px 14px; }
+    .phone-mock::before { content: ""; display: block; width: 92px; height: 22px; background: #1c222e; border-radius: 12px; margin: 2px auto 14px auto; }
+    .chat-bubble { max-width: 88%; border-radius: 12px; padding: 10px 14px; font-size: 12.5px; line-height: 1.7; margin-top: 12px; color: var(--ink); }
+    .chat-bubble.customer { background: #dbe7f7; margin-left: auto; width: fit-content; }
+    .chat-bubble.kobito { background: #eef1f4; margin-right: auto; width: fit-content; }
+    .chat-bubble .green-emphasis { font-weight: 800; }
+
+    /* ---- 具体例(資料p.10〜13) ---- */
+    .case-study { margin-top: 76px; }
+    .case-study:first-child { margin-top: 0; }
+    .case-study-columns { display: flex; align-items: center; gap: 30px; margin-top: 16px; }
+    .case-study-text { flex: 0 0 38%; background: var(--paper-soft); border-radius: 10px; padding: 20px 22px; }
+    .case-study-name { font-weight: 900; color: var(--navy); font-size: 16px; }
+    .case-tag { display: inline-block; background: var(--blue); color: #fff; font-size: 12px; font-weight: 800; border-radius: 5px; padding: 2px 12px; margin-right: 10px; vertical-align: 2px; }
+    .case-note { font-size: 12px; color: var(--ink-soft); font-weight: 700; margin-left: 8px; }
+    .case-study-body { margin-top: 12px; font-size: 14px; color: var(--ink); line-height: 2; }
+    .case-study-figure { flex: 1; min-width: 0; }
+    .case-study-figure img { width: 100%; height: auto; }
+    .case-study-figure .figure-caption { text-align: center; font-size: 12px; color: var(--ink-soft); margin-top: 6px; }
+    .case-study .light-band { margin-top: 22px; font-weight: 800; }
+    .case-studies-closing { margin-top: 90px; text-align: center; }
+    .case-studies-closing .closing-lead { font-size: 17px; font-weight: 600; color: var(--ink-soft); }
+    .case-studies-closing .closing-main { margin-top: 22px; font-size: 30px; font-weight: 900; color: var(--navy); line-height: 1.9; }
+    .case-studies-closing .closing-main .marker { background: linear-gradient(transparent 35%, #ffe24d 35%, #ffe24d 92%, transparent 92%); }
+
+    .use-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 26px; }
+    .use-card { background: var(--paper-soft); padding: 24px 26px 26px 26px; border-radius: 12px; border: 2px solid transparent; }
+    .use-card .use-card-letter { display: inline-flex; width: 36px; height: 36px; align-items: center; justify-content: center; font-weight: 800; font-size: 17px; color: #fff; background: var(--navy); border-radius: 9px; }
+    .use-card h3 { margin-top: 16px; font-size: 17.5px; font-weight: 900; color: var(--navy); line-height: 1.5; }
+    .use-card .use-card-note { margin-top: 2px; font-size: 12.5px; font-weight: 900; color: var(--green); }
+    .use-card p { margin-top: 10px; font-size: 14px; color: var(--ink); }
+    .use-card.highlighted { border-color: var(--green); }
+    .use-card.highlighted .use-card-letter { background: var(--green); }
+
     @media (max-width: 760px) {
-      .hero { height: auto; min-height: 560px; background-position: 62% 30%; }
-      .hero::after { background: linear-gradient(180deg, rgba(255,255,255,.45) 0%, rgba(255,255,255,0) 25%, rgba(0,0,0,.6) 100%); }
-      .hero-inner { padding: 22px 20px 34px 20px; }
+      .use-cards, .three-points { grid-template-columns: 1fr; }
+      .about-kobito-columns { flex-direction: column; }
+      .knowhow-columns { flex-direction: column; }
+      .case-study-columns { flex-direction: column; }
+      .day-one-columns { flex-direction: column; }
+      .phone-mock { flex: none; width: 260px; margin: 0 auto; }
+      .case-study-text { flex: none; }
+      .case-studies-closing .closing-main { font-size: 21px; }
+      .bigquote { font-size: 20px; }
+      .bigquote.mid { font-size: 17px; }
+      .hero-inner { padding: 18px 20px 26px 20px; }
       .hero-top { flex-direction: column; gap: 10px; }
       .nav ul { gap: 14px; padding-top: 0; overflow-x: auto; }
       .nav a { font-size: 13px; }
-      .hero-logo { width: 220px; }
-      .hero-base { font-size: 16px; }
-      .hero-title { font-size: 28px; }
-      .hero-sub { font-size: 16px; }
-      .hero-cta .btn { flex: 1; text-align: center; padding: 14px 10px; }
+      .hero-brand-row { gap: 14px; }
+      .hero-logo { width: 215px; }
+      .hero-subsidy-logo { width: 100px; }
+      .hero-right { align-items: flex-start; gap: 6px; margin-top: 8px; }
+      .hero-catch { font-size: 13px; }
+      .hero-q { font-size: 15px; padding: 8px 14px; margin-top: 6px; }
+      .hero-main { display: block; margin-top: 10px; }
+      .hero-illustration { display: none; }
+      .hero-base { font-size: 15px; }
+      .hero-title { font-size: 21px; }
+      .hero-badge { font-size: 13px; padding: 3px 14px; }
+      .hero-message { font-size: 12.5px; padding: 6px 12px; }
+      .floating-hexagons { display: none; }
+      .hero-cta .btn { flex: 1 1 100%; text-align: center; padding: 12px 10px; }
       .page { padding: 0 20px 70px 20px; }
       .section { margin-top: 70px; }
       .section.price-top { margin-top: 56px; }
       .section-title { font-size: 25px; }
       .steps, .pains, .flow, .plans, .cases { grid-template-columns: 1fr; }
+      .price-notes { grid-template-columns: 1fr; }
       .features th { width: 120px; }
       .features th, .features td { padding: 10px 8px; font-size: 14px; }
       .philosophy-list { grid-template-columns: 1fr; }
@@ -361,89 +512,426 @@
   <header class="hero" id="top">
     <div class="hero-inner">
       <div class="hero-top">
-        <img class="hero-logo" src="/img/products/KOBITO/logo_hT.png" alt="KOBITO コビト サーバークラウド ─ サーバーの“コビト”にスマホで指示。">
+        <div class="hero-brand-row">
+          <img class="hero-logo" src="/img/products/KOBITO/cover_brand.png" alt="KOBITO コビト by ThinkX ─ サーバーの“コビト”にスマホで直接指示。">
+          <img class="hero-subsidy-logo" src="/img/products/KOBITO/hojokin2026.png" alt="デジタル化・AI導入補助金2026 IT導入補助事業者">
+        </div>
         <nav class="nav">
           <ul>
+            <li><a href="#uses">使いみち</a></li>
             <li><a href="#price">プランと価格</a></li>
-            <li><a href="#why">特徴</a></li>
-            <li><a href="#features">機能</a></li>
             <li><a href="#flow">導入の流れ</a></li>
             <li><a href="#faq">FAQ</a></li>
             <li><a href="#contact">お問い合わせ</a></li>
           </ul>
         </nav>
       </div>
-      <div class="hero-word">
-        <p class="hero-base">ClaudeCodeベース</p>
-        <h1 class="hero-title">プロ仕様のAI駆動開発商用システムベースキット</h1>
-        <p class="hero-sub">AI企業が10年蓄積してきた設計基盤が今すぐ手に入る。</p>
-        <div class="hero-cta">
-          <a class="btn btn-primary" href="#contact">お問い合わせ</a>
-          <a class="btn btn-ghost" href="#price">料金を見る</a>
-        </div>
+      <div class="hero-right">
+        <span class="hero-badge">ClaudeCodeベース</span>
+        <p class="hero-catch">AI企業が10年蓄積してきた設計基盤が今すぐ手に入る。</p>
       </div>
+      <p class="hero-question">そのエージェントで作った<br>システム、大丈夫ですか？</p>
+      <div class="hero-main">
+        <div class="hero-word">
+          <p class="hero-base">企業がAIエージェントをはじめるなら、</p>
+          <h1 class="hero-title">プロ仕様の「エージェントシステムベースキット」<br>を入手し、その上に構築するのが合理的な理由とは</h1>
+          <div class="hero-cta">
+            <a class="btn btn-primary" href="#contact">お問い合わせ</a>
+            <a class="btn btn-ghost" href="#price">料金を見る</a>
+            <a class="btn btn-ghost" href="/img/products/KOBITO/KOBITO製品資料.pdf" target="_blank" rel="noopener">資料をダウンロード</a>
+          </div>
+        </div>
+        <img class="hero-illustration" src="/img/products/KOBITO/cover_woman.png" alt="">
+      </div>
+      <div class="hero-footer">
+        <span class="hero-message">AI開発10年の企業が自ら開発し使用する、<br>完成されたセットアップ</span>
+        <span class="hero-message">AIの設計に任せない。<br>長期的に失敗しないノウハウの蓄積</span>
+      </div>
+      <a class="floating-hexagons" href="https://thinkxinc.com/inquiry/product" target="_blank" rel="noopener" aria-label="製品についてのお問い合わせ">
+        <span class="hexagon-wrap large"><span class="hexagon hexagon-large"><span class="hexagon-text">ThinkX</span><span class="hexagon-subtext">Since 2015</span></span></span>
+        <span class="hexagon-wrap small"><span class="hexagon hexagon-small"><img src="/img/products/KOBITO/qr_thinkx.png" alt=""></span></span>
+      </a>
+      <script>
+      (() => {
+        const big = document.querySelector('.hexagon-wrap.large');
+        const small = document.querySelector('.hexagon-wrap.small');
+        if (!big || !small) return;
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        // 浮遊モデル(風に吹かれる葉): 強いスクロールの加速度だけを「突風」として受け、
+        // ふわっと一回だけ浮いて静かに降りる。一次系の連鎖なのでバネのような
+        // 往復振動は構造的に起きない。小さい六角形が先に、大きい六角形は
+        // 遅れた風で後から動く。
+        const mkLeaf = (gain, follow, limit, xk, rk) => ({ lift: 0, pulse: 0, gain: gain, follow: follow, limit: limit, xk: xk, rk: rk });
+        const leafBig = mkLeaf(0.8, 0.08, 4, 0.10, 0.10);
+        const leafSmall = mkLeaf(1.6, 0.12, 6, 0.16, 0.18);
+        const gust = (x) => { const n = Math.min(6, Math.abs(x)) / 6; return n * n * n; };
+        let lastY = window.scrollY, lastV = 0, wind = 0, windLag = 0, running = false, calm = 0;
+        const settle = (leaf, w) => {
+          leaf.pulse = leaf.pulse * 0.94 + gust(w) * leaf.gain;
+          if (leaf.pulse > leaf.limit) { leaf.pulse = leaf.limit; }
+          leaf.lift += (leaf.pulse - leaf.lift) * leaf.follow;
+        };
+        const tick = () => {
+          const y = window.scrollY;
+          const v = y - lastY; lastY = y;
+          const a = v - lastV; lastV = v;
+          wind = wind * 0.90 + a * 0.10;
+          windLag = windLag * 0.93 + wind * 0.07;
+          settle(leafSmall, wind);
+          settle(leafBig, windLag);
+          big.style.transform = 'translate(' + (leafBig.lift * leafBig.xk).toFixed(2) + 'px, ' + (-leafBig.lift).toFixed(2) + 'px) rotate(' + (-leafBig.lift * leafBig.rk).toFixed(2) + 'deg)';
+          small.style.transform = 'translate(' + (leafSmall.lift * leafSmall.xk).toFixed(2) + 'px, ' + (-leafSmall.lift).toFixed(2) + 'px) rotate(' + (leafSmall.lift * leafSmall.rk).toFixed(2) + 'deg)';
+          const active = Math.abs(v) > 0.5 || Math.abs(wind) > 0.05 ||
+            leafBig.pulse > 0.03 || leafBig.lift > 0.03 ||
+            leafSmall.pulse > 0.03 || leafSmall.lift > 0.03;
+          if (active) { calm = 0; requestAnimationFrame(tick); }
+          else if (calm < 30) { calm += 1; requestAnimationFrame(tick); }
+          else { running = false; }
+        };
+        addEventListener('scroll', () => {
+          if (!running) { running = true; calm = 0; lastY = window.scrollY; lastV = 0; requestAnimationFrame(tick); }
+        }, { passive: true });
+      })();
+      </script>
     </div>
   </header>
   <!-- ↑↑↑↑ END ヘッダー ↑↑↑↑ -->
 
   <div class="page">
 
-    {# 構成(オーナー指示 2026-09-05): ヘッダー → ノウハウ(見出し・本文・図・3ステップ) → 「ビジネスやラボのために」+本文 → プラン → 特徴 → … #}
-    <!-- ↓↓↓↓ 何をするのか(図) ↓↓↓↓ -->
+    {# 構成(オーナー指示 2026-10-26): 序盤は製品資料p.3〜5のストーリーを文言そのまま。以降は従来構成 #}
+    <!-- ↓↓↓↓ いま起きていること(資料p.3) ↓↓↓↓ -->
+    <!-- ↓↓↓↓ 長年のノウハウ(一番上に維持・原文のまま) ↓↓↓↓ -->
     <section class="section price-top" id="what">
       <h2 class="section-title">長年のノウハウがすぐ手に入る</h2>
       <p class="section-lead">エンジニアを雇わなくてもエージェントで自社サイトシステムを作れる時代になりました。しかしエージェントに任せるだけでは設計の品質が低く、長期的に不安定で安全性の低いシステムになります。結果、運用に耐えるまで長い改善が要求されます。KOBITOは、AI開発10年のThinkXが自ら用いているサイト基盤と運用基盤の、完成されたセットアップです。長年のノウハウを蓄積した指示書やサンプルをもとにエージェントが開発。この基盤の上に商用サイトやビジネス用のシステムなどを構築すれば、長期的に安定で運用効率の高いシステムになります。</p>
+    </section>
+    <!-- ↑↑↑↑ END 長年のノウハウ ↑↑↑↑ -->
 
-      <h2 class="section-title mid">プロ仕様の堅牢かつシンプルな構成</h2>
+    <section class="section" id="now">
+      <h2 class="story-heading">「開発者はもういらない」――本当にそうでしょうか。</h2>
+      <p class="story-lead">Claude Codeに代表されるAIエージェントの登場で、<br>エンジニアでなくても<span class="emphasis">「こんなシステムにしたい」と日本語で頼むだけ</span>でシステムが作れる時代になりました。</p>
+      <div class="story-box">
+        <p class="story-box-title">実際にあった話</p>
+        <p class="story-box-body">ある病院の経営者は、患者向けの予約やバス送迎の案内から、従業員の休暇・シフトの管理まで、<br><span class="emphasis">すべて自分でAIに作らせました。</span>ひと昔前なら、発注すれば数千万円かかった規模の仕組みです。</p>
+      </div>
+      <p class="story-quote">「すごい。無敵じゃん。<span class="marker">システム開発会社はもういらない</span>」</p>
+      <p class="story-quote-sub">―― いま、多くの人がこの段階にいます。</p>
+      <div class="navy-band">
+        <p class="navy-band-main">ところがこの経営者はいま、本業の手を止めて、朝から晩までAIと向き合い続けています。</p>
+        <p class="navy-band-sub">なぜそうなるのか。エージェント開発の構造的な問題を説明します。</p>
+      </div>
+    </section>
+    <!-- ↑↑↑↑ END いま起きていること ↑↑↑↑ -->
 
-      <div class="figure">
-        <img src="/img/products/KOBITO/diagram.jpg" alt="スマホから「最新情報のページに今日付で以下の内容を追加して」と指示すると、AWS のテスト環境サーバーに常駐する KOBITO がサイトを変更し、本番環境へ反映する図">
+    <!-- ↓↓↓↓ なぜゼロから作り始めるべきでないのか(資料p.4) ↓↓↓↓ -->
+    <section class="section" id="why-not">
+      <h2 class="story-heading">AIに「ただ作らせた」システムに起きる、3つのこと</h2>
+      <div class="three-points">
+        <div>
+          <span class="point-number">1</span>
+          <h3>中身が、いつの間にか複雑になり、<br>誰にもわからなくなる</h3>
+          <p>AIに任せきりで作ると、中身はぐちゃぐちゃになります。無駄で冗長な設計、その場しのぎの継ぎ足し、統一されない技術スタックと仕様。1年後には<span class="emphasis">作った本人にも分からず、プロのエンジニアでも避けたくなるものになります。</span>マニュアルもありません。</p>
+        </div>
+        <div>
+          <span class="point-number">2</span>
+          <h3>「動けば終わり」と<br>「回し続ける」は別物</h3>
+          <p>個人の便利ツールは、動けばいい。しかし企業のシステムは長期的にスケールアップし、回し続けるものです。最初に一貫した設計なく作り続けるのは、<span class="emphasis">基盤がグラグラしているビルを建て続ける</span>のと同じです。</p>
+        </div>
+        <div>
+          <span class="point-number">3</span>
+          <h3>流行りの技術は、<br>数年で古びる</h3>
+          <p>放っておくと、AIは流行のフレームワークを使って作ります。バージョン更新や流行の移り変わりとともに古び、<span class="emphasis">最初は楽でも、数年で破綻していきます。</span>使い続けるほどAPI費用もかさみます。</p>
+        </div>
+      </div>
+      <div class="light-band">問題は「作れるか」ではありません。<span class="emphasis">「その効率性を維持し続けられるか」「安全に回し続けられるか」</span>です。</div>
+    </section>
+    <!-- ↑↑↑↑ END なぜゼロから ↑↑↑↑ -->
+
+    <!-- ↓↓↓↓ プロの現場では(資料p.5) ↓↓↓↓ -->
+    <section class="section" id="professional">
+      <span class="section-badge">プロの現場では</span>
+      <div class="professional-header">
+        <h2 class="story-heading">プロは、AIの設計に任せません。</h2>
+        <div class="balloon">エージェントに自由にシステムを作らせるのは、<br>複数の大工が<span class="emphasis">建築家なしで自由にビルを建てる</span>のに似ています。</div>
+      </div>
+      <div class="professional-columns">
+        <div class="check-list">
+          <div class="check-item">
+            <span class="check-icon"><svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path d="M20 6L9 17l-5-5" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <div class="check-item-body">
+              <h3>見張って、監督する</h3>
+            <p>プロはAIを放し飼いにしません。CTOが開発者に指示を出すように、設計がまずくならないよう一つひとつ監督します。特に最初が肝心です。</p>
+            </div>
+          </div>
+          <div class="check-item">
+            <span class="check-icon"><svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path d="M20 6L9 17l-5-5" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <div class="check-item-body">
+              <h3>いきなり本番に出さない。データ・変更をプロ基準で管理</h3>
+            <p>まずテスト環境で確認し、問題がなければ本番に反映する。ソースコードの変更を管理し、必要ならロールバックする。IT企業が当たり前にやってきた工程です。</p>
+            </div>
+          </div>
+          <div class="check-item">
+            <span class="check-icon"><svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path d="M20 6L9 17l-5-5" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <div class="check-item-body">
+              <h3>長年のノウハウから作られる、一貫した指示書。全体設計は手放さない</h3>
+            <p>組織の業務マニュアルや就業規則を思い浮かべてみてください。プロは過去の仕事で培われたノウハウをドキュメント化し、エージェント向けの規約としてプロジェクトに配置しています。そうしておけば、AIは、一貫したやり方で安全に書き続けます。</p>
+            </div>
+          </div>
+        </div>
+        <div class="green-box">
+          <p class="green-box-title">あなたの仕事に置き換えると</p>
+          <p class="green-box-body">自分の仕事の「考えるステップ」を全部文書化してAIに渡せば、AIはそのとおりに仕事をします。その<span class="green-emphasis">文書化済みのプロのノウハウ</span>が、システム開発の世界にはすでに存在します。問題は、それを持っているかどうかです。</p>
+        </div>
+      </div>
+      <div class="navy-band">
+        <p class="navy-band-main">これからシステムを内製する会社の選択肢は、二つ。</p>
+        <p class="navy-band-sub">① ゼロからエージェントで作り始める　／　② プロの設計とノウハウが最初から入った基盤の上で作る<br>KOBITOが提供するのは、この ② です。</p>
+      </div>
+    </section>
+    <!-- ↑↑↑↑ END プロの現場では ↑↑↑↑ -->
+
+    <!-- ↓↓↓↓ KOBITOとは(資料p.6) ↓↓↓↓ -->
+    <section class="section" id="about-kobito">
+      <span class="section-badge green">KOBITOとは</span>
+      <h2 class="story-heading">プロ仕様の「エージェントシステムベースキット」</h2>
+      <div class="about-kobito-columns">
+        <div class="check-list">
+          <div class="check-item">
+            <span class="check-icon"><svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path d="M20 6L9 17l-5-5" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <div class="check-item-body">
+              <h3>破綻しないノウハウの詰め込まれた基盤。長期視点での成長するシステム。</h3>
+            <p>コーポレートサイトも社内システムも、この基盤の上に積み上げます。構成を保つドキュメントやサンプル、よく使うコンポーネントも同梱。</p>
+            </div>
+          </div>
+          <div class="check-item">
+            <span class="check-icon"><svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path d="M20 6L9 17l-5-5" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <div class="check-item-body">
+              <h3>10年のAI企業が自ら開発し使用する、完成された設計と開発ドキュメント。</h3>
+            <p>ThinkXが自社のために作り、使い続けてきた構成とノウハウを、そのまま提供します。</p>
+            </div>
+          </div>
+          <div class="check-item">
+            <span class="check-icon"><svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path d="M20 6L9 17l-5-5" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <div class="check-item-body">
+              <h3>サーバーの中に、エージェントが常駐。チームで管理し、共有する。</h3>
+            <p>お客様専用AWSサーバーに「コビト」が常駐。スマホやPCから日本語で指示するだけです。</p>
+            </div>
+          </div>
+        </div>
+        <div class="about-kobito-figure">
+          <img src="/img/products/KOBITO/diagram.jpg" alt="本番環境とテスト環境の図: スマホから「最新情報のページに今日付で以下の内容を追加して」と指示すると、テスト環境サーバーに常駐するKOBITOがサイトを変更し、本番環境へ反映する">
+        </div>
+      </div>
+      <p class="about-kobito-summary">ThinkXエージェントシステムベースキット(KOBITO)は、<br>ITシステムを知り尽くしたThinkXが自ら用いている、エージェントシステム基盤の、完成されたセットアップです。</p>
+    </section>
+    <!-- ↑↑↑↑ END KOBITOとは ↑↑↑↑ -->
+
+    <!-- ↓↓↓↓ ノウハウが、最初から入っている(資料p.7) ↓↓↓↓ -->
+    <section class="section" id="built-in-knowhow">
+      <div class="knowhow-columns">
+        <div class="knowhow-main">
+          <h2 class="story-heading">ノウハウが、最初から入っている。</h2>
+          <p class="story-lead">当社がエンジニアに指示するレベルの開発指示書・コード規約・サンプルコードが、基盤に組み込み済みです。コビトは、その延長でしか書きません。</p>
+          <p class="story-lead">つまり<span class="emphasis">「プロが書いてきたシステムの続きを、プロの監督のもとでAIが書き続ける」</span>状態から始まります。ゼロの状態からAIが書き始めたシステムとは、ここが根本的に違います。</p>
+          <p class="knowhow-closing">AIの設計に任せない。長期的に失敗しないノウハウの蓄積――それがこの製品の中身です。</p>
+        </div>
+        <div class="knowhow-side">
+          <div class="included-functions">
+            <p class="included-functions-title">よく使う機能も内臓</p>
+            <ul>
+              <li>多言語翻訳</li>
+              <li>問い合わせからチャットに通知</li>
+              <li>SEO（検索エンジン最適化）</li>
+              <li>https(TLS証明書)の自動更新　など</li>
+            </ul>
+          </div>
+          <div class="design-principles">
+            <p class="design-principles-title">設計思想 ― 10年の運用で崩れなかった構成</p>
+            <ul class="design-principles-list">
+              <li><span class="check-icon"><svg viewBox="0 0 24 24" width="11" height="11" aria-hidden="true"><path d="M20 6L9 17l-5-5" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>大規模フレームワークに依存しない(流行り廃り・バージョン変更で壊れない)</span></li>
+              <li><span class="check-icon"><svg viewBox="0 0 24 24" width="11" height="11" aria-hidden="true"><path d="M20 6L9 17l-5-5" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>疎結合・高いモジュール性(AIが安全に変更・拡張できる)</span></li>
+              <li><span class="check-icon"><svg viewBox="0 0 24 24" width="11" height="11" aria-hidden="true"><path d="M20 6L9 17l-5-5" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>広く普及した標準技術だけ(独自プラットフォームに閉じない)</span></li>
+            </ul>
+            <table class="technology-stack">
+              <tr><th>サーバー</th><td>Python／Flask、nginx、Linux(AWS EC2)</td></tr>
+              <tr><th>フロント</th><td>JavaScript、CSS(大規模フレームワーク不使用)</td></tr>
+              <tr><th>履歴・配布</th><td>Git／GitHub(全変更を記録・日次バックアップ)</td></tr>
+              <tr><th>エージェント</th><td>Anthropic社 Claude Code＋当社の指示書群</td></tr>
+            </table>
+            <p class="technology-stack-note">当社が自社サイトで実際に使い続けている構成と同一です。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- ↑↑↑↑ END ノウハウが、最初から入っている ↑↑↑↑ -->
+
+    <!-- ↓↓↓↓ 企業の運用が、初日から動く(資料p.8) ↓↓↓↓ -->
+    <section class="section" id="day-one-operation">
+      <h2 class="story-heading">企業の運用が、初日から動く。</h2>
+      <div class="day-one-columns">
+        <div class="check-list">
+          <div class="check-item">
+            <span class="check-icon"><svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path d="M20 6L9 17l-5-5" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <div class="check-item-body">
+              <h3>テスト環境と本番環境が、最初から分離</h3>
+              <p>ステージング(テスト環境)での確認とお客様の承認なしに、本番は変わりません。</p>
+            </div>
+          </div>
+          <div class="check-item">
+            <span class="check-icon"><svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path d="M20 6L9 17l-5-5" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <div class="check-item-body">
+              <h3>「戻して」のひと言で元通り</h3>
+              <p>変更はすべてGitに記録。気に入らなければいつでも戻せます。</p>
+            </div>
+          </div>
+          <div class="check-item">
+            <span class="check-icon"><svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path d="M20 6L9 17l-5-5" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <div class="check-item-body">
+              <h3>運用に要るものは、最初から</h3>
+              <p>日次バックアップ、証明書の自動更新、問い合わせ通知、SEO、費用の見える化。すべて同じチャットで。</p>
+            </div>
+          </div>
+          <div class="check-item">
+            <span class="check-icon"><svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path d="M20 6L9 17l-5-5" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <div class="check-item-body">
+              <h3>PCがなくても、動く</h3>
+              <p>コビトはサーバーの中にいます。指示 → テスト → 本番公開まで、担当者のスマートフォン一つで完結します。</p>
+            </div>
+          </div>
+        </div>
+        <div class="phone-mock" aria-hidden="true">
+          <div class="chat-bubble customer">最新情報のページに、今日付でこの内容を追加して</div>
+          <div class="chat-bubble kobito">ステージングに反映しました。表示をご確認ください</div>
+          <div class="chat-bubble customer">OK。公開して</div>
+          <div class="chat-bubble kobito"><span class="green-emphasis">本番に公開しました。</span>戻す場合は「戻して」と送ってください</div>
+        </div>
+      </div>
+    </section>
+    <!-- ↑↑↑↑ END 企業の運用が、初日から動く ↑↑↑↑ -->
+
+    <!-- ↓↓↓↓ 何に使えるか(3つの使いみち) ↓↓↓↓ -->
+    <section class="section" id="uses">
+      <h2 class="story-heading">使いみちは、大きく3つ。</h2>
+      <div class="use-cards">
+        <div class="use-card">
+          <span class="use-card-letter">A</span>
+          <h3>コーポレートサイトの運用</h3>
+          <p>ページ追加、お知らせ更新、LP、FAQ、問い合わせ受付、多言語ページ。「サービスページに事例を1件追加して」のひと言で。</p>
+        </div>
+        <div class="use-card highlighted">
+          <span class="use-card-letter">B</span>
+          <h3>社内のシステム</h3>
+          <p class="use-card-note">←特に相性が良い</p>
+          <p>これまで<span class="emphasis">Excelや紙でやっていた管理</span>を、ブラウザで動く社内システムに。管理表、共有ページ、掲示板、台帳。パスワードを入れれば社内の誰でも使えます。</p>
+        </div>
+        <div class="use-card">
+          <span class="use-card-letter">C</span>
+          <h3>マーケティングや事務処理</h3>
+          <p>製品紹介や告知のサイト、期間限定のキャンペーンページ、会員向けの限定コンテンツ配信。</p>
+        </div>
+      </div>
+      <p class="section-lead">データベースがサーバーの中で走ってさえいれば、あとはプロンプトで作れます。欲しくなったその場で、同じチャットに頼むだけ。</p>
+    </section>
+    <!-- ↑↑↑↑ END 何に使えるか ↑↑↑↑ -->
+
+    <!-- ↓↓↓↓ 具体例(資料p.10〜13) ↓↓↓↓ -->
+    <section class="section" id="case-studies">
+      <div class="case-study">
+        <span class="section-badge">活用例１</span>
+        <h2 class="story-heading">いくつものサイトを一元的に管理</h2>
+        <div class="case-study-columns">
+          <div class="case-study-text">
+            <p class="case-study-name"><span class="case-tag">事例</span>物件サイトの一括運用</p>
+            <p class="case-study-body">物件ごとにサイトもサーバーもバラバラだと、更新のたびに大仕事。データも指示経路も一本に束ねられているので、<span class="emphasis">「このマンションは完売に更新して」</span>で該当サイトだけが即座に変わります。</p>
+          </div>
+          <div class="case-study-figure">
+            <img src="/img/products/KOBITO/case_mansion_sites.jpg" alt="不動産企業Aが「このマンション完売したので表示更新して」などの指示で複数サイトを一元的に更新する図">
+          </div>
+        </div>
+        <p class="light-band">指示経路とデータが集約されているから、サイトAでの指示や前提がサイトBにも効きます。</p>
       </div>
 
-      <p class="section-lead">“コビト”はお客様のAWSクラウドサーバーの内部に常駐し、非エンジニアでも手元のスマートフォンで指示を出し、直接テスト環境と本番環境を変更できます。</p>
+      <div class="case-study">
+        <span class="section-badge">活用例２</span>
+        <h2 class="story-heading">ちょっとした業務システムを一瞬で作る</h2>
+        <div class="case-study-columns">
+          <div class="case-study-text">
+            <p class="case-study-name"><span class="case-tag">事例</span>出版の校正管理チェック<span class="case-note">(当社の実例)</span></p>
+            <p class="case-study-body">「直した・直さない」をExcelで管理するのは面倒──そこで<span class="emphasis">「ブラウザで動くチェックシートを作って」</span>。できたシステムをそのままサーバーに上げ、関係者はパスワードを入れて共有。本ベースキットは、サイトの検証環境(テストサーバー)を使って、ちょっとした業務効率化システムも簡単にチーム内で共有できるよう設計されています。</p>
+          </div>
+          <div class="case-study-figure">
+            <img src="/img/products/KOBITO/case_proofreading.jpg" alt="ブラウザで動く校正管理チェックシートの実画面。社内情報管理、進捗管理、在庫管理、売り上げ管理、TODOリスト、スケジュール管理などお客様のビジネス文脈から一瞬で構築">
+          </div>
+        </div>
+        <p class="light-band">ビジネス文脈を仕様化しなくても、KOBITOの集約的設計により、「あのサイトの情報」「あのフォルダに置いた資料」「いつもの」と言うだけです。</p>
+      </div>
 
-      <ol class="steps">
-        <li>
-          <h3>指示する</h3>
-          <p>「サービスページに事例を1件追加して」。スマホでもPCでも、いつもの言葉で。</p>
-        </li>
-        <li>
-          <h3>テスト環境で確認する</h3>
-          <p>コビトがサイトを読んで変更案を作り、ステージング(テスト環境)に反映。実際の表示をスマホで確認します。</p>
-        </li>
-        <li>
-          <h3>承認して本番に公開する</h3>
-          <p>「公開して」で本番へ。本番への反映は必ず「お客様の承認」と「ステージングでの確認」を経ます。気に入らなければ「戻して」。</p>
-        </li>
-      </ol>
-      <p class="examples-note">ほかにも「FAQに質問を足して」「問い合わせボタンを目立たせて」「戻して」「ステージングを止めて」「先週のアクセスログを見せて」。運用に要る指示は、すべて同じチャットで。</p>
+      <div class="case-study">
+        <span class="section-badge">活用例３</span>
+        <h2 class="story-heading">補助金申請など事務処理も集約自動化</h2>
+        <div class="case-study-columns">
+          <div class="case-study-text">
+            <p class="case-study-name"><span class="case-tag">事例</span>IT導入支援事業者申請<span class="case-note">(当社の実例)</span></p>
+            <p class="case-study-body">このベースキットは企業システム用に設計されているため、コーポレートサイトの<span class="emphasis">商品情報やブランド資料などを一元的に集約管理する構成</span>をデフォルトで組んでいます。事業のコピー・ライティング・ビジネス情報を再び教えることなく収集し、申請マニュアルを調査し、申請に必要なものを自動で用意。あとは投稿するだけ。</p>
+          </div>
+          <div class="case-study-figure">
+            <img src="/img/products/KOBITO/case_subsidy_application.jpg" alt="1 事業内容、申請ルールを把握 → 2 申請様式を作成 → 3 採択、の流れで申請書類が自動で用意される図">
+            <p class="figure-caption">当社が実際に中小企業庁の「IT導入事業者登録」に本システムで申請し採択されたフロー</p>
+          </div>
+        </div>
+        <p class="light-band">新しいツールの操作を覚える必要はありません。窓口は、いつもの同じチャット一つです。</p>
+      </div>
+
+      <div class="case-study">
+        <span class="section-badge">活用例４</span>
+        <h2 class="story-heading">インフルエンサー・広報支援</h2>
+        <div class="case-study-columns">
+          <div class="case-study-text">
+            <p class="case-study-name"><span class="case-tag">事例</span>字幕付きリール動画<span class="case-note">(当社の実例)</span></p>
+            <p class="case-study-body">企業サイトや業務システムだけでなく、<span class="emphasis">「あなたのビジネスを支援するすべての機能」へ統合的に拡張するように設計</span>されています。そこにはSNSでのマーケティング活動も。録音・録画した素材をフォルダにアップロードするだけで、SNSに投稿できるコンテンツの編集が可能に。<span class="emphasis">テストサーバーで公開できるから、スタッフで共有編集が可能。</span></p>
+          </div>
+          <div class="case-study-figure">
+            <img src="/img/products/KOBITO/case_reel_video.jpg" alt="録音・録画素材をアップロードすると文字起こし・編集タイムラインを自動生成し、「切り抜きリール動画」を効率良く量産できる編集画面。サーバー上にあるからスタッフで共同編集可能">
+          </div>
+        </div>
+        <p class="light-band">「ビジネスに必要なすべてを統合的に管理」する思想で設計された本ベースキットは、組織のマーケティング・広報にも拡張されます。</p>
+      </div>
+
+      <div class="case-studies-closing">
+        <p class="closing-lead">ここに出した案は、一例にすぎません。</p>
+        <p class="closing-main"><span class="marker">無限のアイデア</span>を実現し、それが<br><span class="marker">一貫した企業システム</span>の中で成長していきます。</p>
+      </div>
+      <div class="hero-cta" style="justify-content:center">
+        <a class="btn btn-primary" href="/img/products/KOBITO/KOBITO製品資料.pdf" target="_blank" rel="noopener">資料をダウンロード</a>
+      </div>
     </section>
-    <!-- ↑↑↑↑ END 何をするのか(図) ↑↑↑↑ -->
+    <!-- ↑↑↑↑ END 具体例 ↑↑↑↑ -->
 
     <!-- ↓↓↓↓ 料金(見出し+本文 → カード → 説明文 → 別途費用) ↓↓↓↓ -->
     <section class="section" id="price">
-      <h2 class="section-title">ビジネスやラボのために。<br>洗練された設計が今すぐ使える。</h2>
-      <p class="section-lead">エンジニアを雇わなくてもエージェントで自社サイトを作れる時代になりました。しかし商用用途でゼロから作らせると、設計の品質が低く、長期的に不安定で安全性の低いシステムになることが多く、運用に耐えるまで長い改善が要ります。KOBITOはClaudeCodeをベースに長年の基盤がデフォルトパッケージ化されています</p>
+      <span class="section-badge">価格</span>
+      <h2 class="story-heading">本体は買い切り。お客様のものに。サポートも付属。</h2>
 
       <div class="plans price-plans">
         <div class="plan featured">
-          <span class="badge">まずはここから</span>
+          <p class="plan-target">アーリーステージ、病院などオーナー組織向け</p>
           <p class="name">Lite</p>
           <p class="price">78<small>万円</small></p>
-          <p class="split">一括、または 初期42万円＋月1.5万円×12ヶ月(年契約)</p>
+          <p class="split">一括(税抜)</p>
           <ul>
             <li>サイト数 1つ</li>
             <li>本番・ステージング分離の専用環境</li>
             <li>標準機能すべて</li>
-            <li>初年度サポート(メール対応等の基本サポート)</li>
+            <li>初年度サポート(メール対応等)</li>
           </ul>
           <a class="btn btn-primary" href="#contact">Liteについて問い合わせる</a>
         </div>
         <div class="plan">
-          <span class="badge">複数サイト</span>
+          <p class="plan-target">中小企業向けにバランスの取れたサポート</p>
           <p class="name">Standard</p>
           <p class="price">156<small>万円</small></p>
-          <p class="split">一括</p>
+          <p class="split">一括(税抜)</p>
           <ul>
             <li>複数サイト可</li>
             <li>本番・ステージング分離の専用環境</li>
@@ -453,13 +941,13 @@
           <a class="btn btn-ghost" href="#contact" style="background:var(--paper-soft)">Standardについて問い合わせる</a>
         </div>
         <div class="plan">
-          <span class="badge">カスタム機能</span>
+          <p class="plan-target">上場企業など、既に大きなシステムを抱える企業への伴奏支援</p>
           <p class="name">Pro</p>
           <p class="price">624~<small>万円 *応相談</small></p>
-          <p class="split">一括</p>
+          <p class="split">一括(税抜)</p>
           <ul>
             <li>複数サイト可</li>
-            <li>実装支援によるカスタム機能を含む</li>
+            <li>実装支援によるカスタム機能</li>
             <li>標準機能すべて</li>
             <li>コンサルティング＋実装支援</li>
           </ul>
@@ -467,87 +955,26 @@
         </div>
       </div>
 
-      <p class="section-lead price-lead">買うのはテンプレートではなく、運用の土台一式。価格はすべて税抜。本体は買取で、初年度1年間のサポートを含みます。お申込みから2〜3週間で運用開始。2年目以降の保守は別途(年額・お見積り)。</p>
-
-      <div class="running">
-        <h3>別途かかる費用(お客様所有のクラウド・AI利用料)</h3>
-        <table>
-          <tr><td>AWSサーバーインフラ一式。(ステージングの稼働量による)</td><td>月 6,000〜9,000円程度</td></tr>
-          <tr><td>Claude 有料プラン(お客様のアカウント。他の業務と併用可)</td><td>月 $20〜</td></tr>
-          <tr><td>ドメイン</td><td>年 1,500円程度</td></tr>
-          <tr class="total"><td>合計(月額の目安)</td><td>月 9,000〜12,000円程度</td></tr>
-        </table>
-        <p>AWSとClaudeの利用料は、お客様のアカウントでお客様が直接お支払いになります(当社を経由しません)。既存サイトを移行する場合別途費用がかかります。サイトの規模・使われている技術・データベースの有無によって変わります。当社の構成との差が小さく、変更がほとんど要らない場合の目安として50万円~です。</p>
+      <div class="price-notes">
+        <div class="running">
+          <h3>別途かかる費用(お客様所有のクラウド・AI利用料)</h3>
+          <table>
+            <tr><td>AWSサーバーインフラ一式。(ステージングの稼働量による)</td><td>月 6,000〜9,000円程度</td></tr>
+            <tr><td>Claude 有料プラン(お客様のアカウント。他の業務と併用可)</td><td>月 $20〜</td></tr>
+            <tr><td>ドメイン</td><td>年 1,500円程度</td></tr>
+            <tr class="total"><td>合計(月額の目安)</td><td>月 9,000〜12,000円程度</td></tr>
+          </table>
+          <p>AWSとClaudeの利用料は、お客様のアカウントでお客様が直接お支払いになります(当社を経由しません)。既存サイトを移行する場合別途費用がかかります。サイトの規模・使われている技術・データベースの有無によって変わります。当社の構成との差が小さく、変更がほとんど要らない場合の目安として50万円~です。</p>
+        </div>
+        <div class="price-faq">
+          <p class="price-faq-title"><span class="green-emphasis">よくあるご質問:</span> 月々の利用料がかかりますか？</p>
+          <p>いいえ。月々の約1万円はサービス利用料ではなく、お客様ご自身のAWS・Claudeアカウントへの実費です(当社を経由しません)。</p>
+          <p>環境はすべてお客様所有。一度購入すれば契約が終わってもサイトはそのまま動き続けます。当社ThinkXは中小企業庁<span class="green-emphasis">「デジタル化・AI導入補助金2026」</span>のIT導入支援事業者に認定されており、<span class="green-emphasis">最大1/3の負担で購入できる</span>本ITツールの登録申請の準備中です。</p>
+          <img class="price-subsidy-logo" src="/img/products/KOBITO/hojokin2026.png" alt="デジタル化・AI導入補助金2026">
+        </div>
       </div>
     </section>
     <!-- ↑↑↑↑ END 料金 ↑↑↑↑ -->
-
-    <!-- ↓↓↓↓ 選ばれる理由(ただ Claude Code を使うのとの違い) ↓↓↓↓ -->
-    <section class="section" id="why">
-      <h2 class="section-title">AIの設計に任せない。<br>長期的に失敗しないノウハウの蓄積</h2>
-
-      <div class="pains">
-        <div class="pain">
-          <p class="before">AIは頼まれるたび、その場しのぎで作り足す。半年で中身は誰にも分からない。</p>
-          <div class="after">一貫した設計と基盤で長期的な保守コストを下げる
-            <p>当社が10年かけて決めた設計がそのまま入っている。コビトはその上でしか作らないので、何を足しても一貫したまま。</p>
-          </div>
-        </div>
-        <div class="pain">
-          <p class="before">作るのは簡単。公開・戻す・バックアップ・証明書・費用は、誰がやる?</p>
-          <div class="after">運用の仕組みが、初日から動く。
-            <p>テストで確認して本番へ。「戻して」。毎日のバックアップ、証明書の自動更新、費用の見える化、問い合わせ通知、SEO。全部、同じチャットで。</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="yours philosophy">
-        <strong>設計思想 ― 10年の運用で崩れなかった構成</strong>
-        <ul class="philosophy-list">
-          <li><b>大規模フレームワークに依存しない。</b>AI駆動開発で停止・矛盾の要因になる。小型軽量の標準ライブラリだけでシンプルに。</li>
-          <li><b>疎結合・高いモジュール性。</b>AIが部品を独立して安全に変更・拡張できる。</li>
-          <li><b>流行り廃りに左右されない。</b>フレームワークのバージョン変更で止まらない。動作は軽く、読み込みも速い。</li>
-          <li><b>独自プラットフォームに閉じない。</b>ノーコード基盤ではなく、広く普及した標準技術だけ。</li>
-        </ul>
-        <table class="stack">
-          <tr><th>サーバー</th><td>Python／Flask、nginx、uWSGI・systemd、Linux(AWS EC2)</td></tr>
-          <tr><th>フロントエンド</th><td>JavaScript(ECMAScript)、CSS(LESS)。大規模フレームワークを使用せず、時流に左右されない</td></tr>
-          <tr><th>履歴・配布</th><td>Git／GitHub</td></tr>
-          <tr><th>エージェント</th><td>Anthropic社 Claude Code＋当社のエージェント用基本マナー</td></tr>
-        </table>
-        <p class="philosophy-foot">当社が自社サイトで実際に使い続けている構成と同一です。</p>
-      </div>
-
-      <div class="yours">
-        <strong>環境はお客様のもの</strong>
-        AWS・GitHub・Claudeの各アカウントとドメインはお客様が所有します。当社がお客様のメールアドレスで作成し、完了後にログイン情報一式を引き渡します。契約が終わってもサイトはそのまま動き続け、記事などのデータはGitで管理されているのでいつでも他のシステムへ移せます。
-      </div>
-    </section>
-    <!-- ↑↑↑↑ END 何を解決するのか ↑↑↑↑ -->
-
-    <!-- ↓↓↓↓ 機能 ↓↓↓↓ -->
-    <section class="section" id="features">
-      <h2 class="section-title">運用に要るものは、最初から入っている。</h2>
-      <p class="section-lead">全プラン共通の標準機能です。どれも同じチャットで指示します。</p>
-      <table class="features">
-        <tr><th>スマホでページ追加・更新</th><td>ページ更新、LP追加、告知、FAQ、問い合わせ導線。</td></tr>
-        <tr><th>テスト環境・クローズド公開</th><td>IDとパスワードで閲覧。使わないときは「停止して」。</td></tr>
-        <tr><th>本番へ公開</th><td>確認・承認のうえ反映。</td></tr>
-        <tr><th>戻す</th><td>変更はすべてGitに記録。「戻して」で元通り。</td></tr>
-        <tr><th>日次バックアップ</th><td>お客様のGitHubに毎日保存。</td></tr>
-        <tr><th>問い合わせフォーム</th><td>受信をチャット(Discord)に通知。</td></tr>
-        <tr><th>SEO</th><td>検索に配慮したページ構成・メタ情報。</td></tr>
-        <tr><th>AWS自動構築・費用の見える化</th><td>本番・テストのサーバー一式を自動で立ち上げ。費用は事前に分かる。</td></tr>
-        <tr><th>再起動・ログ確認・証明書更新</th><td>同じチャットで指示。</td></tr>
-      </table>
-
-      <h3 class="sub-title">追加予定<span class="tag tag-opt">未提供</span></h3>
-      <table class="features">
-        <tr class="option"><th>ブログ</th><td>標準機能として追加予定。</td></tr>
-        <tr class="option"><th>ログイン・決済・商品販売</th><td>月額オプション(各3,000円、セット5,000円)で順次追加予定。</td></tr>
-      </table>
-    </section>
-    <!-- ↑↑↑↑ END 機能 ↑↑↑↑ -->
 
     <!-- ↓↓↓↓ 導入の流れ ↓↓↓↓ -->
     <section class="section" id="flow">
@@ -607,6 +1034,10 @@
       <h2 class="section-title">よくあるご質問</h2>
 
       <div class="faq">
+        <details>
+          <summary>Claudeのチャットと、何が違うのですか。</summary>
+          <p class="answer">裏で動くAIは、同じClaudeです。違うのは、AIが仕事をする場所と、最初から持っている文脈です。ふつうのAIチャットは、会社の情報・資料を毎回ゼロから教えるところから始まり、前回の仕事のやり取りを忘れた状態で次の仕事が始まり、作ったものは単発で終わります。KOBITOでは、事業内容も資料も過去の仕事も基盤の中に蓄積し、「あそこを見てやって」のひと言で勝手に読み取って仕事を始めます。作ったものは整理され保管され、サイトや業務システムとしてサーバーの上でそのまま動き続けます。</p>
+        </details>
         <details>
           <summary>エンジニアがいなくても本当に運用できますか。</summary>
           <p class="answer">できます。指示は日本語のチャットで、コマンドや設定画面を触ることはありません。当社自身が、担当者のスマートフォンからこの方法で自社サイトを運用しています。導入時にはお客様のスマホで一緒に操作しながらご案内します。</p>
@@ -669,7 +1100,7 @@
         </details>
         <details>
           <summary>補助金は使えますか。</summary>
-          <p class="answer">本製品(Lite)は「デジタル化・AI導入補助金2026」のITツールとして登録申請中です。補助金を利用した導入をご検討の場合は、お問い合わせ時にその旨をお知らせください。</p>
+          <p class="answer">本製品(Lite)は「デジタル化・AI導入補助金2026」のITツールとして登録申請の準備中です。補助金を利用した導入をご検討の場合は、お問い合わせ時にその旨をお知らせください。</p>
         </details>
         <details>
           <summary>英語ページや多言語のサイトもできますか。</summary>
@@ -691,6 +1122,9 @@
     <section class="contact" id="contact">
       <h2 class="section-title">お問い合わせ・資料請求</h2>
       <p class="section-lead">ご希望のプラン、現在のサイトのURL、お困りごとをお書きください。担当者からメールでご連絡し、資料をお送りします。</p>
+      <div class="hero-cta" style="justify-content:center">
+        <a class="btn btn-primary" href="/img/products/KOBITO/KOBITO製品資料.pdf" target="_blank" rel="noopener">資料をダウンロード</a>
+      </div>
 
       {% from "macro/inquiry.html" import inquiry_form %}
       {{ inquiry_form('inquiry-form', '/inquiry/submit',
