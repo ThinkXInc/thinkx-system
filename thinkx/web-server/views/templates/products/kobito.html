@@ -91,7 +91,7 @@
     .hero-subsidy-logo { width: 215px; }
     .hero-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; margin-top: 2px; }
     .hero-badge { display: inline-block; background: #111; color: #fff; padding: 5px 20px; font-size: 20px; font-weight: 700; letter-spacing: .04em; }
-    .hero-catch { font-size: 17px; font-weight: 800; color: var(--navy); }
+    .hero-catchphrase { font-size: 17px; font-weight: 800; color: var(--navy); }
     .hero-question {
       display: none;
       background: #eef1f6;
@@ -471,7 +471,14 @@
       .case-studies-closing .closing-main { font-size: 21px; }
       .bigquote { font-size: 20px; }
       .bigquote.mid { font-size: 17px; }
-      .hero-inner { padding: 18px 20px 26px 20px; }
+      .hero-inner { padding: 18px 20px 26px 20px; display: flex; flex-direction: column; }
+      .hero-right { display: contents; }
+      .hero-catchphrase { order: -2; font-size: 13px; }
+      .hero-top { order: -1; margin-top: 12px; }
+      .hero-badge { order: 1; align-self: flex-start; margin-top: 14px; }
+      .hero-main { order: 2; }
+      .hero-footer { order: 3; margin-top: 30px; }
+      .floating-hexagons { order: 4; }
       .hero-top { flex-direction: column; gap: 10px; }
       .nav ul { gap: 14px; padding-top: 0; overflow-x: auto; }
       .nav a { font-size: 13px; }
@@ -479,7 +486,6 @@
       .hero-logo { width: 215px; }
       .hero-subsidy-logo { width: 100px; }
       .hero-right { align-items: flex-start; gap: 6px; margin-top: 8px; }
-      .hero-catch { font-size: 13px; }
       .hero-q { font-size: 15px; padding: 8px 14px; margin-top: 6px; }
       .hero-main { display: block; margin-top: 10px; }
       .hero-illustration { display: none; }
@@ -490,7 +496,7 @@
       .floating-hexagons { display: none; }
       .hero-cta .btn { flex: 1 1 100%; text-align: center; padding: 12px 10px; }
       .page { padding: 0 20px 70px 20px; }
-      .section { margin-top: 70px; }
+      .section { margin-top: 115px; }
       .section.price-top { margin-top: 56px; }
       .section-title { font-size: 25px; }
       .steps, .pains, .flow, .plans, .cases { grid-template-columns: 1fr; }
@@ -547,7 +553,7 @@
       </div>
       <div class="hero-right">
         <span class="hero-badge">ClaudeCodeベース</span>
-        <p class="hero-catch">AI企業が10年蓄積してきた設計基盤が今すぐ手に入る。</p>
+        <p class="hero-catchphrase">AI企業が10年蓄積してきた設計基盤が今すぐ手に入る。</p>
       </div>
       <p class="hero-question">そのエージェントで作った<br>システム、大丈夫ですか？</p>
       <div class="hero-main">
