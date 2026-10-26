@@ -471,6 +471,20 @@ ask と deny のルールは hook の allow に勝つ。
 - **残るゲート**: なし。
 - **同型カウント**: 本番 ssh 観測 **6 回目**(Q・T・U・AE・AF・AP)。k00bot2 生死確認としては 2026-08-12(v2 収録外)と合わせ実質 2 回目。
 
+### AQ. staging の podcast 編集サイトの疎通切り分け(uwsgi 生死・mount 先・LB 経路)(2026-10-24)
+
+- **生**: ①`ssh supercom-web1-stg 'systemctl is-active uwsgi_podcast; curl -s http://127.0.0.1:8010/ ...'`
+  ②同 `curl http://127.0.0.1:8010/podcast/`(mount 下の正パス)③`curl http://52.68.142.190/podcast/`(LB 直・401 期待)
+- **引き金**: `ssh`(ask・staging)・`curl` 外部(ask)。
+- **クラス**: 観測(staging.thinkxinc.com/podcast/ が 404 に見えた切り分け。読み取りのみ)。
+- **結論**: 故障ではなく入口違い。podcast は LB の EIP 直 `/podcast/`(direct.conf・Basic 認証)で公開され、
+  staging ドメイン側には /podcast が無い(thinkx アプリが 404/308 を返していた)。
+- **正しい形**: `stg.py check` の外形一覧に「LB EIP 直 /podcast/ = 401 期待」を1行足す(uwsgi_podcast の
+  is-active と合わせて podcast の生死が wrapper で済む)。verify_deploy.py landed の --file が
+  日本語パスを弾いた件も修正候補。
+- **残るゲート**: なし。
+- **同型カウント**: staging ssh 観測は stg.py 整備後では初。curl 外部(EIP 直)は O・Q に続く系。
+
 ---
 
 ## 状態と次の一手(2026-10-01)
