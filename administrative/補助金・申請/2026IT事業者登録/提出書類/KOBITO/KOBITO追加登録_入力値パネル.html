@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KOBITO追加登録 入力値パネル</title>
+<style>
+  /* KOBITO 追加登録(Lite/Standard/Pro)のポータル入力値。フォームと同じ並び・項目ごとコピーボタン。
+     ラジオ/プルダウンは「画面で選択」、未確定は黄色の「要決定」。(LSHで確立した form-copy-panel 形式) */
+  * { box-sizing: border-box; }
+  body { font-family: "Hiragino Sans", sans-serif; margin: 0; background: #f4f5f8; color: #22252c; font-size: 14px; line-height: 1.7; }
+  header { background: #1f3864; color: #fff; padding: 14px 20px; }
+  header h1 { margin: 0; font-size: 16px; }
+  header p { margin: 4px 0 0 0; font-size: 12px; opacity: .85; }
+  main { max-width: 860px; margin: 0 auto; padding: 18px 16px 60px; }
+  h2 { font-size: 15px; color: #1f3864; border-bottom: 2px solid #1f3864; padding-bottom: 4px; margin: 28px 0 10px; }
+  .item { background: #fff; border: 1px solid #dde0e8; border-radius: 8px; padding: 10px 12px; margin-top: 10px; }
+  .item .label { font-size: 12px; font-weight: 700; color: #5a6070; }
+  .item .value { margin-top: 4px; display: flex; gap: 10px; align-items: flex-start; }
+  .item .value pre { flex: 1; margin: 0; white-space: pre-wrap; word-break: break-all; font-family: inherit; font-size: 14px; background: #f7f8fb; border-radius: 6px; padding: 8px 10px; }
+  .item button { flex: 0 0 auto; border: none; background: #1f3864; color: #fff; font-size: 12px; font-weight: 700; border-radius: 6px; padding: 8px 14px; cursor: pointer; }
+  .item button.done { background: #0b8a2f; }
+  .select { background: #eef1f6; border-radius: 6px; padding: 8px 10px; font-size: 13px; }
+  .select b { color: #1f3864; }
+  .todo { background: #fff3bf; border: 1px solid #e0c200; border-radius: 6px; padding: 8px 10px; font-size: 13px; }
+  .todo b { color: #8a6d00; }
+  .note { font-size: 12px; color: #5a6070; margin-top: 4px; }
+  .per-plan td, .per-plan th { border: 1px solid #dde0e8; padding: 6px 10px; font-size: 13px; text-align: left; }
+  .per-plan { border-collapse: collapse; width: 100%; margin-top: 8px; background: #fff; }
+  .per-plan th { background: #eef1f6; color: #1f3864; }
+</style>
+</head>
+<body>
+<header>
+  <h1>KOBITO 追加登録 入力値パネル(Lite／Standard／Pro の3ツール)</h1>
+  <p>大分類Ⅰ カテゴリー1(ソフトウェア)・通常登録。プランごとに1ツールずつ同じ手順で登録する。添付は 04_機能説明資料_v11.pdf と 05_価格説明資料_v3.pdf(3ツール共通)。</p>
+</header>
+<main>
+
+  <h2>名称(プランごとに差し替え)</h2>
+  <div class="item"><div class="label">ITツール名(Lite)</div><div class="value"><pre>ThinkXエージェントシステムベースキット(KOBITO) Lite</pre><button>コピー</button></div></div>
+  <div class="item"><div class="label">ITツール名(Standard)</div><div class="value"><pre>ThinkXエージェントシステムベースキット(KOBITO) Standard</pre><button>コピー</button></div></div>
+  <div class="item"><div class="label">ITツール名(Pro)</div><div class="value"><pre>ThinkXエージェントシステムベースキット(KOBITO) Pro</pre><button>コピー</button></div></div>
+  <div class="item"><div class="label">正式な製品名(3ツール共通)</div><div class="value"><pre>ThinkXエージェントシステムベースキット(KOBITO)</pre><button>コピー</button></div></div>
+  <p class="note">機能説明資料・価格説明資料・接続画面の表示と一字一句同じであること(名称不一致はLSHで差し戻しになった)。</p>
+
+  <h2>開発メーカー・導入</h2>
+  <div class="item"><div class="label">開発メーカー</div><div class="select">画面で選択：<b>自社</b></div></div>
+  <div class="item"><div class="label">開発メーカー名</div><div class="value"><pre>ThinkX株式会社</pre><button>コピー</button></div></div>
+  <div class="item"><div class="label">本ITツールを導入するまでにかかる日数</div><div class="value"><pre>21</pre><button>コピー</button></div><p class="note">2〜3週間(お申込みから運用開始まで)の上限側で21日。</p></div>
+  <div class="item"><div class="label">導入に係る作業(項目)内容</div><div class="value"><pre>当社がお客様のメールアドレスでAWS・GitHub・Claudeのアカウントを作成し、AWS上に本番・ステージングのサーバー一式を自動構築してエージェントを設置。お客様のスマートフォンで動作確認のうえログイン情報一式を引き渡して運用開始(お客様の端末操作なし・訪問なし)。</pre><button>コピー</button></div></div>
+
+  <h2>概要・URL</h2>
+  <div class="item"><div class="label">ITツール概要(説明)</div><div class="value"><pre>Anthropic社Claude Codeをベースに、AI開発10年のThinkXが自ら用いているエージェント駆動開発システム基盤の完成されたセットアップ。お客様専用AWSサーバーの中にエージェント“コビト”が常駐し、非エンジニアでも手元のスマートフォンやPCから日本語で指示するだけで、コーポレートサイトの運用(ページ追加・更新・公開)や管理表・台帳などの社内システムを、この基盤の上に構築・運用できる。本番への反映はテスト環境(ステージング)での確認と利用者の承認を必ず経る。問い合わせ受付とチャット通知、SEO、日次バックアップ、TLS証明書の自動更新、費用の見える化を標準で備える。</pre><button>コピー</button></div></div>
+  <div class="item"><div class="label">WEB掲載用URL／参考URL</div><div class="value"><pre>https://thinkxinc.com/products/KOBITO</pre><button>コピー</button></div></div>
+  <div class="item"><div class="label">マスタファイル</div><div class="todo"><b>画面に出たら:</b> LSH先行登録のときと同じ対応(アップロード欄の仕様を確認してから用意)。</div></div>
+
+  <h2>実績・販売</h2>
+  <div class="item"><div class="label">自社が顧客へ導入した会社数</div><div class="value"><pre>0</pre><button>コピー</button></div></div>
+  <div class="item"><div class="label">販売を開始した日</div><div class="value"><pre>2026/09/01</pre><button>コピー</button></div></div>
+  <div class="item"><div class="label">販売形態</div><div class="select">画面で選択：<b>買取</b></div></div>
+
+  <h2>価格(プランごと)</h2>
+  <table class="per-plan">
+    <tr><th></th><th>Lite</th><th>Standard</th><th>Pro</th></tr>
+    <tr><td>標準販売価格(税抜)</td><td>780000</td><td>1560000</td><td>6240000</td></tr>
+    <tr><td>最小販売価格(税抜)</td><td>780000</td><td>1560000</td><td>6240000</td></tr>
+  </table>
+  <p class="note">値引きなしのため標準＝最小。ライセンス価格の欄は「追加ライセンスなし(1社1環境)」なので空欄または0(画面の仕様に従う)。</p>
+  <div class="item"><div class="label">価格設定の内訳(Lite・全角255字以内)</div><div class="value"><pre>ソフトウェア本体(利用権)の価格である。Ｌｉｔｅ７８０，０００円(税抜)は、サイト数１・標準機能すべて・本番／ステージング分離の専用環境を含むソフトウェア利用権の一式であり、これ以外の商材を含まない。値引きはない。</pre><button>コピー</button></div></div>
+  <div class="item"><div class="label">価格設定の内訳(Standard)</div><div class="value"><pre>ソフトウェア本体(利用権)の価格である。Ｓｔａｎｄａｒｄ１，５６０，０００円(税抜)は、複数サイト可・標準機能すべて・本番／ステージング分離の専用環境を含むソフトウェア利用権の一式であり、これ以外の商材を含まない。値引きはない。</pre><button>コピー</button></div></div>
+  <div class="item"><div class="label">価格設定の内訳(Pro)</div><div class="value"><pre>ソフトウェア本体(利用権)の価格である。Ｐｒｏ６，２４０，０００円(税抜)は、複数サイト可・標準機能すべてとカスタム機能・本番／ステージング分離の専用環境を含むソフトウェア利用権の一式であり、これ以外の商材を含まない。値引きはない。</pre><button>コピー</button></div></div>
+
+  <h2>AI・プロセス</h2>
+  <div class="item"><div class="label">AI搭載</div><div class="select">画面で選択：<b>あり(生成AI)</b>　<span class="note">機能説明資料p.3に「生成AI搭載」を明記済み。</span></div></div>
+  <div class="item"><div class="label">プロセス選択</div><div class="select">画面で選択：<b>主 共P-05(情シス・統合業務)／副 共P-01(顧客対応・販売支援)</b>　該当ページ：<b>3</b></div></div>
+  <div class="item"><div class="label">共P-05 機能概要文</div><div class="value"><pre>サイトを構成するIT資産(サーバー・証明書・ログ・リポジトリ)の構築・管理と、変更→承認→公開の承認ワークフローを一連で担う(単一処理ではない)。機能説明資料p.3の対応表に別紙2の機能例の語をマーカーで明示。</pre><button>コピー</button></div></div>
+  <div class="item"><div class="label">共P-01 機能概要文</div><div class="value"><pre>問い合わせフォームの受付とチャット通知(CRM・無人受付)、告知・LP・FAQによる販促コンテンツの運用(販促)。機能説明資料p.3の対応表に別紙2の機能例の語をマーカーで明示。</pre><button>コピー</button></div></div>
+
+  <h2>チェック項目の注意(11項目)</h2>
+  <div class="item"><div class="label">「顧客の要求に合わせてカスタマイズを行うソフトウェアですか」</div><div class="select">画面で選択：<b>いいえ</b>　<span class="note">完成済み標準パッケージとして販売(LSHで「はい」は対象外規定に抵触)。</span></div></div>
+  <div class="item"><div class="label">「クラウドサーバーは貴社が用意するものですか」(文言は画面に合わせる)</div><div class="todo"><b>要決定:</b> KOBITOはお客様所有のAWSアカウント上に当社が構築する。LSH(当社提供SaaS)は「はい」だったが、KOBITOは所有がお客様のため「いいえ」が実態に近い。画面の設問文言を見て決める。</div></div>
+  <div class="item"><div class="label">インボイス枠(電子取引類型)での導入希望</div><div class="select">画面で選択：<b>希望しない</b>(通常枠のみ)</div></div>
+
+<script>
+  for (const button of document.querySelectorAll('.item button')) {
+    button.addEventListener('click', async () => {
+      const text = button.parentElement.querySelector('pre').textContent;
+      try { await navigator.clipboard.writeText(text); } catch (e) {
+        const area = document.createElement('textarea');
+        area.value = text; document.body.appendChild(area); area.select();
+        document.execCommand('copy'); area.remove();
+      }
+      button.textContent = 'コピー済み'; button.classList.add('done');
+      setTimeout(() => { button.textContent = 'コピー'; button.classList.remove('done'); }, 1800);
+    });
+  }
+</script>
+</main>
+</body>
+</html>

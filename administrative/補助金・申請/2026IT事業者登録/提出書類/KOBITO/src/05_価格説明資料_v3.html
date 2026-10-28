@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>05_価格説明資料_v3</title>
+<style>
+  /* 価格説明資料(KOBITO v3)。A4縦・1ページ。Chrome --print-to-pdf で出力する。
+     LSH 07で通過した紺デザイン(紺見出し+下線+角丸の紺バッジ❶〜❼)に合わせる。
+     サポート・保守・カテゴリー・役務の語は使わない(LSHの差し戻し実績に基づく)。 */
+  @page { size: A4 portrait; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #1f3864;
+    --ink: #222222;
+    --ink-soft: #555b66;
+    --line: #c9cedb;
+    --box: #f2f5fa;
+  }
+  body { font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", sans-serif; color: var(--ink); font-size: 10pt; line-height: 1.7; }
+  .page { width: 210mm; height: 297mm; padding: 13mm 15mm; position: relative; overflow: hidden; page-break-after: always; }
+  .page:last-child { page-break-after: auto; }
+  .page-foot { position: absolute; bottom: 7mm; right: 15mm; font-size: 8pt; color: var(--ink-soft); }
+  .doc-title { text-align: center; font-size: 15pt; font-weight: 800; color: var(--navy); }
+  .doc-sub { text-align: center; font-size: 9pt; color: var(--ink-soft); margin-top: 1mm; }
+  h2.sec { font-size: 11pt; font-weight: 800; color: var(--navy); border-bottom: 1.5px solid var(--navy); padding-bottom: 1mm; margin: 5.5mm 0 2.5mm 0; }
+  .num { display: inline-block; width: 5.2mm; height: 5.2mm; border-radius: 50%; background: var(--navy); color: #fff; font-size: 8.5pt; font-weight: 700; text-align: center; line-height: 5.2mm; margin-right: 2mm; vertical-align: 1px; }
+  .big { font-size: 11.5pt; font-weight: 700; }
+  .note { font-size: 8.8pt; color: var(--ink-soft); }
+  table.t { width: 100%; border-collapse: collapse; font-size: 9.2pt; margin-top: 1.5mm; }
+  table.t th, table.t td { border: 0.5px solid var(--line); padding: 1.8mm 2.4mm; text-align: left; vertical-align: top; }
+  table.t th { background: var(--box); color: var(--navy); font-weight: 700; white-space: nowrap; }
+  td.price { text-align: right; font-weight: 700; white-space: nowrap; }
+  ul.dots { list-style: none; margin-top: 1.5mm; font-size: 8.8pt; color: var(--ink-soft); }
+  ul.dots li { padding-left: 4mm; position: relative; margin-top: 0.6mm; }
+  ul.dots li::before { content: "・"; position: absolute; left: 0; }
+</style>
+</head>
+<body>
+<section class="page">
+  <p class="doc-title">価格説明資料</p>
+  <p class="doc-sub">デジタル化・AI導入補助金2026 ITツール登録申請 添付資料(任意書式)　※❶〜❼は「ITツール登録における注意ポイント」の記載項目に対応</p>
+
+  <h2 class="sec"><span class="num">1</span>IT導入支援事業者名</h2>
+  <p class="big">ThinkX株式会社(法人番号 6010401116248)</p>
+
+  <h2 class="sec"><span class="num">2</span>ITツール名</h2>
+  <p class="big">ThinkXエージェントシステムベースキット(KOBITO)</p>
+  <p class="note">正式な製品名：ThinkXエージェントシステムベースキット(KOBITO)／ITツール名は本製品名にプラン名を付したもの(「ThinkXエージェントシステムベースキット(KOBITO) Lite」「同 Standard」「同 Pro」。各プランを別ITツールとして登録)</p>
+
+  <h2 class="sec"><span class="num">3</span><span class="num" style="margin-left:-1mm;">4</span><span class="num" style="margin-left:-1mm;">5</span>ITツールの価格(税抜・上限確定・料金体系ごと)</h2>
+  <table class="t">
+    <tr><th style="width:40mm;">料金体系</th><th>内容</th><th style="width:40mm;">標準販売価格</th></tr>
+    <tr><td>ソフトウェア(買取)<br>Lite</td><td>ソフトウェア本体(利用権)。サイト数1つ・標準機能すべて・本番/ステージング分離の専用環境</td><td class="price">780,000円(税抜)</td></tr>
+    <tr><td>ソフトウェア(買取)<br>Standard</td><td>ソフトウェア本体(利用権)。複数サイト可・標準機能すべて・本番/ステージング分離の専用環境</td><td class="price">1,560,000円(税抜)</td></tr>
+    <tr><td>ソフトウェア(買取)<br>Pro</td><td>ソフトウェア本体(利用権)。複数サイト可・標準機能すべて＋カスタム機能・本番/ステージング分離の専用環境</td><td class="price">6,240,000円(税抜)</td></tr>
+    <tr><td>ライセンス</td><td>追加ライセンスの販売なし(1社1環境)</td><td class="price">－</td></tr>
+  </table>
+  <ul class="dots">
+    <li>価格はすべて税抜。「〜」等の下限表記ではなく上限確定額。値引きなし。</li>
+    <li>価格はソフトウェア本体(利用権)の価格。各プランを別ITツールとして登録し、申請画面「価格設定の内訳」と同一。</li>
+    <li>お客様所有のクラウド・AI利用料は別途(AWS 月6,000〜9,000円程度＋Claude有料プラン 月$20〜＋ドメイン 年1,500円程度。お客様のアカウントでお客様が直接支払い、当社を経由しない)。</li>
+  </ul>
+
+  <h2 class="sec">価格設定の理由</h2>
+  <p style="font-size:9.3pt;">本製品は、当社がAI開発10年以上の実績の中で自社の複数サイト・社内システムの運用に用いてきたエージェント駆動開発基盤(AIコードエージェント、Git連携、ステージング・承認・ロールバックの仕組み)を製品化したものであり、当社が自社で実際に使用している構成と同一の構成を標準パッケージとして提供する。価格は、(1)製品開発・実装に要した工数、(2)導入1件あたりの接続・設定の作業量、(3)市場の類似AI・システム開発相場、の3点を踏まえて設定している。個別開発ではなく標準パッケージとして提供するため、同等の機能を個別開発・外注で実現する場合の市場相場を大きく下回る価格で提供できる。</p>
+
+  <div class="page-foot">1 / 2</div>
+</section>
+
+<section class="page">
+  <h2 class="sec" style="margin-top:0;"><span class="num">6</span>導入事例・実績</h2>
+  <table class="t">
+    <tr><th style="width:28mm;">時期</th><th style="width:48mm;">導入先</th><th>内容</th></tr>
+    <tr><td>2016年〜現在</td><td>ThinkX株式会社(自社・東京都港区)</td><td>自社コーポレートサイト thinkxinc.com を本製品の構成(Python/Flask・nginx・Git・ステージング／本番分離)で構築・運用。2026年よりAIコードエージェント“コビト”によるチャット運用に移行し、ページ追加・更新・公開・TLS更新・ログ確認を担当者がスマートフォンから実施。</td></tr>
+    <tr><td>2025年〜現在</td><td>ThinkX株式会社(自社サービスサイト)</td><td>nntmapp.com 等の自社サービスサイトを同一基盤で運用。検索キーワード「ブラウンノイズ」で検索上位を維持(SEO実績)。</td></tr>
+    <tr><td>2025年〜現在</td><td>True Tech Association Japan</td><td>同団体の公式サイト truetechjapan.com(日英多言語、エントリーフォーム、問い合わせフォーム、資料配布)を本製品の基盤で構築・運用。ページ更新・フォーム運用・公開を本製品で実施。</td></tr>
+    <tr><td>2026年9月</td><td>一般販売開始</td><td>本製品(Lite／Standard／Pro)の一般販売を開始。外部企業への導入は販売開始後に順次実施し、本資料へ追記する。</td></tr>
+  </table>
+
+  <h2 class="sec"><span class="num">7</span>料金表</h2>
+  <p style="font-size:9.3pt;">本資料p.1の❸〜❺の価格表が本製品の料金表(プラン一覧)である。同一の料金は製品ページ https://thinkxinc.com/products/KOBITO でも一般に公開している。</p>
+  <div class="page-foot">2 / 2</div>
+</section>
+</body>
+</html>

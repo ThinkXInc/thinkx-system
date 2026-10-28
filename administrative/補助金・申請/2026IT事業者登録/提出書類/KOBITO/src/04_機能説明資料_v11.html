@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>04_機能説明資料_v11</title>
+<style>
+  /* 機能説明資料(KOBITO v11)。A4横・4ページ。Chrome --print-to-pdf で出力する。
+     デザインはLSH 06で通過した流儀(紺見出し・下線・黄マーカー・枠囲み)に合わせる。 */
+  @page { size: A4 landscape; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #1f3864;
+    --ink: #222222;
+    --ink-soft: #555b66;
+    --line: #c9cedb;
+    --marker: #ffe24d;
+    --box: #f2f5fa;
+  }
+  body { font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", sans-serif; color: var(--ink); font-size: 10.5pt; line-height: 1.75; }
+  .page { width: 297mm; height: 210mm; padding: 11mm 13mm 9mm 13mm; page-break-after: always; position: relative; overflow: hidden; }
+  .page:last-child { page-break-after: auto; }
+  .doc-header { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid var(--navy); padding-bottom: 2mm; margin-bottom: 5mm; }
+  .doc-header .doc-title { font-size: 13pt; font-weight: 700; color: var(--navy); }
+  .doc-header .doc-items { font-size: 8.5pt; color: var(--ink-soft); }
+  .item-tag { display: inline-block; background: var(--navy); color: #fff; font-size: 8pt; font-weight: 700; border-radius: 3px; padding: 0 2.2mm; margin-left: 2mm; vertical-align: 1px; }
+  h2.sec { font-size: 11.5pt; font-weight: 800; color: var(--navy); border-bottom: 1.5px solid var(--navy); padding-bottom: 1mm; margin: 4.5mm 0 2.5mm 0; }
+  h2.sec:first-of-type { margin-top: 0; }
+  .name-line { font-size: 15pt; font-weight: 800; color: var(--ink); }
+  .note { font-size: 9pt; color: var(--ink-soft); }
+  .maker-sub { font-size: 8.5pt; color: var(--ink-soft); }
+  .lead { font-size: 9.8pt; }
+  .lead p + p { margin-top: 2mm; }
+  .ownbox { border: 1.2px solid var(--navy); border-radius: 3mm; background: var(--box); padding: 3mm 4mm; margin-top: 3.5mm; }
+  .ownbox .bt { font-weight: 800; color: var(--navy); font-size: 10pt; }
+  .ownbox p { font-size: 9pt; margin-top: 1mm; }
+  .url-line { margin-top: 3mm; font-size: 9pt; }
+  .cols { display: flex; gap: 6mm; }
+  .cols > div { flex: 1; min-width: 0; }
+  .mk { background: linear-gradient(transparent 45%, var(--marker) 45%); font-weight: 700; }
+  table.t { width: 100%; border-collapse: collapse; font-size: 8.8pt; }
+  table.t th, table.t td { border: 0.5px solid var(--line); padding: 1.4mm 2mm; text-align: left; vertical-align: top; }
+  table.t th { background: var(--box); color: var(--navy); font-weight: 700; white-space: nowrap; }
+  .flow-lanes { margin-top: 2mm; }
+  .lane { display: flex; align-items: center; gap: 3mm; margin-top: 2.5mm; }
+  .lane .who { flex: 0 0 34mm; text-align: center; font-weight: 700; color: var(--navy); font-size: 9pt; border: 1.2px solid var(--navy); border-radius: 2mm; padding: 1.6mm 1mm; background: #fff; }
+  .lane .steps { flex: 1; display: flex; gap: 2.5mm; }
+  .lane .step { flex: 1; border: 0.8px solid var(--line); border-radius: 2mm; background: var(--box); padding: 1.6mm 2mm; font-size: 8.6pt; text-align: center; }
+  .lane .step b { display: block; color: var(--navy); font-size: 9pt; }
+  .flow-note { margin-top: 2.5mm; font-size: 8.8pt; color: var(--ink-soft); }
+  .figs { display: flex; gap: 6mm; margin-top: 2mm; align-items: flex-start; }
+  .figs figure { flex: 1; min-width: 0; }
+  .figs img { width: 100%; height: auto; border: 0.6px solid var(--line); }
+  .figs figcaption { font-size: 9pt; margin-top: 1.2mm; font-weight: 700; }
+  .figs .cap-sub { font-size: 8.3pt; color: var(--ink-soft); font-weight: 400; }
+  .zoom-strip { margin-top: 2.5mm; }
+  .zoom-strip img { width: 100%; border: 0.6px solid var(--line); }
+  .ai-box { border: 1.2px solid var(--navy); border-radius: 2mm; background: #fff; padding: 2.5mm 3.5mm; margin-top: 3.5mm; font-size: 9pt; }
+  .ai-box .mk { font-weight: 700; }
+  .proc-head { font-size: 9.5pt; margin-bottom: 1.5mm; }
+  .plans { display: flex; gap: 5mm; margin-top: 2mm; }
+  .plan { flex: 1; border: 1px solid var(--line); border-radius: 3mm; padding: 3mm 4mm; }
+  .plan .pname { font-size: 12pt; font-weight: 800; color: var(--navy); }
+  .plan .pprice { font-size: 15pt; font-weight: 800; margin-top: 1mm; }
+  .plan .pprice small { font-size: 9pt; font-weight: 600; color: var(--ink-soft); }
+  .plan ul { list-style: none; margin-top: 2mm; font-size: 8.8pt; }
+  .plan li { margin-top: 1mm; padding-left: 4mm; position: relative; }
+  .plan li::before { content: ""; position: absolute; left: 0; top: 1.1mm; width: 2.6mm; height: 2.6mm; border-radius: 0.7mm; background: var(--navy); }
+  .plan-note { margin-top: 2.5mm; font-size: 8.8pt; color: var(--ink-soft); }
+  .steps-ol { counter-reset: n; margin-top: 1mm; }
+  .steps-ol li { list-style: none; counter-increment: n; font-size: 9.3pt; margin-top: 1.6mm; padding-left: 7mm; position: relative; }
+  .steps-ol li::before { content: counter(n); position: absolute; left: 0; top: 0.4mm; width: 4.6mm; height: 4.6mm; border-radius: 1.2mm; background: var(--navy); color: #fff; font-size: 8.5pt; font-weight: 700; text-align: center; line-height: 4.6mm; }
+  .page-foot { position: absolute; bottom: 5mm; right: 13mm; font-size: 8pt; color: var(--ink-soft); }
+</style>
+</head>
+<body>
+
+<!-- ============ p.1 ============ -->
+<section class="page">
+  <div class="doc-header">
+    <span class="doc-title">機能説明資料</span>
+    <span class="doc-items">記載項目 ①③ p.1 ／ ⑥④ p.2 ／ ⑤ p.3 ／ ⑦② p.4</span>
+  </div>
+
+  <h2 class="sec">ITツールの正式な製品名<span class="item-tag">記載項目①</span></h2>
+  <p class="name-line">ThinkXエージェントシステムベースキット(KOBITO)</p>
+  <p class="note">ITツール名は本製品名にプラン名を付したもの(「ThinkXエージェントシステムベースキット(KOBITO) Lite／Standard／Pro」。各プランを別ITツールとして登録)</p>
+
+  <h2 class="sec">開発メーカー名<span class="item-tag">記載項目③</span></h2>
+  <p style="font-weight:700;">ThinkX株式会社(自社開発・法人番号 6010401116248)</p>
+  <p class="maker-sub">AI開発10年。自社コードベース約67万行、特許4件(うち2件出願中)。音声・自然言語処理分野のアルゴリズム研究開発。</p>
+
+  <h2 class="sec">製品概要</h2>
+  <div class="lead">
+    <p>エンジニアでなくても「こんなシステムにしたい」と日本語で頼むだけでシステムが作れる時代になったが、AIに任せきりで作ると設計の品質が低く、長期的に不安定で安全性の低いシステムになることが多く、運用効率の高いシステムとなるまで長い改善を必要とする。</p>
+    <p>本ソフトウェアは、Anthropic社 Claude Codeをベースとしながら、AI開発10年の実績をもつThinkXが自ら用いている、エージェント駆動開発システム基盤の完成されたセットアップである。当社がエンジニアに指示するレベルの開発指示書・コード規約・サンプルコードが基盤に組み込み済みで、エージェント“コビト”はその延長でしか書かない。お客様専用AWSサーバーの中に“コビト”が常駐し、非エンジニアでも手元のスマートフォンやPCから日本語で指示するだけで、コーポレートサイトの運用(ページ追加・更新・公開)も、管理表・台帳などの社内システムも、この基盤の上に積み上げていくことができる。本番反映はテスト環境(ステージング)での確認と利用者の承認を必ず経る。</p>
+    <p>問い合わせ、チャット(Discord)への通知、SEOなどの機能はデフォルトで付属する。ソースコードはアトミックな技術スタックと設計が保たれ、エージェント用の基本マナーによって、長期的にAIが設計の失敗・複雑化に陥らずシンプルさを維持するための長いノウハウの蓄積が実現されている。</p>
+  </div>
+
+  <div class="ownbox">
+    <span class="bt">環境はお客様のもの</span>
+    <p>AWS・GitHub・Claudeの各アカウントとドメインはお客様が所有する。当社がお客様のメールアドレスで作成し、完了後にログイン情報一式を引き渡す。契約が終わってもサイトはそのまま動き続け、記事などのデータはGitで管理されているのでいつでも他のシステムへ移せる。</p>
+  </div>
+
+  <p class="url-line">製品ページ：https://thinkxinc.com/products/KOBITO(機能・料金・導入の流れ・FAQを公開)</p>
+  <div class="page-foot">1 / 4</div>
+</section>
+
+<!-- ============ p.2 ============ -->
+<section class="page">
+  <h2 class="sec">業務フロー図<span class="item-tag">記載項目⑥</span></h2>
+  <div class="flow-lanes">
+    <div class="lane">
+      <div class="who">利用者<br><span style="font-weight:400;font-size:8pt;">(スマホ／PC)</span></div>
+      <div class="steps">
+        <div class="step"><b>1 指示</b>「事例を1件追加」</div>
+        <div class="step"><b>3 変更内容を確認</b>承認／修正指示</div>
+        <div class="step"><b>5 表示を確認</b>公開を指示</div>
+      </div>
+    </div>
+    <div class="lane">
+      <div class="who">“コビト”<br><span style="font-weight:400;font-size:8pt;">(AWS・ステージング環境)</span></div>
+      <div class="steps">
+        <div class="step"><b>2 サイトを読み</b>変更案を作成</div>
+        <div class="step"><b>4 ステージングに反映</b>修正指示なら 2 へ戻る</div>
+        <div class="step" style="visibility:hidden;"></div>
+      </div>
+    </div>
+    <div class="lane">
+      <div class="who">本番環境<br><span style="font-weight:400;font-size:8pt;">(AWS)</span></div>
+      <div class="steps">
+        <div class="step" style="visibility:hidden;"></div>
+        <div class="step" style="visibility:hidden;"></div>
+        <div class="step"><b>6 本番に公開</b></div>
+      </div>
+    </div>
+  </div>
+  <p class="flow-note">本番への反映は必ず「利用者の承認」と「ステージングでの確認」を経る。公開後の再起動・ログ確認・TLS更新・ロールバック・日次バックアップも同じチャットで指示する。</p>
+
+  <h2 class="sec">画面キャプチャ<span class="item-tag">記載項目④</span></h2>
+  <div class="figs">
+    <figure>
+      <img src="assets/figA_接続画面.png" alt="">
+      <figcaption>図A：本製品の接続画面 <span class="cap-sub">(画面上部にITツール名を表示)</span></figcaption>
+      <div class="zoom-strip"><img src="assets/figA_タイトル拡大.png" alt=""></div>
+      <p class="cap-sub" style="margin-top:1mm;">図Aの画面上部の拡大：ITツール名の表示部</p>
+    </figure>
+    <figure>
+      <img src="assets/figB_aws費用.png" alt="">
+      <figcaption>図B：AWSクラウドの費用の見える化 <span class="cap-sub">(“コビト”がサーバー構成ごとの月額費用を概算表示)</span></figcaption>
+    </figure>
+  </div>
+  <div class="page-foot">2 / 4</div>
+</section>
+
+<!-- ============ p.3 ============ -->
+<section class="page">
+  <h2 class="sec">機能一覧と申請プロセスの対応<span class="item-tag">記載項目⑤</span></h2>
+  <p class="proc-head">申請プロセス：主 共P-05 情シス・統合業務／副 共P-01 顧客対応・販売支援　<span class="note">黄色＝該当箇所(別紙2「該当する機能例」の語で対応を示す)</span></p>
+  <table class="t">
+    <tr><th style="width:34mm;">機能</th><th>内容</th><th style="width:76mm;">プロセス／別紙2の機能例</th></tr>
+    <tr><td>AWSクラウドの自動構築と費用の見える化</td><td>Terraformでお客様のAWSにサーバー一式(本番・ステージング)を自動で立ち上げる。かかる費用は事前に簡単に分かる</td><td>P-05 <span class="mk">社内資産管理</span>(IT資産の構築・費用管理)</td></tr>
+    <tr><td>スマホでページ追加・更新</td><td>スマホで指示すれば手のひらで運用できる。ページ更新・LP追加・告知・FAQ・問い合わせ導線修正</td><td>P-05 <span class="mk">ビジネスアプリ作成ツール</span>／P-01 <span class="mk">販促</span></td></tr>
+    <tr><td>ステージングでのテスト・クローズド公開</td><td>ステージングサーバーで確認してから本番へ。IDとパスワードでログインして閲覧できるクローズド公開。使わないときは「停止して」で止まる</td><td>P-05 <span class="mk">ワークフロー</span>／<span class="mk">社内資産管理</span>(IT資産の稼働管理)</td></tr>
+    <tr><td>本番へのデプロイ</td><td>確認・承認のうえ本番に反映</td><td>P-05 <span class="mk">ワークフローシステム</span>(承認後の実行)</td></tr>
+    <tr><td>サーバー再起動</td><td>サーバー・プロセスの再起動</td><td>P-05 <span class="mk">社内資産管理</span>(IT資産・機器管理)</td></tr>
+    <tr><td>ログ確認</td><td>アクセスログ・エラーログの確認</td><td>P-05 <span class="mk">社内資産管理</span>／<span class="mk">分析・解析ツール</span></td></tr>
+    <tr><td>TLS更新</td><td>certbot によるTLS証明書の更新</td><td>P-05 <span class="mk">社内資産管理</span>(証明書の期限管理)</td></tr>
+    <tr><td>変更履歴とロールバック</td><td>変更はすべてGitに記録され、「戻して」で元に戻せる</td><td>P-05 <span class="mk">ワークフローシステム</span>(差し戻し)</td></tr>
+    <tr><td>日次バックアップ</td><td>GitHubにプッシュされた時点でバックアップ。お客様のGitHub内のバックアップ用リポジトリへ日次で保存</td><td>P-05 <span class="mk">社内資産管理</span>(IT資産の保全)</td></tr>
+    <tr><td>問い合わせ</td><td>問い合わせフォーム。受信をDiscordに通知</td><td>P-01 <span class="mk">CRM</span>(対応履歴の受付・共有)、<span class="mk">無人受付</span></td></tr>
+    <tr><td>SEO</td><td>検索エンジン最適化に配慮したページ構成・メタ情報</td><td>P-01 <span class="mk">販促</span>(検索経由の集客)</td></tr>
+  </table>
+  <p class="note" style="margin-top:1.5mm;">共P-05：サイトを構成するIT資産(サーバー・証明書・ログ・リポジトリ)の構築・管理と、変更→承認→公開の承認ワークフローを一連で担う(単一処理ではない)。共P-01：問い合わせ受付と告知・LP・FAQによる販促コンテンツの運用。</p>
+
+  <div class="ai-box"><span class="mk">生成AI搭載</span>：“コビト”は Anthropic 社 Claude Code をベースとするAIコードエージェント。利用者の自然言語指示を生成AIが解釈し、サイトの更新・公開の操作を生成・実行する。本番反映はステージング確認と利用者の承認を経る。</div>
+  <div class="page-foot">3 / 4</div>
+</section>
+
+<!-- ============ p.4 ============ -->
+<section class="page">
+  <h2 class="sec">導入手順と利用方法<span class="item-tag">記載項目⑦</span></h2>
+  <div class="cols">
+    <div>
+      <p style="font-weight:700; color:var(--navy); font-size:9.5pt;">導入手順(当社が実施。お客様の端末操作なし・訪問なし・2〜3週間)</p>
+      <ol class="steps-ol">
+        <li>お申込み後、当社がお客様のメールアドレスでAWS・GitHub・Claudeのアカウントを作成する。お客様は電話でメールの認証コードを読み上げるだけ。</li>
+        <li>当社がAWS上にサーバー一式を自動構築し、“コビト”を設置する(このとき月々の費用が確定する)。</li>
+        <li>既存サイトがあれば移行する(別途)。</li>
+        <li>お客様のスマホで動作を確認し、ログイン情報一式を引き渡して運用開始。</li>
+      </ol>
+      <p style="font-weight:700; color:var(--navy); font-size:9.5pt; margin-top:3.5mm;">問い合わせ窓口</p>
+      <p style="font-size:9.3pt;">メールおよび電話(受付時間内)で問い合わせに対応。動作環境：Python／Flask、nginx、uWSGI・systemd、Git、Linux。AWS EC2上に本番とステージングを分離して構築(1社1環境)。</p>
+    </div>
+    <div>
+      <p style="font-weight:700; color:var(--navy); font-size:9.5pt;">利用方法</p>
+      <ol class="steps-ol">
+        <li>スマートフォンのClaudeアプリ(またはPC)から“コビト”のセッションに接続する。接続が切れた場合は窓口が再接続を案内する。</li>
+        <li>チャットで運用指示を入力する(例：「サービスページに事例を1件追加して」「戻して」「ステージングを止めて」)。</li>
+        <li>“コビト”が変更内容を提示 → 利用者が承認 → ステージングで表示を確認 → 本番へ公開。</li>
+        <li>公開後の再起動・ログ確認・証明書更新・バックアップも同じチャットで指示する。</li>
+      </ol>
+    </div>
+  </div>
+
+  <h2 class="sec">プラン名・価格<span class="item-tag">記載項目②</span></h2>
+  <div class="plans">
+    <div class="plan">
+      <p class="pname">Lite</p>
+      <p class="pprice">780,000<small>円(税抜)</small></p>
+      <ul>
+        <li>サイト数 1つ</li>
+        <li>標準機能すべて</li>
+        <li>本番・ステージング分離の専用環境</li>
+      </ul>
+    </div>
+    <div class="plan">
+      <p class="pname">Standard</p>
+      <p class="pprice">1,560,000<small>円(税抜)</small></p>
+      <ul>
+        <li>複数サイト可</li>
+        <li>標準機能すべて</li>
+        <li>本番・ステージング分離の専用環境</li>
+      </ul>
+    </div>
+    <div class="plan">
+      <p class="pname">Pro</p>
+      <p class="pprice">6,240,000<small>円(税抜)</small></p>
+      <ul>
+        <li>複数サイト可</li>
+        <li>標準機能すべて＋カスタム機能</li>
+        <li>本番・ステージング分離の専用環境</li>
+      </ul>
+    </div>
+  </div>
+  <p class="plan-note">価格はソフトウェア本体(利用権)の価格。各プランを別ITツールとして登録する。お客様所有のクラウド・AI利用料は別途：AWS 月6,000〜9,000円程度(ステージングの稼働量による)＋Claude有料プラン(月$20〜)＋ドメイン 年1,500円程度。</p>
+  <div class="page-foot">4 / 4</div>
+</section>
+
+</body>
+</html>
